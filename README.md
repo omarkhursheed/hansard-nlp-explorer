@@ -14,14 +14,17 @@ A comprehensive tool for crawling, analyzing, and exploring UK Parliamentary deb
 
 ```
 src/hansard/
-├── crawler.py          # Web crawler for Historic Hansard API (v4.2)
-├── data/hansard/       # Raw debate data (compressed HTML files)
-│   └── 1864/          # Sample data from 1864
-│       ├── feb/       # February debates
-│       └── apr/       # April debates
-├── parser.py          # [TODO] HTML parsing and text extraction
-├── analysis/          # [TODO] NLP analysis modules
-└── app.py            # [TODO] Streamlit dashboard
+├── crawler.py                   # Web crawler for Historic Hansard API (v4.2)
+├── parallel_hansard_runner.py   # Multi-strategy parallel crawler with resource monitoring
+├── test_runner.py              # Comprehensive test suite with performance analysis
+├── view_test_output.py         # Real-time test runner for debugging and monitoring
+├── data/hansard/               # Raw debate data (compressed HTML files)
+│   └── 1864/                  # Sample data from 1864
+│       ├── feb/               # February debates
+│       └── apr/               # April debates
+├── parser.py                   # [TODO] HTML parsing and text extraction
+├── analysis/                   # [TODO] NLP analysis modules
+└── app.py                     # [TODO] Streamlit dashboard
 ```
 
 ## Quick Start
@@ -40,6 +43,10 @@ pip install httpx tenacity polars spacy gensim scikit-learn streamlit
 ### 2. Crawl Data
 
 ```bash
+# Test the crawler first
+python src/hansard/test_runner.py
+python src/hansard/view_test_output.py
+
 # Crawl a single year
 python src/hansard/crawler.py 1864
 
@@ -48,6 +55,9 @@ python src/hansard/crawler.py 1860s
 
 # Crawl a range with house filter
 python src/hansard/crawler.py 1860 1869 --house commons --out data/hansard
+
+# Large-scale parallel crawling
+python src/hansard/parallel_hansard_runner.py --strategy house --start 1860 --end 1869
 ```
 
 ### 3. Process and Analyze
@@ -81,6 +91,9 @@ The crawler saves debates as:
 
 - [x] Web crawler with rate limiting and error handling
 - [x] Data collection for 1864 sample period
+- [x] Multi-strategy parallel crawler for large-scale data collection
+- [x] Comprehensive test suite with performance monitoring
+- [x] Real-time debugging and monitoring tools
 - [ ] HTML parser for text extraction
 - [ ] Topic modeling pipeline
 - [ ] Named entity recognition
