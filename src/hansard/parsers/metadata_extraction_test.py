@@ -126,7 +126,7 @@ def extract_comprehensive_metadata(file_path):
 def main():
     # Test on larger sample with more years
     sample_years = [1803, 1820, 1840, 1860, 1880, 1900, 1920, 1940, 1960, 1980, 2000, 2005]
-    base_path = "data/hansard/"
+    base_path = "../data/hansard/"
     
     print(f"Comprehensive metadata extraction test")
     print(f"Testing years: {sample_years}")

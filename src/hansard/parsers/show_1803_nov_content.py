@@ -36,10 +36,10 @@ def parse_and_show_content(file_path, max_lines=20):
 def main():
     # Show content from a few interesting files
     interesting_files = [
-        "data/hansard/1803/nov/22_01_kings-speech.html.gz",
-        "data/hansard/1803/nov/28_01_income-tax.html.gz", 
-        "data/hansard/1803/nov/30_02_bank-restriction-bill.html.gz",
-        "data/hansard/1803/nov/25_02_desertion-of-seamen.html.gz"
+        "../data/hansard/1803/nov/22_01_kings-speech.html.gz",
+        "../data/hansard/1803/nov/28_01_income-tax.html.gz", 
+        "../data/hansard/1803/nov/30_02_bank-restriction-bill.html.gz",
+        "../data/hansard/1803/nov/25_02_desertion-of-seamen.html.gz"
     ]
     
     for file_path in interesting_files:

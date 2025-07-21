@@ -97,7 +97,7 @@ def main():
         2000, 2005         # 21st century
     ]
     
-    base_path = "../../data/hansard/"
+    base_path = "../data/hansard/"
     print(f"Testing parser across years: {sample_years}")
     print("=" * 60)
     
