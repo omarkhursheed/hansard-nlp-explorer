@@ -13,31 +13,47 @@ A comprehensive tool for crawling, parsing, and exploring UK Parliamentary debat
 ## Project Structure
 
 ```
-src/hansard/
-├── crawlers/
-│   ├── crawler.py                      # Web crawler for Historic Hansard API (v4.2)
-│   └── parallel_hansard_runner.py      # Multi-strategy parallel crawler with resource monitoring
-├── parsers/
-│   ├── metadata_extraction_test.py     # Comprehensive metadata extraction and testing
-│   ├── parse_1803_nov.py              # Enhanced parser supporting Commons and Lords
-│   ├── show_1803_nov_content.py       # Content display and exploration utilities
-│   ├── simple_parser.py               # Basic HTML parser
-│   └── test_parser_broad_sample.py    # Broad temporal testing framework
-├── analysis/
-│   ├── detailed_progress_estimator.py  # Advanced progress tracking and estimation
-│   └── progress_estimator.py          # Basic progress monitoring
-├── scripts/
-│   ├── test_runner.py                  # Comprehensive test suite with performance analysis
-│   └── view_test_output.py            # Real-time test runner for debugging
-├── utils/
-│   ├── debug.py                        # Debug utilities and HTML inspection
-│   ├── investigate_preamble.py        # HTML structure investigation tools
-│   └── debug_*.html                   # Sample debug files
-└── data/hansard/                      # Raw debate data (200+ years of compressed HTML files)
-    ├── 1803/                         # Early parliamentary records
-    ├── 1850s.../                     # Victorian era debates
-    ├── 1900s.../                     # 20th century proceedings
-    └── 2000s/                        # Modern parliamentary records
+src/
+├── explore_hansard_data.ipynb          # Interactive Jupyter notebook for data exploration
+└── hansard/
+    ├── crawlers/
+    │   ├── crawler.py                      # Web crawler for Historic Hansard API (v4.2)
+    │   └── parallel_hansard_runner.py      # Multi-strategy parallel crawler with resource monitoring
+    ├── parsers/
+    │   ├── data_pipeline.py                # Production data processing pipeline
+    │   ├── data_validation.py              # Comprehensive data validation and quality checks
+    │   ├── hansard_search.py               # Search functionality for processed data
+    │   ├── metadata_extraction_test.py     # Comprehensive metadata extraction and testing
+    │   ├── parse_1803_nov.py              # Enhanced parser supporting Commons and Lords
+    │   ├── show_1803_nov_content.py       # Content display and exploration utilities
+    │   ├── simple_parser.py               # Basic HTML parser
+    │   └── test_parser_broad_sample.py    # Broad temporal testing framework
+    ├── analysis/
+    │   ├── detailed_progress_estimator.py  # Advanced progress tracking and estimation
+    │   └── progress_estimator.py          # Basic progress monitoring
+    ├── scripts/
+    │   ├── process_full_dataset.py         # Full dataset processing script
+    │   ├── run_full_processing.sh          # Automated processing pipeline script
+    │   ├── test_production_script.py       # Production environment testing
+    │   ├── test_runner.py                  # Comprehensive test suite with performance analysis
+    │   └── view_test_output.py            # Real-time test runner for debugging
+    ├── utils/
+    │   ├── debug.py                        # Debug utilities and HTML inspection
+    │   ├── investigate_preamble.py        # HTML structure investigation tools
+    │   └── debug_*.html                   # Sample debug files
+    └── data/
+        ├── hansard/                        # Raw debate data (200+ years of compressed HTML files)
+        │   ├── 1803-2005/                 # Complete temporal coverage (203 years)
+        │   └── parallel_status.json       # Crawling progress tracking
+        ├── processed/                      # Processed and structured data
+        │   ├── metadata/                   # Parquet files with extracted metadata
+        │   │   ├── debates_master.parquet  # Master debates dataset (673,385 records)
+        │   │   ├── speakers_master.parquet # Master speakers dataset
+        │   │   └── debates_YYYY.parquet   # Annual debate files (1803-2005)
+        │   ├── content/                    # Full text content files
+        │   ├── index/                      # SQLite database for fast querying
+        │   └── validation_report.json     # Data quality validation results
+        └── processed_test/                 # Test subset for development
 ```
 
 ## Quick Start
@@ -71,6 +87,9 @@ python crawlers/crawler.py 1860 1869 --house commons --out ../data/hansard
 
 # Large-scale parallel crawling
 python crawlers/parallel_hansard_runner.py --strategy house --start 1860 --end 1869
+
+# Full production processing pipeline
+./scripts/run_full_processing.sh
 ```
 
 ### 3. Parse and Analyze Data
@@ -87,6 +106,12 @@ python parsers/show_1803_nov_content.py
 
 # Monitor progress and estimate completion
 python analysis/detailed_progress_estimator.py
+
+# Run production data processing
+python scripts/process_full_dataset.py
+
+# Test production environment
+python scripts/test_production_script.py
 ```
 
 ### 4. Key Parser Capabilities
@@ -109,12 +134,31 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 }
 ```
 
+### 5. Explore Data with Jupyter
+
+```bash
+# Launch interactive data exploration
+jupyter notebook src/explore_hansard_data.ipynb
+
+# The notebook provides:
+# - Full dataset overview (673,385 debates)
+# - Data quality analysis
+# - Temporal trends visualization
+# - Speaker analysis tools
+```
+
 ## Data Format
 
-The crawler saves debates as:
+**Raw Data** (HTML files):
 - **Compressed HTML**: `{day}_{index}_{topic-slug}.html.gz`
 - **Summary JSON**: `{day}_summary.json` with metadata
 - **Directory structure**: `year/month/files`
+
+**Processed Data** (Structured formats):
+- **Master datasets**: `debates_master.parquet`, `speakers_master.parquet`
+- **Annual files**: `debates_YYYY.parquet` (1803-2005)
+- **SQLite index**: `debates.db` for fast querying
+- **Full-text search**: Indexed content for search functionality
 
 ## Dependencies
 
@@ -133,6 +177,10 @@ The crawler saves debates as:
 - [x] **Robust HTML parser with 100% success rate across centuries**
 - [x] **Rich metadata extraction (Hansard refs, speakers, topics, chambers)**
 - [x] **Professional directory structure and testing framework**
+- [x] **Production data processing pipeline with validation**
+- [x] **Master dataset creation (673,385 debates processed)**
+- [x] **Interactive Jupyter notebook for data exploration**
+- [x] **SQLite database indexing for fast queries**
 - [ ] Topic modeling pipeline using extracted debate topics
 - [ ] Named entity recognition for speakers and political figures
 - [ ] Timeline analysis tools leveraging temporal metadata
