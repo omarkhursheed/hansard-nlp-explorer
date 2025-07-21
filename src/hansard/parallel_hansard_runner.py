@@ -83,7 +83,7 @@ class ParallelHansardCrawler:
                 cmd, 
                 capture_output=True, 
                 text=True, 
-                timeout=7200,  # 2 hours timeout per worker 
+                timeout=86400,  # 2 hƒours timeout per worker 
                 cwd=Path.cwd()
             )
             
