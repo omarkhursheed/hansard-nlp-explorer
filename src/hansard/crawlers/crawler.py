@@ -49,6 +49,10 @@ except ImportError:
 BASE_URL = "https://api.parliament.uk/historic-hansard"
 DEFAULT_CONCURRENCY = 4
 MAX_RPS = 3  # be more conservative 
+
+# Fast batch processing settings
+FAST_CONCURRENCY = 8
+FAST_MAX_RPS = 6.0 
 MONTHS = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
 FULL_MONTHS = [
     "january","february","march","april","may","june",
@@ -115,6 +119,7 @@ class HansardCrawler:
             async with self.limiter:
                 r = await self.http.get(url)
                 if r.status_code == 404:
+                    log.debug(f"404 Not Found: {url}")
                     return None
                 r.raise_for_status()
                 return r.json() if expect_json else r.text
@@ -202,10 +207,13 @@ class HansardCrawler:
         try:
             html = await self._get(f"{BASE_URL}/sittings/{year_month}")
             if not html:
+                log.warning(f"No HTML returned for {year_month}")
                 return []
             
             links = self._extract_links(html)
             days = []
+            
+            log.debug(f"Found {len(links)} links for {year_month}")
             
             for link in links:
                 # Look for day patterns like '/historic-hansard/sittings/1864/feb/15'
@@ -217,7 +225,14 @@ class HansardCrawler:
                         if day_part.isdigit():
                             days.append(f"{year_month}/{day_part}")
             
-            return sorted(set(days))
+            # Add explicit logging for single-digit days discovery
+            single_digit_days = [d for d in days if d.split('/')[-1].isdigit() and len(d.split('/')[-1]) == 1]
+            if single_digit_days:
+                log.info(f"Found single-digit days in {year_month}: {single_digit_days}")
+            
+            result = sorted(set(days))
+            log.debug(f"Discovered {len(result)} days in {year_month}: {result}")
+            return result
         except Exception as e:
             log.error(f"Error discovering days in month {year_month}: {e}")
             return []
@@ -269,31 +284,47 @@ class HansardCrawler:
             links = self._extract_links(html)
             out: List[str] = []
             
+            # Handle both single-digit and zero-padded day formats
+            # The API may redirect /7 to /07, so we need to check both
+            d_padded = d.zfill(2) if d.isdigit() else d
+            day_formats = [d, d_padded] if d != d_padded else [d]
+            
+            log.debug(f"Looking for debate links with day formats: {day_formats} in {date_path}")
+            
             for link in links:
                 if not link or any(x in link.lower() for x in ("index", "contents", "#")):
                     continue
                 
-                # Look for debate patterns
-                # Pattern 1: /commons/1864/feb/15/topic or /lords/1864/feb/15/topic
-                pattern1 = rf"/(commons|lords)/{re.escape(y)}/{re.escape(mo)}/{re.escape(d)}/([^/?#]+)"
-                m1 = re.search(pattern1, link, re.I)
-                if m1:
-                    path = m1.group(0).lstrip("/")
-                    if path not in out:
-                        out.append(path)
-                    continue
-                
-                # Pattern 2: /1864/feb/15/topic (generic)
-                pattern2 = rf"/{re.escape(y)}/{re.escape(mo)}/{re.escape(d)}/([^/?#]+)"
-                m2 = re.search(pattern2, link, re.I)
-                if m2:
-                    topic = m2.group(1)
-                    # Add both commons and lords variants
-                    for house in ["commons", "lords"]:
-                        path = f"{house}/{y}/{mo}/{d}/{topic}"
+                # Look for debate patterns with both day formats
+                found_match = False
+                for day_format in day_formats:
+                    # Pattern 1: /commons/1864/feb/15/topic or /lords/1864/feb/15/topic
+                    pattern1 = rf"/(commons|lords)/{re.escape(y)}/{re.escape(mo)}/{re.escape(day_format)}/([^/?#]+)"
+                    m1 = re.search(pattern1, link, re.I)
+                    if m1:
+                        path = m1.group(0).lstrip("/")
                         if path not in out:
                             out.append(path)
+                        found_match = True
+                        break
+                    
+                    # Pattern 2: /1864/feb/15/topic (generic)
+                    pattern2 = rf"/{re.escape(y)}/{re.escape(mo)}/{re.escape(day_format)}/([^/?#]+)"
+                    m2 = re.search(pattern2, link, re.I)
+                    if m2:
+                        topic = m2.group(1)
+                        # Add both commons and lords variants, but use original day format for consistency
+                        for house in ["commons", "lords"]:
+                            path = f"{house}/{y}/{mo}/{d}/{topic}"
+                            if path not in out:
+                                out.append(path)
+                        found_match = True
+                        break
+                
+                if found_match:
+                    continue
             
+            log.debug(f"Found {len(out)} debate links for {date_path}: {out[:5]}{'...' if len(out) > 5 else ''}")
             return out
         except Exception as e:
             log.error(f"Error extracting debate links from {date_path}: {e}")
@@ -315,8 +346,14 @@ class HansardCrawler:
     async def crawl_day(self, date_path: str, house: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Crawl all debates for a single sitting day."""
         try:
+            # Add explicit logging for single-digit days
+            day_num = date_path.split('/')[-1]
+            if day_num.isdigit() and len(day_num) == 1:
+                log.info(f"Processing single-digit day: {date_path}")
+            
             html = await self._get(f"{BASE_URL}/sittings/{date_path}")
             if not html:
+                log.warning(f"No HTML returned for sitting day: {date_path}")
                 return None
             
             links = self._links(html, date_path)
@@ -368,6 +405,10 @@ class HansardCrawler:
                 return
             
             y, mo, d = parts
+            
+            # Add explicit logging for single-digit days
+            if d.isdigit() and len(d) == 1:
+                log.info(f"Saving single-digit day: {data['date']} with {len(data.get('debates', []))} debates")
             day_dir = outdir / y / mo
             day_dir.mkdir(parents=True, exist_ok=True)
             
