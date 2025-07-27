@@ -37,6 +37,23 @@ src/
     │   ├── test_production_script.py       # Production environment testing
     │   ├── test_runner.py                  # Comprehensive test suite with performance analysis
     │   └── view_test_output.py            # Real-time test runner for debugging
+    ├── tests/
+    │   ├── test_backfill_small.py          # Small-scale backfill testing
+    │   ├── test_fast_backfill.py           # Fast backfill performance testing
+    │   ├── test_fix_verification.py        # Data fix verification testing
+    │   ├── test_optimized_backfill.py      # Optimized backfill algorithm testing
+    │   ├── test_simple_discovery.py        # Simple data discovery testing
+    │   ├── test_single_digit_crawler.py    # Single digit year crawler testing
+    │   └── test_timeout_handling.py        # Timeout handling and recovery testing
+    ├── debug_scripts/
+    │   ├── analyze_missing_dates.py        # Missing date analysis and reporting
+    │   ├── backfill_missing_dates.py       # Basic missing dates backfill script
+    │   ├── backfill_missing_dates_fast.py  # Fast missing dates backfill implementation
+    │   ├── backfill_missing_dates_final.py # Final optimized backfill solution
+    │   ├── backfill_missing_dates_optimized.py # Optimized backfill with performance tuning
+    │   ├── debug_crawler_flow.py           # Crawler flow debugging and monitoring
+    │   ├── debug_dates.py                  # Date parsing and validation debugging
+    │   └── debug_simple.py                 # Simple debugging utilities
     ├── utils/
     │   ├── debug.py                        # Debug utilities and HTML inspection
     │   ├── investigate_preamble.py        # HTML structure investigation tools
@@ -76,6 +93,10 @@ pip install httpx tenacity polars spacy gensim scikit-learn streamlit
 python scripts/test_runner.py
 python scripts/view_test_output.py
 
+# Run comprehensive tests
+python tests/test_simple_discovery.py
+python tests/test_timeout_handling.py
+
 # Crawl a single year
 python crawlers/crawler.py 1864
 
@@ -103,6 +124,13 @@ python parsers/parse_1803_nov.py
 
 # Display historical content
 python parsers/show_1803_nov_content.py
+
+# Debug and analyze data issues
+python debug_scripts/analyze_missing_dates.py
+python debug_scripts/debug_crawler_flow.py
+
+# Run backfill operations for missing data
+python debug_scripts/backfill_missing_dates_final.py
 
 # Monitor progress and estimate completion
 python analysis/detailed_progress_estimator.py
