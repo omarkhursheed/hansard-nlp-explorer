@@ -94,9 +94,9 @@ class ProductionProcessor:
             else:
                 self.failed_years.append(year)
             
-            # Progress estimation
-            elapsed = datetime.now() - batch_start
-            if i > 0:
+            # Progress estimation - only show every 5 years for performance
+            if i % 5 == 0:
+                elapsed = datetime.now() - batch_start
                 avg_time_per_year = elapsed.total_seconds() / i
                 remaining_years = len(years) - i
                 eta = datetime.now() + timedelta(seconds=avg_time_per_year * remaining_years)
@@ -124,6 +124,33 @@ class ProductionProcessor:
             json.dump(checkpoint, f, indent=2)
         
         print(f"💾 Checkpoint saved: {checkpoint_path}")
+    
+    def _build_search_index_from_processed_data(self):
+        """Build search index from all processed data at the end."""
+        import json
+        
+        print("📚 Building comprehensive search index...")
+        
+        # Load all processed content files
+        all_debates = []
+        content_dir = self.pipeline.processed_data_path / "content"
+        
+        for year_dir in content_dir.iterdir():
+            if year_dir.is_dir():
+                jsonl_file = year_dir / f"debates_{year_dir.name}.jsonl"
+                if jsonl_file.exists():
+                    with open(jsonl_file, 'r') as f:
+                        for line in f:
+                            if line.strip():
+                                record = json.loads(line)
+                                all_debates.append(record.get('metadata', {}))
+        
+        if all_debates:
+            print(f"   Found {len(all_debates):,} debates to index")
+            self.pipeline._update_search_index(all_debates, "all_years")
+            print("   ✅ Search index built successfully")
+        else:
+            print("   ⚠️  No debates found to index")
     
     def process_full_dataset(self, start_year: int = 1803, end_year: int = 2005, 
                            batch_size: int = 10) -> dict:
@@ -204,6 +231,9 @@ class ProductionProcessor:
             print(f"\n🔄 Consolidating metadata across all years...")
             self.pipeline._consolidate_metadata()
             
+            print(f"🔍 Building search index...")
+            self._build_search_index_from_processed_data()
+            
             print(f"🔍 Running final validation...")
             validator = HansardDataValidator(str(self.pipeline.processed_data_path))
             validation_report = validator.run_full_validation()
@@ -239,8 +269,8 @@ def main():
                         help='Start year (default: 1803)')
     parser.add_argument('--end-year', type=int, default=2005,
                         help='End year (default: 2005)')
-    parser.add_argument('--batch-size', type=int, default=10,
-                        help='Years per batch (default: 10)')
+    parser.add_argument('--batch-size', type=int, default=50,
+                        help='Years per batch (default: 50 - optimized for high-memory systems)')
     parser.add_argument('--raw-data', type=str, default='../data/hansard',
                         help='Raw data path (default: ../data/hansard)')
     parser.add_argument('--output', type=str, default='../data/processed',

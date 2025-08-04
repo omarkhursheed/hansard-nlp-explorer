@@ -99,9 +99,14 @@ class HansardDataPipeline:
             
             metadata['chamber'] = sitting_type
             
-            # Extract content
+            # Extract content - remove navigation and unwanted elements
             for unwanted in content_div(['nav', 'footer', 'script', 'style']):
                 unwanted.decompose()
+            
+            # Remove section navigation (Back to/Forward to links)
+            nav_section = content_div.find('div', id='section-navigation')
+            if nav_section:
+                nav_section.decompose()
             
             content_text = content_div.get_text(separator='\n', strip=True)
             lines = [line for line in content_text.split('\n') if line.strip()]
@@ -115,13 +120,13 @@ class HansardDataPipeline:
             metadata.update(hansard_ref)
             
             # Extract speakers
-            speakers = self._extract_speakers(lines)
+            speakers = self._extract_speakers(soup)
             metadata['speakers'] = speakers
             metadata['speaker_count'] = len(speakers)
             
-            # Extract debate topics
-            debate_topics = self._extract_debate_topics(metadata['title'])
-            metadata['debate_topics'] = debate_topics
+            # Extract debate topic
+            debate_topic = self._extract_debate_topic(metadata['title'])
+            metadata['debate_topic'] = debate_topic
             
             # Extract year/month from file path
             path_parts = file_path.parts
@@ -167,40 +172,41 @@ class HansardDataPipeline:
         
         return hansard_ref
     
-    def _extract_speakers(self, lines: List[str]) -> List[str]:
-        """Extract speaker information from debate lines."""
+    def _extract_speakers(self, soup: BeautifulSoup) -> List[str]:
+        """Extract speaker information using HTML structure."""
         speakers = []
-        for line in lines[1:20]:  # Check first 20 lines
-            # Look for speaker patterns
-            speaker_patterns = [
-                r'^(Mr\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-                r'^(Mrs\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-                r'^(The\s+[A-Z][a-z]+(?:\s+of\s+[A-Z][a-z]+)*)',
-                r'^(Lord\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-                r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*$'
-            ]
-            for pattern in speaker_patterns:
-                match = re.match(pattern, line.strip())
-                if match and len(match.group(1)) < 50:
-                    speakers.append(match.group(1))
-                    break
+        
+        # Find main content div
+        content_div = soup.find('div', class_='house-of-commons-sitting')
+        if not content_div:
+            content_div = soup.find('div', class_='house-of-lords-sitting')
+        
+        if content_div:
+            # Find all member citations which contain speaker names
+            member_cites = content_div.find_all('cite', class_='member')
+            for cite in member_cites:
+                speaker_text = cite.get_text(strip=True)
+                if speaker_text and len(speaker_text) < 200:  # Reasonable length filter
+                    speakers.append(speaker_text)
         
         return list(set(speakers))  # Remove duplicates
     
-    def _extract_debate_topics(self, title: str) -> List[str]:
-        """Extract debate topics from title."""
+    def _extract_debate_topic(self, title: str) -> str:
+        """Extract the main topic from title by removing Hansard citation."""
         if not title:
-            return []
+            return ""
             
-        debate_topics = []
-        # Look for patterns like "BANK RESTRICTION BILL", "INCOME TAX", etc.
-        topic_matches = re.findall(r'([A-Z][A-Z\s-]+)\.?—', title)
-        for topic in topic_matches:
-            clean_topic = topic.strip()
-            if len(clean_topic) > 3 and clean_topic not in ['HANSARD']:
-                debate_topics.append(clean_topic)
+        # Remove (Hansard, date) suffix which appears in modern format
+        if ' (Hansard,' in title:
+            topic = title.split(' (Hansard,')[0].strip()
+        # Handle older format with em dash (rare but exists)
+        elif '—' in title:
+            topic = title.split('—')[0].strip()
+        else:
+            # Keep full title if no recognizable suffix
+            topic = title.strip()
         
-        return debate_topics
+        return topic
     
     def process_year(self, year: str) -> Dict:
         """Process all files for a given year."""
@@ -208,7 +214,8 @@ class HansardDataPipeline:
         if not year_path.exists():
             return {'error': f'Year {year} not found', 'processed': 0}
         
-        print(f"Processing year {year}...")
+        # Reduced logging for performance
+        # print(f"Processing year {year}...")
         
         # Find all HTML files
         html_files = list(year_path.rglob("*.html.gz"))
@@ -256,7 +263,8 @@ class HansardDataPipeline:
                 processed_count += 1
             else:
                 error_count += 1
-                print(f"  Error processing {file_path.name}: {metadata.get('error')}")
+                # Reduced error logging for performance - errors still counted
+                # print(f"  Error processing {file_path.name}: {metadata.get('error')}")
         
         # Save structured data
         if debates_data:
@@ -276,8 +284,8 @@ class HansardDataPipeline:
                 for record in content_data:
                     f.write(json.dumps(record, ensure_ascii=False) + '\n')
             
-            # Update search index
-            self._update_search_index(debates_data, year)
+            # Skip search index during processing - build once at end for better performance
+            # self._update_search_index(debates_data, year)
         
         return {
             'year': year,
