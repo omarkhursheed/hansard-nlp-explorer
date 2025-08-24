@@ -125,6 +125,12 @@ merged.dropna(axis=1, how='all', inplace=True)
 merged.drop(columns=['post_identifiers', 'post_area'], inplace=True)
 # Rename membership id for clarity
 merged.rename(columns={'id': 'membership_id'}, inplace=True)
+# Rename columns for clarity
+merged.rename(columns={'mem_id_historichansard_id': 'mem_id_historichansard', 
+                       'id_historichansard_person_id': 'id_historichansard_person',
+                       'id_datadotparl_id': 'id_datadotparl',
+                       'id_pims_id': 'id_pims',
+                       'id_scotparl_id': 'id_scotparl'}, inplace=True)
 
 
 
