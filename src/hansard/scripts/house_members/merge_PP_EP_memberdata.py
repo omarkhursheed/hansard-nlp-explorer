@@ -107,6 +107,11 @@ def extract_aliases(obj):
         # Personal names
         if given and family:
             aliases.add(f"{given} {family}")
+            initials = "".join([t[0] for t in given.split() if t])
+            if initials:
+                aliases.add(f"{initials} {family}")
+                aliases.add(" ".join(list(initials)) + f" {family}")
+                aliases.add(f"{initials[0]} {family}")
         elif given:
             aliases.add(given)
         elif family:
@@ -126,6 +131,7 @@ def extract_aliases(obj):
             aliases.add(f"{lordname} of {lordof}")
         if prefix and lordof:  # e.g. "Lord of Rothiemay"
             aliases.add(f"{prefix} of {lordof}")
+            aliases.add(f"{prefix} {lordof}")
 
     return [a.strip() for a in aliases if a.strip()]
 
@@ -133,15 +139,33 @@ def extract_aliases(obj):
 merged["aliases"] = merged["other_names"].map(extract_aliases)
 merged["aliases_norm"] = merged["aliases"].apply(lambda lst: [normalize_name(x) for x in lst])
 
+# Add EP names to aliases
+def add_ep_names(row):
+    aliases = set(row.get("aliases_norm", []) or [])
+    name = normalize_name(row.get("name_ep"))
+    sort_name = normalize_name(row.get("sort_name_ep"))
+    given_name = normalize_name(row.get("given_name_ep"))
+    family_name = normalize_name(row.get("family_name_ep"))
+
+    for n in [name, sort_name, given_name, family_name]:
+        if (n not in aliases) and (n is not None):
+            aliases.add(n)
+    return list(aliases)
+
+merged["aliases_norm"] = merged.apply(add_ep_names, axis=1)
+# Drop duplicates in aliases lists
+merged["aliases_norm"] = merged["aliases_norm"].apply(lambda lst: list(set(lst)))
+print("Example aliases:", merged.iloc[3426][["aliases_norm"]].values[0])
 
 # --- Clean up temporary columns ---
-merged = merged.drop(columns=["id_parlparse", "org_id", "id_parlparse_epparty"], errors="ignore")
+merged = merged.drop(columns=["id_parlparse", "org_id", "id_parlparse_epparty", "aliases", "name", 
+                              "sort_name", "given_name", "family_name"], errors="ignore")
 
-# --- Add suffix to name columns ---
-merged.rename(columns={'name': 'name_ep', 
-                       'sort_name': 'sort_name_ep',
-                       'given_name': 'given_name_ep',
-                       'family_name': 'family_name_ep'}, inplace=True)
+# # --- Add suffix to name columns ---
+# merged.rename(columns={'name': 'name_ep', 
+#                        'sort_name': 'sort_name_ep',
+#                        'given_name': 'given_name_ep',
+#                        'family_name': 'family_name_ep'}, inplace=True)
 
 # Save
 merged.to_parquet(OUT_PATH, index=False)
