@@ -87,15 +87,17 @@ class SpeakerProcessor:
         }
 
         def normalize_name(name: str) -> str:
+            if name is None:
+                return ""
             name_lower = name.lower().strip()
             for old, new in normalizations.items():
                 name_lower = name_lower.replace(old, new)
             # Remove extra whitespace
             return ' '.join(name_lower.split())
 
-        # Apply normalization
+        # Apply normalization with proper return type
         normalized_df = speakers_df.with_columns([
-            pl.col('name').map_elements(normalize_name).alias('normalized_name')
+            pl.col('name').map_elements(normalize_name, return_dtype=pl.Utf8).alias('normalized_name')
         ])
 
         return normalized_df
@@ -111,14 +113,22 @@ class SpeakerProcessor:
         if 'normalized_name' not in speakers_df.columns:
             speakers_df = self.normalize_speakers(speakers_df)
 
+        # Build aggregation list based on available columns
+        agg_list = [pl.col('name').first().alias('canonical_name')]
+
+        if 'first_appearance' in speakers_df.columns:
+            agg_list.append(pl.col('first_appearance').min().alias('first_appearance'))
+        if 'last_appearance' in speakers_df.columns:
+            agg_list.append(pl.col('last_appearance').max().alias('last_appearance'))
+        if 'debate_count' in speakers_df.columns:
+            agg_list.append(pl.col('debate_count').sum().alias('total_debates'))
+        if 'primary_chamber' in speakers_df.columns:
+            agg_list.append(pl.col('primary_chamber').mode().first().alias('primary_chamber'))
+        elif 'chamber' in speakers_df.columns:
+            agg_list.append(pl.col('chamber').mode().first().alias('primary_chamber'))
+
         # Group by normalized name and aggregate
-        dedup_df = speakers_df.group_by('normalized_name').agg([
-            pl.col('name').first().alias('canonical_name'),
-            pl.col('first_appearance').min().alias('first_appearance'),
-            pl.col('last_appearance').max().alias('last_appearance'),
-            pl.col('debate_count').sum().alias('total_debates'),
-            pl.col('chamber').mode().first().alias('primary_chamber')
-        ])
+        dedup_df = speakers_df.group_by('normalized_name').agg(agg_list)
 
         return dedup_df
 
@@ -156,14 +166,27 @@ class SpeakerProcessor:
 
         validation_report = {
             'total_speakers': len(speakers_df),
-            'speakers_with_debates': len(speakers_df.filter(pl.col('debate_count') > 0)),
-            'date_coverage': {
-                'earliest': speakers_df['first_appearance'].min(),
-                'latest': speakers_df['last_appearance'].max()
-            },
-            'chamber_distribution': speakers_df['primary_chamber'].value_counts().to_dict(),
             'issues': []
         }
+
+        # Check for debate count if column exists
+        if 'debate_count' in speakers_df.columns:
+            validation_report['speakers_with_debates'] = len(
+                speakers_df.filter(pl.col('debate_count') > 0)
+            )
+
+        # Check date coverage if columns exist
+        if 'first_appearance' in speakers_df.columns and 'last_appearance' in speakers_df.columns:
+            validation_report['date_coverage'] = {
+                'earliest': speakers_df['first_appearance'].min(),
+                'latest': speakers_df['last_appearance'].max()
+            }
+
+        # Check chamber distribution if column exists
+        if 'primary_chamber' in speakers_df.columns:
+            validation_report['chamber_distribution'] = speakers_df['primary_chamber'].value_counts().to_dict()
+        elif 'chamber' in speakers_df.columns:
+            validation_report['chamber_distribution'] = speakers_df['chamber'].value_counts().to_dict()
 
         # Check for missing data
         null_counts = {
@@ -177,11 +200,12 @@ class SpeakerProcessor:
                     f"Column '{col}' has {null_count} null values"
                 )
 
-        # Check for suspicious patterns
-        if len(speakers_df.filter(pl.col('first_appearance') > pl.col('last_appearance'))) > 0:
-            validation_report['issues'].append(
-                "Some speakers have first_appearance > last_appearance"
-            )
+        # Check for suspicious patterns (only if columns exist)
+        if 'first_appearance' in speakers_df.columns and 'last_appearance' in speakers_df.columns:
+            if len(speakers_df.filter(pl.col('first_appearance') > pl.col('last_appearance'))) > 0:
+                validation_report['issues'].append(
+                    "Some speakers have first_appearance > last_appearance"
+                )
 
         return validation_report
 
@@ -193,15 +217,18 @@ class SpeakerProcessor:
         logger.info("Checking MP coverage")
 
         # Rough heuristics for MP identification
-        mp_indicators = ['mp', 'member', 'hon.', 'right hon.']
+        # Include mr., mrs. as they were commonly used for MPs
+        mp_indicators = ['mp', 'member', 'hon.', 'right hon.', 'mr.', 'mrs.']
 
         def likely_mp(name: str) -> bool:
+            if name is None:
+                return False
             name_lower = name.lower()
             return any(indicator in name_lower for indicator in mp_indicators)
 
-        # Apply MP detection
+        # Apply MP detection with proper return type
         with_mp_flag = speakers_df.with_columns([
-            pl.col('name').map_elements(likely_mp).alias('likely_mp')
+            pl.col('name').map_elements(likely_mp, return_dtype=pl.Boolean).alias('likely_mp')
         ])
 
         coverage = {
