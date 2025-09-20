@@ -227,8 +227,26 @@ class SpeakerProcessor:
             return any(indicator in name_lower for indicator in mp_indicators)
 
         # Apply MP detection with proper return type
+        # Handle different possible column names for speaker name
+        name_col = None
+        if 'name' in speakers_df.columns:
+            name_col = 'name'
+        elif 'speaker_name' in speakers_df.columns:
+            name_col = 'speaker_name'
+        elif 'normalized_name' in speakers_df.columns:
+            name_col = 'normalized_name'
+        else:
+            # If no name column, return empty coverage
+            return {
+                'total_speakers': len(speakers_df),
+                'likely_mps': 0,
+                'coverage_percentage': 0.0,
+                'by_chamber': {},
+                'error': 'No name column found'
+            }
+
         with_mp_flag = speakers_df.with_columns([
-            pl.col('name').map_elements(likely_mp, return_dtype=pl.Boolean).alias('likely_mp')
+            pl.col(name_col).map_elements(likely_mp, return_dtype=pl.Boolean).alias('likely_mp')
         ])
 
         coverage = {
@@ -241,12 +259,15 @@ class SpeakerProcessor:
         }
 
         # Coverage by chamber
-        for chamber in speakers_df['primary_chamber'].unique():
-            chamber_df = with_mp_flag.filter(pl.col('primary_chamber') == chamber)
-            coverage['by_chamber'][chamber] = {
-                'total': len(chamber_df),
-                'likely_mps': len(chamber_df.filter(pl.col('likely_mp')))
-            }
+        chamber_col = 'primary_chamber' if 'primary_chamber' in speakers_df.columns else 'chamber'
+        if chamber_col in speakers_df.columns:
+            for chamber in speakers_df[chamber_col].unique():
+                if chamber is not None:
+                    chamber_df = with_mp_flag.filter(pl.col(chamber_col) == chamber)
+                    coverage['by_chamber'][str(chamber)] = {
+                        'total': len(chamber_df),
+                        'likely_mps': len(chamber_df.filter(pl.col('likely_mp')))
+                    }
 
         return coverage
 
