@@ -168,11 +168,11 @@ POLICY_TERMS = {
 }
 
 class HansardAdvancedAnalyzer:
-    def __init__(self, data_dir="../data/processed_fixed", output_dir="analysis/results_advanced",
+    def __init__(self, data_dir=None, output_dir="analysis/results_advanced",
                  filter_level=3):
         """
         Initialize analyzer with specified filtering level.
-        
+
         Filter levels:
         0: NONE - No filtering
         1: BASIC - Basic English stop words
@@ -183,6 +183,16 @@ class HansardAdvancedAnalyzer:
         6: POS_NOUN - Keep only nouns (requires spacy)
         7: ENTITY - Focus on named entities (requires spacy)
         """
+        # Auto-detect data directory
+        if data_dir is None:
+            # Check common locations
+            if Path("../data/processed_fixed").exists():
+                data_dir = "../data/processed_fixed"
+            elif Path("src/hansard/data/processed_fixed").exists():
+                data_dir = "src/hansard/data/processed_fixed"
+            else:
+                data_dir = "data/processed_fixed"
+
         self.data_dir = Path(data_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -193,9 +203,31 @@ class HansardAdvancedAnalyzer:
         # Build stop words based on filter level
         self.stop_words = self.build_stop_words(filter_level)
         
-        # Load gender wordlists
-        self.male_words = self._load_gender_wordlist("../data/gender_wordlists/male_words.txt")
-        self.female_words = self._load_gender_wordlist("../data/gender_wordlists/female_words.txt")
+        # Load gender wordlists - try multiple paths
+        male_paths = [
+            "../data/gender_wordlists/male_words.txt",
+            "src/hansard/data/gender_wordlists/male_words.txt",
+            "data/gender_wordlists/male_words.txt"
+        ]
+        female_paths = [
+            "../data/gender_wordlists/female_words.txt",
+            "src/hansard/data/gender_wordlists/female_words.txt",
+            "data/gender_wordlists/female_words.txt"
+        ]
+
+        for path in male_paths:
+            if Path(path).exists():
+                self.male_words = self._load_gender_wordlist(path)
+                break
+        else:
+            self.male_words = set()
+
+        for path in female_paths:
+            if Path(path).exists():
+                self.female_words = self._load_gender_wordlist(path)
+                break
+        else:
+            self.female_words = set()
         
         # Analysis results storage
         self.results = {}

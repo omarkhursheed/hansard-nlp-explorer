@@ -19,6 +19,12 @@
 - Ensure temporal analysis reflects real time periods
 - Check that NLP analysis produces real topics from real text
 
+### 4. **PATHS MUST BE UNIVERSAL**
+- Scripts must work from any directory
+- Use absolute paths or smart path resolution
+- Never hardcode relative paths that break when run from different locations
+- Always test scripts from root, subdirectories, and parent directories
+
 ## Testing Checklist for Each Module
 
 ### Before Committing ANY Script:
