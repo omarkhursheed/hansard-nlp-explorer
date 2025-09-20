@@ -142,7 +142,80 @@ python scripts/process_full_dataset.py
 python scripts/test_production_script.py
 ```
 
-### 4. Key Parser Capabilities
+### 4. NLP Analysis and Historical Research
+
+```bash
+# Basic NLP analysis with small sample
+python analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
+
+# Historical milestone analysis
+python analysis/historical_milestone_analysis.py
+
+# Comprehensive corpus analysis
+python analysis/overall_corpus_analysis.py
+
+# Dataset statistics and overview
+python analysis/dataset_statistics.py
+
+# Audit tool for data quality checks
+python analysis/hansard_audit_tool.py
+
+# Example usage demonstrations
+python example_usage.py
+
+# High-performance processing for large datasets
+python high_performance_processor.py
+
+# Complete parsing tests
+python test_complete_parsing.py
+
+# Performance testing
+python test_hp_performance.py
+
+# Speaker extraction testing
+python test_speaker_extraction.py
+```
+
+#### NLP Analysis Options
+
+**Quick Analysis (Testing)**:
+```bash
+# Women's suffrage period analysis
+python analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
+
+# Victorian era sample
+python analysis/hansard_nlp_analysis.py --years 1850-1900 --sample 500
+
+# WWI period analysis
+python analysis/hansard_nlp_analysis.py --years 1914-1918 --sample 200
+```
+
+**Comprehensive Analysis**:
+```bash
+# Full period analysis (large dataset)
+python analysis/hansard_nlp_analysis.py --years 1850-1950 --sample 5000
+
+# Complete corpus analysis (WARNING: long runtime)
+python analysis/hansard_nlp_analysis.py --full
+
+# Decade-by-decade analysis
+python analysis/hansard_nlp_analysis.py --years 1900-1910 --sample 1000
+```
+
+**Analysis Features**:
+- **Unigram/Bigram Analysis**: Most frequent words and phrases
+- **Topic Modeling (LDA)**: Identifies major parliamentary themes
+- **Gender Analysis**: UCLA NLP wordlist-based gender language patterns
+- **Temporal Analysis**: Pre/post-1928 women's suffrage comparisons
+- **Historical Milestone Tracking**: Key political reform periods
+
+**Output Files**:
+- `results/hansard_nlp_analysis.png`: 4-panel visualization
+- `results/hansard_nlp_results.json`: Complete analysis data
+- `analysis/historical_milestones/`: Period-specific analysis results
+- `analysis/overall_analysis/`: Comprehensive corpus statistics
+
+### 5. Key Parser Capabilities
 
 The parser successfully extracts rich metadata from 200+ years of parliamentary data:
 
@@ -162,18 +235,6 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 }
 ```
 
-### 5. Explore Data with Jupyter
-
-```bash
-# Launch interactive data exploration
-jupyter notebook src/explore_hansard_data.ipynb
-
-# The notebook provides:
-# - Full dataset overview (673,385 debates)
-# - Data quality analysis
-# - Temporal trends visualization
-# - Speaker analysis tools
-```
 
 ## Data Format
 
