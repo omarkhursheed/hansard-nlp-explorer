@@ -168,7 +168,7 @@ POLICY_TERMS = {
 }
 
 class HansardAdvancedAnalyzer:
-    def __init__(self, data_dir="data/processed_fixed", output_dir="analysis/results_advanced", 
+    def __init__(self, data_dir="../data/processed_fixed", output_dir="analysis/results_advanced",
                  filter_level=3):
         """
         Initialize analyzer with specified filtering level.
@@ -194,8 +194,8 @@ class HansardAdvancedAnalyzer:
         self.stop_words = self.build_stop_words(filter_level)
         
         # Load gender wordlists
-        self.male_words = self._load_gender_wordlist("data/gender_wordlists/male_words.txt")
-        self.female_words = self._load_gender_wordlist("data/gender_wordlists/female_words.txt")
+        self.male_words = self._load_gender_wordlist("../data/gender_wordlists/male_words.txt")
+        self.female_words = self._load_gender_wordlist("../data/gender_wordlists/female_words.txt")
         
         # Analysis results storage
         self.results = {}
