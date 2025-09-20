@@ -4,11 +4,11 @@ A comprehensive tool for crawling, parsing, and exploring UK Parliamentary debat
 
 ## Features
 
-- **🕷️ Web Crawler**: Production-ready crawler for fetching Historic Hansard debates from the UK Parliament API
-- **📄 Robust Parser**: Comprehensive HTML parser supporting both Commons and Lords with 100% success rate across 200+ years
-- **🔍 Metadata Extraction**: Rich metadata extraction including Hansard references, speakers, debate topics, and chamber information
-- **📊 Data Analysis**: Progress monitoring, temporal sampling, and comprehensive testing frameworks
-- **⚡ Parallel Processing**: Multi-strategy parallel crawler with resource monitoring for large-scale data collection
+- **Web Crawler**: Production-ready crawler for fetching Historic Hansard debates from the UK Parliament API
+- **Robust Parser**: Comprehensive HTML parser supporting both Commons and Lords with 100% success rate across 200+ years
+- **Metadata Extraction**: Rich metadata extraction including Hansard references, speakers, debate topics, and chamber information
+- **Data Analysis**: Progress monitoring, temporal sampling, and comprehensive testing frameworks
+- **Parallel Processing**: Multi-strategy parallel crawler with resource monitoring for large-scale data collection
 
 ## Project Structure
 
@@ -219,10 +219,10 @@ python analysis/hansard_nlp_analysis.py --years 1900-1910 --sample 1000
 
 The parser successfully extracts rich metadata from 200+ years of parliamentary data:
 
-- **✅ 100% Success Rate**: Tested across 1803-2005 with perfect parsing
-- **📊 Rich Metadata**: Hansard references, chamber type, dates, speakers, topics
-- **🏛️ Dual Chamber Support**: Both House of Commons and House of Lords
-- **🕰️ Temporal Robustness**: Consistent parsing across centuries of format evolution
+- **100% Success Rate**: Tested across 1803-2005 with perfect parsing
+- **Rich Metadata**: Hansard references, chamber type, dates, speakers, topics
+- **Dual Chamber Support**: Both House of Commons and House of Lords
+- **Temporal Robustness**: Consistent parsing across centuries of format evolution
 
 **Example extracted metadata:**
 ```python
@@ -280,11 +280,11 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 ## Parser Performance
 
 **Comprehensive Testing Results:**
-- ✅ **60 files tested** across 12 decades (1803, 1820, 1840, 1860, 1880, 1900, 1920, 1940, 1960, 1980, 2000, 2005)
-- ✅ **100% success rate** - zero parsing failures
-- ✅ **Rich metadata extraction**: 100% Hansard references, 56.7% speaker identification, 16.7% topic extraction
-- ✅ **Dual chamber support**: Successfully parses both Commons (68%) and Lords (32%) content
-- ✅ **Scalable**: From 49 files (1803) to 6,939 files (2000) per year
+- **60 files tested** across 12 decades (1803, 1820, 1840, 1860, 1880, 1900, 1920, 1940, 1960, 1980, 2000, 2005)
+- **100% success rate** - zero parsing failures
+- **Rich metadata extraction**: 100% Hansard references, 56.7% speaker identification, 16.7% topic extraction
+- **Dual chamber support**: Successfully parses both Commons (68%) and Lords (32%) content
+- **Scalable**: From 49 files (1803) to 6,939 files (2000) per year
 
 ## API Structure
 

@@ -3,6 +3,20 @@
 ## Executive Summary
 Complete repository reorganization with comprehensive testing, data validation, and final analysis generation. Focus on minimal, self-contained tests that progressively validate functionality from basic operations to full analysis pipelines.
 
+## Commit Strategy Throughout Cleanup
+
+### Checkpoint Commits Required:
+- **Before Phase 1**: `git commit -am "checkpoint: Pre-cleanup state"`
+- **After each major deletion**: `git commit -am "cleanup: Remove [what was removed]"`
+- **After successful test**: `git commit -am "test: Add [test description]"`
+- **After refactoring**: `git commit -am "refactor: [what was refactored]"`
+- **End of each phase**: `git commit -am "checkpoint: Phase X complete"`
+
+### Recovery Points:
+- Tag important states: `git tag pre-cleanup-v1`, `git tag tests-passing-v1`
+- Push after each phase completes successfully
+- Document commit hash in this file for critical checkpoints
+
 ## Phase 1: Repository Assessment and Organization
 
 ### 1.1 Current State Analysis
@@ -35,26 +49,31 @@ Complete repository reorganization with comprehensive testing, data validation, 
    - Test scripts and validation utilities
 
 ### 1.2 Cleanup Actions
-1. **Remove redundant files**:
+1. **Remove redundant files** (COMMIT after each group):
+   - `git commit -am "cleanup: Remove duplicate NLP analysis scripts"`
    - Multiple versions of same functionality (e.g., `hansard_nlp_analysis_*.py`)
    - Obsolete test files
    - Debug HTML files
 
-2. **Consolidate functionality**:
+2. **Consolidate functionality** (COMMIT after each consolidation):
+   - `git commit -am "refactor: Consolidate speaker processing scripts"`
    - Merge speaker processing scripts into single module
    - Combine stop words implementations
    - Unify gender analysis scripts
 
-3. **Remove all emojis** from:
+3. **Remove all emojis** (COMMIT after completion):
+   - `git commit -am "cleanup: Remove all emojis from codebase"`
    - README.md
    - All Python docstrings and comments
    - Analysis output files
    - Documentation
 
-4. **Archive non-essential files**:
+4. **Archive non-essential files** (COMMIT before and after):
+   - `git commit -am "checkpoint: Before archiving non-essential files"`
    - PDF report
    - Old analysis results
    - Debug scripts (move to archive/)
+   - `git commit -am "cleanup: Archive non-essential files"`
 
 ## Phase 2: Progressive Testing Framework
 

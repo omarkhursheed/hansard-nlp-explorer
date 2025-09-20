@@ -208,3 +208,55 @@ Always follow this approach when making changes:
 - ❌ Making multiple complex changes simultaneously
 - ❌ Adding optimizations without testing intermediate steps
 - ❌ Assuming changes work without verification
+
+## VERSION CONTROL STRATEGY
+
+**COMMIT EARLY AND OFTEN**
+
+Create frequent git commits to maintain recovery points:
+
+### Commit Checkpoints:
+1. **Before any major changes**: Create a checkpoint commit
+2. **After successful test**: Commit working code immediately
+3. **Before refactoring**: Save the working version
+4. **After each cleanup phase**: Document what was removed/changed
+5. **Before deleting files**: Commit with clear message about what will be removed
+
+### Commit Message Format:
+```
+<type>: <short description>
+
+<detailed explanation if needed>
+- List of specific changes
+- Why changes were made
+- What was removed/added
+```
+
+Types: feat, fix, refactor, test, docs, cleanup, checkpoint
+
+### Recovery Strategy:
+- Use `git log --oneline` to see commit history
+- Use `git diff HEAD~1` to review recent changes
+- Use `git checkout <commit-hash> -- <file>` to restore specific files
+- Use `git reset --hard <commit-hash>` only as last resort
+
+### Example Commit Flow:
+```bash
+# Before starting work
+git commit -am "checkpoint: Before refactoring speaker modules"
+
+# After successful change
+git commit -am "refactor: Consolidate speaker processing into single module"
+
+# After removing files
+git commit -am "cleanup: Remove duplicate NLP analysis scripts"
+
+# After tests pass
+git commit -am "test: Add unit tests for parser module"
+```
+
+**NEVER:**
+- ❌ Make large changes without commits
+- ❌ Delete multiple files without committing first
+- ❌ Refactor without a checkpoint
+- ❌ Work for hours without committing
