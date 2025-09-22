@@ -188,6 +188,47 @@ When working with this analysis:
 **DATA AUTHENTICITY:**
 This corpus represents real historical parliamentary debates. Any analysis must preserve the integrity of this historical record. Synthetic data undermines the entire research value.
 
+## CRITICAL: DATASET CONSISTENCY
+
+**MAINTAIN SYMMETRICAL DATA STRUCTURES**
+
+When creating datasets with multiple categories (e.g., male/female, party affiliations, etc.):
+- ✅ **ALWAYS** store the same level of detail for ALL categories
+- ✅ **ALWAYS** keep both names AND counts for every group
+- ✅ **NEVER** store just counts for one group and full details for another
+- ✅ **NEVER** make asymmetric design decisions that prevent equivalent analysis
+
+**Example of BAD design:**
+```python
+# ❌ WRONG - Asymmetric data storage
+'female_names': ['Nancy Astor', 'Margaret Thatcher'],  # Full names
+'female_mps': 2,                                       # Count
+'male_mps': 15,                                        # Only count, NO NAMES!
+```
+
+**Example of GOOD design:**
+```python
+# ✅ CORRECT - Symmetric data storage
+'female_names': ['Nancy Astor', 'Margaret Thatcher'],
+'female_mps': 2,
+'male_names': ['Winston Churchill', 'Tony Blair', ...],  # SAME detail level
+'male_mps': 15,
+```
+
+**WHY THIS MATTERS:**
+- Asymmetric data prevents comparative analysis
+- Can't answer "which male MPs?" if you only stored counts
+- Forces expensive re-processing of entire datasets
+- Creates hidden biases in research capabilities
+- Makes the dataset less valuable for future research
+
+**BEFORE PROCESSING FULL DATASETS:**
+1. Design the output schema carefully
+2. Ensure ALL categories get equal treatment
+3. Think about ALL potential analyses needed
+4. Store raw data that enables multiple research questions
+5. Don't optimize prematurely by dropping "less important" fields
+
 ## DEVELOPMENT METHODOLOGY
 
 **WRITE MINIMAL CODE, TEST AND ITERATE**
