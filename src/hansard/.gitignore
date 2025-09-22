@@ -1,0 +1,9 @@
+
+# Temporary/intermediate data
+data_filtered_*/
+debate_datasets/
+gender_analysis_data/
+*.backup
+
+# Keep only the FULL version
+!gender_analysis_data_FULL/
