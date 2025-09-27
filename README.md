@@ -16,74 +16,73 @@ A comprehensive tool for crawling, parsing, and exploring UK Parliamentary debat
 
 ```
 src/
-└── hansard/
-    ├── crawlers/
-    │   ├── crawler.py                      # Web crawler for Historic Hansard API
-    │   └── parallel_hansard_runner.py      # Multi-strategy parallel crawler
-    ├── parsers/
-    │   ├── data_pipeline.py                # Production data processing pipeline
-    │   ├── data_validation.py              # Data validation and quality checks
-    │   ├── hansard_search.py               # Search functionality
-    │   └── metadata_extraction_test.py     # Metadata extraction and testing
-    ├── analysis/
-    │   ├── hansard_nlp_analysis.py         # Main NLP analysis with filtering levels
-    │   ├── temporal_gender_analysis.py     # Gender language temporal analysis
-    │   ├── stop_words.py                   # Parliamentary stop words configuration
-    │   └── comprehensive_corpus_analysis.py # Full corpus analysis tools
-    ├── speaker_processing.py               # Unified speaker processing module
-    ├── data_validator.py                   # Data integrity validation
-    ├── path_utils.py                       # Universal path resolution
-    ├── scripts/
-    │   ├── process_full_dataset.py         # Full dataset processing script
-    │   ├── run_full_processing.sh          # Automated processing pipeline script
-    │   ├── test_production_script.py       # Production environment testing
-    │   ├── test_runner.py                  # Comprehensive test suite with performance analysis
-    │   └── view_test_output.py            # Real-time test runner for debugging
-    ├── tests/
-    │   ├── test_backfill_small.py          # Small-scale backfill testing
-    │   ├── test_fast_backfill.py           # Fast backfill performance testing
-    │   ├── test_fix_verification.py        # Data fix verification testing
-    │   ├── test_optimized_backfill.py      # Optimized backfill algorithm testing
-    │   ├── test_simple_discovery.py        # Simple data discovery testing
-    │   ├── test_single_digit_crawler.py    # Single digit year crawler testing
-    │   └── test_timeout_handling.py        # Timeout handling and recovery testing
-    ├── debug_scripts/
-    │   ├── analyze_missing_dates.py        # Missing date analysis and reporting
-    │   ├── backfill_missing_dates.py       # Basic missing dates backfill script
-    │   ├── backfill_missing_dates_fast.py  # Fast missing dates backfill implementation
-    │   ├── backfill_missing_dates_final.py # Final optimized backfill solution
-    │   ├── backfill_missing_dates_optimized.py # Optimized backfill with performance tuning
-    │   ├── debug_crawler_flow.py           # Crawler flow debugging and monitoring
-    │   ├── debug_dates.py                  # Date parsing and validation debugging
-    │   └── debug_simple.py                 # Simple debugging utilities
-    ├── utils/
-    │   ├── debug.py                        # Debug utilities and HTML inspection
-    │   ├── investigate_preamble.py        # HTML structure investigation tools
-    │   └── debug_*.html                   # Sample debug files
-    └── data/
-        ├── hansard/                        # Raw debate data (200+ years of compressed HTML files)
-        │   ├── 1803-2005/                 # Complete temporal coverage (203 years)
-        │   └── parallel_status.json       # Crawling progress tracking
-        ├── processed/                      # Processed and structured data
-        │   ├── metadata/                   # Parquet files with extracted metadata
-        │   │   ├── debates_master.parquet  # Master debates dataset (673,385 records)
-        │   │   ├── speakers_master.parquet # Master speakers dataset
-        │   │   └── debates_YYYY.parquet   # Annual debate files (1803-2005)
-        │   ├── content/                    # Full text content files
-        │   ├── index/                      # SQLite database for fast querying
-        │   └── validation_report.json     # Data quality validation results
-        └── processed_test/                 # Test subset for development
+├── hansard/
+│   ├── analysis/
+│   │   ├── hansard_nlp_analysis.py         # Main NLP analysis with filtering levels
+│   │   ├── comprehensive_corpus_analysis.py # Full corpus analysis tools
+│   │   ├── temporal_gender_analysis.py     # Gender language temporal analysis
+│   │   ├── historical_milestone_analysis.py # Historical milestone analysis
+│   │   ├── dataset_statistics.py           # Dataset statistics generator
+│   │   ├── stop_words.py                   # Parliamentary stop words configuration
+│   │   └── corpus_results/                 # Analysis outputs by filtering level
+│   ├── crawlers/
+│   │   ├── crawler.py                      # Web crawler for Historic Hansard API
+│   │   └── parallel_hansard_runner.py      # Multi-strategy parallel crawler
+│   ├── parsers/
+│   │   ├── data_pipeline.py                # Production data processing pipeline
+│   │   ├── data_validation.py              # Data validation and quality checks
+│   │   ├── hansard_search.py               # Search functionality
+│   │   └── metadata_extraction_test.py     # Metadata extraction and testing
+│   ├── scripts/
+│   │   ├── data_creation/                  # Dataset creation scripts
+│   │   │   ├── create_enhanced_gender_dataset.py  # Enhanced gender dataset generator
+│   │   │   └── create_full_gender_dataset.py      # Full gender dataset creator
+│   │   ├── matching/                       # MP matching algorithms
+│   │   │   └── mp_matcher_corrected.py     # Corrected MP gender matching
+│   │   ├── process_full_dataset.py         # Full dataset processing script
+│   │   ├── run_enhanced_gender_dataset.sh  # Enhanced dataset runner
+│   │   ├── run_full_processing.sh          # Automated processing pipeline
+│   │   └── test_runner.py                  # Comprehensive test suite
+│   ├── tests/                              # Unit and integration tests
+│   │   ├── test_speaker_extraction.py      # Speaker extraction testing
+│   │   ├── test_corrected_matcher.py       # MP matcher testing
+│   │   └── test_timeout_handling.py        # Timeout handling tests
+│   ├── debug_scripts/                      # Debugging and analysis tools
+│   │   ├── analyze_missing_dates.py        # Missing date analysis
+│   │   └── backfill_missing_dates*.py      # Various backfill implementations
+│   ├── utils/
+│   │   ├── path_utils.py                   # Universal path resolution
+│   │   ├── high_performance_processor.py   # High-performance data processing
+│   │   └── debug.py                        # Debug utilities
+│   ├── docs/
+│   │   ├── GENDER_DATASET_GENERATION.md    # Gender dataset documentation
+│   │   └── CLAUDE.md                       # AI assistant guidance
+│   └── data/
+│       ├── hansard/                        # Raw HTML debate files (1803-2005)
+│       ├── processed_fixed/                # Cleaned processed data
+│       │   ├── content/                    # Extracted JSONL text by year
+│       │   ├── metadata/                   # Structured metadata (Parquet)
+│       │   └── index/                      # SQLite search indices
+│       ├── gender_analysis_enhanced/       # Enhanced gender dataset
+│       │   ├── ALL_debates_enhanced_with_text.parquet  # Full text dataset
+│       │   ├── ALL_debates_enhanced_metadata.parquet   # Metadata only
+│       │   ├── debates_YYYY_enhanced.parquet          # Per-year files
+│       │   └── dataset_metadata.json                  # Dataset statistics
+│       ├── house_members_gendered_updated.parquet     # Corrected MP gender data
+│       └── gender_wordlists/                          # UCLA NLP gender words
+└── tests/
+    └── integration/                         # Integration tests
+        ├── test_nlp_real_data.py           # NLP analysis tests
+        └── test_speaker_real_data.py       # Speaker processing tests
 ```
 
-## Repository Health
+## Repository Status
 
-- **Status**: PRISTINE (Recently cleaned and reorganized)
-- **Tests**: ALL PASSING
-- **Data Validated**: 802,178 debates (1803-2005)
+- **Data Coverage**: 802,178 debates (1803-2005)
+- **Tests**: All passing
 - **Code Coverage**: 80%+
-- **Last Verified**: Repository fully tested and operational
-- **Code Quality**: 40% reduction in files, zero duplicate functions
-- **Truth-Seeking**: All analysis uses real data, no synthetic values
+- **Recent Updates**: Cleaned and reorganized codebase
+- **Gender Dataset**: Corrected historical misclassifications
 
 ## Quick Start
 
@@ -256,7 +255,7 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 - **Directory structure**: `year/month/files`
 
 **Processed Data** (Structured formats):
-- **Master datasets**: `debates_master.parquet`, `speakers_master.parquet`
+- **Master datasets**: `debates_master.parquet` (802,178 records), `speakers_master.parquet`
 - **Annual files**: `debates_YYYY.parquet` (1803-2005)
 - **SQLite index**: `debates.db` for fast querying
 - **Full-text search**: Indexed content for search functionality
@@ -310,7 +309,7 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 ### Gender Language Patterns (1920-1930)
 - **Male language dominance**: 91.5% of gendered words are masculine
 - **Post-1928 shift**: Female language increased from 7.97% to 9.93% after women's suffrage
-- **Real patterns**: All findings based on actual parliamentary debates, no synthetic data
+- **Data source**: Findings based on actual parliamentary debates
 
 ### Parliamentary Topics Identified
 Through LDA topic modeling on real debates:
