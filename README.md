@@ -102,34 +102,37 @@ conda env create -f environment.yml
 conda activate hansard
 
 # Or install manually
-pip install httpx tenacity polars spacy gensim scikit-learn matplotlib wordcloud
+pip install httpx tenacity polars pandas numpy spacy gensim scikit-learn matplotlib seaborn wordcloud
+
+# Optional: SpaCy model for POS/NER features
+python -m spacy download en_core_web_sm
 ```
 
 ### 2. Crawl Data
 
 ```bash
-# Test the crawler first
-python scripts/test_runner.py
-python scripts/view_test_output.py
+# Test the crawler helpers first
+python src/hansard/scripts/test_runner.py
+python src/hansard/scripts/view_test_output.py
 
-# Run comprehensive tests
-python tests/test_simple_discovery.py
-python tests/test_timeout_handling.py
+# Run comprehensive legacy tests
+python src/hansard/tests/test_simple_discovery.py
+python src/hansard/tests/test_timeout_handling.py
 
 # Crawl a single year
-python crawlers/crawler.py 1864
+python src/hansard/crawlers/crawler.py 1864
 
 # Crawl a decade
-python crawlers/crawler.py 1860s
+python src/hansard/crawlers/crawler.py 1860s
 
 # Crawl a range with house filter
-python crawlers/crawler.py 1860 1869 --house commons --out ../data/hansard
+python src/hansard/crawlers/crawler.py 1860 1869 --house commons --out src/hansard/data/hansard
 
 # Large-scale parallel crawling
-python crawlers/parallel_hansard_runner.py --strategy house --start 1860 --end 1869
+python src/hansard/crawlers/parallel_hansard_runner.py --strategy house --start 1860 --end 1869 --out src/hansard/data/hansard
 
-# Full production processing pipeline
-./scripts/run_full_processing.sh
+# Full production processing pipeline (from repo root)
+bash src/hansard/scripts/run_full_processing.sh
 ```
 
 ### 3. Validate Data and Run Analysis
@@ -138,12 +141,11 @@ python crawlers/parallel_hansard_runner.py --strategy house --start 1860 --end 1
 # Validate data integrity (80% health score)
 python src/hansard/data_validator.py
 
-# Quick NLP analysis test
-cd src/hansard/analysis
-python hansard_nlp_analysis.py --years 1920-1920 --sample 50
+# Quick NLP analysis test (from repo root)
+python src/hansard/analysis/hansard_nlp_analysis.py --years 1920-1920 --sample 50
 
 # Larger analysis (detects real patterns)
-python hansard_nlp_analysis.py --years 1920-1930 --sample 500
+python src/hansard/analysis/hansard_nlp_analysis.py --years 1920-1930 --sample 500
 
 # Process speakers (2.4M records)
 python -c "from hansard.speaker_processing import SpeakerProcessor; p = SpeakerProcessor(); print(p.check_mp_coverage(...))"
@@ -159,34 +161,31 @@ python verify_all_systems.py
 
 ```bash
 # Basic NLP analysis with small sample
-python analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
+python src/hansard/analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
 
 # Historical milestone analysis
-python analysis/historical_milestone_analysis.py
+python src/hansard/analysis/historical_milestone_analysis.py
 
 # Comprehensive corpus analysis
-python analysis/overall_corpus_analysis.py
+python src/hansard/analysis/overall_corpus_analysis.py
 
 # Dataset statistics and overview
-python analysis/dataset_statistics.py
+python src/hansard/analysis/dataset_statistics.py
 
 # Audit tool for data quality checks
-python analysis/hansard_audit_tool.py
-
-# Example usage demonstrations
-python example_usage.py
+python src/hansard/analysis/hansard_audit_tool.py
 
 # High-performance processing for large datasets
-python high_performance_processor.py
+python src/hansard/utils/high_performance_processor.py
 
 # Complete parsing tests
-python test_complete_parsing.py
+python src/hansard/tests/test_complete_parsing.py
 
 # Performance testing
-python test_hp_performance.py
+python src/hansard/tests/test_hp_performance.py
 
 # Speaker extraction testing
-python test_speaker_extraction.py
+python src/hansard/tests/test_speaker_extraction.py
 ```
 
 #### NLP Analysis Options
@@ -194,10 +193,10 @@ python test_speaker_extraction.py
 **Quick Analysis (Testing)**:
 ```bash
 # Women's suffrage period analysis
-python analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
+python src/hansard/analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
 
 # Victorian era sample
-python analysis/hansard_nlp_analysis.py --years 1850-1900 --sample 500
+python src/hansard/analysis/hansard_nlp_analysis.py --years 1850-1900 --sample 500
 
 # WWI period analysis
 python analysis/hansard_nlp_analysis.py --years 1914-1918 --sample 200
@@ -261,6 +260,13 @@ The parser successfully extracts rich metadata from 200+ years of parliamentary 
 - **Annual files**: `debates_YYYY.parquet` (1803-2005)
 - **SQLite index**: `debates.db` for fast querying
 - **Full-text search**: Indexed content for search functionality
+
+**Enhanced Gender Analysis Dataset** (`data/gender_analysis_enhanced/`):
+- **Full dataset**: `ALL_debates_enhanced_with_text.parquet` (4.5GB of parliamentary text)
+- **Metadata only**: `ALL_debates_enhanced_metadata.parquet` (lightweight, no text)
+- **Statistics**: 354,626 debates with confirmed MPs, 25,521 with female MPs
+- **Gender accuracy**: Corrected historical misclassifications (e.g., Nancy Astor correctly identified as first female MP in 1919)
+- **Coverage**: 201 years (1803-2005), 218 female MPs, 7,396 male MPs identified
 
 ## Dependencies
 

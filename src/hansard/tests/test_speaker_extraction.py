@@ -4,6 +4,9 @@ Test speaker extraction from raw HTML to debug the pipeline issue.
 """
 
 import gzip
+from pathlib import Path
+import pytest
+from hansard.utils.path_utils import get_data_dir
 from bs4 import BeautifulSoup
 import re
 
@@ -48,12 +51,15 @@ def extract_speakers_html_method(soup):
 
 def test_speaker_extraction():
     """Test both methods on the toy pistols debate."""
-    file_path = "data/hansard/1925/mar/12_17_toy-pistols.html.gz"
+    file_path = get_data_dir() / "hansard/1925/mar/12_17_toy-pistols.html.gz"
     
     print("Testing speaker extraction methods...")
     print("=" * 60)
     
-    with gzip.open(file_path, 'rt', encoding='utf-8') as f:
+    if not Path(file_path).exists():
+        pytest.skip(f"Sample HTML not found: {file_path}")
+
+    with gzip.open(str(file_path), 'rt', encoding='utf-8') as f:
         html = f.read()
     
     soup = BeautifulSoup(html, 'html.parser')

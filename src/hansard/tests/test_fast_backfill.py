@@ -11,8 +11,15 @@ from pathlib import Path
 import sys
 sys.path.insert(0, '/Users/omarkhursheed/workplace/hansard-nlp-explorer/src/hansard')
 
-from backfill_missing_dates_fast import FastBackfiller
+from hansard.debug_scripts.backfill_missing_dates_fast import FastBackfiller
+import pytest
+try:
+    import pytest_asyncio  # type: ignore
+    HAS_ASYNC = True
+except Exception:
+    HAS_ASYNC = False
 
+@pytest.mark.skipif(not HAS_ASYNC, reason="pytest-asyncio not installed")
 async def test_fast_backfill():
     """Test the fast backfill with a small sample."""
     

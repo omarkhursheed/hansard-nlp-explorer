@@ -101,8 +101,9 @@ class HansardTestSuite:
         log.info("TEST 1: Basic Functionality")
         log.info("Testing single year to verify crawler works")
         
+        crawler_path = Path(__file__).parent.parent / "crawlers" / "crawler.py"
         cmd = [
-            "python", "crawler.py", "1864", 
+            "python", str(crawler_path), "1864", 
             "--house", "commons",
             "--out", str(self.output_dir),
             "--concurrency", "2",  # Conservative
@@ -117,8 +118,9 @@ class HansardTestSuite:
         log.info("TEST 2: Optimized Settings")
         log.info("Testing faster settings on 2-year range")
         
+        crawler_path = Path(__file__).parent.parent / "crawlers" / "crawler.py"
         cmd = [
-            "python", "crawler.py", "1863", "1864",
+            "python", str(crawler_path), "1863", "1864",
             "--house", "commons", 
             "--out", str(self.output_dir),
             "--concurrency", "6",  # Faster settings
@@ -133,8 +135,9 @@ class HansardTestSuite:
         log.info("TEST 3: Decade Range")
         log.info("Testing decade discovery with 3 years")
         
+        crawler_path = Path(__file__).parent.parent / "crawlers" / "crawler.py"
         cmd = [
-            "python", "crawler.py", "1863", "1865",
+            "python", str(crawler_path), "1863", "1865",
             "--out", str(self.output_dir),
             "--concurrency", "4",
             "--verbose"
@@ -148,8 +151,9 @@ class HansardTestSuite:
         log.info("TEST 4: Parallel Processing")
         log.info("Testing parallel house-based approach")
         
+        runner_path = Path(__file__).parent.parent / "crawlers" / "parallel_hansard_runner.py"
         cmd = [
-            "python", "parallel_hansard_runner.py",
+            "python", str(runner_path),
             "--strategy", "house",
             "--start", "1863", "--end", "1864",
             "--workers", "2",
@@ -164,8 +168,9 @@ class HansardTestSuite:
         log.info("TEST 5: Stress Test")
         log.info("Testing aggressive settings to find limits")
         
+        crawler_path = Path(__file__).parent.parent / "crawlers" / "crawler.py"
         cmd = [
-            "python", "crawler.py", "1860", "1862",
+            "python", str(crawler_path), "1860", "1862",
             "--house", "commons",
             "--out", str(self.output_dir),
             "--concurrency", "8",  # Aggressive

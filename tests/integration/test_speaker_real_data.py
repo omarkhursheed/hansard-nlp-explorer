@@ -1,11 +1,13 @@
 """
 Real data tests for speaker processing module.
 Tests with actual Hansard data to ensure everything works as expected.
+Skips when real dataset isn't available locally.
 """
 
 import sys
 from pathlib import Path
 import polars as pl
+import pytest
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
@@ -13,6 +15,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 from hansard.speaker_processing import SpeakerProcessor
 
 
+DATA_PRESENT = (Path("src/hansard/data/processed_fixed/metadata/debates_master.parquet").exists())
+
+
+@pytest.mark.skipif(not DATA_PRESENT, reason="Real dataset not present")
 def test_with_real_data():
     """Test speaker processing with actual Hansard data."""
     print("Testing speaker processing with real data...")
@@ -96,6 +102,7 @@ def test_with_real_data():
     print("\nTest complete!")
 
 
+@pytest.mark.skipif(not DATA_PRESENT, reason="Real dataset not present")
 def test_validation_with_real_data():
     """Test validation functions with real speaker data."""
     print("\nTesting validation with real speaker data...")
@@ -132,6 +139,7 @@ def test_validation_with_real_data():
         print("✗ Speaker data not found")
 
 
+@pytest.mark.skipif(not DATA_PRESENT, reason="Real dataset not present")
 def test_temporal_analysis_real():
     """Test temporal analysis with real data."""
     print("\nTesting temporal analysis with real data...")

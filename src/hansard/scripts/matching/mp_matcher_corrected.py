@@ -4,14 +4,22 @@ Corrected MP Matcher with accurate historical data
 No hardcoded assumptions - all data verified from authoritative sources
 """
 
+import sys
+from pathlib import Path
+
+# Add src to path for imports
+project_root = Path(__file__).resolve().parents[4]  # Up to hansard-nlp-explorer
+sys.path.insert(0, str(project_root / 'src'))
+
 import pandas as pd
 import numpy as np
 import re
 from typing import Optional, Tuple, List, Dict, Set
-from pathlib import Path
 from collections import defaultdict
 from datetime import datetime
 import Levenshtein
+import ast
+from hansard.utils.path_utils import get_data_dir
 
 class CorrectedMPMatcher:
     """MP Matcher with verified historical data"""
@@ -28,11 +36,16 @@ class CorrectedMPMatcher:
         self._build_ocr_corrections()
 
     def _load_default_mp_data(self) -> pd.DataFrame:
-        """Load the default MP gender data"""
-        path = Path("data/house_members_gendered_updated.parquet")
-        if not path.exists():
-            raise FileNotFoundError(f"MP data not found at {path}")
-        return pd.read_parquet(path)
+        """Load the default MP gender data (robust to CWD)."""
+        candidates = [
+            get_data_dir() / "house_members_gendered_updated.parquet",
+            Path("src/hansard/data/house_members_gendered_updated.parquet"),
+            Path("data/house_members_gendered_updated.parquet"),
+        ]
+        for path in candidates:
+            if path.exists():
+                return pd.read_parquet(path)
+        raise FileNotFoundError("MP data not found in known locations: " + ", ".join(map(str, candidates)))
 
     def _preprocess_data(self):
         """Preprocess MP data for better matching"""
@@ -62,12 +75,13 @@ class CorrectedMPMatcher:
         constituencies = []
         if isinstance(const_data, str):
             try:
-                const_list = eval(const_data) if const_data.startswith('[') else [const_data]
+                const_list = ast.literal_eval(const_data) if const_data.strip().startswith('[') else [const_data]
                 for const in const_list:
                     if isinstance(const, dict) and 'constituency' in const:
                         constituencies.append(const['constituency'])
-            except:
-                pass
+            except Exception:
+                # Fallback: plain string constituency
+                constituencies.append(const_data)
         elif isinstance(const_data, list):
             for const in const_data:
                 if isinstance(const, dict) and 'constituency' in const:
@@ -207,6 +221,14 @@ class CorrectedMPMatcher:
         if title_match:
             results['strategies_tried'].append('title')
             results['matches'].append(title_match)
+            # Transition days: explicitly mark ambiguous
+            if title_match.get('method') == 'title_resolution_transition':
+                results['match_type'] = 'ambiguous'
+                results['ambiguity_count'] = 2  # at least outgoing/incoming
+                results['final_match'] = None
+                results['confidence'] = title_match['confidence']
+                results['gender'] = title_match['gender']
+                return results
             if title_match['confidence'] >= 0.95:
                 results['final_match'] = title_match['mp_name']
                 results['confidence'] = title_match['confidence']
@@ -272,8 +294,12 @@ class CorrectedMPMatcher:
             if error in speaker_lower:
                 speaker_lower = speaker_lower.replace(error, correction)
 
-        # Fix missing spaces after titles
+        # Normalize apostrophes and fix missing spaces after titles
+        speaker_lower = speaker_lower.replace('\u2019', "'")  # smart quote to ascii apostrophe
         speaker_lower = re.sub(r'(mr|mrs|miss|ms|dr|sir)\.?([a-z])', r'\1. \2', speaker_lower)
+
+        # Normalize O' prefix (e.g., o’brien -> o'brien)
+        speaker_lower = re.sub(r"\bo[’']\s*([a-z])", r"o'\1", speaker_lower)
 
         return speaker_lower
 
@@ -334,15 +360,15 @@ class CorrectedMPMatcher:
     def _match_by_constituency(self, speaker: str, date: str) -> Optional[Dict]:
         """Match by constituency reference"""
         patterns = [
-            r'member for ([a-z\s]+)',
-            r'mp for ([a-z\s]+)',
-            r'representative for ([a-z\s]+)'
+            r"(?:the\s+)?member\s+for\s+([\w\-\'\s]+)",
+            r"(?:the\s+)?mp\s+for\s+([\w\-\'\s]+)",
+            r"representative\s+for\s+([\w\-\'\s]+)"
         ]
 
         for pattern in patterns:
             match = re.search(pattern, speaker.lower())
             if match:
-                constituency = match.group(1).strip()
+                constituency = match.group(1).strip().rstrip('.,;:')
                 try:
                     year = pd.to_datetime(date).year
                     if constituency in self.constituency_index:
@@ -375,7 +401,10 @@ class CorrectedMPMatcher:
         if not clean_parts:
             return []
 
+        # Handle O' prefix and common particles by merging if needed
         surname = clean_parts[-1].lower()
+        if len(clean_parts) >= 2 and clean_parts[-2].lower() in {"o'", "o’", "mac", "mc", "van", "von", "de", "del", "di"}:
+            surname = (clean_parts[-2] + ' ' + clean_parts[-1]).lower().replace('\u2019', "'")
 
         try:
             year = pd.to_datetime(date).year
@@ -436,6 +465,9 @@ class CorrectedMPMatcher:
         best_match = None
         best_distance = float('inf')
 
+        # If initial is provided, use it to constrain candidates for distance==1
+        initial = parts[0][0].lower()
+
         for known_surname in self.temporal_chamber_index.get(chamber, {}).keys():
             distance = Levenshtein.distance(surname, known_surname)
             if distance <= 1 and distance < best_distance:
@@ -444,6 +476,11 @@ class CorrectedMPMatcher:
                     year = pd.to_datetime(date).year
                     candidates = self.temporal_chamber_index[chamber][known_surname].get(year, [])
                     if candidates:
+                        # Guard: if we have an initial in the input, require match for distance==1
+                        if distance == 1 and candidates:
+                            c_name = candidates[0]['full_name']
+                            if not c_name or c_name[0].lower() != initial:
+                                continue
                         best_match = candidates[0]
                         best_distance = distance
                 except:
@@ -458,5 +495,8 @@ class CorrectedMPMatcher:
                 'confidence': confidence,
                 'method': f'fuzzy_distance_{best_distance}'
             }
+
+        return None
+
 
         return None

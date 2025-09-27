@@ -17,6 +17,14 @@ from crawler import HansardCrawler
 logging.basicConfig(level=logging.INFO, format="%(asctime)s – %(levelname)s – %(message)s")
 log = logging.getLogger("test_backfill")
 
+import pytest
+try:
+    import pytest_asyncio  # type: ignore
+    HAS_ASYNC = True
+except Exception:
+    HAS_ASYNC = False
+
+@pytest.mark.skipif(not HAS_ASYNC, reason="pytest-asyncio not installed")
 async def test_backfill_sample():
     """Test backfilling a small sample of missing dates."""
     

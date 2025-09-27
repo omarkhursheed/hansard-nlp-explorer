@@ -13,7 +13,13 @@ from typing import List, Dict
 import sys
 sys.path.insert(0, '/Users/omarkhursheed/workplace/hansard-nlp-explorer/src/hansard')
 
-from backfill_missing_dates_optimized import OptimizedBackfiller
+from hansard.debug_scripts.backfill_missing_dates_optimized import OptimizedBackfiller
+import pytest
+try:
+    import pytest_asyncio  # type: ignore
+    HAS_ASYNC = True
+except Exception:
+    HAS_ASYNC = False
 
 # Set up logging to monitor API usage
 logging.basicConfig(level=logging.INFO, format="%(asctime)s – %(levelname)s – %(message)s")
@@ -62,6 +68,7 @@ class APIRespectfulnessMonitor:
         else:
             print(f"   ❌ AGGRESSIVE: Average RPS ({avg_rps:.1f}) may trigger rate limiting")
 
+@pytest.mark.skipif(not HAS_ASYNC, reason="pytest-asyncio not installed")
 async def test_optimized_backfill():
     """Test the optimized backfill with a strategic sample."""
     

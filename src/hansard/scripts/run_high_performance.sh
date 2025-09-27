@@ -41,7 +41,7 @@ tmux send-keys -t "$SESSION_NAME" "echo '=======================================
 tmux send-keys -t "$SESSION_NAME" "" C-m
 
 # Start the high-performance processing with logging
-tmux send-keys -t "$SESSION_NAME" "python ../high_performance_processor.py 2>&1 | tee '$LOG_FILE'" C-m
+tmux send-keys -t "$SESSION_NAME" "python ../utils/high_performance_processor.py 2>&1 | tee '$LOG_FILE'" C-m
 
 echo -e "${GREEN}✅ High-performance session created successfully!${NC}"
 echo ""

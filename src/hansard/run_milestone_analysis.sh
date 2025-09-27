@@ -14,6 +14,9 @@ if command -v conda &> /dev/null; then
     conda activate hansard 2>/dev/null || echo "No hansard environment found, using base"
 fi
 
+# Resolve script dir for consistent paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Set default parameters
 FILTERING="aggressive"
 MILESTONE=""
@@ -68,7 +71,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Build command
-CMD="python analysis/comprehensive_milestone_analysis.py"
+CMD="python \"$SCRIPT_DIR/analysis/comprehensive_milestone_analysis.py\""
 
 if [[ -n "$ALL_FLAG" ]]; then
     CMD="$CMD $ALL_FLAG"

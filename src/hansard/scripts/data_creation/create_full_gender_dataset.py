@@ -4,10 +4,17 @@ Create FULL gender analysis dataset for all available years
 This will process all 201 years of data (1803-2005)
 """
 
+import sys
+from pathlib import Path
+
+# Add src to path for imports
+project_root = Path(__file__).resolve().parents[4]  # Up to hansard-nlp-explorer
+sys.path.insert(0, str(project_root / 'src'))
+
 import pandas as pd
 import numpy as np
-from pathlib import Path
-from mp_matcher_corrected import CorrectedMPMatcher
+from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.utils.path_utils import get_data_dir, get_processed_data_dir
 import json
 from tqdm import tqdm
 import hashlib
@@ -25,11 +32,11 @@ def process_all_years():
 
     # Load matcher once
     print("\nLoading MP matcher...")
-    mp_data = pd.read_parquet("data/house_members_gendered_updated.parquet")
+    mp_data = pd.read_parquet(get_data_dir() / "house_members_gendered_updated.parquet")
     matcher = CorrectedMPMatcher(mp_data)
 
     # Get all available years
-    metadata_dir = Path("data/processed_fixed/metadata")
+    metadata_dir = get_processed_data_dir() / "metadata"
     all_years = sorted([
         int(f.stem.split('_')[1])
         for f in metadata_dir.glob("debates_*.parquet")
@@ -58,7 +65,7 @@ def process_all_years():
     # Process each year
     for year in tqdm(all_years, desc="Processing years"):
         try:
-            debates_df = pd.read_parquet(f"data/processed_fixed/metadata/debates_{year}.parquet")
+            debates_df = pd.read_parquet(metadata_dir / f"debates_{year}.parquet")
             stats['total_debates_processed'] += len(debates_df)
 
             year_debates = []

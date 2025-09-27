@@ -4,6 +4,7 @@ Ensures analysis produces real results from actual debates.
 """
 
 import sys
+import os
 from pathlib import Path
 
 # Add src to path

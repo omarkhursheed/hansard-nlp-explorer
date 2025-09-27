@@ -43,12 +43,18 @@ def find_project_root():
 def get_data_dir():
     """Get the data directory path that works from anywhere."""
     root = find_project_root()
-    data_dir = root / 'src' / 'hansard' / 'data'
 
-    if not data_dir.exists():
-        raise RuntimeError(f"Data directory not found at {data_dir}")
+    # Check multiple possible locations
+    candidates = [
+        root / 'data',  # Project root level data
+        root / 'src' / 'hansard' / 'data',  # Old location
+    ]
 
-    return data_dir
+    for data_dir in candidates:
+        if data_dir.exists():
+            return data_dir
+
+    raise RuntimeError(f"Data directory not found. Tried: {candidates}")
 
 
 def get_processed_data_dir():

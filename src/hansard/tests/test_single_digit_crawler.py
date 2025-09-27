@@ -5,9 +5,15 @@ import asyncio
 import sys
 import logging
 from pathlib import Path
+import pytest
+try:
+    import pytest_asyncio  # type: ignore
+    HAS_ASYNC = True
+except Exception:
+    HAS_ASYNC = False
 
 # Add the crawler directory to path
-sys.path.insert(0, '/Users/omarkhursheed/workplace/hansard-nlp-explorer/src/hansard/crawlers')
+sys.path.insert(0, str(Path(__file__).parent.parent / 'crawlers'))
 
 from crawler import HansardCrawler
 
@@ -16,6 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s â€“ %(levelname)s â€
 log = logging.getLogger("hansard")
 log.setLevel(logging.DEBUG)
 
+@pytest.mark.skipif(not HAS_ASYNC, reason="pytest-asyncio not installed")
 async def test_single_digit_discovery():
     """Test if single-digit days are properly discovered and processed."""
     

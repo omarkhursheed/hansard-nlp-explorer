@@ -52,7 +52,7 @@ def verify_modules():
 
     # Test data validator
     try:
-        from hansard.data_validator import DataValidator
+        from hansard.utils.data_validator import DataValidator
         validator = DataValidator(data_dir=Path("src/hansard/data"))
         results.append(("Data validator", True))
     except Exception:

@@ -5,7 +5,8 @@ Test corrected matcher on a single year
 
 import pandas as pd
 from pathlib import Path
-from mp_matcher_corrected import CorrectedMPMatcher
+from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.utils.path_utils import get_data_dir, get_processed_data_dir
 
 def test_single_year(year=1950):
     """Test on a single year"""
@@ -13,11 +14,11 @@ def test_single_year(year=1950):
     print(f"Testing year {year}...")
 
     # Load MP data
-    mp_data = pd.read_parquet("data/house_members_gendered_updated.parquet")
+    mp_data = pd.read_parquet(get_data_dir() / "house_members_gendered_updated.parquet")
     matcher = CorrectedMPMatcher(mp_data)
 
     # Load speaker data
-    speaker_file = Path(f"data/processed_fixed/metadata/speakers_{year}.parquet")
+    speaker_file = get_processed_data_dir() / f"metadata/speakers_{year}.parquet"
     if not speaker_file.exists():
         print(f"No data for {year}")
         return
