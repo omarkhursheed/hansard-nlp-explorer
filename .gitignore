@@ -191,3 +191,7 @@ output/
 results/
 plots/
 figures/
+# Analysis output directories (timestamped results)
+analysis/
+src/hansard/analysis/corpus_results/
+src/hansard/analysis/milestone_results/
