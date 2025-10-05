@@ -49,7 +49,7 @@ class EnhancedGenderCorpusAnalyzer:
     def __init__(self):
         # Use centralized paths
         self.data_dir = Paths.GENDER_ENHANCED_DATA
-        self.output_dir = Paths.RESULTS
+        self.output_dir = Paths.ANALYSIS_DIR  # Consolidate to single analysis directory
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # Professional color scheme
@@ -133,6 +133,9 @@ class EnhancedGenderCorpusAnalyzer:
             'bill', 'clause', 'amendment', 'order', 'question',
             'committee', 'motion', 'division', 'lord', 'lords',
             'debate', 'friend', 'friends',  # "my honourable friend" is formulaic
+            'gallant', 'learned', 'noble', 'right',  # Honorifics
+            'speech', 'words', 'statement',  # Meta-references to speaking
+            'report',  # Generic "the report says..."
 
             # Generic human references
             'people', 'person', 'man', 'men', 'woman', 'women',
@@ -151,16 +154,28 @@ class EnhancedGenderCorpusAnalyzer:
             'want', 'wanted', 'need', 'needed', 'hope', 'hoped',
             'believe', 'believed', 'work', 'worked', 'working',
             'must', 'may', 'might', 'shall',
+            'going', 'done', 'ask', 'asked', 'like', 'find',
+
+            # Modals and auxiliaries appearing in >60% of speeches
+            'cannot', 'ought', 'shall', 'must', 'might', 'could', 'would', 'should',
+            'can', 'will', 'may', 'able',
 
             # Discourse markers found in >60% of speeches
             'well', 'yes', 'no', 'indeed', 'perhaps', 'certainly',
-            'obviously', 'clearly', 'surely', 'really',
+            'obviously', 'clearly', 'surely', 'really', 'quite', 'sure',
             'also', 'however', 'therefore', 'whether',
+            'still', 'always', 'never', 'yet', 'already', 'rather',
+
+            # Common prepositions and connectives (>65% frequency)
+            'upon', 'without', 'another', 'every', 'whole', 'even',
+            'far', 'view', 'regard', 'place', 'deal', 'position',
+            'subject', 'course', 'present', 'within', 'towards',
 
             # Generic references (>65% frequency)
             'thing', 'things', 'way', 'ways', 'case', 'cases',
             'point', 'points', 'matter', 'matters', 'fact', 'facts',
-            'number', 'numbers', 'part', 'parts',
+            'number', 'numbers', 'part', 'parts', 'something', 'anything', 'nothing',
+            'side', 'end', 'result', 'means', 'moment', 'kind', 'sort',
 
             # Quantifiers and measurements
             'many', 'much', 'more', 'most', 'less', 'least',
@@ -169,7 +184,9 @@ class EnhancedGenderCorpusAnalyzer:
 
             # Common adjectives with little discriminative value
             'new', 'old', 'good', 'bad', 'great', 'small', 'large',
-            'important', 'different', 'same',
+            'important', 'different', 'same', 'certain', 'possible',
+            'necessary', 'clear', 'particular', 'general', 'special',
+            'full', 'long', 'short', 'high', 'low',
 
             # Removed words that showed up as noise in analysis
             'out',  # Appeared as #1 word but has no clear meaning
@@ -417,7 +434,7 @@ class EnhancedGenderCorpusAnalyzer:
         plt.tight_layout()
 
         # Save
-        output_path = Paths.CORPUS_RESULTS / 'temporal_representation.png'
+        output_path = self.output_dir / 'temporal_representation.png'
         plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
         plt.close()
         print(f"Temporal visualization saved to {output_path}")
@@ -479,7 +496,7 @@ class EnhancedGenderCorpusAnalyzer:
         plt.tight_layout()
 
         # Save
-        output_path = Paths.CORPUS_RESULTS / 'vocabulary_comparison.png'
+        output_path = self.output_dir / 'vocabulary_comparison.png'
         plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
         plt.close()
         print(f"Vocabulary comparison saved to {output_path}")
@@ -591,7 +608,7 @@ class EnhancedGenderCorpusAnalyzer:
         plt.tight_layout()
 
         # Save
-        output_path = Paths.CORPUS_RESULTS / 'topic_distribution.png'
+        output_path = self.output_dir / 'topic_distribution.png'
         plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
         plt.close()
         print(f"Topic distribution saved to {output_path}")
@@ -647,7 +664,7 @@ class EnhancedGenderCorpusAnalyzer:
         fig.text(0.5, 0.05, metadata, ha='center', fontsize=9, style='italic')
 
         # Save
-        output_path = Paths.CORPUS_RESULTS / 'statistical_summary.png'
+        output_path = self.output_dir / 'statistical_summary.png'
         plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
         plt.close()
         print(f"Statistical summary saved to {output_path}")
@@ -685,22 +702,42 @@ class EnhancedGenderCorpusAnalyzer:
         filtered_male = [t for t in filtered_male if t]
         filtered_female = [t for t in filtered_female if t]
 
-        # Analyze
+        # Analyze unigrams
         male_words = ' '.join(filtered_male).split()
         female_words = ' '.join(filtered_female).split()
 
         male_freq = Counter(male_words)
         female_freq = Counter(female_words)
 
+        # Analyze bigrams
+        male_bigrams = []
+        for text in filtered_male:
+            words = text.split()
+            for i in range(len(words) - 1):
+                male_bigrams.append(f"{words[i]} {words[i+1]}")
+
+        female_bigrams = []
+        for text in filtered_female:
+            words = text.split()
+            for i in range(len(words) - 1):
+                female_bigrams.append(f"{words[i]} {words[i+1]}")
+
+        male_bigram_freq = Counter(male_bigrams)
+        female_bigram_freq = Counter(female_bigrams)
+
         results = {
             'filtering': filtering,
             'years': year_range,
             'top_male_words': male_freq.most_common(50),
             'top_female_words': female_freq.most_common(50),
+            'top_male_bigrams': male_bigram_freq.most_common(30),
+            'top_female_bigrams': female_bigram_freq.most_common(30),
             'unique_male_words': len(male_freq),
             'unique_female_words': len(female_freq),
+            'unique_male_bigrams': len(male_bigram_freq),
+            'unique_female_bigrams': len(female_bigram_freq),
             'male_text_sample': ' '.join(filtered_male[:100]),
-            'female_text_sample': ' '.join(filtered_female[:100])
+            'female_text_sample': ' '.join(filtered_male[:100])
         }
 
         # Calculate additional metrics
