@@ -152,9 +152,9 @@ def assign_gender(turnwise, speaker_gender_map):
         turnwise.loc[mask & female_mask, ["gender","gender_source"]] = ["F","guesser_female"]
 
 
-    # Step 7. Default male
-    mask = turnwise["gender"] == "UNK"
-    turnwise.loc[mask, ["gender","gender_source"]] = ["M","default_male"]
+    # # Step 7. Default male
+    # mask = turnwise["gender"] == "UNK"
+    # turnwise.loc[mask, ["gender","gender_source"]] = ["M","default_male"]
 
     return turnwise
 
