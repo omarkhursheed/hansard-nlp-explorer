@@ -23,6 +23,13 @@ from pathlib import Path
 import logging
 from datetime import datetime
 import re
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from hansard.utils.path_config import Paths
+
+# Import unified visualization module
+sys.path.insert(0, str(Path(__file__).parent))
+from professional_visualizations import set_publication_style, COLORS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -89,8 +96,8 @@ class HistoricalTemporalAnalyzer:
     """Analyze temporal gender patterns with historical accuracy."""
     
     def __init__(self):
-        self.data_path = Path('/Users/omarkhursheed/workplace/hansard-nlp-explorer/src/hansard/data')
-        self.results_path = Path('analysis/results')
+        self.data_path = Paths.DATA_DIR
+        self.results_path = Paths.ANALYSIS_DIR
         self.results_path.mkdir(parents=True, exist_ok=True)
         self.gender_inferrer = HistoricalGenderInference()
         
@@ -213,14 +220,15 @@ class HistoricalTemporalAnalyzer:
     
     def create_visualization(self, temporal_df, full_df):
         """Create temporal visualization with historical context."""
-        
-        plt.style.use('default')
+
+        # Use unified publication style
+        set_publication_style()
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12))
-        
+
         # Plot 1: Proportion of female MPs (actual MPs only)
-        ax1.plot(temporal_df['year'], temporal_df['female_proportion'], 
-                linewidth=2.5, color='#e91e63', marker='o', markersize=3,
-                markerfacecolor='white', markeredgecolor='#e91e63', markeredgewidth=1.5,
+        ax1.plot(temporal_df['year'], temporal_df['female_proportion'],
+                linewidth=2.5, color=COLORS['female'], marker='o', markersize=3,
+                markerfacecolor='white', markeredgecolor=COLORS['female'], markeredgewidth=1.5,
                 label='Female MPs (%)')
         
         # Historical milestones
@@ -266,9 +274,9 @@ class HistoricalTemporalAnalyzer:
         ax1.set_ylim(0, max(max_prop * 1.3, 5))
         
         # Plot 2: Speech participation (weighted by activity)
-        ax2.plot(temporal_df['year'], temporal_df['female_speech_proportion'], 
-                linewidth=2.5, color='#9c27b0', marker='s', markersize=3,
-                markerfacecolor='white', markeredgecolor='#9c27b0', markeredgewidth=1.5,
+        ax2.plot(temporal_df['year'], temporal_df['female_speech_proportion'],
+                linewidth=2.5, color=COLORS['accent3'], marker='s', markersize=3,
+                markerfacecolor='white', markeredgecolor=COLORS['accent3'], markeredgewidth=1.5,
                 label='Female speech share (%)')
         
         # Add shaded region for pre-1918

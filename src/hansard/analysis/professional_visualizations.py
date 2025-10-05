@@ -486,5 +486,347 @@ def demo_visualizations():
     print("\nDemo visualizations created successfully!")
 
 
+class UnifiedVisualizationSuite(GenderVisualizationSuite):
+    """
+    Extended visualization suite for all analysis types.
+    Adds corpus analysis and milestone comparison visualizations.
+    """
+
+    def create_unigram_comparison(self, male_words, female_words, top_n=20,
+                                  output_name="unigram_comparison.png"):
+        """
+        Create horizontal bar chart comparing top unigrams by gender.
+
+        Args:
+            male_words: Counter or list of (word, count) tuples for male speeches
+            female_words: Counter or list of (word, count) tuples for female speeches
+            top_n: Number of top words to display
+            output_name: Output filename
+        """
+        if not male_words or not female_words:
+            print("Insufficient data for unigram comparison")
+            return
+
+        # Convert to lists if needed
+        if isinstance(male_words, Counter):
+            male_words = male_words.most_common(top_n)
+        if isinstance(female_words, Counter):
+            female_words = female_words.most_common(top_n)
+
+        # Create figure with side-by-side panels
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 8))
+
+        # Male words
+        m_words, m_counts = zip(*male_words[:top_n])
+        y_pos = np.arange(len(m_words))
+        ax1.barh(y_pos, m_counts, color=COLORS['male'], alpha=0.8)
+        ax1.set_yticks(y_pos)
+        ax1.set_yticklabels(m_words, fontsize=10)
+        ax1.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+        ax1.set_title(f'Male MPs - Top {len(m_words)} Words',
+                     fontsize=12, fontweight='bold')
+        ax1.invert_yaxis()
+
+        # Add value labels
+        for i, count in enumerate(m_counts):
+            ax1.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+        # Female words
+        f_words, f_counts = zip(*female_words[:top_n])
+        y_pos = np.arange(len(f_words))
+        ax2.barh(y_pos, f_counts, color=COLORS['female'], alpha=0.8)
+        ax2.set_yticks(y_pos)
+        ax2.set_yticklabels(f_words, fontsize=10)
+        ax2.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+        ax2.set_title(f'Female MPs - Top {len(f_words)} Words',
+                     fontsize=12, fontweight='bold')
+        ax2.invert_yaxis()
+
+        # Add value labels
+        for i, count in enumerate(f_counts):
+            ax2.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+        # Overall title
+        fig.suptitle('Distinctive Vocabulary by Gender', fontsize=14,
+                    fontweight='bold', y=0.98)
+
+        # Style
+        for ax in [ax1, ax2]:
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.grid(axis='x', alpha=0.3)
+
+        plt.tight_layout()
+
+        output_path = self.output_dir / output_name
+        plt.savefig(output_path, bbox_inches='tight', facecolor=COLORS['background'])
+        plt.close()
+
+        print(f"Saved unigram comparison to {output_path}")
+
+    def create_bigram_comparison(self, male_bigrams, female_bigrams, top_n=20,
+                                output_name="bigram_comparison.png"):
+        """
+        Create horizontal bar chart comparing top bigrams by gender.
+
+        Args:
+            male_bigrams: Counter or list of (bigram, count) tuples for male speeches
+            female_bigrams: Counter or list of (bigram, count) tuples for female speeches
+            top_n: Number of top bigrams to display
+            output_name: Output filename
+        """
+        if not male_bigrams or not female_bigrams:
+            print("Insufficient data for bigram comparison")
+            return
+
+        # Convert to lists if needed
+        if isinstance(male_bigrams, Counter):
+            male_bigrams = male_bigrams.most_common(top_n)
+        if isinstance(female_bigrams, Counter):
+            female_bigrams = female_bigrams.most_common(top_n)
+
+        # Create figure
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 8))
+
+        # Male bigrams
+        m_bigrams, m_counts = zip(*male_bigrams[:top_n])
+        m_labels = [' '.join(b) if isinstance(b, tuple) else b for b in m_bigrams]
+        y_pos = np.arange(len(m_labels))
+        ax1.barh(y_pos, m_counts, color=COLORS['male'], alpha=0.8)
+        ax1.set_yticks(y_pos)
+        ax1.set_yticklabels(m_labels, fontsize=10)
+        ax1.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+        ax1.set_title(f'Male MPs - Top {len(m_labels)} Bigrams',
+                     fontsize=12, fontweight='bold')
+        ax1.invert_yaxis()
+
+        # Add value labels
+        for i, count in enumerate(m_counts):
+            ax1.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+        # Female bigrams
+        f_bigrams, f_counts = zip(*female_bigrams[:top_n])
+        f_labels = [' '.join(b) if isinstance(b, tuple) else b for b in f_bigrams]
+        y_pos = np.arange(len(f_labels))
+        ax2.barh(y_pos, f_counts, color=COLORS['female'], alpha=0.8)
+        ax2.set_yticks(y_pos)
+        ax2.set_yticklabels(f_labels, fontsize=10)
+        ax2.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+        ax2.set_title(f'Female MPs - Top {len(f_labels)} Bigrams',
+                     fontsize=12, fontweight='bold')
+        ax2.invert_yaxis()
+
+        # Add value labels
+        for i, count in enumerate(f_counts):
+            ax2.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+        # Overall title
+        fig.suptitle('Distinctive Bigrams by Gender', fontsize=14,
+                    fontweight='bold', y=0.98)
+
+        # Style
+        for ax in [ax1, ax2]:
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.grid(axis='x', alpha=0.3)
+
+        plt.tight_layout()
+
+        output_path = self.output_dir / output_name
+        plt.savefig(output_path, bbox_inches='tight', facecolor=COLORS['background'])
+        plt.close()
+
+        print(f"Saved bigram comparison to {output_path}")
+
+    def create_filtering_comparison(self, filtering_results,
+                                   output_name="filtering_comparison.png"):
+        """
+        Create comparison visualization across different filtering levels.
+
+        Args:
+            filtering_results: Dict mapping level name to results dict with 'filtering_stats'
+            output_name: Output filename
+        """
+        if not filtering_results:
+            print("No filtering results to compare")
+            return
+
+        # Extract data
+        levels = list(filtering_results.keys())
+        reductions = [filtering_results[l]['filtering_stats']['reduction_pct']
+                     for l in levels]
+        filtered_words = [filtering_results[l]['filtering_stats']['filtered_words']
+                         for l in levels]
+
+        # Create figure
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+        # Chart 1: Reduction percentages
+        bars = ax1.bar(range(len(levels)), reductions, color=COLORS['accent1'], alpha=0.7)
+        ax1.set_xticks(range(len(levels)))
+        ax1.set_xticklabels(levels, rotation=45, ha='right')
+        ax1.set_ylabel('Word Reduction (%)', fontsize=11, fontweight='bold')
+        ax1.set_title('Filtering Effectiveness', fontsize=12, fontweight='bold')
+
+        # Add value labels
+        for bar, value in zip(bars, reductions):
+            ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height(),
+                    f'{value:.1f}%', ha='center', va='bottom', fontsize=9)
+
+        # Chart 2: Words remaining
+        bars = ax2.bar(range(len(levels)), filtered_words, color=COLORS['accent2'], alpha=0.7)
+        ax2.set_xticks(range(len(levels)))
+        ax2.set_xticklabels(levels, rotation=45, ha='right')
+        ax2.set_ylabel('Words Remaining', fontsize=11, fontweight='bold')
+        ax2.set_title('Vocabulary Size After Filtering', fontsize=12, fontweight='bold')
+
+        # Add value labels
+        for bar, value in zip(bars, filtered_words):
+            ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height(),
+                    f'{value:,}', ha='center', va='bottom', fontsize=9)
+
+        # Overall title
+        fig.suptitle('Filtering Levels Comparison', fontsize=14,
+                    fontweight='bold', y=1.02)
+
+        # Style
+        for ax in [ax1, ax2]:
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.grid(axis='y', alpha=0.3)
+
+        plt.tight_layout()
+
+        output_path = self.output_dir / output_name
+        plt.savefig(output_path, bbox_inches='tight', facecolor=COLORS['background'])
+        plt.close()
+
+        print(f"Saved filtering comparison to {output_path}")
+
+    def create_milestone_comparison(self, pre_data, post_data, milestone_info,
+                                   output_name="milestone_comparison.png"):
+        """
+        Create multi-panel comparison for milestone analysis.
+
+        Args:
+            pre_data: Results dict for pre-milestone period
+            post_data: Results dict for post-milestone period
+            milestone_info: Dict with 'name', 'year', etc.
+            output_name: Output filename
+        """
+        fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+        fig.suptitle(f"{milestone_info['name']} - Impact Analysis",
+                    fontsize=14, fontweight='bold')
+
+        # Panel 1: Top words comparison
+        ax = axes[0, 0]
+        if pre_data.get('top_unigrams') and post_data.get('top_unigrams'):
+            pre_words = dict(pre_data['top_unigrams'][:10])
+            post_words = dict(post_data['top_unigrams'][:10])
+
+            # Get union of words
+            all_words = list(set(pre_words.keys()) | set(post_words.keys()))[:10]
+            pre_counts = [pre_words.get(w, 0) for w in all_words]
+            post_counts = [post_words.get(w, 0) for w in all_words]
+
+            x = np.arange(len(all_words))
+            width = 0.35
+            ax.barh(x - width/2, pre_counts, width, label='Pre', color=COLORS['accent1'], alpha=0.7)
+            ax.barh(x + width/2, post_counts, width, label='Post', color=COLORS['accent2'], alpha=0.7)
+            ax.set_yticks(x)
+            ax.set_yticklabels(all_words, fontsize=9)
+            ax.set_xlabel('Frequency')
+            ax.set_title('Top Words Evolution')
+            ax.legend()
+            ax.invert_yaxis()
+
+        # Panel 2: Gender language change
+        ax = axes[0, 1]
+        if (pre_data.get('gender_analysis') and post_data.get('gender_analysis')):
+            pre_female = pre_data['gender_analysis']['female_ratio'] * 100
+            post_female = post_data['gender_analysis']['female_ratio'] * 100
+
+            categories = ['Pre', 'Post']
+            values = [pre_female, post_female]
+            bars = ax.bar(categories, values, color=[COLORS['accent1'], COLORS['accent2']], alpha=0.7)
+            ax.set_ylabel('Female Language (%)')
+            ax.set_title('Gender Language Evolution')
+
+            # Add change annotation
+            change = post_female - pre_female
+            ax.text(0.5, max(values) * 1.1, f'Change: {change:+.2f}pp',
+                   ha='center', fontweight='bold',
+                   color='green' if change > 0 else 'red')
+
+            # Add value labels
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height(),
+                       f'{value:.1f}%', ha='center', va='bottom')
+
+        # Panel 3: Content evolution
+        ax = axes[1, 0]
+        if pre_data.get('top_unigrams') and post_data.get('top_unigrams'):
+            pre_set = set([w for w, _ in pre_data['top_unigrams'][:20]])
+            post_set = set([w for w, _ in post_data['top_unigrams'][:20]])
+
+            new_words = post_set - pre_set
+            disappeared = pre_set - post_set
+            persistent = pre_set & post_set
+
+            categories = ['New Words', 'Disappeared', 'Persistent']
+            values = [len(new_words), len(disappeared), len(persistent)]
+            colors_list = [COLORS['accent2'], COLORS['accent1'], COLORS['accent3']]
+            bars = ax.bar(categories, values, color=colors_list, alpha=0.7)
+            ax.set_ylabel('Number of Words')
+            ax.set_title('Vocabulary Evolution')
+
+            # Add value labels
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height(),
+                       str(value), ha='center', va='bottom')
+
+        # Panel 4: Summary statistics
+        ax = axes[1, 1]
+        ax.axis('off')
+
+        summary_text = f"""
+Milestone: {milestone_info.get('name', 'Unknown')}
+Year: {milestone_info.get('year', 'N/A')}
+
+Pre-Period:
+  Debates: {pre_data.get('total_debates', 0):,}
+  Years: {pre_data.get('years', ['N/A'])[0]}-{pre_data.get('years', ['N/A'])[-1] if pre_data.get('years') else 'N/A'}
+
+Post-Period:
+  Debates: {post_data.get('total_debates', 0):,}
+  Years: {post_data.get('years', ['N/A'])[0]}-{post_data.get('years', ['N/A'])[-1] if post_data.get('years') else 'N/A'}
+
+Filtering: {pre_data.get('filtering_mode', 'N/A')}
+"""
+
+        ax.text(0.1, 0.9, summary_text.strip(), transform=ax.transAxes,
+               fontsize=10, verticalalignment='top', fontfamily='monospace',
+               bbox=dict(boxstyle='round', facecolor=COLORS['background'],
+                        alpha=0.8, edgecolor=COLORS['grid']))
+
+        ax.set_title('Analysis Summary', fontsize=12, fontweight='bold')
+
+        # Style all axes
+        for ax in axes.flat:
+            if ax.get_visible():
+                ax.spines['top'].set_visible(False)
+                ax.spines['right'].set_visible(False)
+                if hasattr(ax, 'grid'):
+                    ax.grid(axis='y', alpha=0.3)
+
+        plt.tight_layout()
+
+        output_path = self.output_dir / output_name
+        plt.savefig(output_path, bbox_inches='tight', facecolor=COLORS['background'])
+        plt.close()
+
+        print(f"Saved milestone comparison to {output_path}")
+
+
 if __name__ == "__main__":
     demo_visualizations()
