@@ -11,7 +11,7 @@ import gender_guesser.detector as genderer
 
 # ==== Paths ====
 PARQUET_PATH = Path("src/hansard/data/processed_fixed/metadata/house_members/PP_HH_members_combined.parquet")
-HONORIFICS_JSON = Path("src/hansard/data/gender_wordlists/gendered_honorifics.json")
+HONORIFICS_JSON = Path("src/hansard/data/word_lists/gendered_honorifics.json")
 OUT_PATH = Path("src/hansard/data/processed_fixed/metadata/house_members/house_members_gendered.parquet")
 
 # ==== Load data ====
@@ -236,7 +236,7 @@ print("Female Lords by alias:", df.loc[mask_alias_lords, "person_id"].nunique())
 before = log_step(df, "Curated female lists", before)
 
 
-# ==== Step 7: Name-based inference (placeholder) ====
+# ==== Step 7: Name-based inference ====
 detector = genderer.Detector(case_sensitive=False)
 
 def infer_gender_from_name(name):

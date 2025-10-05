@@ -26,7 +26,7 @@ from pathlib import Path
 # You asked for hardcoded paths. Update these to your local files if needed.
 MEMBERS_PARQUET    = Path("src/hansard/data/processed_fixed/metadata/house_members/PP_EP_house_members_combined.parquet")
 HANSARD_PARQUET    = Path("src/hansard/data/processed_fixed/metadata/house_members/historic_hansard_speakers.parquet")
-HONORIFICS_JSON    = Path("src/hansard/data/gender_wordlists/gendered_honorifics.json")
+HONORIFICS_JSON    = Path("src/hansard/data/word_lists/gendered_honorifics.json")
 OUT_PATH     = Path("src/hansard/data/processed_fixed/metadata/house_members/PP_HH_members_combined.parquet")
 # ==========================================================================- #
 
