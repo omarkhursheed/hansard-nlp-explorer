@@ -1,365 +1,124 @@
 # Hansard NLP Explorer
 
-A comprehensive tool for crawling, parsing, and exploring UK Parliamentary debates from the Historic Hansard archive (1803-2005) using natural language processing techniques.
+Analysis tools for UK Parliamentary debates (1803-2005) with focus on gender analysis of MP speeches.
 
-## Features
+## Overview
 
-- **Web Crawler**: Production-ready crawler for fetching Historic Hansard debates from the UK Parliament API
-- **Robust Parser**: Comprehensive HTML parser supporting both Commons and Lords with 100% success rate across 200+ years
-- **Metadata Extraction**: Rich metadata extraction including Hansard references, speakers, debate topics, and chamber information
-- **Data Analysis**: NLP analysis with configurable filtering levels, gender language analysis, topic modeling
-- **Parallel Processing**: Multi-strategy parallel crawler with resource monitoring for large-scale data collection
-- **Validated Data**: 802,178 debates and 2.4M speaker records validated and accessible
-- **Comprehensive Testing**: Full test suite with real data validation ensuring all scripts work as expected
+- **Data**: 802K debates, 2.4M speaker records, 201 years of parliamentary history
+- **Analysis**: Gender-matched corpus analysis, temporal trends, milestone events
+- **Visualizations**: Professional charts for academic presentations
 
 ## Project Structure
 
 ```
-src/
-├── hansard/
-│   ├── analysis/
-│   │   ├── hansard_nlp_analysis.py         # Main NLP analysis with filtering levels
-│   │   ├── comprehensive_corpus_analysis.py # Full corpus analysis tools
-│   │   ├── temporal_gender_analysis.py     # Gender language temporal analysis
-│   │   ├── historical_milestone_analysis.py # Historical milestone analysis
-│   │   ├── dataset_statistics.py           # Dataset statistics generator
-│   │   ├── stop_words.py                   # Parliamentary stop words configuration
-│   │   └── corpus_results/                 # Analysis outputs by filtering level
-│   ├── crawlers/
-│   │   ├── crawler.py                      # Web crawler for Historic Hansard API
-│   │   └── parallel_hansard_runner.py      # Multi-strategy parallel crawler
-│   ├── parsers/
-│   │   ├── data_pipeline.py                # Production data processing pipeline
-│   │   ├── data_validation.py              # Data validation and quality checks
-│   │   ├── hansard_search.py               # Search functionality
-│   │   └── metadata_extraction_test.py     # Metadata extraction and testing
-│   ├── scripts/
-│   │   ├── data_creation/                  # Dataset creation scripts
-│   │   │   ├── create_enhanced_gender_dataset.py  # Enhanced gender dataset generator
-│   │   │   └── create_full_gender_dataset.py      # Full gender dataset creator
-│   │   ├── matching/                       # MP matching algorithms
-│   │   │   └── mp_matcher_corrected.py     # Corrected MP gender matching
-│   │   ├── process_full_dataset.py         # Full dataset processing script
-│   │   ├── run_enhanced_gender_dataset.sh  # Enhanced dataset runner
-│   │   ├── run_full_processing.sh          # Automated processing pipeline
-│   │   └── test_runner.py                  # Comprehensive test suite
-│   ├── tests/                              # Unit and integration tests
-│   │   ├── test_speaker_extraction.py      # Speaker extraction testing
-│   │   ├── test_corrected_matcher.py       # MP matcher testing
-│   │   └── test_timeout_handling.py        # Timeout handling tests
-│   ├── debug_scripts/                      # Debugging and analysis tools
-│   │   ├── analyze_missing_dates.py        # Missing date analysis
-│   │   └── backfill_missing_dates*.py      # Various backfill implementations
-│   ├── utils/
-│   │   ├── path_utils.py                   # Universal path resolution
-│   │   ├── high_performance_processor.py   # High-performance data processing
-│   │   └── debug.py                        # Debug utilities
-│   ├── docs/
-│   │   ├── GENDER_DATASET_GENERATION.md    # Gender dataset documentation
-│   │   └── CLAUDE.md                       # AI assistant guidance
-│   └── data/
-│       ├── hansard/                        # Raw HTML debate files (1803-2005)
-│       ├── processed_fixed/                # Cleaned processed data
-│       │   ├── content/                    # Extracted JSONL text by year
-│       │   ├── metadata/                   # Structured metadata (Parquet)
-│       │   └── index/                      # SQLite search indices
-│       ├── gender_analysis_enhanced/       # Enhanced gender dataset
-│       │   ├── ALL_debates_enhanced_with_text.parquet  # Full text dataset
-│       │   ├── ALL_debates_enhanced_metadata.parquet   # Metadata only
-│       │   ├── debates_YYYY_enhanced.parquet          # Per-year files
-│       │   └── dataset_metadata.json                  # Dataset statistics
-│       ├── house_members_gendered_updated.parquet     # Corrected MP gender data
-│       └── gender_wordlists/                          # UCLA NLP gender words
-└── tests/
-    └── integration/                         # Integration tests
-        ├── test_nlp_real_data.py           # NLP analysis tests
-        └── test_speaker_real_data.py       # Speaker processing tests
+hansard-nlp-explorer/
+├── data-hansard/             # Data files (not in git)
+│   ├── gender_analysis_enhanced/  # Enhanced dataset with full text
+│   ├── gender_wordlists/          # Gender word lists
+│   └── processed_fixed/           # Cleaned debate data
+├── analysis/                 # All output files (charts, results)
+├── src/hansard/
+│   ├── analysis/            # Analysis scripts
+│   ├── crawlers/            # Web scrapers
+│   ├── parsers/             # Data processors
+│   ├── scripts/             # Utility scripts
+│   └── utils/               # Shared utilities
+└── tests/                   # Test suite
 ```
-
-## Repository Status
-
-- **Data Coverage**: 802,178 debates (1803-2005)
-- **Codebase**: 70 Python files, 17,564 lines (29% reduction from cleanup)
-- **Tests**: 20/20 passing
-- **Code Quality**: Reproducible pipeline, deterministic outputs
-- **Recent Updates**:
-  - Major cleanup: Removed 5,540 lines of duplicate/obsolete code
-  - Fixed reproducibility: Parser now deterministic
-  - Reorganized: Utilities in subdirectories, old versions archived
-- **Gender Dataset**: Corrected historical misclassifications
-- **Documentation**: Comprehensive guides in `src/hansard/docs/`
 
 ## Quick Start
 
-### 1. Verify Installation
-
+### Setup
 ```bash
-# Run comprehensive system verification
-python verify_all_systems.py
-```
-
-### 2. Environment Setup
-
-```bash
-# Create conda environment
 conda env create -f environment.yml
 conda activate hansard
-
-# Or install manually
-pip install httpx tenacity polars pandas numpy spacy gensim scikit-learn matplotlib seaborn wordcloud
-
-# Optional: SpaCy model for POS/NER features
-python -m spacy download en_core_web_sm
 ```
 
-### 2. Crawl Data
-
+### Run Complete Analysis
 ```bash
-# Test the crawler helpers first
-python src/hansard/scripts/test_runner.py
-python src/hansard/scripts/view_test_output.py
+# Run everything with one command
+./run_complete_analysis.sh
 
-# Run comprehensive legacy tests
-python src/hansard/tests/test_simple_discovery.py
-python src/hansard/tests/test_timeout_handling.py
+# Or run individually:
+# 1. Overall gender corpus analysis
+python3 src/hansard/analysis/enhanced_gender_corpus_analysis.py --full --sample 50000 --filtering aggressive
 
-# Crawl a single year
-python src/hansard/crawlers/crawler.py 1864
-
-# Crawl a decade
-python src/hansard/crawlers/crawler.py 1860s
-
-# Crawl a range with house filter
-python src/hansard/crawlers/crawler.py 1860 1869 --house commons --out src/hansard/data/hansard
-
-# Large-scale parallel crawling
-python src/hansard/crawlers/parallel_hansard_runner.py --strategy house --start 1860 --end 1869 --out src/hansard/data/hansard
-
-# Full production processing pipeline (from repo root)
-bash src/hansard/scripts/run_full_processing.sh
+# 2. Milestone analysis (suffrage, WWI, WWII, Thatcher, Blair)
+python3 src/hansard/analysis/gender_milestone_analysis.py --all --filtering aggressive
 ```
 
-### 3. Validate Data and Run Analysis
-
+### Individual Analyses
 ```bash
-# Validate data integrity (80% health score)
-python src/hansard/data_validator.py
+# Test with small sample
+python3 src/hansard/analysis/enhanced_gender_corpus_analysis.py --years 1990-1991 --sample 1000
 
-# Quick NLP analysis test (from repo root)
-python src/hansard/analysis/hansard_nlp_analysis.py --years 1920-1920 --sample 50
-
-# Larger analysis (detects real patterns)
-python src/hansard/analysis/hansard_nlp_analysis.py --years 1920-1930 --sample 500
-
-# Process speakers (2.4M records)
-python -c "from hansard.speaker_processing import SpeakerProcessor; p = SpeakerProcessor(); print(p.check_mp_coverage(...))"
-
-# Run comprehensive tests
-python -m pytest tests/
-
-# Verify all systems
-python verify_all_systems.py
+# Specific milestone
+python3 src/hansard/analysis/gender_milestone_analysis.py --milestone ww2_period --filtering aggressive
 ```
 
-### 4. NLP Analysis and Historical Research
+## Output Files
 
-```bash
-# Basic NLP analysis with small sample
-python src/hansard/analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
+All outputs go to `analysis/`:
+- `temporal_representation.png` - Gender trends over time (1803-2005)
+- `vocabulary_comparison.png` - Distinctive words by gender
+- `bigram_comparison.png` - Distinctive phrases by gender
+- `topic_distribution.png` - Topic modeling results
+- `statistical_summary.png` - Key statistics
+- `*.json` - Numerical results
 
-# Historical milestone analysis
-python src/hansard/analysis/historical_milestone_analysis.py
+## Data
 
-# Comprehensive corpus analysis
-python src/hansard/analysis/overall_corpus_analysis.py
+- **Location**: `data-hansard/` (13GB, not in repository)
+- **Enhanced Dataset**: 354K debates with speaker gender identification
+- **Coverage**: 218 female MPs, 7,396 male MPs (1803-2005)
 
-# Dataset statistics and overview
-python src/hansard/analysis/dataset_statistics.py
+## Key Findings
 
-# Audit tool for data quality checks
-python src/hansard/analysis/hansard_audit_tool.py
+### Gender Representation
+- First female MP: 1919 (Nancy Astor)
+- Post-1997 surge: "Blair's 101 women"
+- Peak representation: ~14% by 2005
 
-# High-performance processing for large datasets
-python src/hansard/utils/high_performance_processor.py
-
-# Complete parsing tests
-python src/hansard/tests/test_complete_parsing.py
-
-# Performance testing
-python src/hansard/tests/test_hp_performance.py
-
-# Speaker extraction testing
-python src/hansard/tests/test_speaker_extraction.py
-```
-
-#### NLP Analysis Options
-
-**Quick Analysis (Testing)**:
-```bash
-# Women's suffrage period analysis
-python src/hansard/analysis/hansard_nlp_analysis.py --years 1925-1930 --sample 100
-
-# Victorian era sample
-python src/hansard/analysis/hansard_nlp_analysis.py --years 1850-1900 --sample 500
-
-# WWI period analysis
-python analysis/hansard_nlp_analysis.py --years 1914-1918 --sample 200
-```
-
-**Comprehensive Analysis**:
-```bash
-# Full period analysis (large dataset)
-python analysis/hansard_nlp_analysis.py --years 1850-1950 --sample 5000
-
-# Complete corpus analysis (WARNING: long runtime)
-python analysis/hansard_nlp_analysis.py --full
-
-# Decade-by-decade analysis
-python analysis/hansard_nlp_analysis.py --years 1900-1910 --sample 1000
-```
-
-**Analysis Features**:
-- **Unigram/Bigram Analysis**: Most frequent words and phrases
-- **Topic Modeling (LDA)**: Identifies major parliamentary themes
-- **Gender Analysis**: UCLA NLP wordlist-based gender language patterns
-- **Temporal Analysis**: Pre/post-1928 women's suffrage comparisons
-- **Historical Milestone Tracking**: Key political reform periods
-
-**Output Files**:
-- `results/hansard_nlp_analysis.png`: 4-panel visualization
-- `results/hansard_nlp_results.json`: Complete analysis data
-- `analysis/historical_milestones/`: Period-specific analysis results
-- `analysis/overall_analysis/`: Comprehensive corpus statistics
-
-### 5. Key Parser Capabilities
-
-The parser successfully extracts rich metadata from 200+ years of parliamentary data:
-
-- **100% Success Rate**: Tested across 1803-2005 with perfect parsing
-- **Rich Metadata**: Hansard references, chamber type, dates, speakers, topics
-- **Dual Chamber Support**: Both House of Commons and House of Lords
-- **Temporal Robustness**: Consistent parsing across centuries of format evolution
-
-**Example extracted metadata:**
-```python
-{
-    'hansard_reference': 'HC Deb 22 November 1803 vol 1 cc13-31',
-    'sitting_type': 'Commons',
-    'speakers': ['Mr. Heseltine', 'The Chancellor'],
-    'debate_topics': ['BANK RESTRICTION BILL', 'INCOME TAX'],
-    'line_count': 230
-}
-```
-
-
-## Data Format
-
-**Raw Data** (HTML files):
-- **Compressed HTML**: `{day}_{index}_{topic-slug}.html.gz`
-- **Summary JSON**: `{day}_summary.json` with metadata
-- **Directory structure**: `year/month/files`
-
-**Processed Data** (Structured formats):
-- **Master datasets**: `debates_master.parquet` (802,178 records), `speakers_master.parquet`
-- **Annual files**: `debates_YYYY.parquet` (1803-2005)
-- **SQLite index**: `debates.db` for fast querying
-- **Full-text search**: Indexed content for search functionality
-
-**Enhanced Gender Analysis Dataset** (`data/gender_analysis_enhanced/`):
-- **Full dataset**: `ALL_debates_enhanced_with_text.parquet` (4.5GB of parliamentary text)
-- **Metadata only**: `ALL_debates_enhanced_metadata.parquet` (lightweight, no text)
-- **Statistics**: 354,626 debates with confirmed MPs, 25,521 with female MPs
-- **Gender accuracy**: Corrected historical misclassifications (e.g., Nancy Astor correctly identified as first female MP in 1919)
-- **Coverage**: 201 years (1803-2005), 218 female MPs, 7,396 male MPs identified
+### Language Patterns
+- Male MPs: Dominated by policy/economic terms (country, act, trade)
+- Female MPs: Focus on social issues (local, health, service, education)
+- Distinctive bigrams reveal procedural vs. social policy focus
 
 ## Dependencies
 
-- **Core**: Python 3.12, httpx, tenacity, polars
-- **NLP**: spaCy, gensim, scikit-learn  
-- **UI**: Streamlit
-- **Dev**: black, ruff, pytest
+```bash
+# Core
+pandas polars numpy
 
-## Development Roadmap
+# NLP
+scikit-learn gensim
 
-- [x] Web crawler with rate limiting and error handling
-- [x] Data collection for 200+ years of parliamentary data (1803-2005)
-- [x] Multi-strategy parallel crawler for large-scale data collection
-- [x] Comprehensive test suite with performance monitoring
-- [x] Real-time debugging and monitoring tools
-- [x] **Robust HTML parser with 100% success rate across centuries**
-- [x] **Rich metadata extraction (Hansard refs, speakers, topics, chambers)**
-- [x] **Professional directory structure and testing framework**
-- [x] **Production data processing pipeline with validation**
-- [x] **Master dataset creation (673,385 debates processed)**
-- [x] **Interactive Jupyter notebook for data exploration**
-- [x] **SQLite database indexing for fast queries**
-- [ ] Topic modeling pipeline using extracted debate topics
-- [ ] Named entity recognition for speakers and political figures
-- [ ] Timeline analysis tools leveraging temporal metadata
-- [ ] Interactive Streamlit dashboard with search capabilities
-- [ ] Advanced filtering by chamber, speaker, topic, and time period
-- [ ] Export functionality for structured data and analysis results
+# Visualization
+matplotlib seaborn
 
-## Parser Performance
-
-**Comprehensive Testing Results:**
-- **60 files tested** across 12 decades (1803, 1820, 1840, 1860, 1880, 1900, 1920, 1940, 1960, 1980, 2000, 2005)
-- **100% success rate** - zero parsing failures
-- **Rich metadata extraction**: 100% Hansard references, 56.7% speaker identification, 16.7% topic extraction
-- **Dual chamber support**: Successfully parses both Commons (68%) and Lords (32%) content
-- **Scalable**: From 49 files (1803) to 6,939 files (2000) per year
-
-## Key Findings from Analysis
-
-### Gender Language Patterns (1920-1930)
-- **Male language dominance**: 91.5% of gendered words are masculine
-- **Post-1928 shift**: Female language increased from 7.97% to 9.93% after women's suffrage
-- **Data source**: Findings based on actual parliamentary debates
-
-### Parliamentary Topics Identified
-Through LDA topic modeling on real debates:
-1. Trade and unions (dominant in 1920s)
-2. Legislative process (bills, readings, acts)
-3. Government departments and boards
-4. Military and defense matters
-5. Economic issues (coal, transport, utilities)
-
-### Data Coverage
-- **Temporal span**: 1803-2005 (202 years)
-- **Total debates**: 802,178 validated records
-- **Speaker identification**: 2.4M speaker instances, 64.2% identified as likely MPs
-- **Missing years**: Only 1816 and 1829 absent from corpus
-
-## API Structure
-
-The Historic Hansard API follows a hierarchy:
-```
-/sittings/1860s → /sittings/1864 → /sittings/1864/feb → /sittings/1864/feb/15
+# Optional
+spacy  # For advanced NLP features
 ```
 
-## Code Quality & Reproducibility
+## Development
 
-### Reproducible Pipeline
-The complete pipeline from web crawling to analysis is now deterministic:
-- Parser uses sorted file operations
-- Random operations use fixed seeds (seed=42)
-- DataFrame operations maintain consistent ordering
+```bash
+# Run tests
+pytest tests/
 
-**Verification:** Run `bash verify_reproducibility.sh baseline` before changes, regenerate data, then `bash verify_reproducibility.sh compare` to verify identical outputs.
+# Check paths
+python3 src/hansard/utils/path_config.py
 
-**Documentation:** See `src/hansard/docs/FULL_PIPELINE_REPRODUCIBILITY.md` for complete analysis.
+# Verify data
+python3 verify_all_systems.py
+```
 
-### Recent Cleanup (2025-10-04)
-- Removed 5,540 lines of duplicate/obsolete code
-- Deleted 4 duplicate analysis scripts
-- Archived 5 old versions of scripts
-- Reorganized 6 utility scripts into subdirectories
-- All tests passing (20/20)
+## Documentation
 
-## Contributing
+- `CLAUDE.md` - Development guidelines and visualization standards
+- `DIRECTORY_STRUCTURE.md` - Detailed project layout
+- `RUN_ANALYSIS.md` - Analysis execution guide
 
-1. Set up development environment with `conda env create -f environment.yml`
-2. Run tests with `pytest`
-3. Format code with `black` and `ruff`
-4. Follow existing patterns in crawler.py for new modules
-5. Check reproducibility documentation before modifying data pipeline
+## License
+
+Data sourced from UK Parliament Historic Hansard (public domain).

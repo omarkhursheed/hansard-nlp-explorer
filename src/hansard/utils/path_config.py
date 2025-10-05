@@ -30,24 +30,22 @@ class Paths:
     ROOT = PROJECT_ROOT
     SRC = PROJECT_ROOT / 'src' / 'hansard'
 
-    # Data directories
-    DATA_DIR = SRC / 'data'
+    # Data directories - now at top level
+    DATA_DIR = ROOT / 'data-hansard'
     GENDER_ENHANCED_DATA = DATA_DIR / 'gender_analysis_enhanced'
     GENDER_WORDLISTS = DATA_DIR / 'gender_wordlists'
     PROCESSED_FIXED = DATA_DIR / 'processed_fixed'
 
-    # Analysis directories
-    ANALYSIS_DIR = SRC / 'analysis'
-    CORPUS_RESULTS = ANALYSIS_DIR / 'corpus_results'
-    MILESTONE_RESULTS = ANALYSIS_DIR / 'milestone_results'
-    VISUALIZATIONS = ANALYSIS_DIR / 'visualizations'
-    RESULTS = ANALYSIS_DIR / 'results'
+    # Analysis directory - single top-level directory for all outputs
+    ANALYSIS_DIR = ROOT / 'analysis'
+    # Legacy subdirectory paths - kept for compatibility but not used
+    CORPUS_RESULTS = ANALYSIS_DIR
+    MILESTONE_RESULTS = ANALYSIS_DIR
+    VISUALIZATIONS = ANALYSIS_DIR
+    RESULTS = ANALYSIS_DIR
 
     # Script directories
     SCRIPTS_DIR = SRC / 'scripts'
-
-    # Documentation
-    DOCS_DIR = SRC / 'docs'
 
     # Specific files
     MALE_WORDS = GENDER_WORDLISTS / 'male_words.txt'
@@ -56,14 +54,7 @@ class Paths:
     @classmethod
     def ensure_output_dirs(cls):
         """Create all output directories if they don't exist."""
-        dirs = [
-            cls.CORPUS_RESULTS,
-            cls.MILESTONE_RESULTS,
-            cls.VISUALIZATIONS,
-            cls.RESULTS
-        ]
-        for dir_path in dirs:
-            dir_path.mkdir(parents=True, exist_ok=True)
+        cls.ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def get_year_files(cls, start_year=None, end_year=None):

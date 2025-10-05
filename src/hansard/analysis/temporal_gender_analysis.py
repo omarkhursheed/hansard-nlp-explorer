@@ -102,14 +102,25 @@ class HistoricalTemporalAnalyzer:
         self.gender_inferrer = HistoricalGenderInference()
         
     def load_and_infer_gender(self):
-        """Load deduplicated speakers and infer gender with historical context."""
-        
-        # Load deduplicated and fixed speakers
-        speakers_path = self.data_path / 'speakers_deduplicated_fixed.parquet'
-        logger.info(f"Loading deduplicated speakers from {speakers_path}")
-        df = pd.read_parquet(speakers_path)
-        
-        logger.info(f"Loaded {len(df):,} deduplicated speakers")
+        """Build speaker dataset from derived gender speeches."""
+
+        # Check for cached speakers
+        speakers_cache = self.data_path / 'derived' / 'speakers.parquet'
+
+        if speakers_cache.exists():
+            logger.info(f"Loading cached speakers from {speakers_cache}")
+            df = pd.read_parquet(speakers_cache)
+            logger.info(f"Loaded {len(df):,} speakers from cache")
+        else:
+            logger.info("Building speaker dataset from derived gender speeches...")
+            df = self._build_speakers_from_derived()
+
+            # Cache for future use
+            speakers_cache.parent.mkdir(parents=True, exist_ok=True)
+            df.to_parquet(speakers_cache)
+            logger.info(f"Cached speakers to {speakers_cache}")
+
+        logger.info(f"Loaded {len(df):,} speakers")
         
         # Infer gender for each speaker based on their active period
         logger.info("Inferring gender from speaker names with historical context...")
@@ -157,9 +168,37 @@ class HistoricalTemporalAnalyzer:
         ].copy()
         
         logger.info(f"\nUsing {len(mp_df):,} actual MPs with confident gender assignment")
-        
+
         return mp_df, df  # Return both filtered MPs and full dataset for analysis
-    
+
+    def _build_speakers_from_derived(self):
+        """Build speaker dataset from derived gender speeches."""
+        derived_dir = self.data_path / 'derived' / 'gender_speeches'
+
+        if not derived_dir.exists():
+            raise FileNotFoundError(
+                f"Derived speeches not found at {derived_dir}\n"
+                f"Run: python scripts/create_gender_speeches_dataset.py"
+            )
+
+        all_speeches = []
+        for speech_file in sorted(derived_dir.glob("speeches_*.parquet")):
+            df = pd.read_parquet(speech_file)
+            all_speeches.append(df[['speaker', 'year']])
+
+        speeches_df = pd.concat(all_speeches, ignore_index=True)
+        logger.info(f"Loaded {len(speeches_df):,} speeches from {len(all_speeches)} year files")
+
+        speaker_stats = speeches_df.groupby('speaker').agg({
+            'year': ['min', 'max'],
+            'speaker': 'count'
+        }).reset_index()
+
+        speaker_stats.columns = ['normalized_name', 'first_year', 'last_year', 'total_speeches']
+        logger.info(f"Built dataset for {len(speaker_stats):,} unique speakers")
+
+        return speaker_stats
+
     def calculate_yearly_proportions(self, mp_df):
         """Calculate gender proportions by year for actual MPs only."""
         

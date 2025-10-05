@@ -134,6 +134,15 @@ files_to_process = all_files[:args.limit] if args.limit else all_files
 
 ## Development Process Rules
 
+### CRITICAL: Update Documentation After Code Changes
+
+**ALWAYS** update related documentation when changing code:
+- If you change paths or directory structure, update README.md
+- If you modify analysis outputs, update relevant documentation
+- Planning docs (*.md in docs/) are temporary - delete after task completion
+- Commit before deleting so they can be recovered if needed
+- Prefer self-documenting code over extensive documentation
+
 ### CRITICAL: Always Create Detailed Plans Before Implementation
 
 **NEVER** make ad-hoc patches or quick fixes. For ANY new functionality:

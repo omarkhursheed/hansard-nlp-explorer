@@ -84,7 +84,8 @@ class UnifiedCorpusLoader:
 
     def load_debates(self, year_range: Optional[Tuple[int, int]] = None,
                     sample_size: Optional[int] = None,
-                    stratified: bool = True) -> Union[Dict, List]:
+                    stratified: bool = True,
+                    use_derived: bool = True) -> Union[Dict, List]:
         """
         Load debates with optional filtering and sampling.
 
@@ -92,11 +93,20 @@ class UnifiedCorpusLoader:
             year_range: Tuple of (start_year, end_year) or None for all years
             sample_size: Number of speeches/debates to sample, or None for all
             stratified: Maintain year distribution when sampling (recommended)
+            use_derived: For gender dataset, use derived flat speeches if available (10x faster)
 
         Returns:
             Dict for gender dataset, List for overall dataset
         """
         if self.dataset_type == 'gender':
+            # Try derived speeches first (much faster)
+            if use_derived:
+                derived_dir = Paths.DATA_DIR / 'derived' / 'gender_speeches'
+                if derived_dir.exists() and list(derived_dir.glob("speeches_*.parquet")):
+                    return self.load_gender_speeches_derived(year_range, sample_size, stratified)
+                else:
+                    print("Derived speeches not found, using nested extraction...")
+
             return self.load_gender_matched(year_range, sample_size, stratified)
         elif self.dataset_type == 'overall':
             return self.load_overall_corpus(year_range, sample_size, stratified)
@@ -104,6 +114,77 @@ class UnifiedCorpusLoader:
             return self.load_speakers()
         else:
             raise ValueError(f"Cannot load dataset type: {self.dataset_type}")
+
+    def load_gender_speeches_derived(self, year_range: Optional[Tuple[int, int]] = None,
+                                     sample_size: Optional[int] = None,
+                                     stratified: bool = True) -> Dict:
+        """
+        Load derived gender speeches dataset (flat speech-level data).
+
+        Much faster than loading nested structure.
+        """
+        derived_dir = Paths.DATA_DIR / 'derived' / 'gender_speeches'
+        print(f"Loading derived gender speeches from {derived_dir}")
+
+        if year_range:
+            start_year, end_year = year_range
+        else:
+            start_year, end_year = 1803, 2005
+
+        all_speeches = []
+        years_loaded = []
+
+        for year in range(start_year, end_year + 1):
+            speech_file = derived_dir / f"speeches_{year}.parquet"
+            if not speech_file.exists():
+                continue
+
+            try:
+                df = pd.read_parquet(speech_file)
+                all_speeches.append(df)
+                years_loaded.append(year)
+                print(f"  {year}: {len(df):,} speeches")
+            except Exception as e:
+                print(f"  {year}: Error - {e}")
+
+        if not all_speeches:
+            raise FileNotFoundError(f"No speech files found for {start_year}-{end_year}")
+
+        speeches_df = pd.concat(all_speeches, ignore_index=True)
+        print(f"\nLoaded {len(speeches_df):,} total speeches from {len(years_loaded)} years")
+
+        if sample_size and len(speeches_df) > sample_size:
+            if stratified:
+                sampled = speeches_df.groupby('year', group_keys=False).apply(
+                    lambda x: x.sample(n=min(len(x), int(len(x) / len(speeches_df) * sample_size)), random_state=42)
+                )
+                if len(sampled) > sample_size:
+                    sampled = sampled.sample(n=sample_size, random_state=42)
+                speeches_df = sampled
+                print(f"Stratified sampling: {len(speeches_df):,} speeches")
+            else:
+                speeches_df = speeches_df.sample(n=sample_size, random_state=42)
+
+        male_df = speeches_df[speeches_df['gender'] == 'm']
+        female_df = speeches_df[speeches_df['gender'] == 'f']
+
+        data = {
+            'male_speeches': male_df['text'].tolist(),
+            'female_speeches': female_df['text'].tolist(),
+            'temporal_data': [],
+            'metadata': {'dataset_type': 'gender', 'years_processed': years_loaded, 'source': 'derived'}
+        }
+
+        for year in years_loaded:
+            year_data = speeches_df[speeches_df['year'] == year]
+            data['temporal_data'].append({
+                'year': year,
+                'male_speeches': len(year_data[year_data['gender'] == 'm']),
+                'female_speeches': len(year_data[year_data['gender'] == 'f'])
+            })
+
+        print(f"Converted: {len(data['male_speeches'])} male, {len(data['female_speeches'])} female")
+        return data
 
     def load_gender_matched(self, year_range: Optional[Tuple[int, int]] = None,
                           sample_size: Optional[int] = None,
