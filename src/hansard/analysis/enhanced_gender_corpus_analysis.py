@@ -197,10 +197,12 @@ class EnhancedGenderCorpusAnalyzer:
 
         print(f"Processing {len(year_files)} year files...")
 
-        # Collect data
+        # Collect data with year tracking for stratified sampling
         all_data = {
             'male_speeches': [],
             'female_speeches': [],
+            'male_speeches_by_year': {},  # For stratified sampling
+            'female_speeches_by_year': {},  # For stratified sampling
             'temporal_data': [],
             'metadata': []
         }
@@ -254,9 +256,17 @@ class EnhancedGenderCorpusAnalyzer:
 
                                     if gender == 'male' and text:
                                         all_data['male_speeches'].append(text)
+                                        # Track by year for stratified sampling
+                                        if year not in all_data['male_speeches_by_year']:
+                                            all_data['male_speeches_by_year'][year] = []
+                                        all_data['male_speeches_by_year'][year].append(text)
                                         year_male_count += 1
                                     elif gender == 'female' and text:
                                         all_data['female_speeches'].append(text)
+                                        # Track by year for stratified sampling
+                                        if year not in all_data['female_speeches_by_year']:
+                                            all_data['female_speeches_by_year'][year] = []
+                                        all_data['female_speeches_by_year'][year].append(text)
                                         year_female_count += 1
 
                 # Store temporal data
@@ -272,24 +282,55 @@ class EnhancedGenderCorpusAnalyzer:
                 print(f"Error processing {file_path}: {e}")
                 continue
 
-        # Sample if needed - sample each gender separately for balanced representation
+        # Stratified sampling by year - maintains temporal distribution
         if sample_size:
             random.seed(42)
 
-            # Sample up to sample_size from each gender (not forcing a ratio)
-            # This ensures good representation of both male and female speeches
-            male_available = len(all_data['male_speeches'])
-            female_available = len(all_data['female_speeches'])
+            total_speeches = len(all_data['male_speeches']) + len(all_data['female_speeches'])
 
-            male_sample = min(male_available, sample_size)
-            female_sample = min(female_available, sample_size)
+            if total_speeches > sample_size:
+                print(f"\nApplying year-stratified sampling: {sample_size:,} from {total_speeches:,} speeches")
 
-            if male_available > male_sample:
-                all_data['male_speeches'] = random.sample(all_data['male_speeches'], male_sample)
-            if female_available > female_sample:
-                all_data['female_speeches'] = random.sample(all_data['female_speeches'], female_sample)
+                # Calculate total speeches per year
+                year_totals = {}
+                for year in set(list(all_data['male_speeches_by_year'].keys()) + list(all_data['female_speeches_by_year'].keys())):
+                    male_count = len(all_data['male_speeches_by_year'].get(year, []))
+                    female_count = len(all_data['female_speeches_by_year'].get(year, []))
+                    year_totals[year] = male_count + female_count
 
-            print(f"\nSampling: {male_sample:,} male (from {male_available:,}) + {female_sample:,} female (from {female_available:,})")
+                # Sample proportionally from each year
+                sampled_male = []
+                sampled_female = []
+                sampling_rate = sample_size / total_speeches
+
+                for year in sorted(year_totals.keys()):
+                    # Determine how many to sample from this year
+                    year_total = year_totals[year]
+                    year_sample_target = int(year_total * sampling_rate)
+
+                    # Sample male speeches from this year
+                    year_male = all_data['male_speeches_by_year'].get(year, [])
+                    if year_male:
+                        year_male_proportion = len(year_male) / year_total if year_total > 0 else 0
+                        year_male_sample = min(len(year_male), int(year_sample_target * year_male_proportion))
+                        if year_male_sample > 0:
+                            sampled_male.extend(random.sample(year_male, year_male_sample))
+
+                    # Sample female speeches from this year
+                    year_female = all_data['female_speeches_by_year'].get(year, [])
+                    if year_female:
+                        year_female_proportion = len(year_female) / year_total if year_total > 0 else 0
+                        year_female_sample = min(len(year_female), int(year_sample_target * year_female_proportion))
+                        if year_female_sample > 0:
+                            sampled_female.extend(random.sample(year_female, year_female_sample))
+
+                all_data['male_speeches'] = sampled_male
+                all_data['female_speeches'] = sampled_female
+
+                print(f"  Sampled: {len(sampled_male):,} male + {len(sampled_female):,} female (stratified by year)")
+                print(f"  Temporal distribution preserved across {len(year_totals)} years")
+            else:
+                print(f"\nUsing all available data: {total_speeches:,} speeches")
 
         print(f"\nLoaded: {len(all_data['male_speeches'])} male, {len(all_data['female_speeches'])} female speeches")
         return all_data
