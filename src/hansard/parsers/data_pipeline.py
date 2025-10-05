@@ -217,8 +217,8 @@ class HansardDataPipeline:
         # Reduced logging for performance
         # print(f"Processing year {year}...")
         
-        # Find all HTML files
-        html_files = list(year_path.rglob("*.html.gz"))
+        # Find all HTML files (sorted for reproducibility)
+        html_files = sorted(year_path.rglob("*.html.gz"))
         
         debates_data = []
         speakers_data = []
@@ -393,17 +393,21 @@ class HansardDataPipeline:
         """Consolidate yearly parquet files into master files."""
         print("Consolidating metadata files...")
         
-        # Consolidate debates
-        debate_files = list((self.processed_data_path / 'metadata').glob('debates_*.parquet'))
+        # Consolidate debates (sorted for reproducibility)
+        debate_files = sorted((self.processed_data_path / 'metadata').glob('debates_*.parquet'))
         if debate_files:
             debates_df = pl.concat([pl.read_parquet(f) for f in debate_files])
+            # Sort by year and file path for consistent row order
+            debates_df = debates_df.sort(['year', 'file_path'])
             debates_df.write_parquet(self.processed_data_path / 'metadata' / 'debates_master.parquet')
             print(f"  ✓ Consolidated {len(debate_files)} debate files -> debates_master.parquet")
         
-        # Consolidate speakers
-        speaker_files = list((self.processed_data_path / 'metadata').glob('speakers_*.parquet'))
+        # Consolidate speakers (sorted for reproducibility)
+        speaker_files = sorted((self.processed_data_path / 'metadata').glob('speakers_*.parquet'))
         if speaker_files:
             speakers_df = pl.concat([pl.read_parquet(f) for f in speaker_files])
+            # Sort by year and speaker name for consistent row order
+            speakers_df = speakers_df.sort(['year', 'speaker_name', 'file_path'])
             speakers_df.write_parquet(self.processed_data_path / 'metadata' / 'speakers_master.parquet')
             print(f"  ✓ Consolidated {len(speaker_files)} speaker files -> speakers_master.parquet")
 

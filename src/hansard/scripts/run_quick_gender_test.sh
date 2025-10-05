@@ -32,8 +32,8 @@ echo "  - Filtering: $FILTERING"
 echo ""
 
 # Test 1: Basic corpus analysis
-echo -e "${YELLOW}Test 1: Corpus Analysis${NC}"
-python3 src/hansard/analysis/gender_corpus_analysis.py \
+echo -e "${YELLOW}Test 1: Enhanced Corpus Analysis${NC}"
+python3 src/hansard/analysis/enhanced_gender_corpus_analysis.py \
     --years $YEARS \
     --sample $SAMPLE_SIZE
 

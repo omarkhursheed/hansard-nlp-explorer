@@ -61,8 +61,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Build command - use the gender-matched specific analysis script
-CMD="python \"$SCRIPT_DIR/analysis/gender_corpus_analysis.py\""
+# Build command - use the enhanced gender-matched specific analysis script
+CMD="python \"$SCRIPT_DIR/../analysis/enhanced_gender_corpus_analysis.py\""
 
 if [[ -n "$FULL_FLAG" ]]; then
     CMD="$CMD $FULL_FLAG"
