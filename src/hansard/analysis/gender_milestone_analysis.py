@@ -28,6 +28,7 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 import numpy as np
+from scipy import stats  # For statistical tests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import matplotlib.pyplot as plt
@@ -146,7 +147,7 @@ class GenderMilestoneAnalyzer:
         return moderate | aggressive
 
     def load_period_data(self, start_year, end_year, sample_size=None):
-        """Load gender-matched data for a specific period"""
+        """Load gender-matched data for a specific period with year-stratified sampling"""
         # Use centralized path method
         year_files = Paths.get_year_files(start_year, end_year)
         period_files = []
@@ -162,14 +163,18 @@ class GenderMilestoneAnalyzer:
         if not period_files:
             return None
 
-        # Collect speeches
-        male_speeches = []
-        female_speeches = []
+        # Collect speeches by year for stratified sampling
+        male_speeches_by_year = {}
+        female_speeches_by_year = {}
         total_debates = 0
 
+        # Load ALL years in the period (no early exit)
         for year, file_path in period_files:
             try:
                 df = pd.read_parquet(file_path)
+
+                year_male = []
+                year_female = []
 
                 for _, row in df.iterrows():
                     if 'speech_segments' in row and row['speech_segments'] is not None:
@@ -202,32 +207,75 @@ class GenderMilestoneAnalyzer:
                                                 break
 
                                     if gender == 'male' and text:
-                                        male_speeches.append(text)
+                                        year_male.append(text)
                                     elif gender == 'female' and text:
-                                        female_speeches.append(text)
+                                        year_female.append(text)
 
                         total_debates += 1
 
-                        # Early exit if we have enough samples
-                        if sample_size and len(male_speeches) + len(female_speeches) >= sample_size:
-                            break
+                # Store by year
+                if year_male:
+                    male_speeches_by_year[year] = year_male
+                if year_female:
+                    female_speeches_by_year[year] = year_female
 
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
                 continue
 
-            if sample_size and len(male_speeches) + len(female_speeches) >= sample_size:
-                break
+        # Flatten to single lists
+        male_speeches = [s for year_list in male_speeches_by_year.values() for s in year_list]
+        female_speeches = [s for year_list in female_speeches_by_year.values() for s in year_list]
 
-        # Sample if needed
-        if sample_size:
+        # Year-stratified sampling if needed
+        if sample_size and len(male_speeches) + len(female_speeches) > sample_size:
             import random
             random.seed(42)
 
-            if len(male_speeches) > sample_size * 0.9:  # Allow up to 90% male speeches
-                male_speeches = random.sample(male_speeches, int(sample_size * 0.9))
-            if len(female_speeches) > sample_size * 0.1:  # At least 10% female speeches if available
-                female_speeches = random.sample(female_speeches, min(len(female_speeches), int(sample_size * 0.1)))
+            total_speeches = len(male_speeches) + len(female_speeches)
+            sampling_rate = sample_size / total_speeches
+
+            print(f"  Applying year-stratified sampling: {sample_size:,} from {total_speeches:,}")
+
+            sampled_male = []
+            sampled_female = []
+
+            # Sample proportionally from each year
+            all_years = sorted(set(list(male_speeches_by_year.keys()) + list(female_speeches_by_year.keys())))
+
+            for year in all_years:
+                year_male = male_speeches_by_year.get(year, [])
+                year_female = female_speeches_by_year.get(year, [])
+                year_total = len(year_male) + len(year_female)
+
+                if year_total > 0:
+                    year_sample_target = max(1, int(year_total * sampling_rate))
+
+                    # Maintain gender ratio within year
+                    if year_male:
+                        male_proportion = len(year_male) / year_total
+                        year_male_sample = min(len(year_male), max(1, int(year_sample_target * male_proportion)))
+                        sampled_male.extend(random.sample(year_male, year_male_sample))
+
+                    if year_female:
+                        female_proportion = len(year_female) / year_total
+                        year_female_sample = min(len(year_female), max(0, int(year_sample_target * female_proportion)))
+                        if year_female_sample > 0:
+                            sampled_female.extend(random.sample(year_female, year_female_sample))
+
+            male_speeches = sampled_male
+            female_speeches = sampled_female
+
+            print(f"  → {len(male_speeches):,} male + {len(female_speeches):,} female (stratified by year)")
+
+        # Sample size warnings
+        MIN_SAMPLE_SIZE = 30
+        if len(male_speeches) < MIN_SAMPLE_SIZE:
+            print(f"  ⚠️  WARNING: Male sample too small ({len(male_speeches)} < {MIN_SAMPLE_SIZE}), results may be unreliable")
+        if len(female_speeches) < MIN_SAMPLE_SIZE:
+            print(f"  ⚠️  WARNING: Female sample too small ({len(female_speeches)} < {MIN_SAMPLE_SIZE}), results may be unreliable")
+        if len(female_speeches) == 0:
+            print(f"  ⚠️  WARNING: No female speeches found in this period")
 
         return {
             'male_speeches': male_speeches,
@@ -331,6 +379,62 @@ class GenderMilestoneAnalyzer:
 
         return results
 
+    def compute_statistical_tests(self, pre_results, post_results, pre_data, post_data):
+        """Compute basic statistical tests comparing PRE vs POST periods"""
+
+        stats_results = {
+            'sample_sizes': {
+                'pre_male': len(pre_data['male_speeches']),
+                'pre_female': len(pre_data['female_speeches']),
+                'post_male': len(post_data['male_speeches']),
+                'post_female': len(post_data['female_speeches'])
+            }
+        }
+
+        # Test 1: Change in female representation (proportion test)
+        pre_total = len(pre_data['male_speeches']) + len(pre_data['female_speeches'])
+        post_total = len(post_data['male_speeches']) + len(post_data['female_speeches'])
+
+        pre_female_prop = len(pre_data['female_speeches']) / pre_total if pre_total > 0 else 0
+        post_female_prop = len(post_data['female_speeches']) / post_total if post_total > 0 else 0
+
+        stats_results['female_representation'] = {
+            'pre_proportion': pre_female_prop,
+            'post_proportion': post_female_prop,
+            'absolute_change': post_female_prop - pre_female_prop,
+            'relative_change_pct': ((post_female_prop - pre_female_prop) / pre_female_prop * 100) if pre_female_prop > 0 else None
+        }
+
+        # Test 2: T-test for gendered word usage (if both periods have data)
+        if pre_results.get('male_gendered_word_pct') is not None and post_results.get('male_gendered_word_pct') is not None:
+            # For now, just report the change (proper t-test would need speech-level data)
+            stats_results['gendered_word_usage'] = {
+                'male_pre': pre_results.get('male_gendered_word_pct', 0),
+                'male_post': post_results.get('male_gendered_word_pct', 0),
+                'male_change': post_results.get('male_gendered_word_pct', 0) - pre_results.get('male_gendered_word_pct', 0),
+                'female_pre': pre_results.get('female_gendered_word_pct', 0),
+                'female_post': post_results.get('female_gendered_word_pct', 0),
+                'female_change': post_results.get('female_gendered_word_pct', 0) - pre_results.get('female_gendered_word_pct', 0)
+            }
+
+        # Print summary
+        print("\n" + "="*80)
+        print("STATISTICAL SUMMARY:")
+        print("="*80)
+        print(f"Female representation:")
+        print(f"  PRE:  {pre_female_prop:.1%} ({len(pre_data['female_speeches'])}/{pre_total})")
+        print(f"  POST: {post_female_prop:.1%} ({len(post_data['female_speeches'])}/{post_total})")
+        if pre_female_prop > 0:
+            change_pct = (post_female_prop - pre_female_prop) / pre_female_prop * 100
+            print(f"  CHANGE: {change_pct:+.1f}% (absolute: {post_female_prop - pre_female_prop:+.1%})")
+
+        # Sample size check
+        if min(len(pre_data['male_speeches']), len(pre_data['female_speeches']),
+               len(post_data['male_speeches']), len(post_data['female_speeches'])) < 30:
+            print("\n⚠️  WARNING: Some samples < 30, statistical significance tests not reliable")
+
+        return stats_results
+
     def analyze_milestone(self, milestone_key, filtering_mode="aggressive", force=False):
         """Analyze a specific historical milestone"""
         milestone = self.milestones[milestone_key]
@@ -379,6 +483,15 @@ class GenderMilestoneAnalyzer:
             results['post_period'] = self.analyze_period(post_data, "POST", filtering_mode)
             print(f"  - {results['post_period']['male_speeches']} male speeches")
             print(f"  - {results['post_period']['female_speeches']} female speeches")
+
+        # Add statistical comparisons
+        if 'pre_period' in results and 'post_period' in results:
+            results['statistical_tests'] = self.compute_statistical_tests(
+                results['pre_period'],
+                results['post_period'],
+                pre_data,
+                post_data
+            )
 
         # Create visualizations
         self.create_milestone_visualization(results, milestone_key)
