@@ -54,7 +54,7 @@ MILESTONES = {
         "year": 1918,
         "pre_window": (1908, 1918),
         "post_window": (1918, 1928),
-        "sample_size": 5000
+        "sample_size": None  # Use all available data
     },
     "1928_full_suffrage": {
         "name": "1928 Full Women's Suffrage",
@@ -62,7 +62,7 @@ MILESTONES = {
         "year": 1928,
         "pre_window": (1918, 1928),
         "post_window": (1928, 1938),
-        "sample_size": 5000
+        "sample_size": None  # Use all available data
     },
     "ww1_period": {
         "name": "World War I Analysis",
@@ -71,7 +71,7 @@ MILESTONES = {
         "pre_window": (1909, 1914),
         "during_window": (1914, 1918),
         "post_window": (1918, 1923),
-        "sample_size": 5000
+        "sample_size": None  # Use all available data
     },
     "ww2_period": {
         "name": "World War II Analysis",
@@ -80,7 +80,7 @@ MILESTONES = {
         "pre_window": (1934, 1939),
         "during_window": (1939, 1945),
         "post_window": (1945, 1950),
-        "sample_size": 5000
+        "sample_size": None  # Use all available data
     },
     "thatcher_period": {
         "name": "Thatcher Era Analysis",
@@ -89,7 +89,7 @@ MILESTONES = {
         "pre_window": (1974, 1979),
         "during_window": (1979, 1990),
         "post_window": (1990, 1995),
-        "sample_size": 5000
+        "sample_size": None  # Use all available data
     }
 }
 

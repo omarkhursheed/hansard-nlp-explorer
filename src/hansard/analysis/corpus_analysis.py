@@ -528,8 +528,8 @@ Examples:
     parser.add_argument('--full', action='store_true',
                        help='Use full corpus (1803-2005)')
 
-    parser.add_argument('--sample', type=int,
-                       help='Sample size (number of speeches/debates)')
+    parser.add_argument('--sample', type=int, default=None,
+                       help='Sample size (default: use all data, no sampling)')
 
     parser.add_argument('--filtering', type=str, default='moderate',
                        choices=['minimal', 'basic', 'parliamentary', 'moderate', 'aggressive'],

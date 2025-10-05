@@ -10,11 +10,11 @@
 #
 # OPTIONS:
 #   --quick      Quick test with small sample (~5 min)
-#                - 500 speeches, 1995-2000
-#   --standard   Standard analysis (~20 min) [DEFAULT]
-#                - 5,000 speeches, 1803-2005
-#   --full       Full corpus analysis (~60 min)
-#                - 20,000 speeches, 1803-2005
+#                - 1,000 speeches, 1995-2000
+#   --standard   Standard analysis (~45 min) [DEFAULT]
+#                - ALL post-1920 data (good gender representation)
+#   --full       Full corpus analysis (~90 min)
+#                - ALL data 1803-2005 (2M+ speeches)
 #
 # OUTPUTS:
 #   analysis/
@@ -54,22 +54,22 @@ print_info() {
 MODE="standard"
 if [[ "$1" == "--quick" ]]; then
     MODE="quick"
-    SAMPLE=500
+    SAMPLE="--sample 1000"
     YEARS="1995-2000"
-    MILESTONE_SAMPLE=200
-    print_info "MODE: Quick test (500 speeches, 1995-2000, ~5 min)"
+    MILESTONE_SAMPLE="--sample 1000"
+    print_info "MODE: Quick test (1k speeches, 1995-2000, ~5 min)"
 elif [[ "$1" == "--full" ]]; then
     MODE="full"
-    SAMPLE=20000
+    SAMPLE=""  # No sampling - use all data
     YEARS="--full"
-    MILESTONE_SAMPLE=5000
-    print_info "MODE: Full analysis (20k speeches, 1803-2005, ~60 min)"
+    MILESTONE_SAMPLE=""  # No sampling - use all data
+    print_info "MODE: Full analysis (ALL data, 1803-2005, ~90 min)"
 else
     MODE="standard"
-    SAMPLE=5000
-    YEARS="--full"
-    MILESTONE_SAMPLE=2000
-    print_info "MODE: Standard analysis (5k speeches, 1803-2005, ~20 min)"
+    SAMPLE=""  # No sampling - use all data for year range
+    YEARS="--years 1920-2005"  # Focus on post-suffrage era for better gender representation
+    MILESTONE_SAMPLE=""  # No sampling
+    print_info "MODE: Standard analysis (ALL post-1920 data, ~45 min)"
 fi
 
 print_header "HANSARD NLP EXPLORER - COMPLETE ANALYSIS PIPELINE"
@@ -105,7 +105,7 @@ if [[ "$SKIP_GENDER" != "true" ]]; then
     python3 src/hansard/analysis/corpus_analysis.py \
         --dataset gender \
         $YEARS \
-        --sample $SAMPLE \
+        $SAMPLE \
         --filtering aggressive \
         --analysis all \
         --output-dir analysis/corpus_gender
@@ -119,7 +119,7 @@ print_info "Running overall corpus analysis..."
 python3 src/hansard/analysis/corpus_analysis.py \
     --dataset overall \
     $YEARS \
-    --sample $SAMPLE \
+    $SAMPLE \
     --filtering moderate \
     --analysis unigram,bigram,topic,gender \
     --output-dir analysis/corpus_overall
@@ -140,7 +140,7 @@ if [[ "$SKIP_GENDER" != "true" ]]; then
         --all-milestones \
         --dataset gender \
         --filtering aggressive \
-        --sample $MILESTONE_SAMPLE \
+        $MILESTONE_SAMPLE \
         --output-dir analysis/milestones_gender
 
     print_success "Gender milestone analysis complete"
@@ -154,7 +154,7 @@ if [[ "$MODE" != "quick" ]]; then
         --all-milestones \
         --dataset overall \
         --filtering moderate \
-        --sample $MILESTONE_SAMPLE \
+        $MILESTONE_SAMPLE \
         --output-dir analysis/milestones_overall
 
     print_success "Overall milestone analysis complete"
