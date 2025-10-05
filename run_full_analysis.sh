@@ -10,11 +10,11 @@
 #
 # OPTIONS:
 #   --quick      Quick test with small sample (~5 min)
-#                - 1,000 speeches, 1995-2000
-#   --standard   Standard analysis (~45 min) [DEFAULT]
-#                - ALL post-1920 data (good gender representation)
-#   --full       Full corpus analysis (~90 min)
-#                - ALL data 1803-2005 (2M+ speeches)
+#                - 1,000 speeches, 1995-2000 (for testing)
+#   [default]    Full analysis - NO SAMPLING (~60-90 min) [DEFAULT]
+#                - ALL 2 million speeches, 1803-2005
+#                - Complete historical record
+#                - All milestones with full data
 #
 # OUTPUTS:
 #   analysis/
@@ -56,20 +56,15 @@ if [[ "$1" == "--quick" ]]; then
     MODE="quick"
     SAMPLE="--sample 1000"
     YEARS="1995-2000"
-    MILESTONE_SAMPLE="--sample 1000"
+    MILESTONE_SAMPLE="--sample 500"
     print_info "MODE: Quick test (1k speeches, 1995-2000, ~5 min)"
-elif [[ "$1" == "--full" ]]; then
-    MODE="full"
-    SAMPLE=""  # No sampling - use all data
-    YEARS="--full"
-    MILESTONE_SAMPLE=""  # No sampling - use all data
-    print_info "MODE: Full analysis (ALL data, 1803-2005, ~90 min)"
 else
+    # Standard/Full - use ALL data, no sampling
     MODE="standard"
-    SAMPLE=""  # No sampling - use all data for year range
-    YEARS="--years 1920-2005"  # Focus on post-suffrage era for better gender representation
-    MILESTONE_SAMPLE=""  # No sampling
-    print_info "MODE: Standard analysis (ALL post-1920 data, ~45 min)"
+    SAMPLE=""  # No sampling - use all 2M speeches
+    YEARS="--full"  # Full corpus 1803-2005
+    MILESTONE_SAMPLE=""  # No sampling - all data per milestone
+    print_info "MODE: Full analysis (ALL 2M speeches, 1803-2005, ~60-90 min)"
 fi
 
 print_header "HANSARD NLP EXPLORER - COMPLETE ANALYSIS PIPELINE"
