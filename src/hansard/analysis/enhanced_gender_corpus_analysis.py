@@ -205,16 +205,15 @@ class EnhancedGenderCorpusAnalyzer:
             'metadata': []
         }
 
-        # Process files (limit based on sample size, not file count)
+        # Process ALL files - do not limit based on sample size during loading
+        # Sampling happens after loading complete dataset
         files_to_process = year_files
-        # For large corpus, optionally start from when women entered Parliament
-        if len(year_files) > 100 and sample_size and sample_size < 10000:
-            # For small samples, focus on years with female representation
-            files_to_process = [f for f in year_files if int(re.search(r'debates_(\d{4})_enhanced', str(f)).group(1)) >= 1919] if year_files else []
-            if not files_to_process:
-                files_to_process = year_files
 
-        for file_path in files_to_process:
+        print(f"Loading data from {len(files_to_process)} year files...")
+        if sample_size:
+            print(f"Will sample {sample_size:,} speeches after loading")
+
+        for file_idx, file_path in enumerate(files_to_process):
             try:
                 df = pd.read_parquet(file_path)
                 year_match = re.search(r'debates_(\d{4})_enhanced\.parquet', os.path.basename(file_path))
@@ -269,24 +268,28 @@ class EnhancedGenderCorpusAnalyzer:
 
                 print(f"  {year}: {year_male_count} male, {year_female_count} female speeches")
 
-                # Early exit for sampling
-                if sample_size and len(all_data['male_speeches']) + len(all_data['female_speeches']) >= sample_size * 2:
-                    break
-
             except Exception as e:
                 print(f"Error processing {file_path}: {e}")
                 continue
 
-        # Sample if needed
+        # Sample if needed - sample each gender separately for balanced representation
         if sample_size:
             random.seed(42)
-            male_sample = min(len(all_data['male_speeches']), int(sample_size * 0.8))
-            female_sample = min(len(all_data['female_speeches']), int(sample_size * 0.2))
 
-            if len(all_data['male_speeches']) > male_sample:
+            # Sample up to sample_size from each gender (not forcing a ratio)
+            # This ensures good representation of both male and female speeches
+            male_available = len(all_data['male_speeches'])
+            female_available = len(all_data['female_speeches'])
+
+            male_sample = min(male_available, sample_size)
+            female_sample = min(female_available, sample_size)
+
+            if male_available > male_sample:
                 all_data['male_speeches'] = random.sample(all_data['male_speeches'], male_sample)
-            if len(all_data['female_speeches']) > female_sample:
+            if female_available > female_sample:
                 all_data['female_speeches'] = random.sample(all_data['female_speeches'], female_sample)
+
+            print(f"\nSampling: {male_sample:,} male (from {male_available:,}) + {female_sample:,} female (from {female_available:,})")
 
         print(f"\nLoaded: {len(all_data['male_speeches'])} male, {len(all_data['female_speeches'])} female speeches")
         return all_data
