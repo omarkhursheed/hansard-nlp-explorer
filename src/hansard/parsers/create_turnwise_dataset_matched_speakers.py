@@ -4,7 +4,9 @@ import glob
 import os
 import re
 import json
+import multiprocessing
 from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # --- Paths ---
 INPUT_PATH = Path("src/hansard/data/processed_fixed/cleaned_data/")
@@ -60,60 +62,110 @@ def filter_matched_speakers(turnwise, speaker_details):
 
 # ---------------- File Processing ----------------
 
-files = glob.glob(os.path.join(INPUT_PATH, "debates_*.parquet"))
-print(f"Found {len(files)} files.")
+def process_file(f):
+    try:
+        df = pd.read_parquet(f)
+        dfs_local = []
 
-dfs = []
-for f in files:
-    df = pd.read_parquet(f)
+        # Each file can contain multiple debates
+        for debate_id, group in df.groupby("debate_id"):
+            speaker_details = group["speaker_details"].iloc[0]
 
-    # Expand speech_segments into turnwise rows
-    turnwise = df.explode("speech_segments").dropna(subset=["speech_segments"])
+            # --- Expand speech_segments safely ---
+            speech_segments = group.explode("speech_segments").dropna(subset=["speech_segments"])
+            col = speech_segments["speech_segments"]
 
-    # Extract dict fields safely
-    segs = turnwise["speech_segments"].apply(pd.Series)
-    keep_cols = ["speaker", "text"]
-    if "position" in segs.columns:
-        keep_cols.append("position")
-    turnwise = pd.concat([turnwise.drop(columns=["speech_segments"]), segs[keep_cols]], axis=1)
+            # Skip debates with no valid segments
+            if col.empty:
+                continue
+            first_valid = col.dropna().iloc[0] if not col.dropna().empty else None
+            if first_valid is None:
+                continue
 
-    # Normalize speakers
-    turnwise["speaker"] = turnwise["speaker"].astype(str).str.strip().str.upper()
-    turnwise = normalize_speakers(turnwise)
+            # Handle single dict or array of dicts
+            if isinstance(first_valid, dict):
+                segs = pd.json_normalize(col.dropna())
+            else:
+                segs = col.apply(pd.Series)
 
-    # Filter only matched speakers
-    speaker_details = df.iloc[0].get("speaker_details", [])
-    speaker_gender_map = build_speaker_gender_map(speaker_details)
-    turnwise = filter_matched_speakers(turnwise, speaker_details)
+            if isinstance(segs, pd.Series):
+                segs = segs.to_frame().T
 
-    # Assign gender directly from speaker_details map
-    turnwise["gender"] = turnwise["speaker"].map(speaker_gender_map).fillna("UNK")
-    turnwise["gender_source"] = np.where(turnwise["gender"] != "UNK", "speaker_details", "UNK")
+            # Reset indices before concatenation
+            speech_segments = speech_segments.reset_index(drop=True)
+            segs = segs.reset_index(drop=True)
 
-    # Word/char counts
-    turnwise["word_count"] = turnwise["text"].astype(str).str.split().str.len()
-    turnwise["char_count"] = turnwise["text"].astype(str).str.len()
+            keep_cols = ["speaker", "text"]
+            if "position" in segs.columns:
+                keep_cols.append("position")
 
-    # Keep relevant columns
-    base_cols = [
-        'debate_id','year','decade','month','reference_date','chamber','title','topic',
-        'hansard_reference','reference_volume','reference_columns','file_path','speaker',
-        'gender','gender_source','text','word_count','char_count'
-    ]
-    if "position" in turnwise.columns:
-        base_cols.insert(base_cols.index("word_count"), "position")
-    turnwise = turnwise[base_cols]
+            turnwise = pd.concat(
+                [speech_segments.drop(columns=["speech_segments"]), segs[keep_cols]],
+                axis=1
+            )
 
-    if "position" in turnwise.columns:
-        turnwise = turnwise.sort_values(["debate_id","position"]).reset_index(drop=True)
-    else:
-        turnwise = turnwise.sort_values(["debate_id"]).reset_index(drop=True)
+            # Normalize
+            turnwise["speaker"] = turnwise["speaker"].astype(str).str.strip().str.upper()
+            turnwise = normalize_speakers(turnwise)
 
-    dfs.append(turnwise)
+            # --- Filter matched speakers properly ---
+            turnwise = filter_matched_speakers(turnwise, speaker_details)
 
-# Concatenate and save
-final_df = pd.concat(dfs, ignore_index=True)
-final_df.to_parquet(OUT_PATH, index=False)
+            # Assign gender only from speaker_details
+            speaker_gender_map = build_speaker_gender_map(speaker_details)
+            turnwise["gender"] = turnwise["speaker"].map(speaker_gender_map).fillna("UNK")
+            turnwise["gender_source"] = np.where(turnwise["gender"] != "UNK", "speaker_details", "UNK")
 
-print(f"Processed {len(files)} files into {OUT_PATH}")
-print(final_df.head())
+            # Word/char counts
+            turnwise["word_count"] = turnwise["text"].astype(str).str.split().str.len()
+            turnwise["char_count"] = turnwise["text"].astype(str).str.len()
+
+            # Keep relevant columns
+            base_cols = [
+                'debate_id','year','decade','month','reference_date','chamber','title','topic',
+                'hansard_reference','reference_volume','reference_columns','file_path','speaker',
+                'gender','gender_source','text','word_count','char_count'
+            ]
+            if "position" in turnwise.columns:
+                base_cols.insert(base_cols.index("word_count"), "position")
+            turnwise = turnwise[base_cols]
+
+            if "position" in turnwise.columns:
+                turnwise = turnwise.sort_values(["debate_id", "position"]).reset_index(drop=True)
+            else:
+                turnwise = turnwise.sort_values(["debate_id"]).reset_index(drop=True)
+
+            dfs_local.append(turnwise)
+
+        if dfs_local:
+            return pd.concat(dfs_local, ignore_index=True)
+        return None
+
+    except Exception as e:
+        print(f"Error processing {f}: {e}")
+        return None
+
+
+if __name__ == "__main__":
+    files = glob.glob(os.path.join(INPUT_PATH, "debates_*.parquet"))
+    print(f"Found {len(files)} files.")
+
+    dfs = []
+    with ProcessPoolExecutor(max_workers=max(1, multiprocessing.cpu_count() - 1)) as executor:
+        futures = {executor.submit(process_file, f): f for f in files}
+        for i, future in enumerate(as_completed(futures), 1):
+            f = futures[future]
+            try:
+                result = future.result()
+                if result is not None and not result.empty:
+                    dfs.append(result)
+                    print(f"[{i}/{len(files)}] Done {f}")
+                else:
+                    print(f"[{i}/{len(files)}] Skipped {f} (no data)")
+            except Exception as e:
+                print(f"Error in future for {f}: {e}")
+
+    final_df = pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+    final_df.to_parquet(OUT_PATH, index=False)
+    print(f"Processed {len(files)} files into {OUT_PATH}")
+    print(final_df.head())

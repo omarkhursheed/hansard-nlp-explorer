@@ -1,6 +1,4 @@
-
 """
-
 Analyze word usage in Hansard debates by gender.
 
 Normalizations:
@@ -23,198 +21,305 @@ Normalizations:
 """
 
 import pandas as pd
+import numpy as np
 import re
 from collections import Counter
 from pathlib import Path
+from multiprocessing import Pool, cpu_count
+from functools import partial
+from sklearn.feature_extraction.text import CountVectorizer
 
 INPUT_PATH = Path("src/hansard/data/processed_fixed/cleaned_data/turnwise_debates_matched_speakers.parquet")
 OUT_PATH = Path("src/hansard/data/analysis_data/attention_speech_len.parquet")
 OUT_PATH_WORDS = Path("src/hansard/data/analysis_data/unique_top_words.parquet")
+OUT_PATH_LOGODDS = Path("src/hansard/data/analysis_data/terms_logodds.parquet")
 STOPWORD_PATH = Path("src/hansard/data/word_lists/custom_stop_words.txt")
 
+N_JOBS = max(1, cpu_count() - 1)  # tune if needed
 
-# ---------------------------------------------------------
-# Load custom stopwords
-# ---------------------------------------------------------
+# -----------------------------
+# Stopwords / tokenizer
+# -----------------------------
 def load_stopwords():
-    stopwords = set()
+    sw = set()
     with open(STOPWORD_PATH, "r", encoding="utf-8") as f:
         for line in f:
-            word = line.strip().lower()
-            if word:
-                stopwords.add(word)
-    return stopwords
+            w = line.strip().lower()
+            if w:
+                sw.add(w)
+    return sw
 
-# ---------------------------------------------------------
-# Tokenization and word frequency
-# ---------------------------------------------------------
+TOKEN_RE = re.compile(r"\b[a-zA-Z]+\b")
+
 def tokenize_text(text: str, stopwords: set, min_len: int = 2):
-    tokens = re.findall(r"\b\w+\b", text.lower())
-    return [t for t in tokens if t not in stopwords and len(t) >= min_len]
+    # lower + alphabetic only; drop short tokens; custom stopwords
+    toks = TOKEN_RE.findall(text.lower())
+    return [t for t in toks if len(t) >= min_len and t not in stopwords]
 
+def _count_words_one(text: str, stopwords: set, min_len: int = 2) -> int:
+    # count only; avoids materializing token list in the main df
+    toks = TOKEN_RE.findall(text.lower())
+    return sum(1 for t in toks if len(t) >= min_len and t not in stopwords)
 
-# ---------------------------------------------------------
-# Main processing
-# ---------------------------------------------------------
-def process_word_frequencies(df: pd.DataFrame):
+def _tokens_one(text: str, stopwords: set, min_len: int = 2):
+    return tokenize_text(text, stopwords, min_len=min_len)
+
+# -----------------------------
+# Parallel helpers
+# -----------------------------
+def parallel_map(func, iterable, processes=N_JOBS, chunksize=1000):
+    if processes == 1:
+        return list(map(func, iterable))
+    with Pool(processes=processes) as pool:
+        return list(pool.imap(func, iterable, chunksize=chunksize))
+
+# -----------------------------
+# Core processing (vectorized)
+# -----------------------------
+def process_word_frequencies(df: pd.DataFrame) -> pd.DataFrame:
     stopwords = load_stopwords()
 
-    # Tokenize and recompute word_count
-    df["tokens"] = df["text"].apply(lambda x: tokenize_text(str(x), stopwords))
-    df["word_count"] = df["tokens"].apply(len)
+    # === 1) parallel word counts (no token column kept) ===
+    texts = df["text"].astype(str).tolist()
+    count_fn = partial(_count_words_one, stopwords=stopwords, min_len=2)
+    df["word_count"] = parallel_map(count_fn, texts, processes=N_JOBS, chunksize=2000)
 
-    results = []
+    # ensure speaker sanity (drop blanks)
+    df = df[df["speaker"].astype(str).str.strip() != ""].copy()
 
-    # Iterate debate by debate
-    for debate_id, debate_df in df.groupby("debate_id"):
-        total_words = debate_df["word_count"].sum()
-        total_speakers = debate_df["speaker"].nunique()
-        total_turns = len(debate_df)
+    # === 2) debate-level totals (vectorized) ===
+    # totals per debate
+    debate_totals = (
+        df.groupby("debate_id")
+          .agg(total_words=("word_count", "sum"),
+               total_speakers=("speaker", "nunique"),
+               total_turns=("text", "size"),
+               year=("year", "first"),
+               decade=("decade", "first"),
+               month=("month", "first"),
+               reference_date=("reference_date", "first"),
+               chamber=("chamber", "first"),
+               title=("title", "first"),
+               topic=("topic", "first"))
+          .reset_index()
+    )
 
-        # Gender-level speaker counts
-        gender_counts = debate_df.groupby("gender")["speaker"].nunique().to_dict()
+    # unique speakers of each gender in debate
+    speakers_by_gender = (
+        df.groupby(["debate_id", "gender"])["speaker"]
+          .nunique()
+          .rename("speakers_of_gender")
+          .reset_index()
+    )
 
-        # Expected values
-        expected_group = {
-            g: (count / total_speakers) * total_words
-            for g, count in gender_counts.items()
-        }
-        expected_flat = total_words / total_speakers if total_speakers > 0 else 0
-        expected_avg_turn = total_words / total_turns if total_turns > 0 else 0
+    # expected words per (debate, gender)
+    exp_group = speakers_by_gender.merge(debate_totals[["debate_id","total_words","total_speakers"]], on="debate_id", how="left")
+    exp_group["expected_words_gender"] = (
+        exp_group["speakers_of_gender"] / exp_group["total_speakers"]
+    ) * exp_group["total_words"]
 
-        # Speaker-level observed values
-        speaker_obs = (
-            debate_df.groupby(["speaker", "gender"])
-            .agg(observed_words=("word_count", "sum"),
-                 observed_turns=("text", "count"))
-            .reset_index()
-        )
+    # === 3) speaker-level observed (vectorized) ===
+    speaker_obs = (
+        df.groupby(["debate_id", "speaker", "gender"])
+          .agg(observed_words=("word_count", "sum"),
+               observed_turns=("text", "size"))
+          .reset_index()
+    )
 
-        # Extract shared debate metadata
-        meta = {
-            "year": debate_df["year"].iloc[0] if "year" in debate_df.columns else None,
-            "decade": debate_df["decade"].iloc[0] if "decade" in debate_df.columns else None,
-            "month": debate_df["month"].iloc[0] if "month" in debate_df.columns else None,
-            "reference_date": debate_df["reference_date"].iloc[0] if "reference_date" in debate_df.columns else None,
-            "chamber": debate_df["chamber"].iloc[0] if "chamber" in debate_df.columns else None,
-            "title": debate_df["title"].iloc[0] if "title" in debate_df.columns else None,
-            "topic": debate_df["topic"].iloc[0] if "topic" in debate_df.columns else None,
-        }
+    # attach debate totals to each speaker row
+    speaker_obs = speaker_obs.merge(
+        debate_totals[["debate_id","total_words","total_speakers","total_turns",
+                       "year","decade","month","reference_date","chamber","title","topic"]],
+        on="debate_id", how="left"
+    )
 
-        for _, row in speaker_obs.iterrows():
-            spk, gender = row["speaker"], row["gender"]
-            obs_words, obs_turns = row["observed_words"], row["observed_turns"]
+    # attach expected words for that (debate, gender)
+    speaker_obs = speaker_obs.merge(
+        exp_group[["debate_id","gender","expected_words_gender"]],
+        on=["debate_id","gender"], how="left"
+    )
 
-            exp_gender = expected_group.get(gender, 0)
-            norm_words = obs_words / exp_gender if exp_gender > 0 else None
-            flat_norm = obs_words / expected_flat if expected_flat > 0 else None
+    # compute norms (vectorized)
+    speaker_obs["norm_words_speaker"] = (
+        speaker_obs["observed_words"] / speaker_obs["expected_words_gender"]
+    )
+    speaker_obs["expected_words_flat"] = speaker_obs["total_words"] / speaker_obs["total_speakers"]
+    speaker_obs["flat_norm_words"] = speaker_obs["observed_words"] / speaker_obs["expected_words_flat"]
 
-            # Avg words per turn
-            avg_words_per_turn = obs_words / obs_turns if obs_turns > 0 else None
-            norm_avg_turn = (
-                avg_words_per_turn / expected_avg_turn
-                if avg_words_per_turn is not None and expected_avg_turn > 0
-                else None
-            )
+    # avg words per turn + normalized
+    speaker_obs["avg_words_per_turn"] = speaker_obs["observed_words"] / speaker_obs["observed_turns"].replace(0, np.nan)
+    speaker_obs["expected_avg_words_per_turn"] = speaker_obs["total_words"] / speaker_obs["total_turns"].replace(0, np.nan)
+    speaker_obs["norm_avg_words_per_turn"] = speaker_obs["avg_words_per_turn"] / speaker_obs["expected_avg_words_per_turn"]
 
-            results.append({
-                **meta,
-                "debate_id": debate_id,
-                "speaker": spk,
-                "gender": gender,
-                "observed_words": obs_words,
-                "observed_turns": obs_turns,
-                "expected_words_gender": exp_gender,
-                "norm_words_speaker": norm_words,
-                "expected_words_flat": expected_flat,
-                "flat_norm_words": flat_norm,
-                "avg_words_per_turn": avg_words_per_turn,
-                "expected_avg_words_per_turn": expected_avg_turn,
-                "norm_avg_words_per_turn": norm_avg_turn,
-            })
+    speaker_obs["row_type"] = "speaker"
 
-        # Group-level entry
-        for g in gender_counts.keys():
-            obs_group_words = debate_df.loc[debate_df["gender"] == g, "word_count"].sum()
-            exp_group_words = expected_group[g]
-            group_norm = obs_group_words / exp_group_words if exp_group_words > 0 else None
+        # === 4) group-level observed (vectorized) ===
+    group_obs = (
+        df.groupby(["debate_id", "gender"])
+          .agg(observed_words=("word_count", "sum"))
+          .reset_index()
+    )
 
-            results.append({
-                **meta,
-                "debate_id": debate_id,
-                "speaker": None,
-                "gender": g,
-                "observed_words": obs_group_words,
-                "observed_turns": None,
-                "expected_words_gender": exp_group_words,
-                "group_norm_words": group_norm,
-                "avg_words_per_turn": None,
-                "expected_avg_words_per_turn": None,
-                "norm_avg_words_per_turn": None,
-            })
+    group_obs = group_obs.merge(
+        exp_group[["debate_id", "gender", "expected_words_gender"]],
+        on=["debate_id", "gender"], how="left"
+    ).merge(
+        debate_totals[["debate_id", "year", "decade", "month", "reference_date", "chamber", "title", "topic"]],
+        on="debate_id", how="left"
+    )
 
-    return pd.DataFrame(results)
+    group_obs["group_norm_words"] = group_obs["observed_words"] / group_obs["expected_words_gender"]
 
-# ---------------------------------------------------------
-# Top words by gender
-# ---------------------------------------------------------
+    # 🔧 add missing columns so both DataFrames align for concat
+    for col in [
+        "observed_turns", "norm_words_speaker", "expected_words_flat", "flat_norm_words",
+        "avg_words_per_turn", "expected_avg_words_per_turn", "norm_avg_words_per_turn"
+    ]:
+        group_obs[col] = np.nan
+
+    group_obs["speaker"] = None
+    group_obs["row_type"] = "group"
+
+    # === 5) unify and return ===
+    wanted_cols = [
+        "year", "decade", "month", "reference_date", "chamber", "title", "topic",
+        "debate_id", "speaker", "gender",
+        "observed_words", "observed_turns",
+        "expected_words_gender", "norm_words_speaker",
+        "expected_words_flat", "flat_norm_words",
+        "avg_words_per_turn", "expected_avg_words_per_turn", "norm_avg_words_per_turn",
+        "group_norm_words", "row_type"
+    ]
+
+    # ensure speaker_obs also has group_norm_words column
+    if "group_norm_words" not in speaker_obs.columns:
+        speaker_obs["group_norm_words"] = np.nan
+    speaker_obs["row_type"] = "speaker"
+
+    out = pd.concat(
+        [speaker_obs[wanted_cols], group_obs[wanted_cols]],
+        ignore_index=True
+    )
+
+    return out
+
+
+# -----------------------------
+# Top words (optimized single pass)
+# -----------------------------
 def top_words_by_gender(df: pd.DataFrame, top_n: int = 50, min_len: int = 2):
     stopwords = load_stopwords()
-    tokens_by_gender = {"M": [], "F": []}
+    # restrict decades with meaningful female presence
+    dec = df[df["decade"].isin([1970, 1980, 1990])][["gender","text"]].dropna(subset=["gender","text"])
 
-    for _, row in df.iterrows():
-        gender = row["gender"]
-        if pd.isna(gender) or gender not in tokens_by_gender:
-            continue
-        tokens = tokenize_text(str(row["text"]), stopwords, min_len=min_len)
-        tokens_by_gender[gender].extend(tokens)
+    # parallel tokenization -> list of token lists
+    tok_fn = partial(_tokens_one, stopwords=stopwords, min_len=min_len)
+    tokens_list = parallel_map(tok_fn, dec["text"].astype(str).tolist(), processes=N_JOBS, chunksize=2000)
 
-    top_words = {}
-    for g, tokens in tokens_by_gender.items():
-        counts = Counter(tokens)
-        top_words[g] = counts.most_common(top_n)
+    # aggregate counters per gender (single pass)
+    male_counter = Counter()
+    female_counter = Counter()
+    for (g, toks) in zip(dec["gender"].tolist(), tokens_list):
+        if g == "M":
+            male_counter.update(toks)
+        elif g == "F":
+            female_counter.update(toks)
 
-    return top_words
+    top = {
+        "M": male_counter.most_common(top_n),
+        "F": female_counter.most_common(top_n),
+    }
+    return top
 
-# ---------------------------------------------------------
-# Unique top words by gender (removes overlap)
-# ---------------------------------------------------------
 def unique_top_words(top_words: dict, top_n: int = 50):
-    # Extract just the words
     male_words = {w for w, _ in top_words.get("M", [])}
     female_words = {w for w, _ in top_words.get("F", [])}
-
-    # Find overlaps
     overlap = male_words & female_words
 
-    # Remove overlap and keep top-n re-sorted
-    unique_top = {}
-    for g, words in top_words.items():
-        filtered = [(w, c) for w, c in words if w not in overlap]
-        unique_top[g] = filtered[:top_n]
+    uniq = {}
+    for g, pairs in top_words.items():
+        filtered = [(w, c) for (w, c) in pairs if w not in overlap]
+        uniq[g] = filtered[:top_n]
+    return uniq
 
-    return unique_top
+# -----------------------------
+# Log-odds (uses same tokenizer)
+# -----------------------------
+def compute_log_odds(df: pd.DataFrame, top_n: int = 20):
+    stopwords = list(load_stopwords())
+    dec = df[df["decade"].isin([1970, 1980, 1990])]
 
-# ---------------------------------------------------------
+    male_texts = dec.loc[dec["gender"] == "M", "text"].fillna("").tolist()
+    female_texts = dec.loc[dec["gender"] == "F", "text"].fillna("").tolist()
+
+    vectorizer = CountVectorizer(
+        tokenizer=lambda x: tokenize_text(x, set(stopwords), min_len=2),
+        preprocessor=None,
+        lowercase=True,
+        stop_words=None,
+        min_df=2
+    )
+    X = vectorizer.fit_transform(male_texts + female_texts)
+    vocab = np.array(vectorizer.get_feature_names_out())
+
+    Xm = X[:len(male_texts), :]
+    Xf = X[len(male_texts):, :]
+
+    # fast sparse sums (A1 gets 1D ndarray)
+    freq_m = Xm.sum(axis=0).A1 + 1
+    freq_f = Xf.sum(axis=0).A1 + 1
+
+    p_m = freq_m / freq_m.sum()
+    p_f = freq_f / freq_f.sum()
+    log_odds = np.log(p_f / p_m)
+
+    df_logodds = (
+        pd.DataFrame({"word": vocab,
+                      "freq_m": freq_m,
+                      "freq_f": freq_f,
+                      "log_odds_f_over_m": log_odds})
+        .sort_values("log_odds_f_over_m", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    top_f = df_logodds.head(top_n)
+    top_m = df_logodds.tail(top_n)
+
+    return top_f, top_m, df_logodds
+
+# -----------------------------
 # Main
-# ---------------------------------------------------------
+# -----------------------------
 if __name__ == "__main__":
-
+    print("🔹 Loading parquet…")
     df = pd.read_parquet(INPUT_PATH)
 
+    print("Original shape:", df.shape)
+    df = df[df["gender"].isin(["M","F"])]
+    df["text"] = df["text"].fillna("")
+
+    print(df["gender"].value_counts())
+
+    # === word frequency + normalizations ===
+    print("🔹 Computing word counts + normalizations…")
     results_df = process_word_frequencies(df)
     results_df.to_parquet(OUT_PATH, index=False)
+    print(f"Saved → {OUT_PATH}")
 
+    # === top words (unique) ===
+    print("🔹 Computing top/unique words…")
     top_words = top_words_by_gender(df, top_n=100)
-
-    # Remove overlaps, keep only unique top words for each gender
     unique_words = unique_top_words(top_words, top_n=50)
+    unique_df = pd.DataFrame(
+        [{"gender": g, "word": w, "count": c}
+         for g, pairs in unique_words.items()
+         for (w, c) in pairs]
+    )
+    unique_df.to_parquet(OUT_PATH_WORDS, index=False)
+    print(f"Saved → {OUT_PATH_WORDS}")
 
-    unique_df = (
-        pd.DataFrame([
-            {"gender": g, "word": w, "count": c}
-            for g, pairs in unique_words.items()
-            for w, c in pairs
-        ]))
-unique_df.to_parquet(OUT_PATH_WORDS, index=False)
-    
+    # === log-odds ===
+    print("🔹 Computing log-odds distinctive terms…")
+    top_f, top_m, df_logodds = compute_log_odds(df, top_n=20)
+    df_logodds.to_parquet(OUT_PATH_LOGODDS, index=False)
+    print(f"Saved → {OUT_PATH_LOGODDS}")

@@ -37,23 +37,59 @@ detector = genderer.Detector(case_sensitive=False)
 ROLE_WORDS = {
     "the", "prime","minister","speaker","secretary","treasurer","president","chancellor"}
 
-def extract_first_name_vec(speakers: pd.Series):
-    """Vectorized first-name extraction, only return proper names (skip titles/roles)."""
-    norm = speakers.str.lower().str.replace(r"[^a-z ]", " ", regex=True)
-    tokens = norm.str.split()
+def extract_first_name_vec(speakers: pd.Series) -> pd.Series:
+    """
+    Extracts a probable first name (not surname) from Hansard speaker strings.
+    Handles:
+    - 'MR. JOHN DOUGLAS'      → 'John'
+    - 'SIR J. BRYDGES'        → None  (initial + surname)
+    - 'MR. W. PEEL'           → None  (initial + surname)
+    - 'MR. LOCKHART'          → None  (surname only)
+    - 'MR. GREGORY BARKER'    → 'Gregory'
+    - 'MR. CHARLES BATHURST'  → 'Charles'
+    - 'SIR M. W. RIDLEY'      → None  (multi-initial pattern)
+    """
 
+    skip = honorific_male | honorific_female | honorific_unk | army_hon | navy_hon | airforce_hon | ROLE_WORDS
     results = []
-    skip = honorific_male.union(honorific_female).union(honorific_unk).union(ROLE_WORDS)
-    for toklist in tokens:
-        fname = None
-        if toklist:
-            for tok in toklist:
-                if tok not in skip and len(tok) > 1:  # skip initials and roles
-                    # Only accept if it's alphabetic and not a known role
-                    if tok.isalpha():
-                        fname = tok.capitalize()
-                        break
-        results.append(fname)
+
+    for name in speakers.fillna("").astype(str):
+        # Normalize
+        name_clean = re.sub(r"[^A-Za-z.\s]", " ", name).lower()
+        tokens = [t.strip(".") for t in name_clean.split() if t.strip(".")]
+
+        # Remove leading titles and skip words
+        tokens = [t for t in tokens if t not in skip]
+
+        first_name = None
+
+        if len(tokens) == 0:
+            results.append(None)
+            continue
+
+        # Pattern 1: Initial + surname  -> skip (no usable first name)
+        if len(tokens) == 2 and len(tokens[0]) == 1:
+            results.append(None)
+            continue
+
+        # Pattern 2: Two initials + surname -> skip
+        if len(tokens) >= 3 and all(len(tok) == 1 for tok in tokens[:-1]):
+            results.append(None)
+            continue
+
+        # Pattern 3: Single surname (no first name)
+        if len(tokens) == 1:
+            results.append(None)
+            continue
+
+        # Pattern 4: Proper first name followed by something else
+        for tok in tokens:
+            if len(tok) > 1 and tok.isalpha():
+                first_name = tok.capitalize()
+                break
+
+        results.append(first_name)
+
     return pd.Series(results, index=speakers.index)
 
 def contains_any(norm_speakers: pd.Series, honorifics: set):
@@ -95,6 +131,18 @@ def normalize_speakers(df_turnwise):
 
     out = df_turnwise.groupby("debate_id", group_keys=False).apply(expand_speakers)
     return out.reset_index(drop=True)
+
+def flatten_nested_list(x):
+    """Recursively flattens nested lists or arrays."""
+    if not isinstance(x, (list, np.ndarray, pd.Series)):
+        return []
+    flat = []
+    for item in x:
+        if isinstance(item, (list, np.ndarray, pd.Series)):
+            flat.extend(flatten_nested_list(item))
+        else:
+            flat.append(item)
+    return flat
 
 
 # ---------------- Gender Assignment ----------------
@@ -161,56 +209,78 @@ def assign_gender(turnwise, speaker_gender_map):
 # ---------------- File Processing ----------------
 
 def process_file(f):
-    df = pd.read_parquet(f)
+    try:
+        df = pd.read_parquet(f)
+    except Exception as e:
+        print(f"⚠️  Failed to read {f}: {e}")
+        return pd.DataFrame()
 
-    # Expand speech_segments into turnwise rows
-    turnwise = df.explode("speech_segments").dropna(subset=["speech_segments"])
+    dfs_local = []
 
-    # Extract dict fields
-    segs = turnwise["speech_segments"].apply(pd.Series)
-    keep_cols = ["speaker","text"]
-    if "position" in segs.columns:
-        keep_cols.append("position")
-    turnwise = pd.concat([turnwise.drop(columns=["speech_segments"]), segs[keep_cols]], axis=1)
+    for debate_id, group in df.groupby("debate_id"):
+        try:
+            # ---- speaker details ----
+            speaker_details = group["speaker_details"].iloc[0] if "speaker_details" in group.columns else []
+            speaker_gender_map = build_speaker_gender_map(speaker_details)
 
-    # Normalize speakers and expand shortened forms
-    turnwise["speaker"] = turnwise["speaker"].astype(str).str.strip().str.upper()
-    turnwise = normalize_speakers(turnwise)
+            # ---- handle speech segments safely ----
+            if "speech_segments" in group.columns and group["speech_segments"].dropna().shape[0] > 0:
+                turnwise = group.explode("speech_segments", ignore_index=True)
+                turnwise = turnwise[turnwise["speech_segments"].notna()]
+                segs = turnwise["speech_segments"].apply(pd.Series)
+                keep_cols = [c for c in ["speaker", "text", "position"] if c in segs.columns]
+                turnwise = pd.concat(
+                    [turnwise.drop(columns=["speech_segments"]), segs[keep_cols].reset_index(drop=True)],
+                    axis=1,
+                )
+            else:
+                # No segments → create placeholder one-row debate
+                turnwise = group.copy()
+                turnwise["speaker"] = np.nan
+                turnwise["text"] = group.get("debate_text", pd.Series([""] * len(group)))
+                turnwise["position"] = np.nan
 
-    # Build speaker lookup
-    speaker_gender_map = build_speaker_gender_map(df.iloc[0].get("speaker_details", []))
+            # ---- normalize & tag ----
+            turnwise["speaker"] = turnwise["speaker"].astype(str).str.strip().str.upper()
+            turnwise = normalize_speakers(turnwise)
+            turnwise = assign_gender(turnwise, speaker_gender_map)
 
-    # Apply gender assignment
-    turnwise = assign_gender(turnwise, speaker_gender_map)
+            # ---- text stats ----
+            turnwise["word_count"] = turnwise["text"].astype(str).str.split().str.len()
+            turnwise["char_count"] = turnwise["text"].astype(str).str.len()
 
-    # Word/char counts
-    turnwise["word_count"] = turnwise["text"].astype(str).str.split().str.len()
-    turnwise["char_count"] = turnwise["text"].astype(str).str.len()
+            # ---- column selection ----
+            base_cols = [
+                "debate_id", "year", "decade", "month", "reference_date", "chamber",
+                "title", "topic", "hansard_reference", "reference_volume",
+                "reference_columns", "file_path", "speaker",
+                "gender", "gender_source", "text", "word_count", "char_count",
+            ]
+            if "position" in turnwise.columns:
+                base_cols.insert(base_cols.index("word_count"), "position")
+            turnwise = turnwise.reindex(columns=base_cols, fill_value=np.nan)
 
-    # Select columns
-    base_cols = [
-        'debate_id','year','decade','month','reference_date','chamber','title','topic',
-        'hansard_reference','reference_volume','reference_columns','file_path','speaker',
-        'gender','gender_source','text','word_count','char_count'
-    ]
-    if "position" in turnwise.columns:
-        base_cols.insert(base_cols.index("word_count"), "position")
-    turnwise = turnwise[base_cols]
+            dfs_local.append(turnwise)
 
-    if "position" in turnwise.columns:
-        turnwise = turnwise.sort_values(["debate_id","position"]).reset_index(drop=True)
-    else:
-        turnwise = turnwise.sort_values(["debate_id"]).reset_index(drop=True)
+        except Exception as e:
+            print(f"⚠️  Debate {debate_id} in {os.path.basename(f)} failed: {e}")
+            continue
 
-    return turnwise
+    if not dfs_local:
+        print(f"⚠️  No valid debates found in {f}")
+        return pd.DataFrame()
 
+    return pd.concat(dfs_local, ignore_index=True)
+
+
+# ---------------- Main Processing ----------------
 
 if __name__ == "__main__":
     files = glob.glob(os.path.join(INPUT_PATH, FILE_PATTERN))
     print(f"Found {len(files)} files.")
 
     dfs = []
-    with ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
+    with ProcessPoolExecutor(max_workers=max(1, multiprocessing.cpu_count() - 1)) as executor:
         futures = {executor.submit(process_file, f): f for f in files}
         for i, future in enumerate(as_completed(futures), 1):
             f = futures[future]

@@ -13,10 +13,10 @@ df = pd.read_parquet(INPUT_PATH)
 print("Original shape:", df.shape)
 print(df["gender"].value_counts())
 
-# # Remove unknown gender speakers before analysis
-# df = df[df["gender"].isin(["M", "F"])]
-# print("After removing UNK:", df.shape)
-# print(df["gender"].value_counts())
+# Remove unknown gender speakers before analysis
+df = df[df["gender"].isin(["M", "F"])]
+print("After removing UNK:", df.shape)
+print(df["gender"].value_counts())
 
 # -------- 1) Per-debate speaker turns --------
 # One row per (debate_id, speaker, gender) with observed turns
