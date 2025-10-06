@@ -3,7 +3,7 @@
 ## 🚀 TL;DR - Run This Now
 
 ```bash
-./run_full_analysis.sh
+./scripts/run_full_analysis.sh
 ```
 
 **That's it!** This runs everything on ALL 2 million speeches (60-90 minutes).
