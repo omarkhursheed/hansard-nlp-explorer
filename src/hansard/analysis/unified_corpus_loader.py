@@ -51,14 +51,14 @@ class UnifiedCorpusLoader:
         Initialize loader for specified dataset type.
 
         Args:
-            dataset_type: One of 'gender', 'overall', or 'speakers'
+            dataset_type: One of 'gender', 'overall', 'speakers', or 'gender-debates'
 
         Raises:
             ValueError: If dataset_type is not recognized
         """
-        if dataset_type not in ['gender', 'overall', 'speakers']:
+        if dataset_type not in ['gender', 'overall', 'speakers', 'gender-debates']:
             raise ValueError(f"Unknown dataset type: {dataset_type}. "
-                           f"Use 'gender', 'overall', or 'speakers'")
+                           f"Use 'gender', 'overall', 'speakers', or 'gender-debates'")
 
         self.dataset_type = dataset_type
         self.data_dir = self._get_data_dir(dataset_type)
@@ -79,6 +79,8 @@ class UnifiedCorpusLoader:
             return Paths.PROCESSED_FIXED
         elif dataset_type == 'speakers':
             return Paths.DATA_DIR
+        elif dataset_type == 'gender-debates':
+            return Paths.DATA_DIR / 'derived' / 'gender_debates'
         else:
             raise ValueError(f"Unknown dataset type: {dataset_type}")
 
@@ -112,6 +114,8 @@ class UnifiedCorpusLoader:
             return self.load_overall_corpus(year_range, sample_size, stratified)
         elif self.dataset_type == 'speakers':
             return self.load_speakers()
+        elif self.dataset_type == 'gender-debates':
+            return self.load_gender_debates(year_range, sample_size, stratified)
         else:
             raise ValueError(f"Cannot load dataset type: {self.dataset_type}")
 
@@ -513,6 +517,87 @@ class UnifiedCorpusLoader:
 
         print(f"Random sampling: {len(data['male_speeches']):,} male + "
               f"{len(data['female_speeches']):,} female")
+
+        return data
+
+    def load_gender_debates(self, year_range: Optional[Tuple[int, int]] = None,
+                           sample_size: Optional[int] = None,
+                           stratified: bool = True) -> Dict:
+        """
+        Load debate-level gender dataset with categorization.
+
+        Categorizes debates by gender composition:
+        - male_only: Only male MPs participated
+        - mixed: Both male and female MPs
+        - female_heavy: More female than male MPs (rare)
+
+        Returns:
+            Dict with male_only_debates, mixed_debates, female_heavy_debates lists
+        """
+        debates_dir = Paths.DATA_DIR / 'derived' / 'gender_debates'
+        print(f"Loading debate-level gender data from {debates_dir}")
+
+        if year_range:
+            start_year, end_year = year_range
+        else:
+            start_year, end_year = 1803, 2005
+
+        all_debates = []
+        years_loaded = []
+
+        for year in range(start_year, end_year + 1):
+            debate_file = debates_dir / f"debates_{year}.parquet"
+            if not debate_file.exists():
+                continue
+
+            try:
+                df = pd.read_parquet(debate_file)
+                all_debates.append(df)
+                years_loaded.append(year)
+                print(f"  {year}: {len(df):,} debates")
+            except Exception as e:
+                print(f"  {year}: Error - {e}")
+
+        if not all_debates:
+            raise FileNotFoundError(f"No debate files found for {start_year}-{end_year}")
+
+        debates_df = pd.concat(all_debates, ignore_index=True)
+        print(f"\nLoaded {len(debates_df):,} total debates from {len(years_loaded)} years")
+
+        # Apply sampling if requested
+        if sample_size and len(debates_df) > sample_size:
+            if stratified:
+                sampled = debates_df.groupby('year', group_keys=False).apply(
+                    lambda x: x.sample(n=min(len(x), int(len(x) / len(debates_df) * sample_size)), random_state=42)
+                )
+                if len(sampled) > sample_size:
+                    sampled = sampled.sample(n=sample_size, random_state=42)
+                debates_df = sampled
+                print(f"Stratified sampling: {len(debates_df):,} debates")
+
+        # Categorize debates
+        male_only = debates_df[(debates_df['has_male']) & (~debates_df['has_female'])]
+        mixed = debates_df[(debates_df['has_male']) & (debates_df['has_female'])]
+        female_heavy = debates_df[debates_df['female_mps'] > debates_df['male_mps']]
+
+        data = {
+            'male_only_debates': male_only['full_text'].tolist(),
+            'mixed_debates': mixed['full_text'].tolist(),
+            'female_heavy_debates': female_heavy['full_text'].tolist(),
+            'metadata': {
+                'dataset_type': 'gender-debates',
+                'years_processed': years_loaded,
+                'total_debates': len(debates_df),
+                'male_only_count': len(male_only),
+                'mixed_count': len(mixed),
+                'female_heavy_count': len(female_heavy)
+            }
+        }
+
+        print(f"\nDebate categories:")
+        print(f"  Male-only: {len(male_only):,} debates")
+        print(f"  Mixed-gender: {len(mixed):,} debates")
+        print(f"  Female-heavy: {len(female_heavy):,} debates")
 
         return data
 

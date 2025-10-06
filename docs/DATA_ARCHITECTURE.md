@@ -35,10 +35,10 @@ data-hansard/
 - **Years:** 1803-2005
 - **Status:** READ-ONLY, backed up
 
-### Tier 2: Sources of Truth (Primary Datasets)
+### Tier 2: Primary Source of Truth
 
-#### `processed_fixed/` (14GB)
-- **Content:** Processed overall corpus (all debates)
+#### `processed_fixed/` (14GB) ← **PRIMARY SOURCE**
+- **Content:** ALL parliamentary debates (complete corpus)
 - **Format:** JSONL (one file per year)
 - **Location:** `processed_fixed/content/YYYY/debates_YYYY.jsonl`
 - **Schema:**
@@ -55,13 +55,18 @@ data-hansard/
     }
   }
   ```
+- **Records:** ~800,000 debates (1803-2005)
 - **Used by:**
-  - `corpus_analysis.py --dataset overall`
-  - `milestone_analysis.py --dataset overall`
-- **Generation:** Processed from `hansard/` HTML files
+  - `corpus_analysis.py --dataset overall` (directly)
+  - `milestone_analysis.py --dataset overall` (directly)
+  - Gender matching pipeline (to create gender_analysis_enhanced)
+- **Generation:** Parsed from `hansard/` HTML files
+- **Status:** SOURCE OF TRUTH - DO NOT DELETE
+
+### Tier 3: Gender-Enhanced Data (Derived from processed_fixed)
 
 #### `gender_analysis_enhanced/` (9.1GB)
-- **Content:** Gender-matched debates with speaker attribution
+- **Content:** Debates with gender-matched speakers
 - **Format:** Parquet (one file per year)
 - **Location:** `gender_analysis_enhanced/debates_YYYY_enhanced.parquet`
 - **Schema:** 40 columns including:
@@ -73,13 +78,12 @@ data-hansard/
   - has_female, has_male, female_mps, male_mps
   - word_count, speech_count
   ```
-- **Purpose:** Source for deriving gender speeches
-- **Used by:**
-  - Generates `derived/gender_speeches/`
-  - Original loading method (if derived not available)
-- **Generation:** Gender matching pipeline from `hansard/`
+- **Records:** ~350,000 debates with confirmed MP speakers
+- **Purpose:** Source for deriving gender-specific datasets
+- **Generation:** Gender matching pipeline applied to `processed_fixed/` (~2-3 hours)
+- **Can regenerate:** Yes (from processed_fixed)
 
-### Tier 3: Derived Datasets (Can Regenerate)
+### Tier 4: Derived Datasets (Optimized Views - Can Regenerate)
 
 #### `derived/gender_speeches/` (1.5GB)
 - **Content:** Flat speech-level data extracted from gender corpus
@@ -109,6 +113,36 @@ data-hansard/
   ```
 - **Regeneration:** Delete and re-run script
 
+#### `derived/gender_debates/` (2.3GB)
+- **Content:** Simplified debate-level gender data
+- **Format:** Parquet (one file per year)
+- **Location:** `derived/gender_debates/debates_YYYY.parquet`
+- **Schema:**
+  ```
+  debate_id: str
+  year: int
+  title: str
+  chamber: str
+  full_text: str              # Complete debate text
+  speakers: list[str]
+  word_count: int
+  has_female: bool            # Has female MPs
+  has_male: bool              # Has male MPs
+  female_mps: int             # Count
+  male_mps: int               # Count
+  speaker_genders: dict       # {name: 'm'/'f'}
+  ```
+- **Total:** 348,679 debates (1803-2005)
+- **Used by:**
+  - `corpus_analysis.py --dataset gender-debates`
+- **Purpose:** Debate-level gender comparison (male-only vs mixed vs female-heavy)
+- **Generation:**
+  ```bash
+  python3 scripts/create_gender_debates_dataset.py
+  # Takes ~10 minutes
+  ```
+- **Regeneration:** Delete and re-run script
+
 #### `derived/speakers.parquet` (~3MB)
 - **Content:** Speaker aggregation (career spans, speech counts)
 - **Format:** Single parquet file
@@ -135,26 +169,36 @@ data-hansard/
 
 ---
 
-## Data Flow
+## Data Flow (Corrected Hierarchy)
 
 ```
-hansard/ (HTML)
+hansard/ (5.7GB - Raw HTML files)
     ↓ [parsing pipeline]
-    ├→ processed_fixed/ (all debates, JSONL)
-    │     ↓ [used directly by]
-    │     → corpus_analysis.py --dataset overall
-    │     → milestone_analysis.py --dataset overall
-    │
-    └→ gender_analysis_enhanced/ (gender-matched, nested parquet)
-          ↓ [create_gender_speeches_dataset.py]
-          → derived/gender_speeches/ (flat parquet)
-                ↓ [used by]
-                ├→ corpus_analysis.py --dataset gender
-                ├→ milestone_analysis.py --dataset gender
-                └→ temporal_gender_analysis.py
-                      ↓ [aggregates to]
-                      → derived/speakers.parquet (cached)
+    → processed_fixed/ (14GB - PRIMARY SOURCE OF TRUTH)
+         │ [used directly by]
+         ├→ corpus_analysis.py --dataset overall
+         ├→ milestone_analysis.py --dataset overall
+         │
+         ↓ [gender matching pipeline ~2-3 hours]
+         → gender_analysis_enhanced/ (9.1GB - Derived with gender info)
+              ↓ [extract & flatten ~10-15 min]
+              ├→ derived/gender_speeches/ (1.5GB - speech-level)
+              │     ↓ [used by]
+              │     ├→ corpus_analysis.py --dataset gender
+              │     ├→ milestone_analysis.py --dataset gender
+              │     └→ temporal_gender_analysis.py
+              │           ↓ [aggregates to]
+              │           → derived/speakers.parquet (3MB - cached)
+              │
+              └→ derived/gender_debates/ (2.3GB - debate-level)
+                    ↓ [used by]
+                    └→ corpus_analysis.py --dataset gender-debates
 ```
+
+**Key Points:**
+- `processed_fixed/` is the PRIMARY SOURCE (all debates, no gender)
+- `gender_analysis_enhanced/` is DERIVED (processed_fixed + gender matching)
+- `derived/*` are OPTIMIZED VIEWS (extracted & flattened for fast analysis)
 
 ---
 

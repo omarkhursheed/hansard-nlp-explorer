@@ -213,6 +213,38 @@ class UnifiedCorpusAnalyzer:
             print(f"  Male vocabulary: {len(male_freq):,} unique words")
             print(f"  Female vocabulary: {len(female_freq):,} unique words")
 
+        elif self.dataset_type == 'gender-debates':
+            # Debate-level gender analysis
+            male_only_texts = data['male_only_debates']
+            mixed_texts = data['mixed_debates']
+
+            male_only_filtered = [self.filter.filter_text(t) for t in male_only_texts]
+            mixed_filtered = [self.filter.filter_text(t) for t in mixed_texts]
+
+            male_only_words = ' '.join(male_only_filtered).split()
+            mixed_words = ' '.join(mixed_filtered).split()
+
+            male_only_freq = Counter(male_only_words)
+            mixed_freq = Counter(mixed_words)
+
+            self.results['male_only_unigrams'] = male_only_freq.most_common(50)
+            self.results['mixed_unigrams'] = mixed_freq.most_common(50)
+            self.results['male_only_vocab_size'] = len(male_only_freq)
+            self.results['mixed_vocab_size'] = len(mixed_freq)
+
+            # Calculate filtering stats
+            total_original = sum(len(t.split()) for t in male_only_texts + mixed_texts)
+            total_filtered = len(male_only_words) + len(mixed_words)
+
+            self.results['filtering_stats'] = {
+                'original_words': total_original,
+                'filtered_words': total_filtered,
+                'reduction_pct': ((total_original - total_filtered) / total_original * 100) if total_original > 0 else 0
+            }
+
+            print(f"  Male-only debates vocabulary: {len(male_only_freq):,} unique words")
+            print(f"  Mixed-gender debates vocabulary: {len(mixed_freq):,} unique words")
+
         else:
             # Overall corpus analysis
             texts = [d['text'] for d in data]
@@ -262,6 +294,23 @@ class UnifiedCorpusAnalyzer:
 
             print(f"  Male bigrams: {len(male_bigram_freq):,} unique")
             print(f"  Female bigrams: {len(female_bigram_freq):,} unique")
+
+        elif self.dataset_type == 'gender-debates':
+            male_only_bigrams = []
+            for text in data['male_only_debates']:
+                filtered = self.filter.filter_text(text)
+                male_only_bigrams.extend(self.filter.extract_bigrams(filtered))
+
+            mixed_bigrams = []
+            for text in data['mixed_debates']:
+                filtered = self.filter.filter_text(text)
+                mixed_bigrams.extend(self.filter.extract_bigrams(filtered))
+
+            self.results['male_only_bigrams'] = Counter(male_only_bigrams).most_common(30)
+            self.results['mixed_bigrams'] = Counter(mixed_bigrams).most_common(30)
+
+            print(f"  Male-only bigrams: {len(Counter(male_only_bigrams)):,} unique")
+            print(f"  Mixed-gender bigrams: {len(Counter(mixed_bigrams)):,} unique")
 
         else:
             bigrams = []
@@ -397,7 +446,23 @@ class UnifiedCorpusAnalyzer:
 
     def _create_visualizations(self):
         """Create all visualizations"""
-        if self.dataset_type == 'gender':
+        if self.dataset_type == 'gender-debates':
+            # Debate-level gender visualizations
+            if 'male_only_unigrams' in self.results and 'mixed_unigrams' in self.results:
+                self.viz.create_unigram_comparison(
+                    self.results['male_only_unigrams'],
+                    self.results['mixed_unigrams'],
+                    output_name="debate_unigram_comparison.png"
+                )
+
+            if 'male_only_bigrams' in self.results and 'mixed_bigrams' in self.results:
+                self.viz.create_bigram_comparison(
+                    self.results['male_only_bigrams'],
+                    self.results['mixed_bigrams'],
+                    output_name="debate_bigram_comparison.png"
+                )
+
+        elif self.dataset_type == 'gender':
             # Gender-specific visualizations
             if 'male_unigrams' in self.results and 'female_unigrams' in self.results:
                 self.viz.create_unigram_comparison(
@@ -519,8 +584,8 @@ Examples:
     )
 
     parser.add_argument('--dataset', type=str, required=True,
-                       choices=['gender', 'overall'],
-                       help='Dataset type: gender-matched or overall corpus')
+                       choices=['gender', 'overall', 'gender-debates'],
+                       help='Dataset type: gender (speech-level), overall, or gender-debates (debate-level)')
 
     parser.add_argument('--years', type=str,
                        help='Year range (e.g., 1920-1930)')
