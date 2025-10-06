@@ -491,8 +491,68 @@ class UnifiedCorpusAnalyzer:
 
         else:
             # Overall corpus visualizations
-            # For now, just indicate these could be added
-            print("  Overall corpus visualizations (to be implemented)")
+            if 'unigrams' in self.results:
+                # Create single-column chart for overall corpus
+                import matplotlib.pyplot as plt
+                from professional_visualizations import COLORS, set_publication_style
+
+                set_publication_style()
+
+                # Top words chart
+                words, counts = zip(*self.results['unigrams'][:30])
+                fig, ax = plt.subplots(figsize=(10, 8))
+                y_pos = range(len(words))
+                ax.barh(y_pos, counts, color=COLORS['accent1'], alpha=0.8)
+                ax.set_yticks(y_pos)
+                ax.set_yticklabels(words, fontsize=10)
+                ax.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+                ax.set_title('Top 30 Words - Overall Corpus', fontsize=12, fontweight='bold')
+                ax.invert_yaxis()
+
+                for i, count in enumerate(counts):
+                    ax.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+                ax.spines['top'].set_visible(False)
+                ax.spines['right'].set_visible(False)
+                ax.grid(axis='x', alpha=0.3)
+
+                plt.tight_layout()
+                output_path = self.output_dir / 'top_words.png'
+                plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+                plt.close()
+                print(f"  Saved top words chart to {output_path}")
+
+            if 'bigrams' in self.results:
+                # Top bigrams chart
+                import matplotlib.pyplot as plt
+                from professional_visualizations import COLORS, set_publication_style
+
+                set_publication_style()
+
+                bigrams, counts = zip(*self.results['bigrams'][:20])
+                labels = [' '.join(b) if isinstance(b, tuple) else b for b in bigrams]
+
+                fig, ax = plt.subplots(figsize=(10, 6))
+                y_pos = range(len(labels))
+                ax.barh(y_pos, counts, color=COLORS['accent2'], alpha=0.8)
+                ax.set_yticks(y_pos)
+                ax.set_yticklabels(labels, fontsize=10)
+                ax.set_xlabel('Frequency', fontsize=11, fontweight='bold')
+                ax.set_title('Top 20 Bigrams - Overall Corpus', fontsize=12, fontweight='bold')
+                ax.invert_yaxis()
+
+                for i, count in enumerate(counts):
+                    ax.text(count, i, f' {count:,}', va='center', fontsize=9)
+
+                ax.spines['top'].set_visible(False)
+                ax.spines['right'].set_visible(False)
+                ax.grid(axis='x', alpha=0.3)
+
+                plt.tight_layout()
+                output_path = self.output_dir / 'top_bigrams.png'
+                plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+                plt.close()
+                print(f"  Saved top bigrams chart to {output_path}")
 
     def _save_results(self):
         """Save analysis results to JSON"""
