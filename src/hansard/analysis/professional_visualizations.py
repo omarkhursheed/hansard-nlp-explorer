@@ -36,7 +36,7 @@ COLORS = {
 
 # Set global style parameters
 def set_publication_style():
-    """Set matplotlib parameters for publication-quality figures"""
+    """Set matplotlib parameters for nice figures"""
     plt.rcParams['figure.dpi'] = 150
     plt.rcParams['savefig.dpi'] = 300
     plt.rcParams['font.family'] = 'sans-serif'
@@ -67,7 +67,7 @@ def set_publication_style():
 
 
 class GenderVisualizationSuite:
-    """Professional visualization suite for gender analysis"""
+    """ visualization suite for gender analysis"""
 
     def __init__(self, output_dir=None):
         # Use centralized path if no output_dir specified
