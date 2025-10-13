@@ -271,4 +271,208 @@ Most suffrage research focuses on:
 
 ---
 
+## Phase 5: Toxicity & Social Bias Analysis (Extended Research)
+
+**Objective:** Connect suffrage opposition arguments to broader patterns of discrimination
+
+### 5.1 Tie to LLM Toxicity Corpora
+
+**Link to existing frameworks:**
+- **Sap et al. Social Bias Frames** - Identify biased framing
+- **Perspective API toxicity** - Measure hostile language
+- **RealToxicityPrompts** - Compare to known toxic patterns
+
+**Analysis:**
+```python
+# For each anti-suffrage argument:
+1. Extract framing (Sap et al. framework)
+   - Offensive/toxic language
+   - Stereotyping
+   - Group-based generalizations
+
+2. Compare to modern toxicity benchmarks
+   - How would these arguments score on Perspective API?
+   - Are they consistent with known bias patterns?
+
+3. Track evolution of language
+   - Did toxic framing decrease over time?
+   - Did arguments become more "polite" but still discriminatory?
+```
+
+**Expected findings:**
+- Anti-suffrage arguments map to social bias frames
+- Similar patterns in other discrimination contexts
+- Language evolution (explicit → implicit bias)
+
+---
+
+### 5.2 Beyond Voting - Continuous Discrimination
+
+**Objective:** Investigate if anti-suffrage themes were repurposed for ongoing discrimination
+
+**Research Question:**
+> "Did the same arguments used against suffrage get recycled to oppose other women's rights?"
+
+**Themes to track across time:**
+
+**1. Traditional Roles Argument**
+```
+Pre-1928: "Women's place is in the home, not politics"
+Post-1928: Look for same framing applied to:
+- Women in workforce debates
+- Equal pay discussions
+- Maternity leave policies
+- Leadership positions
+```
+
+**2. Competence/Capacity Argument**
+```
+Pre-1928: "Women lack political judgment"
+Post-1928: Check if repurposed for:
+- Women in Parliament debates
+- Cabinet positions
+- Prime Minister discussions
+- Professional roles
+```
+
+**3. Protection/Paternalism**
+```
+Pre-1928: "Voting would harm women's delicate nature"
+Post-1928: Watch for in:
+- Employment law debates
+- Night work restrictions
+- Military service discussions
+```
+
+**4. Slippery Slope Arguments**
+```
+Pre-1928: "Suffrage will destroy family/society"
+Post-1928: Look for:
+- Same catastrophizing about other reforms
+- Dire predictions that didn't come true
+- Pattern of exaggerated consequences
+```
+
+---
+
+### Implementation
+
+**Step 1: Build Argument Taxonomy**
+```python
+# Extract all anti-suffrage argument types
+argument_types = {
+    'traditional_roles': [...],
+    'competence': [...],
+    'protection': [...],
+    'slippery_slope': [...],
+    'property_class': [...],
+    'gradual_change': [...]
+}
+```
+
+**Step 2: Track Arguments Across Issues**
+```python
+# Search post-1928 debates on women's issues
+issues = [
+    'equal_pay',
+    'employment_rights',
+    'parliamentary_participation',
+    'cabinet_positions',
+    'maternity_rights',
+    'professional_barriers'
+]
+
+# For each issue, check if same argument frames appear
+```
+
+**Step 3: Measure Argument Recycling**
+```python
+# Calculate overlap:
+recycling_rate = (arguments_reused / total_arguments) * 100
+
+# Track temporal patterns:
+- Do same MPs recycle arguments?
+- Do new MPs adopt old frames?
+- Does framing evolve but core argument persists?
+```
+
+**Step 4: Connect to Bias Frameworks**
+```python
+# Map to Sap et al. Social Bias Frames
+- Identify bias types (intent, implications, target)
+- Compare suffrage bias to other group-based discrimination
+- Show consistency across contexts (gender, race, class)
+```
+
+---
+
+## Novel Contributions
+
+**This research would:**
+
+1. **Longitudinal Political Discourse Analysis**
+   - Track arguments across 100+ years
+   - Show recycling of discriminatory frames
+
+2. **LLM-Assisted Historical Analysis**
+   - Scale argument extraction to 2M speeches
+   - Systematic categorization
+   - Fact-checking historical claims
+
+3. **Bias Framework Application**
+   - Apply modern bias detection to historical data
+   - Show continuity of discriminatory patterns
+   - Connect to contemporary bias research
+
+4. **Practical Implications**
+   - Identify recycled discrimination arguments
+   - Provide evidence for ongoing bias patterns
+   - Inform current policy debates
+
+---
+
+## Datasets We Have (Immediately Usable)
+
+**Suffrage Period:**
+- 1900-1930: 450K+ speeches
+- Milestone analyses: 1918 and 1928 already processed
+- Gender-tagged speakers
+
+**Post-Suffrage Tracking:**
+- 1930-2005: 1.5M+ speeches
+- All with gender tags
+- Can search for women's rights debates
+
+**Perfect for this research!**
+
+---
+
+## Potential Publications
+
+**Paper 1:** "I Told You So: Longitudinal Analysis of Suffrage Opposition in UK Parliament"
+
+**Paper 2:** "Recycling Discrimination: How Anti-Suffrage Arguments Were Repurposed for Ongoing Gender Bias"
+
+**Paper 3:** "LLM-Assisted Historical Discourse Analysis at Scale: 2 Million Speeches on Women's Rights"
+
+---
+
+## Collaborations
+
+**Relevant to:**
+- NLP + Social Science
+- Computational Social Science
+- Political Science
+- Gender Studies
+- Historical Linguistics
+- Bias & Fairness in NLP
+
+**Potential venues:**
+- ACL (NLP + Social Good track)
+- EMNLP (Computational Social Science)
+- Political Science journals
+- Gender Studies journals
+
+---
+
 Last updated: October 12, 2025
