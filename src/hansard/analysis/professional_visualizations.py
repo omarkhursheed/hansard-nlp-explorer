@@ -89,44 +89,44 @@ class GenderVisualizationSuite:
         # Convert to DataFrame and sort
         df = pd.DataFrame(temporal_data).sort_values('year')
 
-        # Create figure with TWO subplots (cleaner than stacked area)
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
+        # Simple single chart - just show female percentage
+        fig, ax = plt.subplots(figsize=(16, 6))
 
-        # Top panel: Absolute counts as line chart (not filled area - cleaner)
-        ax1.plot(df['year'], df['male_speeches'], color=COLORS['male'], linewidth=2.5, label='Male MPs', marker='o', markersize=2, alpha=0.8)
-        ax1.plot(df['year'], df['female_speeches'], color=COLORS['female'], linewidth=2.5, label='Female MPs', marker='o', markersize=2, alpha=0.8)
+        # Calculate female percentage
+        total_speeches = df['male_speeches'] + df['female_speeches']
+        female_pct = (df['female_speeches'] / total_speeches * 100).fillna(0)
 
-        ax1.set_ylabel('Number of Speeches', fontsize=12, fontweight='bold')
-        ax1.set_title('Parliamentary Participation by Gender Over Time', fontsize=14, fontweight='bold', pad=15)
-        ax1.legend(loc='upper left', framealpha=0.9, edgecolor='none')
-        ax1.grid(True, alpha=0.2, linestyle='--')
+        # Simple blue line
+        ax.plot(df['year'], female_pct, color='#1E40AF', linewidth=3, marker='o', markersize=3)
 
-        # Bottom panel: Female percentage
-        female_pct = (df['female_speeches'] / (df['male_speeches'] + df['female_speeches']) * 100).fillna(0)
-        ax2.plot(df['year'], female_pct, color=COLORS['female'], linewidth=3, marker='o', markersize=3)
-        ax2.fill_between(df['year'], 0, female_pct, color=COLORS['female'], alpha=0.2)
-        ax2.set_ylabel('Female Representation (%)', fontsize=12, fontweight='bold')
-        ax2.set_xlabel('Year', fontsize=12, fontweight='bold')
-        ax2.grid(True, alpha=0.2, linestyle='--')
+        # Clean styling
+        ax.set_ylabel('Female MPs (%)', fontsize=14, fontweight='bold')
+        ax.set_xlabel('Year', fontsize=14, fontweight='bold')
+        ax.set_title('Female Representation in UK Parliament (1803-2005)', fontsize=16, fontweight='bold', pad=20)
+        ax.grid(True, alpha=0.25, axis='y')
+        ax.set_ylim(0, max(female_pct) * 1.2 if len(female_pct) > 0 else 25)
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}%'))
 
-        # Add milestone markers (cleaner - just vertical lines + year labels)
-        milestones = [(1918, "1918"), (1928, "1928"), (1979, "1979")]
+        # Add milestones with clean annotations
+        milestones = [
+            (1918, "1918: Women's suffrage"),
+            (1928, "1928: Equal voting"),
+            (1997, "1997: 101 Labour women")
+        ]
 
-        for year, label in milestones:
+        for i, (year, label) in enumerate(milestones):
             if df['year'].min() <= year <= df['year'].max():
-                # Add subtle vertical lines on both panels
-                for ax in [ax1, ax2]:
-                    ax.axvline(year, color='gray', linestyle=':', alpha=0.4, linewidth=1.5)
-                # Small year label at top
-                ax1.text(year, ax1.get_ylim()[1] * 0.98, label,
-                        rotation=0, ha='center', va='top', fontsize=8,
-                        color='gray', alpha=0.7)
+                ax.axvline(year, color='#DC2626', linestyle='--', alpha=0.6, linewidth=2)
+                # Stagger labels to avoid overlap
+                y_offset = [0.85, 0.7, 0.55][i % 3]
+                ax.text(year, ax.get_ylim()[1] * y_offset, label,
+                       fontsize=10, ha='center', color='#DC2626',
+                       bbox=dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.9))
 
-        # Styling for both axes
-        for ax in [ax1, ax2]:
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.set_xlim(df['year'].min(), df['year'].max())
+        # Clean styling
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.set_xlim(df['year'].min(), df['year'].max())
 
         plt.tight_layout()
         output_path = self.output_dir / output_name
