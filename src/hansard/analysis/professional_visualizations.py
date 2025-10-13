@@ -316,13 +316,18 @@ class GenderVisualizationSuite:
             # Get top words for this topic
             if isinstance(male_topic, dict):
                 topic_words = male_topic.get('words', [])[:5]
+                # Try both 'weight' and 'weights' (sum of weights array)
                 male_weight = male_topic.get('weight', 0)
+                if male_weight == 0 and 'weights' in male_topic:
+                    male_weight = sum(male_topic['weights'][:5]) if male_topic['weights'] else 1
             else:
                 topic_words = male_topic[:5] if isinstance(male_topic, list) else []
                 male_weight = 1
 
             if isinstance(female_topic, dict):
                 female_weight = female_topic.get('weight', 0)
+                if female_weight == 0 and 'weights' in female_topic:
+                    female_weight = sum(female_topic['weights'][:5]) if female_topic['weights'] else 1
             else:
                 female_weight = 1
 
