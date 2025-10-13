@@ -492,32 +492,49 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
     Adds corpus analysis and milestone comparison visualizations.
     """
 
-    def create_unigram_comparison(self, male_words, female_words, top_n=20,
+    def create_unigram_comparison(self, male_words, female_words, top_n=30,
                                   output_name="unigram_comparison.png"):
         """
         Create horizontal bar chart comparing top unigrams by gender.
 
+        Automatically filters ultra-common words (would, may, people, one)
+        for cleaner visualization focusing on distinctive vocabulary.
+
         Args:
             male_words: Counter or list of (word, count) tuples for male speeches
             female_words: Counter or list of (word, count) tuples for female speeches
-            top_n: Number of top words to display
+            top_n: Number of top words to display (default: 30 for bigger chart)
             output_name: Output filename
         """
         if not male_words or not female_words:
             print("Insufficient data for unigram comparison")
             return
 
-        # Convert to lists if needed
-        if isinstance(male_words, Counter):
-            male_words = male_words.most_common(top_n)
-        if isinstance(female_words, Counter):
-            female_words = female_words.most_common(top_n)
+        # Ultra-common words to exclude from visualization
+        # These dominate results but aren't distinctive
+        VIZ_EXCLUDE = {'would', 'may', 'people', 'one', 'two', 'like', 'well',
+                       'also', 'much', 'many', 'even', 'quite', 'upon', 'whole'}
 
-        # Create figure with side-by-side panels
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 8))
+        # Convert to lists if needed and filter viz-excluded words
+        if isinstance(male_words, Counter):
+            male_words = [(w, c) for w, c in male_words.most_common(100) if w not in VIZ_EXCLUDE]
+        else:
+            male_words = [(w, c) for w, c in male_words if w not in VIZ_EXCLUDE]
+
+        if isinstance(female_words, Counter):
+            female_words = [(w, c) for w, c in female_words.most_common(100) if w not in VIZ_EXCLUDE]
+        else:
+            female_words = [(w, c) for w, c in female_words if w not in VIZ_EXCLUDE]
+
+        # Take top_n after filtering
+        male_words = male_words[:top_n]
+        female_words = female_words[:top_n]
+
+        # Create figure - bigger for 30 words
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 12))
 
         # Male words
-        m_words, m_counts = zip(*male_words[:top_n])
+        m_words, m_counts = zip(*male_words)
         y_pos = np.arange(len(m_words))
         ax1.barh(y_pos, m_counts, color=COLORS['male'], alpha=0.8)
         ax1.set_yticks(y_pos)
@@ -564,7 +581,7 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
 
         print(f"Saved unigram comparison to {output_path}")
 
-    def create_bigram_comparison(self, male_bigrams, female_bigrams, top_n=20,
+    def create_bigram_comparison(self, male_bigrams, female_bigrams, top_n=30,
                                 output_name="bigram_comparison.png"):
         """
         Create horizontal bar chart comparing top bigrams by gender.
@@ -579,14 +596,29 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
             print("Insufficient data for bigram comparison")
             return
 
-        # Convert to lists if needed
-        if isinstance(male_bigrams, Counter):
-            male_bigrams = male_bigrams.most_common(top_n)
-        if isinstance(female_bigrams, Counter):
-            female_bigrams = female_bigrams.most_common(top_n)
+        # Ultra-common bigrams to exclude from visualization
+        VIZ_EXCLUDE_BIGRAMS = {
+            ('would', 'like'), ('one', 'two'), ('may', 'say'), ('many', 'people'),
+            ('two', 'three'), ('much', 'less'), ('well', 'know')
+        }
 
-        # Create figure
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 8))
+        # Convert to lists if needed and filter
+        if isinstance(male_bigrams, Counter):
+            male_bigrams = [(b, c) for b, c in male_bigrams.most_common(100)
+                           if b not in VIZ_EXCLUDE_BIGRAMS][:top_n]
+        else:
+            male_bigrams = [(b, c) for b, c in male_bigrams
+                           if b not in VIZ_EXCLUDE_BIGRAMS][:top_n]
+
+        if isinstance(female_bigrams, Counter):
+            female_bigrams = [(b, c) for b, c in female_bigrams.most_common(100)
+                             if b not in VIZ_EXCLUDE_BIGRAMS][:top_n]
+        else:
+            female_bigrams = [(b, c) for b, c in female_bigrams
+                             if b not in VIZ_EXCLUDE_BIGRAMS][:top_n]
+
+        # Create figure - bigger for 30 bigrams
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 12))
 
         # Male bigrams
         m_bigrams, m_counts = zip(*male_bigrams[:top_n])

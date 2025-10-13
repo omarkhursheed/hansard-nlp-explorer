@@ -657,8 +657,8 @@ Examples:
                        help='Sample size (default: use all data, no sampling)')
 
     parser.add_argument('--filtering', type=str, default='moderate',
-                       choices=['minimal', 'basic', 'parliamentary', 'moderate', 'aggressive'],
-                       help='Filtering level (default: moderate)')
+                       choices=['minimal', 'basic', 'parliamentary', 'moderate', 'aggressive', 'ultra'],
+                       help='Filtering level (default: moderate, ultra uses collaborator stopwords)')
 
     parser.add_argument('--analysis', type=str, default='all',
                        help='Comma-separated analysis types: unigram,bigram,topic,gender,temporal,all')

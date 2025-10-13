@@ -29,6 +29,7 @@ Usage:
 import re
 from collections import Counter
 from typing import List, Set, Tuple, Optional
+import pandas as pd
 
 # Try to import NLTK for standard stop words
 try:
@@ -266,6 +267,42 @@ class HansardTextFilter:
 
         return moderate | discourse | quantifiers | adjectives | noise
 
+    def _get_ultra_stop_words(self) -> Set[str]:
+        """
+        Ultra filtering using collaborator's categorized stopword list.
+
+        Uses hansard_stopwords.csv where words are marked as:
+        - CONDITIONAL: Should be filtered (371 words)
+        - KEEP: Content words (268 words)
+
+        This is the most aggressive filtering, based on domain expertise.
+        """
+        aggressive = self._get_aggressive_stop_words()
+
+        # Load collaborator's categorized stopwords
+        try:
+            import sys
+            from pathlib import Path
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from utils.path_config import Paths
+
+            stopwords_csv = Paths.DATA_DIR / 'word_lists' / 'hansard_stopwords.csv'
+            df = pd.read_csv(stopwords_csv)
+
+            # Get all CONDITIONAL words (marked for filtering)
+            conditional_words = set(df[df['type'] == 'CONDITIONAL']['token'].str.lower())
+
+            print(f"  Loaded {len(conditional_words)} CONDITIONAL words from collaborator's list")
+
+            return aggressive | conditional_words
+
+        except FileNotFoundError:
+            print("  Warning: hansard_stopwords.csv not found, using aggressive")
+            return aggressive
+        except Exception as e:
+            print(f"  Warning: Could not load stopwords CSV: {e}")
+            return aggressive
+
     def _build_stop_words(self, level: str) -> Set[str]:
         """
         Build stop word set based on filtering level.
@@ -287,9 +324,11 @@ class HansardTextFilter:
             return self._get_moderate_stop_words()
         elif level == 'aggressive':
             return self._get_aggressive_stop_words()
+        elif level == 'ultra':
+            return self._get_ultra_stop_words()
         else:
             raise ValueError(f"Unknown filtering level: {level}. "
-                           f"Use: minimal, basic, parliamentary, moderate, or aggressive")
+                           f"Use: minimal, basic, parliamentary, moderate, aggressive, or ultra")
 
     def filter_text(self, text: str, min_word_length: int = 3) -> str:
         """
