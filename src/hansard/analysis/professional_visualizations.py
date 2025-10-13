@@ -757,9 +757,13 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
 
         # Panel 1: Top words comparison
         ax = axes[0, 0]
-        if pre_data.get('top_unigrams') and post_data.get('top_unigrams'):
-            pre_words = dict(pre_data['top_unigrams'][:10])
-            post_words = dict(post_data['top_unigrams'][:10])
+        # Handle both gender (male_unigrams) and overall (top_unigrams)
+        pre_unigrams = pre_data.get('male_unigrams') or pre_data.get('top_unigrams')
+        post_unigrams = post_data.get('male_unigrams') or post_data.get('top_unigrams')
+
+        if pre_unigrams and post_unigrams:
+            pre_words = dict(pre_unigrams[:10])
+            post_words = dict(post_unigrams[:10])
 
             # Get union of words
             all_words = list(set(pre_words.keys()) | set(post_words.keys()))[:10]
@@ -802,9 +806,13 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
 
         # Panel 3: Content evolution
         ax = axes[1, 0]
-        if pre_data.get('top_unigrams') and post_data.get('top_unigrams'):
-            pre_set = set([w for w, _ in pre_data['top_unigrams'][:20]])
-            post_set = set([w for w, _ in post_data['top_unigrams'][:20]])
+        # Handle both gender and overall datasets
+        pre_unigrams = pre_data.get('male_unigrams') or pre_data.get('top_unigrams')
+        post_unigrams = post_data.get('male_unigrams') or post_data.get('top_unigrams')
+
+        if pre_unigrams and post_unigrams:
+            pre_set = set([w for w, _ in pre_unigrams[:20]])
+            post_set = set([w for w, _ in post_unigrams[:20]])
 
             new_words = post_set - pre_set
             disappeared = pre_set - post_set
@@ -826,16 +834,24 @@ class UnifiedVisualizationSuite(GenderVisualizationSuite):
         ax = axes[1, 1]
         ax.axis('off')
 
+        # Calculate total items (speeches or debates)
+        pre_total = pre_data.get('total_debates',
+                                pre_data.get('total_male_speeches', 0) + pre_data.get('total_female_speeches', 0))
+        post_total = post_data.get('total_debates',
+                                   post_data.get('total_male_speeches', 0) + post_data.get('total_female_speeches', 0))
+
+        item_type = 'Debates' if 'total_debates' in pre_data else 'Speeches'
+
         summary_text = f"""
 Milestone: {milestone_info.get('name', 'Unknown')}
 Year: {milestone_info.get('year', 'N/A')}
 
 Pre-Period:
-  Debates: {pre_data.get('total_debates', 0):,}
+  {item_type}: {pre_total:,}
   Years: {pre_data.get('years', ['N/A'])[0]}-{pre_data.get('years', ['N/A'])[-1] if pre_data.get('years') else 'N/A'}
 
 Post-Period:
-  Debates: {post_data.get('total_debates', 0):,}
+  {item_type}: {post_total:,}
   Years: {post_data.get('years', ['N/A'])[0]}-{post_data.get('years', ['N/A'])[-1] if post_data.get('years') else 'N/A'}
 
 Filtering: {pre_data.get('filtering_mode', 'N/A')}
