@@ -452,6 +452,7 @@ class UnifiedCorpusAnalyzer:
                 self.viz.create_unigram_comparison(
                     self.results['male_only_unigrams'],
                     self.results['mixed_unigrams'],
+                    top_n=30,
                     output_name="debate_unigram_comparison.png"
                 )
 
