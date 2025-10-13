@@ -459,21 +459,24 @@ class UnifiedCorpusAnalyzer:
                 self.viz.create_bigram_comparison(
                     self.results['male_only_bigrams'],
                     self.results['mixed_bigrams'],
+                    top_n=30,
                     output_name="debate_bigram_comparison.png"
                 )
 
         elif self.dataset_type == 'gender':
-            # Gender-specific visualizations
+            # Gender-specific visualizations (show 30 words, auto-filtered)
             if 'male_unigrams' in self.results and 'female_unigrams' in self.results:
                 self.viz.create_unigram_comparison(
                     self.results['male_unigrams'],
-                    self.results['female_unigrams']
+                    self.results['female_unigrams'],
+                    top_n=30  # Show more words for better insights
                 )
 
             if 'male_bigrams' in self.results and 'female_bigrams' in self.results:
                 self.viz.create_bigram_comparison(
                     self.results['male_bigrams'],
-                    self.results['female_bigrams']
+                    self.results['female_bigrams'],
+                    top_n=30  # Show more bigrams
                 )
 
             if 'temporal_data' in self.results:
