@@ -28,13 +28,13 @@ COLORS = {
 - **Never** create figures larger than necessary (typically 10x6 inches for single charts)
 - **Remove** all unnecessary elements (spines, excessive grid lines)
 - **Use** white background, no gray backgrounds
+- **User** default matplotlib colors (blue/orange)
 
 #### 3. **What NOT to Do**
 - **NO** empty subplots - remove or hide unused axes
 - **NO** pie charts unless absolutely necessary (use bar charts)
 - **NO** word clouds unless specifically requested
 - **NO** 3D charts ever
-- **NO** default matplotlib colors (blue/orange)
 - **NO** showing common words like "the", "of", "to" in word frequency charts
 
 #### 4. **What TO Visualize**
@@ -234,4 +234,6 @@ PARLIAMENTARY_STOPS = {
 2. **Ugly colors**: Use the professional color palette defined above
 3. **Overcrowded charts**: Limit to top 10-15 items, use small multiples for more
 4. **Slow performance**: Use sampling for initial tests, then run full analysis
-5. **Partial analysis**: Check for arbitrary limits like `[:10]` in loops
+5. **Partial analysis**: Check for arbitrary limits like `[:10]` in loopsWe track work in Beads instead of Markdown. Run `bd quickstart` to see how.
+
+We track work in Beads instead of Markdown. Run \`bd quickstart\` to see how.

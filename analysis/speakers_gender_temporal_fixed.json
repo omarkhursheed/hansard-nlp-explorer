@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "analysis_type": "speakers_temporal_gender_analysis_with_historical_context",
+    "data_source": "speakers_deduplicated_fixed.parquet",
+    "gender_inference": "title_based_with_historical_constraints",
+    "generated_at": "2025-10-13T14:33:32.955507",
+    "years_analyzed": "1995-1997"
+  },
+  "historical_context": {
+    "women_mp_eligibility_start": 1918,
+    "first_woman_mp": "Nancy Astor (1919)",
+    "note": "Female-titled speakers before 1918 are references in debates, not MPs"
+  },
+  "speaker_categories": {
+    "total_speakers": 1495,
+    "actual_mps": 1251,
+    "debate_references": 0,
+    "female_references_pre_1918": 0,
+    "unknown_category": 244
+  },
+  "key_statistics": {
+    "first_female_mp_year": 1995,
+    "peak_year": 1997,
+    "peak_female_proportion": 9.26,
+    "peak_female_count": 49,
+    "final_year_proportion": 9.26,
+    "final_year_count": 49
+  },
+  "temporal_data": [
+    {
+      "year": 1995,
+      "total_mps": 892,
+      "female_mps": 46,
+      "male_mps": 846,
+      "female_proportion": 5.16,
+      "female_speech_proportion": 5.29,
+      "total_speeches_weighted": 22632,
+      "female_speeches_weighted": 1196
+    },
+    {
+      "year": 1996,
+      "total_mps": 883,
+      "female_mps": 44,
+      "male_mps": 839,
+      "female_proportion": 4.98,
+      "female_speech_proportion": 5.4,
+      "total_speeches_weighted": 22223,
+      "female_speeches_weighted": 1200
+    },
+    {
+      "year": 1997,
+      "total_mps": 529,
+      "female_mps": 49,
+      "male_mps": 480,
+      "female_proportion": 9.26,
+      "female_speech_proportion": 4.47,
+      "total_speeches_weighted": 8554,
+      "female_speeches_weighted": 382
+    }
+  ]
+}

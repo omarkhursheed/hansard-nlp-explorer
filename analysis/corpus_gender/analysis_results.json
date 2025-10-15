@@ -1,0 +1,2298 @@
+{
+  "metadata": {
+    "dataset_type": "gender",
+    "filtering_level": "aggressive",
+    "year_range": [
+      1803,
+      2005
+    ],
+    "sample_size": 50000,
+    "timestamp": "2025-10-13T20:47:13.788071"
+  },
+  "male_unigrams": [
+    [
+      "would",
+      59238
+    ],
+    [
+      "one",
+      32525
+    ],
+    [
+      "people",
+      21209
+    ],
+    [
+      "may",
+      17772
+    ],
+    [
+      "country",
+      17199
+    ],
+    [
+      "upon",
+      14599
+    ],
+    [
+      "two",
+      11753
+    ],
+    [
+      "public",
+      9832
+    ],
+    [
+      "local",
+      9732
+    ],
+    [
+      "act",
+      9372
+    ],
+    [
+      "like",
+      8912
+    ],
+    [
+      "cannot",
+      8443
+    ],
+    [
+      "industry",
+      8323
+    ],
+    [
+      "done",
+      7983
+    ],
+    [
+      "ireland",
+      7896
+    ],
+    [
+      "men",
+      7843
+    ],
+    [
+      "whole",
+      7692
+    ],
+    [
+      "every",
+      7441
+    ],
+    [
+      "money",
+      7382
+    ],
+    [
+      "british",
+      7157
+    ],
+    [
+      "war",
+      7117
+    ],
+    [
+      "without",
+      7035
+    ],
+    [
+      "trade",
+      7026
+    ],
+    [
+      "law",
+      6924
+    ],
+    [
+      "system",
+      6881
+    ],
+    [
+      "service",
+      6863
+    ],
+    [
+      "board",
+      6740
+    ],
+    [
+      "another",
+      6738
+    ],
+    [
+      "power",
+      6545
+    ],
+    [
+      "policy",
+      6375
+    ],
+    [
+      "party",
+      6243
+    ],
+    [
+      "man",
+      6180
+    ],
+    [
+      "parliament",
+      6059
+    ],
+    [
+      "able",
+      5900
+    ],
+    [
+      "three",
+      5869
+    ],
+    [
+      "labour",
+      5742
+    ],
+    [
+      "national",
+      5615
+    ],
+    [
+      "council",
+      5592
+    ],
+    [
+      "support",
+      5581
+    ],
+    [
+      "authorities",
+      5579
+    ],
+    [
+      "tax",
+      5545
+    ],
+    [
+      "john",
+      5449
+    ],
+    [
+      "pay",
+      5373
+    ],
+    [
+      "agree",
+      5298
+    ],
+    [
+      "office",
+      5248
+    ],
+    [
+      "home",
+      5200
+    ],
+    [
+      "authority",
+      5181
+    ],
+    [
+      "united",
+      5090
+    ],
+    [
+      "effect",
+      4934
+    ],
+    [
+      "consider",
+      4899
+    ]
+  ],
+  "female_unigrams": [
+    [
+      "would",
+      1431
+    ],
+    [
+      "people",
+      1069
+    ],
+    [
+      "one",
+      963
+    ],
+    [
+      "may",
+      503
+    ],
+    [
+      "local",
+      475
+    ],
+    [
+      "john",
+      441
+    ],
+    [
+      "country",
+      425
+    ],
+    [
+      "health",
+      370
+    ],
+    [
+      "children",
+      366
+    ],
+    [
+      "industry",
+      329
+    ],
+    [
+      "women",
+      329
+    ],
+    [
+      "like",
+      329
+    ],
+    [
+      "cannot",
+      311
+    ],
+    [
+      "two",
+      310
+    ],
+    [
+      "public",
+      304
+    ],
+    [
+      "service",
+      272
+    ],
+    [
+      "support",
+      267
+    ],
+    [
+      "agree",
+      266
+    ],
+    [
+      "education",
+      264
+    ],
+    [
+      "authorities",
+      244
+    ],
+    [
+      "act",
+      241
+    ],
+    [
+      "money",
+      237
+    ],
+    [
+      "national",
+      237
+    ],
+    [
+      "david",
+      222
+    ],
+    [
+      "done",
+      221
+    ],
+    [
+      "united",
+      219
+    ],
+    [
+      "care",
+      219
+    ],
+    [
+      "community",
+      216
+    ],
+    [
+      "labour",
+      214
+    ],
+    [
+      "areas",
+      214
+    ],
+    [
+      "housing",
+      212
+    ],
+    [
+      "council",
+      211
+    ],
+    [
+      "whole",
+      210
+    ],
+    [
+      "home",
+      209
+    ],
+    [
+      "able",
+      208
+    ],
+    [
+      "aware",
+      207
+    ],
+    [
+      "concerned",
+      205
+    ],
+    [
+      "pay",
+      205
+    ],
+    [
+      "policy",
+      203
+    ],
+    [
+      "system",
+      196
+    ],
+    [
+      "school",
+      195
+    ],
+    [
+      "future",
+      195
+    ],
+    [
+      "trade",
+      194
+    ],
+    [
+      "services",
+      194
+    ],
+    [
+      "british",
+      193
+    ],
+    [
+      "understand",
+      192
+    ],
+    [
+      "child",
+      192
+    ],
+    [
+      "another",
+      190
+    ],
+    [
+      "young",
+      190
+    ],
+    [
+      "consider",
+      188
+    ]
+  ],
+  "male_vocab_size": 57803,
+  "female_vocab_size": 15583,
+  "filtering_stats": {
+    "original_words": 12172810,
+    "filtered_words": 4066311,
+    "reduction_pct": 66.5951329232938
+  },
+  "male_bigrams": [
+    [
+      [
+        "local",
+        "authorities"
+      ],
+      2912
+    ],
+    [
+      [
+        "chancellor",
+        "exchequer"
+      ],
+      2398
+    ],
+    [
+      [
+        "united",
+        "kingdom"
+      ],
+      2143
+    ],
+    [
+      [
+        "united",
+        "states"
+      ],
+      1845
+    ],
+    [
+      [
+        "would",
+        "like"
+      ],
+      1620
+    ],
+    [
+      [
+        "northern",
+        "ireland"
+      ],
+      1516
+    ],
+    [
+      [
+        "local",
+        "authority"
+      ],
+      1437
+    ],
+    [
+      [
+        "board",
+        "trade"
+      ],
+      1424
+    ],
+    [
+      [
+        "labour",
+        "party"
+      ],
+      1287
+    ],
+    [
+      [
+        "one",
+        "two"
+      ],
+      1106
+    ],
+    [
+      [
+        "white",
+        "paper"
+      ],
+      1067
+    ],
+    [
+      [
+        "income",
+        "tax"
+      ],
+      974
+    ],
+    [
+      [
+        "county",
+        "council"
+      ],
+      902
+    ],
+    [
+      [
+        "one",
+        "would"
+      ],
+      883
+    ],
+    [
+      [
+        "beg",
+        "move"
+      ],
+      868
+    ],
+    [
+      [
+        "page",
+        "line"
+      ],
+      830
+    ],
+    [
+      [
+        "president",
+        "board"
+      ],
+      795
+    ],
+    [
+      [
+        "would",
+        "better"
+      ],
+      789
+    ],
+    [
+      [
+        "health",
+        "service"
+      ],
+      756
+    ],
+    [
+      [
+        "two",
+        "three"
+      ],
+      752
+    ],
+    [
+      [
+        "post",
+        "office"
+      ],
+      731
+    ],
+    [
+      [
+        "people",
+        "country"
+      ],
+      730
+    ],
+    [
+      [
+        "brought",
+        "forward"
+      ],
+      694
+    ],
+    [
+      [
+        "gentlemen",
+        "opposite"
+      ],
+      691
+    ],
+    [
+      [
+        "conservative",
+        "party"
+      ],
+      668
+    ],
+    [
+      [
+        "united",
+        "nations"
+      ],
+      667
+    ],
+    [
+      [
+        "bear",
+        "mind"
+      ],
+      590
+    ],
+    [
+      [
+        "trade",
+        "union"
+      ],
+      584
+    ],
+    [
+      [
+        "draw",
+        "attention"
+      ],
+      576
+    ],
+    [
+      [
+        "front",
+        "bench"
+      ],
+      572
+    ]
+  ],
+  "female_bigrams": [
+    [
+      [
+        "local",
+        "authorities"
+      ],
+      153
+    ],
+    [
+      [
+        "united",
+        "kingdom"
+      ],
+      135
+    ],
+    [
+      [
+        "health",
+        "service"
+      ],
+      88
+    ],
+    [
+      [
+        "young",
+        "people"
+      ],
+      82
+    ],
+    [
+      [
+        "northern",
+        "ireland"
+      ],
+      75
+    ],
+    [
+      [
+        "local",
+        "authority"
+      ],
+      73
+    ],
+    [
+      [
+        "would",
+        "like"
+      ],
+      69
+    ],
+    [
+      [
+        "united",
+        "states"
+      ],
+      56
+    ],
+    [
+      [
+        "refer",
+        "reply"
+      ],
+      53
+    ],
+    [
+      [
+        "white",
+        "paper"
+      ],
+      52
+    ],
+    [
+      [
+        "private",
+        "sector"
+      ],
+      52
+    ],
+    [
+      [
+        "health",
+        "care"
+      ],
+      47
+    ],
+    [
+      [
+        "reply",
+        "moments"
+      ],
+      46
+    ],
+    [
+      [
+        "moments",
+        "ago"
+      ],
+      46
+    ],
+    [
+      [
+        "national",
+        "insurance"
+      ],
+      44
+    ],
+    [
+      [
+        "labour",
+        "party"
+      ],
+      35
+    ],
+    [
+      [
+        "national",
+        "health"
+      ],
+      34
+    ],
+    [
+      [
+        "european",
+        "community"
+      ],
+      33
+    ],
+    [
+      [
+        "prime",
+        "list"
+      ],
+      33
+    ],
+    [
+      [
+        "chancellor",
+        "exchequer"
+      ],
+      32
+    ],
+    [
+      [
+        "list",
+        "official"
+      ],
+      32
+    ],
+    [
+      [
+        "official",
+        "engagements"
+      ],
+      32
+    ],
+    [
+      [
+        "beg",
+        "move"
+      ],
+      31
+    ],
+    [
+      [
+        "mental",
+        "health"
+      ],
+      30
+    ],
+    [
+      [
+        "board",
+        "trade"
+      ],
+      29
+    ],
+    [
+      [
+        "one",
+        "two"
+      ],
+      29
+    ],
+    [
+      [
+        "local",
+        "education"
+      ],
+      29
+    ],
+    [
+      [
+        "education",
+        "authorities"
+      ],
+      27
+    ],
+    [
+      [
+        "stoke",
+        "trent"
+      ],
+      26
+    ],
+    [
+      [
+        "people",
+        "would"
+      ],
+      25
+    ]
+  ],
+  "male_topics": [
+    {
+      "topic_id": 0,
+      "words": [
+        "would",
+        "upon",
+        "country",
+        "one",
+        "measure",
+        "motion",
+        "ireland",
+        "people",
+        "law",
+        "petition"
+      ],
+      "weights": [
+        64.7086748665994,
+        28.069506200912734,
+        24.456389140939695,
+        21.537317639889647,
+        19.277869493532126,
+        17.872198921896178,
+        16.172996127953777,
+        16.04547788342169,
+        14.418848954765313,
+        14.330204989878304
+      ]
+    },
+    {
+      "topic_id": 1,
+      "words": [
+        "army",
+        "upon",
+        "admitted",
+        "property",
+        "would",
+        "appointed",
+        "india",
+        "petitions",
+        "individuals",
+        "company"
+      ],
+      "weights": [
+        0.12873551934781619,
+        0.12869893106784416,
+        0.12830930552833483,
+        0.12821353970700872,
+        0.1281971110897195,
+        0.12815160450736732,
+        0.12804398909861653,
+        0.12796472557741057,
+        0.12795342618892352,
+        0.12786340443497252
+      ]
+    },
+    {
+      "topic_id": 2,
+      "words": [
+        "oath",
+        "clergy",
+        "church",
+        "catholic",
+        "tithes",
+        "association",
+        "establishment",
+        "catholics",
+        "attempt",
+        "would"
+      ],
+      "weights": [
+        4.5481891856054375,
+        2.5083724807804715,
+        2.356529678988965,
+        2.2907843314084033,
+        1.6713225648364114,
+        1.634512385146264,
+        1.3034834523175223,
+        1.1291005778144685,
+        0.8437484102361343,
+        0.754464618264484
+      ]
+    },
+    {
+      "topic_id": 3,
+      "words": [
+        "would",
+        "gent",
+        "declared",
+        "motion",
+        "conduct",
+        "inquiry",
+        "company",
+        "bank",
+        "every",
+        "reason"
+      ],
+      "weights": [
+        0.13117308461421742,
+        0.12887220301786106,
+        0.12838764782278203,
+        0.1281404653655771,
+        0.12805550279914027,
+        0.1279313833402599,
+        0.12786624869551996,
+        0.1278167533011829,
+        0.12779022367770582,
+        0.1277684613071024
+      ]
+    },
+    {
+      "topic_id": 4,
+      "words": [
+        "complained",
+        "military",
+        "establishment",
+        "officers",
+        "system",
+        "would",
+        "bank",
+        "capital",
+        "gent",
+        "one"
+      ],
+      "weights": [
+        0.8070745222156845,
+        0.49675569659843694,
+        0.48031634400527046,
+        0.46791171841669477,
+        0.3935573969379143,
+        0.1316801838157471,
+        0.1301777052300674,
+        0.12884463331929225,
+        0.1286295087667289,
+        0.12843249042305754
+      ]
+    },
+    {
+      "topic_id": 5,
+      "words": [
+        "party",
+        "would",
+        "extremely",
+        "upon",
+        "charge",
+        "considered",
+        "stated",
+        "common",
+        "circumstances",
+        "petition"
+      ],
+      "weights": [
+        0.13053596994036953,
+        0.12949500470745534,
+        0.12939349550441745,
+        0.1286542577655951,
+        0.12863296999930035,
+        0.12862912653696615,
+        0.1278652630595703,
+        0.12784529631493113,
+        0.12782113321596408,
+        0.1278171337811076
+      ]
+    },
+    {
+      "topic_id": 6,
+      "words": [
+        "would",
+        "taxes",
+        "agreed",
+        "country",
+        "relief",
+        "proposed",
+        "object",
+        "fund",
+        "resolution",
+        "measure"
+      ],
+      "weights": [
+        0.13433899142052663,
+        0.13012358983677777,
+        0.1301132672505174,
+        0.12949461973234194,
+        0.12944864272506224,
+        0.12926879088865154,
+        0.12923627369022614,
+        0.12909850882414584,
+        0.12907065010782826,
+        0.12903194707570204
+      ]
+    },
+    {
+      "topic_id": 7,
+      "words": [
+        "would",
+        "motion",
+        "punishment",
+        "character",
+        "open",
+        "upon",
+        "allowed",
+        "country",
+        "proper",
+        "treaty"
+      ],
+      "weights": [
+        0.13188781299782465,
+        0.13002408436285032,
+        0.12975069563979091,
+        0.1297327233484522,
+        0.12918485211393976,
+        0.12908596124671814,
+        0.1290000911281962,
+        0.1288283992381251,
+        0.1286737816355523,
+        0.12866575101602432
+      ]
+    }
+  ],
+  "female_topics": [
+    {
+      "topic_id": 0,
+      "words": [
+        "aware",
+        "ireland",
+        "united",
+        "northern ireland",
+        "hospitals",
+        "northern",
+        "reply",
+        "prevent",
+        "united states",
+        "meat"
+      ],
+      "weights": [
+        3.7436874995749654,
+        2.1793611979204517,
+        2.02236697557421,
+        2.0107828585642054,
+        1.8702440083006957,
+        1.6970757892820083,
+        1.6641870019857146,
+        1.3841987560822437,
+        1.337810001643515,
+        1.2612251217164934
+      ]
+    },
+    {
+      "topic_id": 1,
+      "words": [
+        "increasing",
+        "trade",
+        "class",
+        "away",
+        "community",
+        "opportunity",
+        "opposition",
+        "meat",
+        "agree",
+        "american"
+      ],
+      "weights": [
+        0.9443816006426038,
+        0.9021546124390795,
+        0.8691296134313725,
+        0.7715177252903719,
+        0.7560442675240542,
+        0.7303865504228204,
+        0.7183933279714048,
+        0.6187474360561391,
+        0.5866782721342895,
+        0.578481636364224
+      ]
+    },
+    {
+      "topic_id": 2,
+      "words": [
+        "john",
+        "george",
+        "james",
+        "thomas",
+        "william",
+        "col",
+        "major",
+        "smith",
+        "williams",
+        "charles"
+      ],
+      "weights": [
+        4.734142597803402,
+        2.0595327711343896,
+        1.785471639210072,
+        1.7382505966436792,
+        1.6913637293187138,
+        1.6824883143570837,
+        1.4327433094422461,
+        1.4256829290514998,
+        1.3144735464090889,
+        1.27996799341119
+      ]
+    },
+    {
+      "topic_id": 3,
+      "words": [
+        "would",
+        "one",
+        "people",
+        "local",
+        "may",
+        "authorities",
+        "country",
+        "aware",
+        "education",
+        "like"
+      ],
+      "weights": [
+        26.892046135758438,
+        19.63344991099945,
+        19.037964712395475,
+        15.779966271897136,
+        13.554269746065676,
+        12.330228980319148,
+        12.071450902906516,
+        11.609459959323875,
+        11.56148190128646,
+        10.196641833631755
+      ]
+    },
+    {
+      "topic_id": 4,
+      "words": [
+        "action",
+        "west",
+        "welsh",
+        "referred",
+        "aware",
+        "would",
+        "scotland",
+        "may",
+        "england",
+        "issue"
+      ],
+      "weights": [
+        2.4328949024720345,
+        2.167214315659035,
+        2.1660187040236325,
+        2.1213709895814734,
+        1.9433112389620253,
+        1.842393197374544,
+        1.7122088292934428,
+        1.5540759862244542,
+        1.3426941374361017,
+        1.3252785396033453
+      ]
+    },
+    {
+      "topic_id": 5,
+      "words": [
+        "chancellor",
+        "east",
+        "section",
+        "may",
+        "court",
+        "line",
+        "three",
+        "figures",
+        "land",
+        "beg"
+      ],
+      "weights": [
+        1.9246724931134744,
+        1.671715301409832,
+        1.604293062163191,
+        1.240330828042392,
+        1.1456685496283638,
+        1.0039206611153397,
+        0.9779227054152468,
+        0.9725072704327218,
+        0.9330491114707569,
+        0.9319799455224891
+      ]
+    },
+    {
+      "topic_id": 6,
+      "words": [
+        "war",
+        "aware",
+        "scottish",
+        "commonwealth",
+        "defence",
+        "considered",
+        "charge",
+        "recognise",
+        "president",
+        "united"
+      ],
+      "weights": [
+        1.1559470994666872,
+        0.9638358294873027,
+        0.9602118534903991,
+        0.9273314607734108,
+        0.5615304212163837,
+        0.549433576185385,
+        0.5372662433298202,
+        0.5271344425307266,
+        0.5180703111191921,
+        0.5134735488990135
+      ]
+    },
+    {
+      "topic_id": 7,
+      "words": [
+        "accepted",
+        "united",
+        "suggest",
+        "able",
+        "smith",
+        "rate",
+        "show",
+        "public",
+        "satisfactory",
+        "agree"
+      ],
+      "weights": [
+        1.0435006194017074,
+        0.5794945826113886,
+        0.5234214364771841,
+        0.4681789675189623,
+        0.134271028797953,
+        0.1313230858509575,
+        0.13126196161825932,
+        0.13102577994200787,
+        0.13076148001669666,
+        0.13049735218397515
+      ]
+    }
+  ],
+  "gender_analysis": {
+    "male_using_male_words": 208522,
+    "male_using_female_words": 16062,
+    "female_using_male_words": 4744,
+    "female_using_female_words": 1629,
+    "male_gendered_ratio": 0.9284811028390269,
+    "female_gendered_ratio": 0.25560960301270985
+  },
+  "temporal_data": [
+    {
+      "year": 1803,
+      "male_speeches": 0,
+      "female_speeches": 0
+    },
+    {
+      "year": 1804,
+      "male_speeches": 0,
+      "female_speeches": 0
+    },
+    {
+      "year": 1805,
+      "male_speeches": 1,
+      "female_speeches": 0
+    },
+    {
+      "year": 1806,
+      "male_speeches": 17,
+      "female_speeches": 0
+    },
+    {
+      "year": 1807,
+      "male_speeches": 2,
+      "female_speeches": 0
+    },
+    {
+      "year": 1808,
+      "male_speeches": 23,
+      "female_speeches": 0
+    },
+    {
+      "year": 1809,
+      "male_speeches": 27,
+      "female_speeches": 0
+    },
+    {
+      "year": 1810,
+      "male_speeches": 5,
+      "female_speeches": 0
+    },
+    {
+      "year": 1811,
+      "male_speeches": 19,
+      "female_speeches": 0
+    },
+    {
+      "year": 1812,
+      "male_speeches": 1,
+      "female_speeches": 0
+    },
+    {
+      "year": 1813,
+      "male_speeches": 7,
+      "female_speeches": 0
+    },
+    {
+      "year": 1814,
+      "male_speeches": 13,
+      "female_speeches": 0
+    },
+    {
+      "year": 1815,
+      "male_speeches": 30,
+      "female_speeches": 0
+    },
+    {
+      "year": 1817,
+      "male_speeches": 25,
+      "female_speeches": 0
+    },
+    {
+      "year": 1818,
+      "male_speeches": 0,
+      "female_speeches": 0
+    },
+    {
+      "year": 1819,
+      "male_speeches": 44,
+      "female_speeches": 0
+    },
+    {
+      "year": 1820,
+      "male_speeches": 1,
+      "female_speeches": 0
+    },
+    {
+      "year": 1821,
+      "male_speeches": 32,
+      "female_speeches": 0
+    },
+    {
+      "year": 1822,
+      "male_speeches": 26,
+      "female_speeches": 0
+    },
+    {
+      "year": 1823,
+      "male_speeches": 29,
+      "female_speeches": 0
+    },
+    {
+      "year": 1824,
+      "male_speeches": 30,
+      "female_speeches": 0
+    },
+    {
+      "year": 1825,
+      "male_speeches": 30,
+      "female_speeches": 0
+    },
+    {
+      "year": 1826,
+      "male_speeches": 0,
+      "female_speeches": 0
+    },
+    {
+      "year": 1827,
+      "male_speeches": 21,
+      "female_speeches": 0
+    },
+    {
+      "year": 1828,
+      "male_speeches": 26,
+      "female_speeches": 0
+    },
+    {
+      "year": 1830,
+      "male_speeches": 2,
+      "female_speeches": 0
+    },
+    {
+      "year": 1831,
+      "male_speeches": 11,
+      "female_speeches": 0
+    },
+    {
+      "year": 1832,
+      "male_speeches": 36,
+      "female_speeches": 0
+    },
+    {
+      "year": 1833,
+      "male_speeches": 106,
+      "female_speeches": 0
+    },
+    {
+      "year": 1834,
+      "male_speeches": 84,
+      "female_speeches": 0
+    },
+    {
+      "year": 1835,
+      "male_speeches": 101,
+      "female_speeches": 0
+    },
+    {
+      "year": 1836,
+      "male_speeches": 90,
+      "female_speeches": 0
+    },
+    {
+      "year": 1837,
+      "male_speeches": 10,
+      "female_speeches": 0
+    },
+    {
+      "year": 1838,
+      "male_speeches": 51,
+      "female_speeches": 0
+    },
+    {
+      "year": 1839,
+      "male_speeches": 68,
+      "female_speeches": 0
+    },
+    {
+      "year": 1840,
+      "male_speeches": 81,
+      "female_speeches": 0
+    },
+    {
+      "year": 1841,
+      "male_speeches": 14,
+      "female_speeches": 0
+    },
+    {
+      "year": 1842,
+      "male_speeches": 104,
+      "female_speeches": 0
+    },
+    {
+      "year": 1843,
+      "male_speeches": 71,
+      "female_speeches": 0
+    },
+    {
+      "year": 1844,
+      "male_speeches": 50,
+      "female_speeches": 0
+    },
+    {
+      "year": 1845,
+      "male_speeches": 87,
+      "female_speeches": 0
+    },
+    {
+      "year": 1846,
+      "male_speeches": 71,
+      "female_speeches": 0
+    },
+    {
+      "year": 1847,
+      "male_speeches": 20,
+      "female_speeches": 0
+    },
+    {
+      "year": 1848,
+      "male_speeches": 51,
+      "female_speeches": 0
+    },
+    {
+      "year": 1849,
+      "male_speeches": 87,
+      "female_speeches": 0
+    },
+    {
+      "year": 1850,
+      "male_speeches": 113,
+      "female_speeches": 0
+    },
+    {
+      "year": 1851,
+      "male_speeches": 109,
+      "female_speeches": 0
+    },
+    {
+      "year": 1852,
+      "male_speeches": 16,
+      "female_speeches": 0
+    },
+    {
+      "year": 1853,
+      "male_speeches": 119,
+      "female_speeches": 0
+    },
+    {
+      "year": 1854,
+      "male_speeches": 131,
+      "female_speeches": 0
+    },
+    {
+      "year": 1855,
+      "male_speeches": 112,
+      "female_speeches": 0
+    },
+    {
+      "year": 1856,
+      "male_speeches": 117,
+      "female_speeches": 0
+    },
+    {
+      "year": 1857,
+      "male_speeches": 25,
+      "female_speeches": 0
+    },
+    {
+      "year": 1858,
+      "male_speeches": 113,
+      "female_speeches": 0
+    },
+    {
+      "year": 1859,
+      "male_speeches": 9,
+      "female_speeches": 0
+    },
+    {
+      "year": 1860,
+      "male_speeches": 161,
+      "female_speeches": 0
+    },
+    {
+      "year": 1861,
+      "male_speeches": 116,
+      "female_speeches": 0
+    },
+    {
+      "year": 1862,
+      "male_speeches": 102,
+      "female_speeches": 0
+    },
+    {
+      "year": 1863,
+      "male_speeches": 35,
+      "female_speeches": 0
+    },
+    {
+      "year": 1864,
+      "male_speeches": 33,
+      "female_speeches": 0
+    },
+    {
+      "year": 1865,
+      "male_speeches": 5,
+      "female_speeches": 0
+    },
+    {
+      "year": 1866,
+      "male_speeches": 26,
+      "female_speeches": 0
+    },
+    {
+      "year": 1867,
+      "male_speeches": 51,
+      "female_speeches": 0
+    },
+    {
+      "year": 1868,
+      "male_speeches": 5,
+      "female_speeches": 0
+    },
+    {
+      "year": 1869,
+      "male_speeches": 42,
+      "female_speeches": 0
+    },
+    {
+      "year": 1870,
+      "male_speeches": 45,
+      "female_speeches": 0
+    },
+    {
+      "year": 1871,
+      "male_speeches": 40,
+      "female_speeches": 0
+    },
+    {
+      "year": 1872,
+      "male_speeches": 49,
+      "female_speeches": 0
+    },
+    {
+      "year": 1873,
+      "male_speeches": 26,
+      "female_speeches": 0
+    },
+    {
+      "year": 1874,
+      "male_speeches": 4,
+      "female_speeches": 0
+    },
+    {
+      "year": 1875,
+      "male_speeches": 157,
+      "female_speeches": 0
+    },
+    {
+      "year": 1876,
+      "male_speeches": 146,
+      "female_speeches": 0
+    },
+    {
+      "year": 1877,
+      "male_speeches": 165,
+      "female_speeches": 0
+    },
+    {
+      "year": 1878,
+      "male_speeches": 222,
+      "female_speeches": 0
+    },
+    {
+      "year": 1879,
+      "male_speeches": 263,
+      "female_speeches": 0
+    },
+    {
+      "year": 1880,
+      "male_speeches": 24,
+      "female_speeches": 0
+    },
+    {
+      "year": 1881,
+      "male_speeches": 397,
+      "female_speeches": 0
+    },
+    {
+      "year": 1882,
+      "male_speeches": 495,
+      "female_speeches": 0
+    },
+    {
+      "year": 1883,
+      "male_speeches": 393,
+      "female_speeches": 0
+    },
+    {
+      "year": 1884,
+      "male_speeches": 383,
+      "female_speeches": 0
+    },
+    {
+      "year": 1885,
+      "male_speeches": 78,
+      "female_speeches": 0
+    },
+    {
+      "year": 1886,
+      "male_speeches": 29,
+      "female_speeches": 0
+    },
+    {
+      "year": 1887,
+      "male_speeches": 474,
+      "female_speeches": 0
+    },
+    {
+      "year": 1888,
+      "male_speeches": 494,
+      "female_speeches": 0
+    },
+    {
+      "year": 1889,
+      "male_speeches": 308,
+      "female_speeches": 0
+    },
+    {
+      "year": 1890,
+      "male_speeches": 321,
+      "female_speeches": 0
+    },
+    {
+      "year": 1891,
+      "male_speeches": 240,
+      "female_speeches": 0
+    },
+    {
+      "year": 1892,
+      "male_speeches": 20,
+      "female_speeches": 0
+    },
+    {
+      "year": 1893,
+      "male_speeches": 193,
+      "female_speeches": 0
+    },
+    {
+      "year": 1894,
+      "male_speeches": 97,
+      "female_speeches": 0
+    },
+    {
+      "year": 1895,
+      "male_speeches": 12,
+      "female_speeches": 0
+    },
+    {
+      "year": 1896,
+      "male_speeches": 72,
+      "female_speeches": 0
+    },
+    {
+      "year": 1897,
+      "male_speeches": 80,
+      "female_speeches": 0
+    },
+    {
+      "year": 1898,
+      "male_speeches": 88,
+      "female_speeches": 0
+    },
+    {
+      "year": 1899,
+      "male_speeches": 63,
+      "female_speeches": 0
+    },
+    {
+      "year": 1900,
+      "male_speeches": 8,
+      "female_speeches": 0
+    },
+    {
+      "year": 1901,
+      "male_speeches": 58,
+      "female_speeches": 0
+    },
+    {
+      "year": 1902,
+      "male_speeches": 114,
+      "female_speeches": 0
+    },
+    {
+      "year": 1903,
+      "male_speeches": 74,
+      "female_speeches": 0
+    },
+    {
+      "year": 1904,
+      "male_speeches": 115,
+      "female_speeches": 0
+    },
+    {
+      "year": 1905,
+      "male_speeches": 142,
+      "female_speeches": 0
+    },
+    {
+      "year": 1906,
+      "male_speeches": 37,
+      "female_speeches": 0
+    },
+    {
+      "year": 1907,
+      "male_speeches": 108,
+      "female_speeches": 0
+    },
+    {
+      "year": 1908,
+      "male_speeches": 204,
+      "female_speeches": 0
+    },
+    {
+      "year": 1909,
+      "male_speeches": 112,
+      "female_speeches": 0
+    },
+    {
+      "year": 1910,
+      "male_speeches": 1,
+      "female_speeches": 0
+    },
+    {
+      "year": 1911,
+      "male_speeches": 739,
+      "female_speeches": 0
+    },
+    {
+      "year": 1912,
+      "male_speeches": 535,
+      "female_speeches": 0
+    },
+    {
+      "year": 1913,
+      "male_speeches": 231,
+      "female_speeches": 0
+    },
+    {
+      "year": 1914,
+      "male_speeches": 64,
+      "female_speeches": 0
+    },
+    {
+      "year": 1915,
+      "male_speeches": 348,
+      "female_speeches": 0
+    },
+    {
+      "year": 1916,
+      "male_speeches": 505,
+      "female_speeches": 0
+    },
+    {
+      "year": 1917,
+      "male_speeches": 390,
+      "female_speeches": 0
+    },
+    {
+      "year": 1918,
+      "male_speeches": 162,
+      "female_speeches": 0
+    },
+    {
+      "year": 1919,
+      "male_speeches": 462,
+      "female_speeches": 0
+    },
+    {
+      "year": 1920,
+      "male_speeches": 127,
+      "female_speeches": 0
+    },
+    {
+      "year": 1921,
+      "male_speeches": 6,
+      "female_speeches": 0
+    },
+    {
+      "year": 1922,
+      "male_speeches": 5,
+      "female_speeches": 0
+    },
+    {
+      "year": 1923,
+      "male_speeches": 37,
+      "female_speeches": 0
+    },
+    {
+      "year": 1924,
+      "male_speeches": 70,
+      "female_speeches": 3
+    },
+    {
+      "year": 1925,
+      "male_speeches": 286,
+      "female_speeches": 3
+    },
+    {
+      "year": 1926,
+      "male_speeches": 379,
+      "female_speeches": 5
+    },
+    {
+      "year": 1927,
+      "male_speeches": 492,
+      "female_speeches": 5
+    },
+    {
+      "year": 1928,
+      "male_speeches": 413,
+      "female_speeches": 6
+    },
+    {
+      "year": 1929,
+      "male_speeches": 53,
+      "female_speeches": 1
+    },
+    {
+      "year": 1930,
+      "male_speeches": 453,
+      "female_speeches": 24
+    },
+    {
+      "year": 1931,
+      "male_speeches": 192,
+      "female_speeches": 17
+    },
+    {
+      "year": 1932,
+      "male_speeches": 470,
+      "female_speeches": 2
+    },
+    {
+      "year": 1933,
+      "male_speeches": 443,
+      "female_speeches": 3
+    },
+    {
+      "year": 1934,
+      "male_speeches": 520,
+      "female_speeches": 3
+    },
+    {
+      "year": 1935,
+      "male_speeches": 64,
+      "female_speeches": 0
+    },
+    {
+      "year": 1936,
+      "male_speeches": 481,
+      "female_speeches": 7
+    },
+    {
+      "year": 1937,
+      "male_speeches": 575,
+      "female_speeches": 2
+    },
+    {
+      "year": 1938,
+      "male_speeches": 520,
+      "female_speeches": 12
+    },
+    {
+      "year": 1939,
+      "male_speeches": 659,
+      "female_speeches": 11
+    },
+    {
+      "year": 1940,
+      "male_speeches": 398,
+      "female_speeches": 9
+    },
+    {
+      "year": 1941,
+      "male_speeches": 351,
+      "female_speeches": 10
+    },
+    {
+      "year": 1942,
+      "male_speeches": 355,
+      "female_speeches": 6
+    },
+    {
+      "year": 1943,
+      "male_speeches": 414,
+      "female_speeches": 11
+    },
+    {
+      "year": 1944,
+      "male_speeches": 613,
+      "female_speeches": 14
+    },
+    {
+      "year": 1945,
+      "male_speeches": 121,
+      "female_speeches": 4
+    },
+    {
+      "year": 1946,
+      "male_speeches": 540,
+      "female_speeches": 26
+    },
+    {
+      "year": 1947,
+      "male_speeches": 784,
+      "female_speeches": 16
+    },
+    {
+      "year": 1948,
+      "male_speeches": 627,
+      "female_speeches": 24
+    },
+    {
+      "year": 1949,
+      "male_speeches": 747,
+      "female_speeches": 23
+    },
+    {
+      "year": 1950,
+      "male_speeches": 77,
+      "female_speeches": 3
+    },
+    {
+      "year": 1951,
+      "male_speeches": 21,
+      "female_speeches": 5
+    },
+    {
+      "year": 1952,
+      "male_speeches": 778,
+      "female_speeches": 30
+    },
+    {
+      "year": 1953,
+      "male_speeches": 631,
+      "female_speeches": 25
+    },
+    {
+      "year": 1954,
+      "male_speeches": 617,
+      "female_speeches": 27
+    },
+    {
+      "year": 1955,
+      "male_speeches": 34,
+      "female_speeches": 0
+    },
+    {
+      "year": 1956,
+      "male_speeches": 653,
+      "female_speeches": 24
+    },
+    {
+      "year": 1957,
+      "male_speeches": 563,
+      "female_speeches": 15
+    },
+    {
+      "year": 1958,
+      "male_speeches": 571,
+      "female_speeches": 14
+    },
+    {
+      "year": 1959,
+      "male_speeches": 48,
+      "female_speeches": 4
+    },
+    {
+      "year": 1960,
+      "male_speeches": 578,
+      "female_speeches": 23
+    },
+    {
+      "year": 1961,
+      "male_speeches": 673,
+      "female_speeches": 22
+    },
+    {
+      "year": 1962,
+      "male_speeches": 590,
+      "female_speeches": 21
+    },
+    {
+      "year": 1963,
+      "male_speeches": 568,
+      "female_speeches": 12
+    },
+    {
+      "year": 1964,
+      "male_speeches": 81,
+      "female_speeches": 0
+    },
+    {
+      "year": 1965,
+      "male_speeches": 680,
+      "female_speeches": 30
+    },
+    {
+      "year": 1966,
+      "male_speeches": 85,
+      "female_speeches": 2
+    },
+    {
+      "year": 1967,
+      "male_speeches": 756,
+      "female_speeches": 28
+    },
+    {
+      "year": 1968,
+      "male_speeches": 782,
+      "female_speeches": 23
+    },
+    {
+      "year": 1969,
+      "male_speeches": 733,
+      "female_speeches": 30
+    },
+    {
+      "year": 1970,
+      "male_speeches": 92,
+      "female_speeches": 1
+    },
+    {
+      "year": 1971,
+      "male_speeches": 760,
+      "female_speeches": 34
+    },
+    {
+      "year": 1972,
+      "male_speeches": 756,
+      "female_speeches": 34
+    },
+    {
+      "year": 1973,
+      "male_speeches": 297,
+      "female_speeches": 13
+    },
+    {
+      "year": 1974,
+      "male_speeches": 11,
+      "female_speeches": 4
+    },
+    {
+      "year": 1975,
+      "male_speeches": 16,
+      "female_speeches": 2
+    },
+    {
+      "year": 1976,
+      "male_speeches": 2,
+      "female_speeches": 1
+    },
+    {
+      "year": 1977,
+      "male_speeches": 2,
+      "female_speeches": 2
+    },
+    {
+      "year": 1978,
+      "male_speeches": 8,
+      "female_speeches": 2
+    },
+    {
+      "year": 1979,
+      "male_speeches": 71,
+      "female_speeches": 16
+    },
+    {
+      "year": 1980,
+      "male_speeches": 715,
+      "female_speeches": 44
+    },
+    {
+      "year": 1981,
+      "male_speeches": 561,
+      "female_speeches": 31
+    },
+    {
+      "year": 1982,
+      "male_speeches": 688,
+      "female_speeches": 28
+    },
+    {
+      "year": 1983,
+      "male_speeches": 73,
+      "female_speeches": 26
+    },
+    {
+      "year": 1984,
+      "male_speeches": 700,
+      "female_speeches": 44
+    },
+    {
+      "year": 1985,
+      "male_speeches": 707,
+      "female_speeches": 62
+    },
+    {
+      "year": 1986,
+      "male_speeches": 716,
+      "female_speeches": 52
+    },
+    {
+      "year": 1987,
+      "male_speeches": 65,
+      "female_speeches": 24
+    },
+    {
+      "year": 1988,
+      "male_speeches": 705,
+      "female_speeches": 58
+    },
+    {
+      "year": 1989,
+      "male_speeches": 694,
+      "female_speeches": 57
+    },
+    {
+      "year": 1990,
+      "male_speeches": 696,
+      "female_speeches": 67
+    },
+    {
+      "year": 1991,
+      "male_speeches": 715,
+      "female_speeches": 37
+    },
+    {
+      "year": 1992,
+      "male_speeches": 79,
+      "female_speeches": 7
+    },
+    {
+      "year": 1993,
+      "male_speeches": 660,
+      "female_speeches": 41
+    },
+    {
+      "year": 1994,
+      "male_speeches": 634,
+      "female_speeches": 41
+    },
+    {
+      "year": 1995,
+      "male_speeches": 586,
+      "female_speeches": 40
+    },
+    {
+      "year": 1996,
+      "male_speeches": 612,
+      "female_speeches": 44
+    },
+    {
+      "year": 1997,
+      "male_speeches": 140,
+      "female_speeches": 8
+    },
+    {
+      "year": 1998,
+      "male_speeches": 581,
+      "female_speeches": 75
+    },
+    {
+      "year": 1999,
+      "male_speeches": 507,
+      "female_speeches": 85
+    },
+    {
+      "year": 2000,
+      "male_speeches": 586,
+      "female_speeches": 66
+    },
+    {
+      "year": 2001,
+      "male_speeches": 58,
+      "female_speeches": 4
+    },
+    {
+      "year": 2002,
+      "male_speeches": 456,
+      "female_speeches": 83
+    },
+    {
+      "year": 2003,
+      "male_speeches": 455,
+      "female_speeches": 75
+    },
+    {
+      "year": 2004,
+      "male_speeches": 136,
+      "female_speeches": 17
+    },
+    {
+      "year": 2005,
+      "male_speeches": 4,
+      "female_speeches": 0
+    }
+  ]
+}
