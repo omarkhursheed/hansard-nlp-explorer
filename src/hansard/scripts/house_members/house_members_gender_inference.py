@@ -1,3 +1,25 @@
+"""
+Gender Enrichment Pipeline for Historic Hansard Members
+
+This script infers/collects gender for parliamentary members by combining:
+  1) Existing EveryPolitician gender labels (if present).
+  2) Honorific/title heuristics from Historic Hansard (HH) records.
+  3) Honorific/title heuristics from ParlParse (PP) 'other_names'.
+  4) Wikidata P21 (sex or gender) via SPARQL lookups for remaining unknowns.
+  5) Historical rules (Commons pre-1918, Lords pre-1958 → male).
+  6) Curated female lists (Wikidata MPs; Wikipedia female Lords).
+  7) Name-based inference using gender-guesser (first-name heuristic).
+  8) Optional, uncomment if needed: Default male if all of the above fail.
+
+Outputs:
+  - Writes a parquet with inferred gender and provenance to OUT_PATH.
+
+Notes:
+  - Be mindful of rate limits for external services (Wikidata, Wikipedia).
+  - Honorific matching is case-insensitive and token-based.
+  - The pipeline logs per-step assignment counts for transparency/debugging.
+"""
+
 # pip install lxml, gender-guesser
 
 import pandas as pd
@@ -26,7 +48,22 @@ honorific_female = {h.lower().rstrip(".") for h in honorific_map.get("Female", [
 
 # --- Counter after each step ---
 def log_step(df, step_name, before_gender):
-    """Log how many unique person_ids got gender assigned in this step."""
+    """Print and return a boolean mask of rows with gender set after a step.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Working dataframe containing 'gender_inferred' and 'person_id'.
+    step_name : str
+        Human-readable name of the step for logging.
+    before_gender : pandas.Series (bool)
+        Mask of rows that had a gender set before this step.
+
+    Returns
+    -------
+    pandas.Series (bool)
+        Updated mask of rows with gender set after this step.
+    """
     after = df["gender_inferred"].notna()
     new_assignments = after & ~before_gender
     n_new = df.loc[new_assignments, "person_id"].nunique()
@@ -53,7 +90,20 @@ honorifics = df.loc[mask_honorific, "honorific_prefix"]
 honorifics_norm = honorifics.dropna().str.lower()
 
 def match_gendered_word(honorific, gendered_set):
-    """Return True if any word/token in honorific is in gendered_set."""
+    """Return True if any token in a (lowercased) honorific appears in gendered_set.
+
+    Parameters
+    ----------
+    honorific : str | Any
+        Honorific string to search (may be NaN/None).
+    gendered_set : set[str]
+        Set of gendered words (e.g., {'mr', 'sir'} or {'ms', 'mrs'}).
+
+    Returns
+    -------
+    bool
+        True if any token matches; False otherwise.
+    """
     if not isinstance(honorific, str):
         return False
     tokens = honorific.lower().split()
@@ -75,8 +125,17 @@ before = log_step(df, "HH Honorifics", before)
 
 # ==== Step 3: PP Honorific/title inference (extract+append+normalize for ALL rows; match only on NaNs) ====
 def extract_honorific_prefix(obj):
-    """Extract honorific_prefix from other_names (numpy arrays of dicts).
-       Only use the dict where note == 'Main'.
+    """Extract an honorific_prefix from 'other_names' (arrays of dicts) where note == 'Main'.
+
+    Parameters
+    ----------
+    obj : Any
+        Either numpy.ndarray, list[dict], dict, or other type coming from 'other_names'.
+
+    Returns
+    -------
+    str | None
+        The honorific_prefix if found on the 'Main' entry; otherwise None.
     """
     try:
         if isinstance(obj, np.ndarray):
@@ -97,6 +156,12 @@ mask_honorific = df["gender_inferred"].isna()
 
 # Ensure honorific_prefix column is a list for ALL rows
 def _ensure_list(x):
+    """Return a list representation for honorific_prefix cells.
+
+    - If already a list, return a shallow copy.
+    - If NaN/None, return [].
+    - Otherwise wrap the value in a single-element list.
+    """
     if isinstance(x, list):
         return x.copy()
     if pd.isna(x) or x is None:
@@ -110,6 +175,7 @@ new_prefix_all = df["other_names"].map(extract_honorific_prefix)
 
 # Append extracted prefix into honorific_prefix lists 
 def _append_if_missing(lst, pref):
+    """Append `pref` to list `lst` if a case-insensitive equivalent is not already present."""
     if not isinstance(pref, str) or not pref.strip():
         return lst
     # case-insensitive de-duplication
@@ -126,7 +192,20 @@ honorifics_str_all = df["honorific_prefix"].map(lambda v: " ".join(v) if isinsta
 honorifics_norm_all = honorifics_str_all.dropna().str.lower()
 
 def match_gendered_word(honorific, gendered_set):
-    """Return True if any word/token in honorific is in gendered_set."""
+    """Return True if any token in a (lowercased) honorific appears in gendered_set.
+
+    Parameters
+    ----------
+    honorific : str | Any
+        Honorific string to search (may be NaN/None).
+    gendered_set : set[str]
+        Set of gendered words (e.g., {'mr', 'sir'} or {'ms', 'mrs'}).
+
+    Returns
+    -------
+    bool
+        True if any token matches; False otherwise.
+    """
     if not isinstance(honorific, str):
         return False
     tokens = honorific.lower().split()
@@ -186,6 +265,17 @@ before = log_step(df, "Historical rules", before)
 
 # ==== Step 6: Curated female lists ====
 def normalize_name(name):
+    """Normalize a person name for fuzzy matching.
+
+    - Lowercase
+    - Remove non-letters
+    - Collapse internal whitespace
+
+    Returns
+    -------
+    str | None
+        Normalized name, or None if the input is NaN.
+    """
     if pd.isna(name):
         return None
     name = name.lower()
@@ -240,6 +330,18 @@ before = log_step(df, "Curated female lists", before)
 detector = genderer.Detector(case_sensitive=False)
 
 def infer_gender_from_name(name):
+    """Infer a binary gender code from a first name using gender-guesser.
+
+    Parameters
+    ----------
+    name : str | Any
+        Full name string; only the first token is used.
+
+    Returns
+    -------
+    str | None
+        'F' if predicted female/mostly_female, 'M' if male/mostly_male, else None.
+    """
     if not isinstance(name, str):
         return None
     g = detector.get_gender(name.split()[0])  # take first token
@@ -258,10 +360,10 @@ before = log_step(df, "Name-based inference", before)
 
 
 # # ==== Step 8: Default male ====
-mask_default = df["gender_inferred"].isna()
-df.loc[mask_default, ["gender_inferred", "gender_source"]] = ["M", "default_male"]
+# mask_default = df["gender_inferred"].isna()
+# df.loc[mask_default, ["gender_inferred", "gender_source"]] = ["M", "default_male"]
 
-before = log_step(df, "Default male fallback", before)
+# before = log_step(df, "Default male fallback", before)
 
 
 # ==== Step 9: Cleanup ====

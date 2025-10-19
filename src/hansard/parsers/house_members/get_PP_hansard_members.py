@@ -1,3 +1,12 @@
+"""
+ParlParse Popolo -> House Members (1803–2005)
+
+Loads ParlParse's Popolo `people.json`, expands identifiers, merges persons,
+memberships, posts, and organizations into a single table, normalizes dates,
+filters memberships to Hansard's coverage window (1803–2005), performs light
+column cleanup/deduplication, and writes a Parquet for downstream analysis.
+"""
+
 import json
 import pandas as pd
 from pathlib import Path
@@ -21,7 +30,27 @@ orgs = pd.DataFrame(data["organizations"])
 
 # --- Normalize identifiers into wide format ---
 def expand_identifiers(df, col, prefix="id"):
-    """Expand identifiers list into wide columns keyed by scheme."""
+    """Expand a list-of-identifiers column into wide columns keyed by scheme.
+
+    For each row, reads `df[col]` as a list of dicts with keys
+    {'scheme','identifier'} and creates new columns named
+    `{prefix}_{scheme}` containing the corresponding identifier value.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input frame that contains the identifiers column.
+    col : str
+        Name of the column holding the list of identifier dicts.
+    prefix : str, default "id"
+        Prefix to use for generated column names.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A new dataframe with the same number of rows as `df` and additional
+        flattened identifier columns.
+    """
     rows = []
     for row in df.to_dict("records"):
         base = {k: v for k, v in row.items() if k != col}
@@ -41,7 +70,21 @@ memberships_expanded = expand_identifiers(memberships, "identifiers", prefix="me
 
 # --- Person name cleanup ---
 def extract_name(row):
-    """Pick the 'Main' name if available, otherwise fallback to first name entry."""
+    """Extract the canonical display name from `other_names`.
+
+    Picks the entry with `note == "Main"` if present; otherwise falls back to
+    the first entry. Concatenates its `given_name` and `family_name`.
+
+    Parameters
+    ----------
+    row : dict
+        Row from the persons dataframe.
+
+    Returns
+    -------
+    str | None
+        "Given Family" if discoverable; otherwise None.
+    """
     names = row.get("other_names")
     if not isinstance(names, list) or len(names) == 0:
         return None
@@ -69,7 +112,22 @@ merged = merged.merge(
 
 # --- Date normalization ---
 def to_date(x):
-    """Handle ISO dates or year-only strings like '1997'."""
+    """Parse ISO-like or year-only strings to `datetime`, else None.
+
+    Accepts:
+      - 'YYYY-MM-DD' or longer ISO strings (uses first 10 chars)
+      - 'YYYY' (treated as January 1 of that year)
+
+    Parameters
+    ----------
+    x : Any
+        Date-like value (usually a string).
+
+    Returns
+    -------
+    datetime | None
+        Parsed datetime at day precision, or None if parsing fails/empty.
+    """
     if not isinstance(x, str) or not x.strip():
         return None
     try:
@@ -91,6 +149,22 @@ merged = merged[
 
 # Drop duplicate coluumns
 def drop_duplicate_hashable_columns(df):
+    """Drop duplicate columns among hashable dtypes, preserving unhashables.
+
+    Splits columns into hashable vs unhashable (lists/dicts/sets). Removes
+    duplicated columns only among hashables (via transpose + duplicated()),
+    then recombines with the unhashable columns intact.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input dataframe with a mix of column dtypes.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Dataframe with duplicate hashable columns removed.
+    """
     # Separate hashable vs unhashable columns
     hashable_cols = []
     unhashable_cols = []

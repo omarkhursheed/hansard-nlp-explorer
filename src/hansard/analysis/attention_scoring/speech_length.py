@@ -1,29 +1,32 @@
 """
+Hansard Speech Length Attention Analysis
+===================================
 Analyze word usage in Hansard debates by gender.
 
-Normalizations:
-1. Speaker-level:
-   Norm_words = observed words of speaker / expected_words_gender
-   Expected_words_gender = (# speakers of gender in debate / total speakers in debate) * total words in debate
+This module computes several complementary views of verbal participation:
+- Tokenization and word counting with custom stopwords (parallelized).
+- Speaker-level normalization: observed vs. expected words by gender within a debate.
+- Group-level normalization: observed vs. expected total words for a gender within a debate.
+- Flat per-speaker normalization: observed words vs. equal-share baseline within a debate.
+- Average words per turn (and normalized variant).
+- Top/unique words by gender for decades with female presence.
+- Log-odds (F over M) to identify statistically distinctive vocabulary.
 
-2. Group-level:
-   Group_norm_words = observed words of group / expected_words_group
-   Expected_words_group = (# speakers of gender in debate / total speakers in debate) * total words in debate
+Outputs:
+- Per-speaker and per-group normalized metrics to Parquet.
+- Unique top words by gender to Parquet.
+- Full log-odds table (word, freq_m, freq_f, log_odds_f_over_m) to Parquet.
 
-3. Flat per-speaker:
-   Flat_norm_words = observed words of speaker / expected_words_flat
-   Expected_words_flat = total words in debate / total speakers in debate
-
-4. Avg words per turn:
-   AvgWordsPerTurn_speaker = observed words of speaker / observed turns of speaker
-   Norm_AvgWordsPerTurn = AvgWordsPerTurn_speaker / ExpectedAvgWordsPerTurn
-   ExpectedAvgWordsPerTurn = total words in debate / total turns in debate
+Notes:
+- Normalizations answer different questions and should be interpreted accordingly.
+- Means can be influenced by small-denominator debates; medians are often more robust.
 """
 
 import pandas as pd
 import numpy as np
 import re
 from collections import Counter
+from typing import Set, Union
 from pathlib import Path
 from multiprocessing import Pool, cpu_count
 from functools import partial
@@ -33,41 +36,112 @@ INPUT_PATH = Path("src/hansard/data/processed_fixed/cleaned_data/turnwise_debate
 OUT_PATH = Path("src/hansard/data/analysis_data/attention_speech_len.parquet")
 OUT_PATH_WORDS = Path("src/hansard/data/analysis_data/unique_top_words.parquet")
 OUT_PATH_LOGODDS = Path("src/hansard/data/analysis_data/terms_logodds.parquet")
-STOPWORD_PATH = Path("src/hansard/data/word_lists/custom_stop_words.txt")
+STOPWORD_PATH = Path("src/hansard/data/word_lists/hansard_stopwords.csv")
 
 N_JOBS = max(1, cpu_count() - 1)  # tune if needed
 
 # -----------------------------
 # Stopwords / tokenizer
 # -----------------------------
-def load_stopwords():
-    sw = set()
-    with open(STOPWORD_PATH, "r", encoding="utf-8") as f:
-        for line in f:
-            w = line.strip().lower()
-            if w:
-                sw.add(w)
-    return sw
+def load_stopwords(include_conditional: bool = False, *, lowercase: bool = True) -> Set[str]:
+    """
+    Load custom stopwords from the CSV at `STOPWORD_PATH`.
+
+    The CSV must contain columns: 'token' and 'type'.
+    Rows with 'type' in {'keep'} are always included; if `include_conditional=True`,
+    rows with 'type' == 'conditional' are also included.
+
+    Args:
+        include_conditional: Whether to include tokens labeled as 'conditional'.
+        lowercase: If True, return tokens lowercased.
+
+    Returns:
+        A set of stopword strings.
+    """
+    df = pd.read_csv(STOPWORD_PATH)
+    # Normalize column names
+    df.columns = [c.strip().lower() for c in df.columns]
+    if not {"token", "type"}.issubset(df.columns):
+        raise ValueError("CSV must contain 'token' and 'type' columns.")
+
+    # Filter rows by type
+    keep_labels = {"keep"}
+    if include_conditional:
+        keep_labels.add("conditional")
+
+    df = df.loc[df["type"].str.strip().str.lower().isin(keep_labels), ["token"]]
+    # Clean tokens
+    toks = df["token"].astype(str).str.strip()
+    if lowercase:
+        toks = toks.str.lower()
+
+    return set(toks[toks.ne("")].unique())
 
 TOKEN_RE = re.compile(r"\b[a-zA-Z]+\b")
 
 def tokenize_text(text: str, stopwords: set, min_len: int = 2):
+    """
+    Tokenize a text into alphabetic lowercase tokens, filtering by length and stopwords.
+
+    Args:
+        text: Raw text.
+        stopwords: Set of tokens to exclude.
+        min_len: Minimum token length to keep.
+
+    Returns:
+        A list of filtered tokens.
+    """
     # lower + alphabetic only; drop short tokens; custom stopwords
     toks = TOKEN_RE.findall(text.lower())
     return [t for t in toks if len(t) >= min_len and t not in stopwords]
 
 def _count_words_one(text: str, stopwords: set, min_len: int = 2) -> int:
+    """
+    Count tokens in `text` after applying the same tokenization/filtering rules
+    as `tokenize_text`, without materializing the token list.
+
+    Args:
+        text: Raw text.
+        stopwords: Set of tokens to exclude.
+        min_len: Minimum token length to count.
+
+    Returns:
+        Integer count of kept tokens.
+    """
     # count only; avoids materializing token list in the main df
     toks = TOKEN_RE.findall(text.lower())
     return sum(1 for t in toks if len(t) >= min_len and t not in stopwords)
 
 def _tokens_one(text: str, stopwords: set, min_len: int = 2):
+    """
+    Convenience wrapper for producing filtered tokens; useful for parallel map.
+
+    Args:
+        text: Raw text.
+        stopwords: Set of tokens to exclude.
+        min_len: Minimum token length to keep.
+
+    Returns:
+        List of tokens.
+    """
     return tokenize_text(text, stopwords, min_len=min_len)
 
 # -----------------------------
 # Parallel helpers
 # -----------------------------
 def parallel_map(func, iterable, processes=N_JOBS, chunksize=1000):
+    """
+    Apply `func` to `iterable` in parallel using a multiprocessing pool.
+
+    Args:
+        func: Callable to apply to items of `iterable`.
+        iterable: Iterable of inputs.
+        processes: Number of worker processes. If 1, falls back to serial map.
+        chunksize: Chunk size for `imap` to reduce IPC overhead.
+
+    Returns:
+        List of results, preserving order of `iterable`.
+    """
     if processes == 1:
         return list(map(func, iterable))
     with Pool(processes=processes) as pool:
@@ -77,6 +151,28 @@ def parallel_map(func, iterable, processes=N_JOBS, chunksize=1000):
 # Core processing (vectorized)
 # -----------------------------
 def process_word_frequencies(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute speaker- and group-level word-based participation metrics per debate.
+
+    Steps:
+      1) Parallel token counting to derive `word_count` per row.
+      2) Debate-level totals: total words, speakers, turns, and metadata.
+      3) Expected words per (debate, gender) based on share of speakers.
+      4) Speaker-level observed words/turns and normalized metrics:
+         - norm_words_speaker (vs. gender-expected)
+         - flat_norm_words (vs. equal-share per speaker)
+         - avg_words_per_turn and its normalized variant
+      5) Group-level observed words and group_norm_words (vs. gender-expected).
+      6) Return a unified DataFrame containing both speaker and group rows.
+
+    Args:
+        df: Turn-level dataframe with columns including
+            ['debate_id','speaker','gender','text','year','decade','month',
+             'reference_date','chamber','title','topic'].
+
+    Returns:
+        A DataFrame with per-speaker and per-group normalized metrics and metadata.
+    """
     stopwords = load_stopwords()
 
     # === 1) parallel word counts (no token column kept) ===
@@ -208,9 +304,26 @@ def process_word_frequencies(df: pd.DataFrame) -> pd.DataFrame:
 # Top words (optimized single pass)
 # -----------------------------
 def top_words_by_gender(df: pd.DataFrame, top_n: int = 50, min_len: int = 2):
-    stopwords = load_stopwords()
-    # restrict decades with meaningful female presence
-    dec = df[df["decade"].isin([1970, 1980, 1990])][["gender","text"]].dropna(subset=["gender","text"])
+    """
+    Compute top-N most frequent tokens per gender after restricting to decades
+    with at least a minimal level of female presence.
+
+    This is a raw-frequency view (no statistical contrast): tokens are counted
+    per gender and the top-N are returned.
+
+    Args:
+        df: Turn-level dataframe with 'gender', 'text', and 'decade'.
+        top_n: Number of top tokens to return per gender.
+        min_len: Minimum token length to keep.
+
+    Returns:
+        Dict {'M': [(token, count), ...], 'F': [(token, count), ...]}.
+    """
+    # stopwords = load_stopwords()
+    stopwords = []
+    female_counts = df[df["gender"] == "F"]["decade"].value_counts()
+    female_decades = female_counts[female_counts >= 10].index
+    dec = df[df["decade"].isin(female_decades)][["gender", "text"]].dropna(subset=["gender", "text"])
 
     # parallel tokenization -> list of token lists
     tok_fn = partial(_tokens_one, stopwords=stopwords, min_len=min_len)
@@ -232,6 +345,17 @@ def top_words_by_gender(df: pd.DataFrame, top_n: int = 50, min_len: int = 2):
     return top
 
 def unique_top_words(top_words: dict, top_n: int = 50):
+    """
+    Remove overlapping tokens between genders' top lists and return the
+    top-N unique tokens for each gender (still based on raw counts).
+
+    Args:
+        top_words: Dict from `top_words_by_gender`.
+        top_n: Number of items to keep after removing overlap.
+
+    Returns:
+        Dict {'M': [(token, count), ...], 'F': [(token, count), ...]} with uniqueness enforced.
+    """
     male_words = {w for w, _ in top_words.get("M", [])}
     female_words = {w for w, _ in top_words.get("F", [])}
     overlap = male_words & female_words
@@ -246,8 +370,31 @@ def unique_top_words(top_words: dict, top_n: int = 50):
 # Log-odds (uses same tokenizer)
 # -----------------------------
 def compute_log_odds(df: pd.DataFrame, top_n: int = 20):
-    stopwords = list(load_stopwords())
-    dec = df[df["decade"].isin([1970, 1980, 1990])]
+    """
+    Compute log-odds ratios (F over M) for all tokens using CountVectorizer
+    with the same tokenizer, restricted to decades with sufficient female presence.
+
+    Steps:
+      - Build document-term matrix over male + female documents.
+      - Sum frequencies by gender and add +1 smoothing.
+      - Compute log(p_F / p_M) per token.
+      - Return top-N female and male distinctive tokens (by log-odds).
+
+    Args:
+        df: Turn-level dataframe with 'gender', 'text', and 'decade'.
+        top_n: Number of most distinctive tokens to return for each side.
+
+    Returns:
+        top_f: DataFrame of top-N tokens with highest log-odds (female-associated).
+        top_m: DataFrame of top-N tokens with lowest log-odds (male-associated).
+        df_logodds: Full DataFrame with columns ['word','freq_m','freq_f','log_odds_f_over_m'].
+    """
+    # stopwords = list(load_stopwords())
+    stopwords = []
+    female_counts = df[df["gender"] == "F"]["decade"].value_counts()
+    female_decades = female_counts[female_counts >= 10].index
+    dec = df[df["decade"].isin(female_decades)][["gender", "text"]].dropna(subset=["gender", "text"])
+
 
     male_texts = dec.loc[dec["gender"] == "M", "text"].fillna("").tolist()
     female_texts = dec.loc[dec["gender"] == "F", "text"].fillna("").tolist()

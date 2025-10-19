@@ -12,6 +12,10 @@ dependencies:
   - gensim >=4
   - scikit-learn >=1.5
   - streamlit >=1.35
+  - gender-guesser >=0.4.0
+  - SPARQLWrapper >=2.0.0
+  - beautifulsoup4 >=4.13.4
+
 
   # (optional) dev helpers
   - black

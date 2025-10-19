@@ -36,6 +36,8 @@ OUT_PATH     = Path("src/hansard/data/processed_fixed/metadata/house_members/PP_
 # ============================
 
 def build_honorific_sets(hmap: dict):
+    """Builds a flattened lowercase set of all honorifics from a nested gendered honorific dictionary."""
+
     return {h.lower().rstrip(".") for grp in ("Male","Female","Unknown") for h in hmap.get(grp, [])}
 
 with open(HONORIFICS_JSON, "r") as f:
@@ -45,6 +47,8 @@ HSET = build_honorific_sets(honorific_map)
 FILLER_WORDS = {"of","the","and"}
 
 def make_key(x, H):
+    """Generates a normalized, sorted string key from a name by stripping filler words, honorifics, and punctuation."""
+
     if x is None or (isinstance(x, float) and pd.isna(x)): return None
     s = str(x).lower()
     s = re.sub(r"\([^)]*\)", " ", s)                      # drop parens
@@ -59,6 +63,8 @@ def make_key(x, H):
     return " ".join(sorted(toks)) if toks else None
 
 def alias_keys(val, H):
+    """Generates normalized keys from aliases. Ensures keys contain at least two valid tokens."""
+
     if isinstance(val, (list, tuple, Series)):
         out = [make_key(a, H) for a in val]
         return [k for k in out if k and len(k.split()) >= 2]
@@ -66,12 +72,16 @@ def alias_keys(val, H):
     return [k] if (k and len(k.split()) >= 2) else []
 
 def split_name_parts(key: str):
+    """Splits a normalized name key into (surname, remaining parts). Used to separate surname from given names."""
+
     if not key: return None, set()
     toks = key.split()
     surname = max(toks, key=len)
     return surname, set(toks) - {surname}
 
 def initials(given: set) -> set:
+    """Extracts initials from a set of given name tokens."""
+
     return {g[0] for g in given if g}
 
 # Keep honorifics but handle them separately from core tokens
@@ -87,6 +97,8 @@ def _swap_commas(s: str) -> str:
     return s
 
 def _name_tokens_keep_hon(s) -> set:
+    """Tokenizes a name string while preserving honorifics and handling special characters."""
+
     if s is None or (isinstance(s, float) and pd.isna(s)): return set()
     s = _swap_commas(str(s))
     s = re.sub(r"[()]", " ", s)                 # keep inner text like (Mr) -> Mr
@@ -96,6 +108,8 @@ def _name_tokens_keep_hon(s) -> set:
     return set(toks)
 
 def _split_core_hon(tokens: set) -> tuple[set, set]:
+    """Splits tokens into core name tokens and honorifics."""
+
     core = {t for t in tokens if t not in HON_ALL}
     hon  = {t for t in tokens if t in HON_ALL}
     return core, hon
@@ -122,6 +136,8 @@ def _tokens_from_list_keep_hon(v) -> set:
     return out
 
 def year_from_date(val):
+    """Extracts a 4-digit year from various date formats including strings and NaT."""
+
     # Robust: handle pandas NaT / NaN and strings
     try:
         ts = pd.to_datetime(val, errors='coerce')
@@ -133,6 +149,8 @@ def year_from_date(val):
         return int(m.group(1)) if m else None
 
 def time_bonus(ms, me, b, d) -> float:
+    """Scores consistency between a member’s birth/death years and membership start/end dates."""
+
     s = 0.0
     if ms is not None:
         if b is not None:
@@ -147,6 +165,8 @@ def time_bonus(ms, me, b, d) -> float:
 
 STOPWORDS_LOC = {"of","and","the"}
 def normalize_constituency(s: str):
+    """Normalizes a constituency string by lowercasing, replacing punctuation, and removing stopwords."""
+
     s = str(s).lower().replace("&"," and ")
     s = re.sub(r"[^\w\s]"," ", s)
     s = re.sub(r"\s+"," ", s).strip()
@@ -154,10 +174,14 @@ def normalize_constituency(s: str):
     return " ".join(toks) if toks else None
 
 def extract_member_constituency(post_label: str):
+    """Extracts and normalizes constituency name from a post label string."""
+
     m = re.search(r"\bfor\s+(.+)$", str(post_label), flags=re.I)
     return normalize_constituency(m.group(1)) if m else None
 
 def parse_hansard_const_list(val):
+    """Parses a Hansard constituency list (JSON or list) and extracts constituency names."""
+
     if isinstance(val, str):
         try: arr = json.loads(val)
         except Exception: arr = []
@@ -175,6 +199,8 @@ def parse_hansard_const_list(val):
     return out
 
 def constituency_score(member_const_norm, hansard_const_norm_set) -> float:
+    """Computes a fuzzy Jaccard similarity score between a member and Hansard constituency."""
+
     if not member_const_norm or not hansard_const_norm_set: return 0.0
     if member_const_norm in hansard_const_norm_set: return 2.0
     mtoks = set(member_const_norm.split()); best = 0.0
@@ -188,6 +214,8 @@ def constituency_score(member_const_norm, hansard_const_norm_set) -> float:
 MONTHS_RE = r"(?:january|february|march|april|may|june|july|august|september|october|november|december)"
 
 def parse_titles_in_lords(val):
+    """Cleans and extracts peerage titles from Hansard. Removes years and month names."""
+
     # Accept JSON string or list
     if isinstance(val, str):
         try:
@@ -220,15 +248,21 @@ def parse_titles_in_lords(val):
     return out
 
 def lord_title_keys(val, H):
+    """Generates normalized keys from Lords titles using the same parser used for name keys."""
+
     return sorted({make_key(t, H) for t in parse_titles_in_lords(val) if make_key(t, H)})
 
 def extract_honorific_from_name(name: str):
+    """Extracts honorifics from a name by looking inside parentheses."""
+
     m = re.findall(r"\(([^)]+)\)", str(name))
     if not m: return None
     hon = " ".join(m).replace("."," ")
     return re.sub(r"\s+"," ", hon).strip() or None
 
 def normalize_person_name_from_hansard(name):
+    """Normalizes Hansard names by stripping honorifics and handling 'Last, First' format."""
+
     # return None if name is missing/placeholder
     if name is None or (isinstance(name, float) and pd.isna(name)):
         return None
@@ -264,6 +298,8 @@ def _years_from_from_to(s: str):
     return (int(yrs[0]), int(yrs[-1]))
 
 def _const_windows_from(val):
+    """Extracts a dict mapping normalized constituencies to their associated (start, end) year windows."""
+
     win = {}
     for obj in parse_hansard_const_objs(val):
         cn = normalize_constituency(obj.get("constituency"))
@@ -273,6 +309,8 @@ def _const_windows_from(val):
     return win
 
 def window_overlap_score(ms, me, wins):
+    """Returns 1.0 for clear overlap, 0.5 for close-by years, and 0.0 otherwise between membership and Hansard windows."""
+
     if not wins and wins != []: return 0.0
     if ms is None and me is None: return 0.0
     if ms is None: ms = me
@@ -300,8 +338,8 @@ def norm_const(s):
     return s or None
 
 def _parse_hh_const(val):
-    """
-    val like:
+    """Parses Hansard 'constituencies' field and returns a normalized set and associated time windows.
+    Given a val like:
       '[{"constituency":"Rugby and Kenilworth","from_to":"May  1, 1997 - May  5, 2005"}]'
     returns (set_of_norm_const, {const: [(start_year, end_year), ...]})
     """
@@ -336,6 +374,8 @@ def _parse_hh_const(val):
 CONST_STOP_TOKENS = {"and", "of", "the"}
 
 def const_join_key(s):
+    """Creates a canonical join key for constituencies by sorting cleaned tokens."""
+
     if s is None or (isinstance(s, float) and pd.isna(s)):
         return None
     toks = [t for t in re.split(r"[ \-]+", str(s).lower()) if t]
@@ -343,6 +383,8 @@ def const_join_key(s):
     return " ".join(sorted(toks)) or None
 
 def _const_tokens(s):
+    """Tokenizes and normalizes constituency strings to support fuzzy matching."""
+
     if s is None or (isinstance(s, float) and pd.isna(s)):
         return []
     toks = [t for t in re.split(r"[ \-]+", str(s).lower()) if t]
@@ -358,6 +400,7 @@ def propagate_within_person(result: pd.DataFrame,
                             fields: list[str] | None = None,
                             rank_map: dict[str, int] | None = None) -> pd.DataFrame:
     """
+    Fills in Hansard fields for all stints of a person based on the most confident matched entry (canonical row).
     For any person_id where at least one stint already has a Hansard slug,
     propagate the canonical (mode) slug + selected fields to that person's
     other stints. Newly filled stints get match_level='person_propagated'.
@@ -448,6 +491,7 @@ def propagate_within_person(result: pd.DataFrame,
     return result
 
 def merge_members_and_hansard(members_df: pd.DataFrame, hansard_df: pd.DataFrame, honorific_map: dict) -> pd.DataFrame:
+    """Main merge pipeline that progressively aligns members to Hansard speakers using exact, fuzzy, and fallback logic."""
 
     members = members_df.copy()
     hansard = hansard_df.drop_duplicates("slug").copy()
@@ -1370,6 +1414,8 @@ def merge_members_and_hansard(members_df: pd.DataFrame, hansard_df: pd.DataFrame
 # ============================================================
 
 def main():
+    """Loads, processes, and saves the final merged DataFrame. Also prints summary statistics."""
+
     print("🔹 Loading Parquet files…")
     members_df = pd.read_parquet(MEMBERS_PARQUET)
     hansard_df = pd.read_parquet(HANSARD_PARQUET)
