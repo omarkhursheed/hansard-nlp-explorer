@@ -19,7 +19,7 @@ from collections import defaultdict
 from datetime import datetime
 import Levenshtein
 import ast
-from hansard.utils.path_utils import get_data_dir
+from hansard.utils.path_config import Paths
 
 class CorrectedMPMatcher:
     """MP Matcher with verified historical data"""
@@ -38,7 +38,7 @@ class CorrectedMPMatcher:
     def _load_default_mp_data(self) -> pd.DataFrame:
         """Load the default MP gender data (robust to CWD)."""
         candidates = [
-            get_data_dir() / "house_members_gendered_updated.parquet",
+            Paths.get_data_dir() / "house_members_gendered_updated.parquet",
             Path("src/hansard/data/house_members_gendered_updated.parquet"),
             Path("data/house_members_gendered_updated.parquet"),
         ]

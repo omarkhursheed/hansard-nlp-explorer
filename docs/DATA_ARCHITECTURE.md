@@ -176,6 +176,7 @@ hansard/ (5.7GB - Raw HTML files)
     ↓ [parsing pipeline]
     → processed_fixed/ (14GB - PRIMARY SOURCE OF TRUTH)
          │ [used directly by]
+         ├→ basic_analysis.py (via UnifiedDataLoader)
          ├→ corpus_analysis.py --dataset overall
          ├→ milestone_analysis.py --dataset overall
          │
@@ -195,10 +196,47 @@ hansard/ (5.7GB - Raw HTML files)
                     └→ corpus_analysis.py --dataset gender-debates
 ```
 
+## New: Unified Data Loading
+
+**UnifiedDataLoader** (`src/hansard/utils/unified_data_loader.py`)
+- **Purpose:** Single interface for loading from all data sources
+- **Features:** Caching, multiple data sources, efficient loading
+- **Used by:** `basic_analysis.py`, future analysis scripts
+- **Sources supported:**
+  - `processed_fixed` - Overall corpus (14GB)
+  - `gender_enhanced` - Gender-tagged debates (9.1GB) 
+  - `derived_speeches` - Flat speech data (1.5GB)
+
 **Key Points:**
 - `processed_fixed/` is the PRIMARY SOURCE (all debates, no gender)
 - `gender_analysis_enhanced/` is DERIVED (processed_fixed + gender matching)
 - `derived/*` are OPTIMIZED VIEWS (extracted & flattened for fast analysis)
+
+---
+
+## Utils Cleanup (December 2024)
+
+**Consolidated Path Utilities:**
+- **Active:** `src/hansard/utils/path_config.py` - Centralized path management
+- **Archived:** `src/hansard/utils/archive/path_utils.py` - Legacy functions merged
+
+**Unified Data Loading:**
+- **New:** `src/hansard/utils/unified_data_loader.py` - Single data loading interface
+- **Features:** Caching, multiple data sources, efficient loading
+- **Replaces:** Multiple JSONL readers across different scripts
+
+**Archived Files:**
+- `data_validator.py` - Old processing pipeline validation
+- `high_performance_processor.py` - Old HTML processing pipeline
+- Debug files (`debug_*.py`, `debug_*.html`, `investigate_preamble.py`)
+
+**Final Utils Structure:**
+```
+src/hansard/utils/
+├── path_config.py          # Consolidated paths + utility methods
+├── unified_data_loader.py  # Single data loading interface
+└── archive/                # Archived files with README
+```
 
 ---
 

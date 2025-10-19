@@ -79,36 +79,58 @@ plt.rcParams['axes.grid'] = True
 plt.rcParams['grid.alpha'] = 0.3
 ```
 
-#### Filter stop words before visualization:
+#### Use unified stop words from analysis_utils:
 ```python
-# NEVER visualize these words
-STOP_WORDS = {'the', 'of', 'to', 'and', 'a', 'in', 'is', 'it', 'that', 'have', 'be', 'for', 'on', 'with', 'as', 'by', 'at', 'an', 'this', 'was', 'are', 'been', 'has', 'had', 'were', 'will'}
+from analysis.analysis_utils import get_stop_words, preprocess_text
+
+# Use evidence-based stop word filtering
+stop_words = get_stop_words('aggressive')  # or 'moderate', 'parliamentary', etc.
+processed_text = preprocess_text(raw_text, stop_words)
+
+# All filtering happens at preprocessing - NO additional filtering at visualization time
 ```
 
 ## Testing and Running Scripts
 
 ### Quick tests (small samples):
 ```bash
-./run_gender_corpus_analysis.sh --years 1990-1991 --sample 50
-./run_gender_milestone_analysis.sh --milestone ww2_period --filtering aggressive
+# Overall corpus analysis
+python3 src/hansard/analysis/comprehensive_analysis.py --years 1990-2000 --sample 5000 --filtering aggressive
+
+# Gender analysis
+python3 src/hansard/analysis/gendered_comprehensive_analysis.py --years 1990-2000
 ```
 
-### Full analysis (large samples):
+### Full analysis:
 ```bash
-python src/hansard/analysis/enhanced_gender_corpus_analysis.py --full --sample 50000
-python src/hansard/analysis/gender_milestone_analysis.py --all --filtering aggressive
+# Overall corpus (802K debates, ~45-60 minutes)
+python3 src/hansard/analysis/comprehensive_analysis.py --filtering aggressive
+
+# Gender corpus
+python3 src/hansard/analysis/gendered_comprehensive_analysis.py
 ```
 
 ## Repository Structure
 - `src/hansard/analysis/` - Analysis scripts
-- `src/hansard/data/gender_analysis_enhanced/` - Enhanced dataset with full text
-- `src/hansard/docs/` - Documentation including visualization guides
+  - `comprehensive_analysis.py` - Overall corpus analysis
+  - `gendered_comprehensive_analysis.py` - Gender-specific analysis
+  - `analysis_utils.py` - Shared utilities (DRY principle)
+  - `basic_analysis.py` - Simple analysis
+  - `suffrage_analysis.py` - Historical analysis
+- `src/hansard/utils/` - Shared utilities
+  - `unified_data_loader.py` - Single data loading interface
+  - `path_config.py` - Path management
+- `data-hansard/` - Data files (63GB, not in git)
+  - `hansard/` - Raw HTML (5.7GB)
+  - `processed_fixed/` - Overall corpus (14GB, SOURCE OF TRUTH)
+  - `gender_analysis_enhanced/` - Gender-tagged corpus (9.1GB)
+  - `derived/` - Optimized views (1.5GB, can regenerate)
 - `analysis/` - Output directory for results and visualizations
 
 ## Key Commands
-- Always use `chmod +x` to make shell scripts executable
 - Use `python3` explicitly to avoid Python version issues
 - Check data structure with small samples before running full analysis
+- Run tests before committing: `pytest src/hansard/tests/ -v`
 
 ## Code Quality Rules
 

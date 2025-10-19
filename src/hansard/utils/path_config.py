@@ -87,6 +87,67 @@ class Paths:
         print(f"    - Milestone results: {cls.MILESTONE_RESULTS}")
         print(f"    - Visualizations: {cls.VISUALIZATIONS}")
 
+    # Utility methods from path_utils.py for backward compatibility
+    @classmethod
+    def get_data_dir(cls):
+        """Get the data directory path that works from anywhere."""
+        return cls.DATA_DIR
+
+    @classmethod
+    def get_processed_data_dir(cls):
+        """Get processed data directory, checking for alternate names."""
+        if cls.PROCESSED_FIXED.exists():
+            return cls.PROCESSED_FIXED
+        raise RuntimeError(f"No processed data directory found at {cls.PROCESSED_FIXED}")
+
+    @classmethod
+    def get_gender_wordlists_dir(cls):
+        """Get gender wordlists directory."""
+        if not cls.GENDER_WORDLISTS.exists():
+            raise RuntimeError(f"Gender wordlists not found at {cls.GENDER_WORDLISTS}")
+        return cls.GENDER_WORDLISTS
+
+    @classmethod
+    def get_analysis_output_dir(cls):
+        """Get or create analysis output directory."""
+        cls.ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+        return cls.ANALYSIS_DIR
+
+    @classmethod
+    def resolve_path(cls, path_str, base='project'):
+        """
+        Resolve a path string to an absolute path.
+
+        Args:
+            path_str: Path string (can be relative or absolute)
+            base: Base for relative paths ('project', 'data', 'cwd')
+
+        Returns:
+            Absolute Path object
+        """
+        from pathlib import Path
+        path = Path(path_str)
+
+        # If already absolute, return as-is
+        if path.is_absolute():
+            return path
+
+        # Otherwise resolve based on base
+        if base == 'project':
+            return cls.ROOT / path
+        elif base == 'data':
+            return cls.DATA_DIR / path
+        elif base == 'cwd':
+            return Path.cwd() / path
+        else:
+            raise ValueError(f"Unknown base: {base}")
+
+    # Legacy function names for backward compatibility
+    @classmethod
+    def find_project_root(cls):
+        """Legacy function - returns project root."""
+        return cls.ROOT
+
 
 # Test functionality if run directly
 if __name__ == "__main__":

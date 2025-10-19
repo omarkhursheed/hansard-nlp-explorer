@@ -15,7 +15,7 @@ sys.path.insert(0, str(project_root / 'src'))
 import pandas as pd
 import numpy as np
 from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
-from hansard.utils.path_utils import get_data_dir
+from hansard.utils.path_config import Paths
 import json
 from tqdm import tqdm
 import hashlib
@@ -41,7 +41,7 @@ class EnhancedGenderDatasetCreator:
 
         # Initialize matcher
         print("\nLoading MP matcher...")
-        mp_data = pd.read_parquet(get_data_dir() / "house_members_gendered_updated.parquet")
+        mp_data = pd.read_parquet(Paths.get_data_dir() / "house_members_gendered_updated.parquet")
         self.matcher = CorrectedMPMatcher(mp_data)
 
         # Load checkpoint if exists
