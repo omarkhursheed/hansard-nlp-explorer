@@ -214,7 +214,7 @@ hansard/ (5.7GB - Raw HTML files)
 
 ---
 
-## Utils Cleanup (December 2024)
+## Utils Cleanup
 
 **Consolidated Path Utilities:**
 - **Active:** `src/hansard/utils/path_config.py` - Centralized path management

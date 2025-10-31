@@ -8,7 +8,7 @@ matching processed_fixed/ structure + gender metadata.
 Input:  data-hansard/gender_analysis_enhanced/debates_YYYY_enhanced.parquet (40 cols, nested)
 Output: data-hansard/derived/gender_debates/debates_YYYY.parquet (10 cols, flat)
 
-Schema (matches processed_fixed + gender):
+Schema (matches debates/ structure):
     debate_id: str
     year: int
     date: str
@@ -16,12 +16,17 @@ Schema (matches processed_fixed + gender):
     chamber: str
     full_text: str              # Complete debate text
     speakers: list[str]         # List of speaker names
-    word_count: int
-    has_female: bool            # Has female MPs
-    has_male: bool              # Has male MPs
+    speaker_genders: dict       # {speaker_name: 'm'/'f'}
+    total_speakers: int         # Total unique speakers
+    confirmed_mps: int          # Gender-matched MPs
+    unmatched_speakers: int     # Speakers without gender match
     female_mps: int             # Count of female MPs
     male_mps: int               # Count of male MPs
-    speaker_genders: dict       # {speaker_name: 'm'/'f'}
+    has_female: bool            # Has female MPs
+    has_male: bool              # Has male MPs
+    speech_count: int           # Number of speeches
+    word_count: int             # Total words
+    hansard_reference: str      # Official citation
 
 Usage:
     python scripts/create_gender_debates_dataset.py [--years START-END] [--test]
@@ -69,21 +74,27 @@ def simplify_debate(row, year):
                 if speaker and speaker not in speakers:
                     speakers.append(speaker)
 
-    # Create simplified record
+    # Create simplified record with full traceability
     debate = {
         'debate_id': row.get('debate_id', f"debate_{year}_{row.name}"),
+        'file_path': row.get('file_path', ''),  # Links back to processed_complete
         'year': year,
         'date': row.get('reference_date', ''),
         'title': row.get('title', ''),
         'chamber': row.get('chamber', ''),
         'full_text': row.get('debate_text', ''),
         'speakers': speakers,
-        'word_count': row.get('word_count', len(str(row.get('debate_text', '')).split())),
-        'has_female': bool(row.get('has_female', False)),
-        'has_male': bool(row.get('has_male', False)),
+        'speaker_genders': speaker_genders,
+        'total_speakers': int(row.get('total_speakers', 0)),
+        'confirmed_mps': int(row.get('confirmed_mps', 0)),
+        'unmatched_speakers': int(row.get('unmatched_speakers', 0)),
         'female_mps': int(row.get('female_mps', 0)),
         'male_mps': int(row.get('male_mps', 0)),
-        'speaker_genders': speaker_genders
+        'has_female': bool(row.get('has_female', False)),
+        'has_male': bool(row.get('has_male', False)),
+        'speech_count': int(row.get('speech_count', 0)),
+        'word_count': row.get('word_count', len(str(row.get('debate_text', '')).split())),
+        'hansard_reference': row.get('hansard_reference', ''),
     }
 
     return debate
@@ -199,13 +210,11 @@ def main():
     print(f"  Output: {output_dir}")
 
     if total_debates > 0:
-        print(f"\n✓ Simplified debate-level dataset created!")
-        print(f"\nSchema: debate_id, year, title, chamber, full_text, speakers[],")
-        print(f"        has_female, has_male, female_mps, male_mps, speaker_genders{{}}")
-        print(f"\nThis matches processed_fixed/ schema + gender metadata")
-        print(f"\nNext: Update loaders to support --dataset gender-debates")
+        print(f"\nDataset created successfully!")
+        print(f"\nSchema now matches debates/ structure exactly (18 columns)")
+        print(f"All speeches can link to debates via 'debate_id'")
     else:
-        print(f"\n⚠ No debates extracted")
+        print(f"\nNo debates extracted")
 
     print("\n" + "="*80)
 

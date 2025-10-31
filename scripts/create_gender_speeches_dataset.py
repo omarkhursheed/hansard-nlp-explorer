@@ -12,12 +12,20 @@ Schema:
     speech_id: str          # Unique ID (debate_id + speech_index)
     debate_id: str          # Links back to original debate
     year: int               # Year of speech
+    decade: int             # Decade (e.g., 1990)
+    month: int              # Month (1-12)
     date: str               # Date of debate
     speaker: str            # Speaker name
     gender: str             # 'm' or 'f'
+    position: int           # Line position in original debate
     text: str               # Speech text
     word_count: int         # Words in speech
     chamber: str            # Chamber (Commons/Lords)
+    title: str              # Debate title
+    topic: str              # Debate topic/category
+    hansard_reference: str  # Official Hansard citation
+    reference_volume: str   # Volume number
+    reference_columns: str  # Column numbers in original
 
 Usage:
     python scripts/create_gender_speeches_dataset.py [--years START-END] [--test]
@@ -98,17 +106,26 @@ def extract_speeches_from_debate(row, year):
         if not gender:
             continue  # Skip speeches without gender attribution
 
-        # Create speech record
+        # Create speech record with enhanced metadata and full traceability
         speech = {
             'speech_id': f"{debate_id}_speech_{speech_idx}",
             'debate_id': debate_id,
+            'file_path': row.get('file_path', ''),  # Links back to processed_complete
             'year': year,
+            'decade': row.get('decade', year // 10 * 10),
+            'month': row.get('month', ''),
             'date': row.get('reference_date', ''),
             'speaker': speaker,
             'gender': gender,
+            'position': segment.get('position', speech_idx),  # Character position in full_text
             'text': text,
             'word_count': len(text.split()),
-            'chamber': row.get('chamber', '')
+            'chamber': row.get('chamber', ''),
+            'title': row.get('title', ''),
+            'topic': row.get('topic', ''),
+            'hansard_reference': row.get('hansard_reference', ''),
+            'reference_volume': row.get('reference_volume', ''),
+            'reference_columns': row.get('reference_columns', '')
         }
 
         speeches.append(speech)

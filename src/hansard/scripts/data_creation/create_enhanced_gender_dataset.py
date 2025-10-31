@@ -27,7 +27,7 @@ import os
 import re
 
 class EnhancedGenderDatasetCreator:
-    def __init__(self, output_dir=None, checkpoint_file="checkpoint.pkl"):
+    def __init__(self, output_dir=None, input_dir=None, checkpoint_file="checkpoint.pkl"):
         if output_dir is None:
             # Default to data folder
             output_dir = Path(__file__).resolve().parents[2] / 'data' / 'gender_analysis_enhanced'
@@ -35,9 +35,14 @@ class EnhancedGenderDatasetCreator:
         self.output_dir.mkdir(exist_ok=True)
         self.checkpoint_file = self.output_dir / checkpoint_file
 
-        # Path to extracted content
-        self.content_base = Path(__file__).resolve().parents[2] / 'data' / 'processed_fixed' / 'content'
-        self.metadata_base = Path(__file__).resolve().parents[2] / 'data' / 'processed_fixed' / 'metadata'
+        # Path to extracted content (configurable)
+        if input_dir is None:
+            input_dir = Path(__file__).resolve().parents[2] / 'data' / 'processed_fixed'
+        else:
+            input_dir = Path(input_dir)
+
+        self.content_base = input_dir / 'content'
+        self.metadata_base = input_dir / 'metadata'
 
         # Initialize matcher
         print("\nLoading MP matcher...")
@@ -364,7 +369,8 @@ class EnhancedGenderDatasetCreator:
 
         print("=" * 70)
         print("ENHANCED GENDER ANALYSIS DATASET CREATION")
-        print("Using pre-extracted text from processed_fixed/content")
+        print(f"Input: {self.content_base.parent}")
+        print(f"Output: {self.output_dir}")
         print("=" * 70)
 
         # Get all available years from metadata
@@ -526,6 +532,8 @@ def main():
     parser = argparse.ArgumentParser(description='Create enhanced gender analysis dataset')
     parser.add_argument('--output-dir', default=None,
                        help='Output directory for dataset (default: data/gender_analysis_enhanced)')
+    parser.add_argument('--input-dir', default=None,
+                       help='Input processed data directory (default: data/processed_fixed)')
     parser.add_argument('--year-range', nargs=2, type=int, metavar=('START', 'END'),
                        help='Process only years in range (e.g., 1900 2000)')
     parser.add_argument('--sample', action='store_true',
@@ -537,13 +545,17 @@ def main():
 
     # Handle reset
     if args.reset:
-        checkpoint_path = Path(args.output_dir) / "checkpoint.pkl"
+        output_path = Path(args.output_dir) if args.output_dir else Path("data/gender_analysis_enhanced")
+        checkpoint_path = output_path / "checkpoint.pkl"
         if checkpoint_path.exists():
             os.remove(checkpoint_path)
             print("Checkpoint removed. Starting fresh...")
 
     # Create processor and run
-    processor = EnhancedGenderDatasetCreator(output_dir=args.output_dir)
+    processor = EnhancedGenderDatasetCreator(
+        output_dir=args.output_dir,
+        input_dir=args.input_dir
+    )
     processor.process_all_years(year_range=args.year_range, sample_mode=args.sample)
 
 if __name__ == "__main__":

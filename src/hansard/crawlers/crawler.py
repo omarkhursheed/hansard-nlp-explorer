@@ -47,12 +47,12 @@ except ImportError:
     nest_asyncio = None  # type: ignore
 
 BASE_URL = "https://api.parliament.uk/historic-hansard"
-DEFAULT_CONCURRENCY = 4
-MAX_RPS = 3  # be more conservative 
+DEFAULT_CONCURRENCY = 8
+MAX_RPS = 30  # be more conservative 
 
 # Fast batch processing settings
 FAST_CONCURRENCY = 8
-FAST_MAX_RPS = 6.0 
+FAST_MAX_RPS = 50.0 
 MONTHS = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
 FULL_MONTHS = [
     "january","february","march","april","may","june",
@@ -292,15 +292,23 @@ class HansardCrawler:
             log.debug(f"Looking for debate links with day formats: {day_formats} in {date_path}")
             
             for link in links:
-                if not link or any(x in link.lower() for x in ("index", "contents", "#")):
+                if not link:
                     continue
+                low = link.lower()
+                # Skip anchors and explicit contents pages, but allow 'index' links
+                if '#' in low or 'contents' in low:
+                    continue
+
+                # Normalize common variants: strip trailing index pages and trailing slashes
+                norm = re.sub(r'/(index\.html?|index)/?$', '', link, flags=re.I)
+                norm = norm.rstrip('/')
                 
                 # Look for debate patterns with both day formats
                 found_match = False
                 for day_format in day_formats:
                     # Pattern 1: /commons/1864/feb/15/topic or /lords/1864/feb/15/topic
                     pattern1 = rf"/(commons|lords)/{re.escape(y)}/{re.escape(mo)}/{re.escape(day_format)}/([^/?#]+)"
-                    m1 = re.search(pattern1, link, re.I)
+                    m1 = re.search(pattern1, norm, re.I)
                     if m1:
                         path = m1.group(0).lstrip("/")
                         if path not in out:
@@ -310,7 +318,7 @@ class HansardCrawler:
                     
                     # Pattern 2: /1864/feb/15/topic (generic)
                     pattern2 = rf"/{re.escape(y)}/{re.escape(mo)}/{re.escape(day_format)}/([^/?#]+)"
-                    m2 = re.search(pattern2, link, re.I)
+                    m2 = re.search(pattern2, norm, re.I)
                     if m2:
                         topic = m2.group(1)
                         # Add both commons and lords variants, but use original day format for consistency
@@ -320,9 +328,18 @@ class HansardCrawler:
                                 out.append(path)
                         found_match = True
                         break
-                
+
                 if found_match:
                     continue
+
+                # Pattern 3: bare slug links like 'wales' on day page
+                # If the href is a single slug without slashes, treat it as a debate under this date
+                if '/' not in norm:
+                    if re.fullmatch(r"[a-z0-9][a-z0-9\-]{1,80}", norm):
+                        for house in ["commons", "lords"]:
+                            path = f"{house}/{y}/{mo}/{d}/{norm}"
+                            if path not in out:
+                                out.append(path)
             
             log.debug(f"Found {len(out)} debate links for {date_path}: {out[:5]}{'...' if len(out) > 5 else ''}")
             return out
