@@ -134,6 +134,70 @@ python3 src/hansard/analysis/gendered_comprehensive_analysis.py
 
 ## Code Quality Rules
 
+### CRITICAL: Character Encoding Standards
+
+**NEVER use non-standard characters in the repository:**
+- Use only ASCII characters in code, comments, and documentation
+- Use only standard ASCII in file names and paths
+- If special characters are needed in data/output, handle them explicitly
+- **BAD**: Using curly quotes "", em dashes —, or other Unicode in code/docs
+- **GOOD**: Using straight quotes "", regular dashes -, standard ASCII
+
+### CRITICAL: Dataset Quality Assurance Protocol
+
+**ALWAYS run quality tests before and after making ANY changes to datasets or matching logic:**
+
+#### Before Making Changes:
+1. **Baseline Metrics**: Record current matching rates, coverage, and accuracy
+2. **Sample Analysis**: Test on representative samples from different time periods
+3. **Edge Case Documentation**: Identify known problem cases and their current behavior
+
+#### After Making Changes:
+1. **Regression Testing**: Verify no degradation in existing good matches
+2. **Improvement Verification**: Confirm intended improvements actually occurred
+3. **False Positive Check**: Look for new incorrect matches introduced
+4. **Temporal Consistency**: Test across multiple time periods (1800s, 1900s, 2000s)
+5. **Chamber Split**: Verify behavior in both Commons and Lords
+6. **Sample Inspection**: Manually review random sample of 50+ changes
+
+#### Required Test Categories:
+```python
+# 1. Match rate by time period
+for year in [1820, 1850, 1900, 1950, 2000]:
+    - Total speeches
+    - Matched speeches
+    - Match rate %
+    - Female/male distribution
+
+# 2. Ambiguous match analysis
+- Count of ambiguous matches
+- Gender consistency in ambiguous matches
+- Examples of ambiguous matches (name, candidates, gender)
+
+# 3. Speech extraction quality
+- Debates with speakers listed
+- Debates with speeches extracted
+- Extraction success rate
+- Examples of failed extractions
+
+# 4. False positive risk assessment
+- Known problem names (mixed gender, temporal overlap)
+- Confidence distribution
+- Manual validation of sample
+```
+
+#### Quality Gates (Must Pass):
+- Match rate does not decrease by >1% in any time period
+- No new false positives in manual sample review (n=50)
+- Female MP coverage improves or stays constant
+- Zero matches to wrong gender (verified on known cases)
+
+#### Implementation Safety:
+- Use feature flags for easy rollback
+- Test on single year before full dataset
+- Keep before/after datasets for comparison
+- Document all changes in git commit with test results
+
 ### CRITICAL: Never use arbitrary limits in code
 - **NEVER** use arbitrary slicing like `[:10]` in production code
 - **NEVER** limit processing without clear reason and user control
@@ -257,3 +321,5 @@ PARLIAMENTARY_STOPS = {
 3. **Overcrowded charts**: Limit to top 10-15 items, use small multiples for more
 4. **Slow performance**: Use sampling for initial tests, then run full analysis
 5. **Partial analysis**: Check for arbitrary limits like `[:10]` in loops
+- never give up on a task, always think of new ideas and possible issues, and if things get confusing ask the user as many questions as necessary. don't take shortcuts like "because these two behaviors overlap, i don't need to test each individual behavior separately", don't make empty list or inversion errors, think deeply about data formats and quality, and if there's potential for performance improvement by cheap and simple augmentations such as multiprocessing, suggest them to the user
+- don't limit testing to a single year

@@ -26,6 +26,7 @@ import argparse
 import sys
 import json
 import re
+import copy
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -60,7 +61,7 @@ def extract_speeches_from_text(text, speakers_list):
             escaped_speaker = re.escape(str(speaker))
             # Create pattern that matches speaker name at start of speech
             patterns = [
-                f"§\\s*{escaped_speaker}",              # With section marker
+                f"§\\s*\\*?\\s*{escaped_speaker}",      # With section marker (optional asterisk)
                 f"\\n{escaped_speaker}\\s*:",           # At line start with colon
                 f"\\n{escaped_speaker}\\s*\\(",         # At line start with parenthesis
             ]
@@ -231,8 +232,48 @@ def process_year(args):
                     speech_count += 1
 
                 # Create debate record
-                speaker_genders = {speaker: speaker_gender_map.get(speaker) for speaker in speakers}
-                confirmed_mps = sum(1 for g in speaker_genders.values() if g is not None)
+                # Extract speakers that actually appear in speech_segments (most accurate)
+                # This ensures speaker_genders only contains speakers who actually spoke
+                speakers_from_segments = set()
+                for segment in speech_segments:
+                    if isinstance(segment, dict):
+                        speaker = segment.get('speaker', '')
+                        if speaker and str(speaker).strip():
+                            speakers_from_segments.add(speaker.strip())
+                
+                # Also include speakers from metadata for completeness
+                # But filter to only valid, non-empty names
+                valid_speakers = []
+                if speakers is not None:
+                    # Convert numpy array to list if needed
+                    if isinstance(speakers, np.ndarray):
+                        speakers_list = speakers.tolist() if speakers.size > 0 else []
+                    elif isinstance(speakers, list):
+                        speakers_list = speakers
+                    else:
+                        speakers_list = list(speakers) if hasattr(speakers, '__iter__') else []
+                    
+                    # Filter: remove empty strings, None values, whitespace-only, and deduplicate
+                    if speakers_list:
+                        valid_speakers = list(set([
+                            s.strip() for s in speakers_list 
+                            if s is not None and str(s).strip()
+                        ]))
+                
+                # Combine: prefer speakers from segments, fallback to metadata
+                all_speakers = list(speakers_from_segments) if speakers_from_segments else valid_speakers
+                
+                # CRITICAL: Build speaker_genders ONLY from speakers with gender matches
+                # This prevents storing hundreds of None entries for unmatched speakers
+                # Use .copy() to avoid Pandas sharing dict references across rows
+                speaker_genders = {
+                    str(speaker): str(speaker_gender_map.get(speaker))
+                    for speaker in all_speakers
+                    if speaker_gender_map.get(speaker) is not None
+                }
+                
+                # Count statistics (including unmatched speakers)
+                confirmed_mps = len(speaker_genders)
                 female_mps = sum(1 for g in speaker_genders.values() if g == 'F')
                 male_mps = sum(1 for g in speaker_genders.values() if g == 'M')
 
@@ -253,9 +294,9 @@ def process_year(args):
                     'full_text': full_text,
                     'word_count': metadata.get('word_count', 0),
                     'speech_count': len(speech_segments),
-                    'total_speakers': len(set(speakers)) if speakers else 0,
-                    'speakers': speakers,
-                    'speaker_genders': speaker_genders,
+                    'total_speakers': len(all_speakers),
+                    'speakers': list(all_speakers),  # Create new list to avoid sharing
+                    'speaker_genders': json.dumps(speaker_genders),  # FIX: Store as JSON to avoid Parquet corruption
                     'confirmed_mps': confirmed_mps,
                     'female_mps': female_mps,
                     'male_mps': male_mps,
@@ -361,7 +402,7 @@ class UnifiedDatasetCreator:
         print(f"Year range: {years_to_process[0]}-{years_to_process[-1]}")
         print()
 
-        input("Press Enter to start processing...")
+        # input("Press Enter to start processing...")
         print()
 
         start_time = datetime.now()

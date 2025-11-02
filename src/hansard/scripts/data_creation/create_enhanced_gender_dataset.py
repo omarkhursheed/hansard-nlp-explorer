@@ -25,15 +25,228 @@ import argparse
 import signal
 import os
 import re
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing as mp
+
+
+# Module-level functions for parallel processing
+
+def extract_speeches_from_text(text, speakers_list):
+    """Extract individual speech segments from debate text"""
+    if not text or not speakers_list:
+        return []
+
+    speeches = []
+
+    # Create patterns for each known speaker
+    speaker_patterns = []
+    for speaker in speakers_list:
+        if pd.notna(speaker):
+            # Escape special regex characters
+            escaped_speaker = re.escape(str(speaker))
+            # Create pattern that matches speaker name at start of speech
+            patterns = [
+                f"§\\s*\\*?\\s*{escaped_speaker}",  # With section marker (optional asterisk)
+                f"\\n{escaped_speaker}\\s*:",  # At line start with colon
+                f"\\n{escaped_speaker}\\s*\\(",  # At line start with parenthesis
+            ]
+            speaker_patterns.extend([(p, speaker) for p in patterns])
+
+    # Find all speaker positions
+    speaker_positions = []
+    for pattern, speaker in speaker_patterns:
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            speaker_positions.append((match.start(), speaker))
+
+    # Sort by position
+    speaker_positions.sort(key=lambda x: x[0])
+
+    # Extract speech segments
+    for i, (pos, speaker) in enumerate(speaker_positions):
+        # Get end position (start of next speech or end of text)
+        end_pos = speaker_positions[i+1][0] if i+1 < len(speaker_positions) else len(text)
+
+        # Extract speech text
+        speech_text = text[pos:end_pos].strip()
+
+        # Clean up the text (remove speaker name from beginning)
+        for pattern in [f"§\\s*{re.escape(speaker)}", f"{re.escape(speaker)}\\s*:", f"{re.escape(speaker)}\\s*\\("]:
+            speech_text = re.sub(f"^{pattern}", "", speech_text, flags=re.IGNORECASE).strip()
+
+        # Only keep substantial speeches
+        if speech_text and len(speech_text) > 50:
+            speeches.append({
+                'speaker': speaker,
+                'text': speech_text,
+                'position': pos
+            })
+
+    return speeches
+
+
+def process_year_parallel(args):
+    """Process a single year (for parallel execution)"""
+    year, content_base, metadata_base, mnis_data_path = args
+
+    # Load MNIS data and create matcher in worker process
+    mnis_df = pd.read_parquet(mnis_data_path)
+    matcher = CorrectedMPMatcher(mnis_df)
+
+    # Load metadata for this year
+    metadata_file = metadata_base / f"debates_{year}.parquet"
+    if not metadata_file.exists():
+        return {'year': year, 'debates': 0, 'error': 'Metadata file not found'}
+
+    debates_df = pd.read_parquet(metadata_file)
+
+    # Load texts for this year
+    year_content_file = content_base / str(year) / f"debates_{year}.jsonl"
+    texts_by_path = {}
+
+    if year_content_file.exists():
+        try:
+            with open(year_content_file, 'r') as f:
+                for line in f:
+                    debate_data = json.loads(line)
+                    file_path = debate_data.get('file_path', '')
+                    texts_by_path[file_path] = {
+                        'full_text': debate_data.get('full_text', ''),
+                        'content_hash': debate_data.get('content_hash', ''),
+                        'extraction_timestamp': debate_data.get('extraction_timestamp', '')
+                    }
+        except Exception as e:
+            return {'year': year, 'debates': 0, 'error': f'Failed to load texts: {e}'}
+
+    # Process debates
+    year_debates = []
+
+    for idx, debate in debates_df.iterrows():
+        speakers = debate.get('speakers', [])
+        date = debate.get('reference_date', f'{year}-01-01')
+        chamber = debate.get('chamber', 'Commons')
+
+        # Convert to list if numpy array
+        if isinstance(speakers, np.ndarray):
+            speakers = speakers.tolist()
+
+        if not isinstance(speakers, list) or len(speakers) == 0:
+            continue
+
+        # Match speakers
+        matched_mps = []
+        female_mps = []
+        male_mps = []
+        speaker_details = []
+        ambiguous = 0
+        unmatched = 0
+        unmatched_names = []
+
+        for speaker in speakers:
+            if pd.notna(speaker):
+                result = matcher.match_comprehensive(str(speaker), date, chamber)
+
+                if result['match_type'] in ['temporal_unique', 'title', 'constituency', 'titled_extraction', 'temporal_chamber_same_person', 'ambiguous_consistent_gender']:
+                    if result.get('confidence', 0) >= 0.6:  # Lower threshold to include ambiguous_consistent_gender (0.6)
+                        mp_name = result.get('final_match')
+                        matched_mps.append(mp_name)
+
+                        speaker_info = {
+                            'original_name': str(speaker),
+                            'matched_name': mp_name,
+                            'gender': result.get('gender'),
+                            'party': result.get('party'),
+                            'constituency': result.get('constituency'),
+                            'confidence': result.get('confidence'),
+                            'match_type': result['match_type']
+                        }
+                        speaker_details.append(speaker_info)
+
+                        if result.get('gender') == 'F':
+                            female_mps.append(mp_name)
+                        elif result.get('gender') == 'M':
+                            male_mps.append(mp_name)
+                elif result['match_type'] == 'ambiguous':
+                    ambiguous += 1
+                else:
+                    unmatched += 1
+                    unmatched_names.append(str(speaker))
+
+        # Only keep debates with at least one confirmed MP
+        if matched_mps:
+            file_path = debate.get('file_path', '')
+            debate_text_data = texts_by_path.get(file_path, {})
+            full_text = debate_text_data.get('full_text', '')
+
+            # Extract speech segments if we have text
+            speech_segments = []
+            if full_text:
+                speech_segments = extract_speeches_from_text(full_text, speakers)
+
+            debate_id = hashlib.md5(f"{file_path}_{date}".encode()).hexdigest()[:16]
+            decade = (year // 10) * 10
+
+            debate_record = {
+                'debate_id': debate_id,
+                'year': year,
+                'decade': decade,
+                'month': debate.get('month'),
+                'reference_date': date,
+                'chamber': chamber,
+                'title': debate.get('title'),
+                'topic': debate.get('debate_topic'),
+                'hansard_reference': debate.get('hansard_reference'),
+                'reference_volume': debate.get('reference_volume'),
+                'reference_columns': debate.get('reference_columns'),
+                'debate_text': full_text,
+                'text_length': len(full_text) if full_text else 0,
+                'has_text': bool(full_text),
+                'content_hash': debate_text_data.get('content_hash'),
+                'extraction_timestamp': debate_text_data.get('extraction_timestamp'),
+                'speech_segments': speech_segments,
+                'speech_count': len(speech_segments),
+                'total_speakers': len(speakers),
+                'confirmed_mps': len(matched_mps),
+                'female_mps': len(female_mps),
+                'male_mps': len(male_mps),
+                'has_female': len(female_mps) > 0,
+                'has_male': len(male_mps) > 0,
+                'female_names': female_mps,
+                'male_names': male_mps,
+                'speaker_details': speaker_details,
+                'ambiguous_speakers': ambiguous,
+                'unmatched_speakers': unmatched,
+                'unmatched_names': unmatched_names,
+                'gender_ratio': len(female_mps) / (len(female_mps) + len(male_mps)) if (female_mps or male_mps) else None,
+                'word_count': debate.get('word_count', 0),
+                'line_count': debate.get('line_count', 0),
+                'char_count': debate.get('char_count', 0),
+                'file_path': file_path,
+                'file_name': debate.get('file_name'),
+                'file_size': debate.get('file_size', 0),
+                'file_modified': debate.get('file_modified'),
+                'processing_timestamp': datetime.now().isoformat(),
+                'matcher_version': 'corrected_v1'
+            }
+
+            year_debates.append(debate_record)
+
+    return {
+        'year': year,
+        'debates': len(year_debates),
+        'total_debates_in_year': len(debates_df),
+        'debates_data': year_debates
+    }
+
 
 class EnhancedGenderDatasetCreator:
-    def __init__(self, output_dir=None, input_dir=None, checkpoint_file="checkpoint.pkl"):
+    def __init__(self, output_dir=None, input_dir=None, checkpoint_file="checkpoint.pkl", workers=12):
         if output_dir is None:
             # Default to data folder
             output_dir = Path(__file__).resolve().parents[2] / 'data' / 'gender_analysis_enhanced'
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
         self.checkpoint_file = self.output_dir / checkpoint_file
+        self.workers = workers
 
         # Path to extracted content (configurable)
         if input_dir is None:
@@ -44,10 +257,8 @@ class EnhancedGenderDatasetCreator:
         self.content_base = input_dir / 'content'
         self.metadata_base = input_dir / 'metadata'
 
-        # Initialize matcher
-        print("\nLoading MP matcher...")
-        mp_data = pd.read_parquet(Paths.get_data_dir() / "house_members_gendered_updated.parquet")
-        self.matcher = CorrectedMPMatcher(mp_data)
+        # Store path to MNIS data for worker processes
+        self.mnis_data_path = Paths.get_data_dir() / "house_members_gendered_updated.parquet"
 
         # Load checkpoint if exists
         self.checkpoint = self.load_checkpoint()
@@ -219,8 +430,8 @@ class EnhancedGenderDatasetCreator:
                 if pd.notna(speaker):
                     result = self.matcher.match_comprehensive(str(speaker), date, chamber)
 
-                    if result['match_type'] in ['temporal_unique', 'title', 'constituency']:
-                        if result.get('confidence', 0) >= 0.7:
+                    if result['match_type'] in ['temporal_unique', 'title', 'constituency', 'titled_extraction', 'temporal_chamber_same_person', 'ambiguous_consistent_gender']:
+                        if result.get('confidence', 0) >= 0.6:  # Lower threshold to include ambiguous_consistent_gender (0.6)
                             mp_name = result.get('final_match')
                             matched_mps.append(mp_name)
 
@@ -399,59 +610,74 @@ class EnhancedGenderDatasetCreator:
         print(f"\nTotal years available: {len(all_years)}")
         print(f"Already processed: {len(self.checkpoint['processed_years'])}")
         print(f"Remaining to process: {len(years_to_process)}")
+        print(f"Workers: {self.workers}")
         if years_to_process:
             print(f"Years range: {min(years_to_process)} - {max(years_to_process)}")
         print("=" * 70)
+        print()
 
-        # Process each year
-        with tqdm(total=len(all_years), initial=len(self.checkpoint['processed_years']),
-                  desc="Processing years") as pbar:
-            for year in years_to_process:
-                if self.interrupted:
-                    break
+        # Process years in parallel
+        with ProcessPoolExecutor(max_workers=self.workers) as executor:
+            # Prepare arguments for each year
+            args_list = [
+                (year, self.content_base, self.metadata_base, self.mnis_data_path)
+                for year in years_to_process
+            ]
 
-                try:
-                    print(f"\nProcessing year {year}...")
-                    debates_df = pd.read_parquet(self.metadata_base / f"debates_{year}.parquet")
-                    year_debates = self.process_year(year, debates_df)
+            # Process with progress bar
+            with tqdm(total=len(years_to_process), desc="Processing years") as pbar:
+                for result in executor.map(process_year_parallel, args_list):
+                    year = result['year']
+
+                    if 'error' in result:
+                        print(f"\n✗ {year}: {result['error']}")
+                        pbar.update(1)
+                        continue
 
                     # Save year data
-                    if year_debates:
-                        year_df = pd.DataFrame(year_debates)
+                    if result['debates_data']:
+                        year_df = pd.DataFrame(result['debates_data'])
                         year_df.to_parquet(self.output_dir / f"debates_{year}_enhanced.parquet")
-                        self.checkpoint['all_debates'].extend(year_debates)
 
-                    # Update checkpoint
+                        # Track stats (don't accumulate all data in memory)
+                        for debate in result['debates_data']:
+                            if debate.get('has_female'):
+                                self.checkpoint['stats']['debates_with_female'] += 1
+                            if debate.get('debate_text'):
+                                self.checkpoint['stats']['debates_with_text'] += 1
+                                self.checkpoint['stats']['total_text_chars'] += len(debate['debate_text'])
+
+                    # Update checkpoint and stats
                     self.checkpoint['processed_years'].add(year)
-                    self.checkpoint['last_completed_year'] = year
+                    self.checkpoint['stats']['debates_with_confirmed_mps'] += result['debates']
+                    self.checkpoint['stats']['total_debates_processed'] += result.get('total_debates_in_year', result['debates'])
 
-                    # Save checkpoint every 5 years
-                    if year % 5 == 0:
+                    # Save checkpoint every 10 years
+                    if len(self.checkpoint['processed_years']) % 10 == 0:
                         self.save_checkpoint()
 
                     pbar.update(1)
 
-                except Exception as e:
-                    print(f"\nError processing {year}: {e}")
-                    print("Saving checkpoint and continuing...")
-                    self.save_checkpoint()
-                    continue
-
-        # Final save
+        # Final save (regenerate combined file from year files)
         self.save_final_dataset()
 
     def save_final_dataset(self):
-        """Save the combined dataset and metadata"""
+        """Save the combined dataset and metadata (load from year files)"""
         print("\n" + "=" * 70)
         print("SAVING ENHANCED FINAL DATASET")
         print("=" * 70)
 
-        # Save combined dataset
-        if self.checkpoint['all_debates']:
-            print(f"\nSaving {len(self.checkpoint['all_debates'])} total debates...")
+        # Load all year files and combine (saves memory vs accumulating in checkpoint)
+        year_files = sorted(self.output_dir.glob("debates_*_enhanced.parquet"))
 
-            # Create version with and without text for size management
-            combined_df = pd.DataFrame(self.checkpoint['all_debates'])
+        if year_files:
+            print(f"\nCombining {len(year_files)} year files...")
+
+            # Load and combine all year files
+            all_dfs = [pd.read_parquet(f) for f in year_files]
+            combined_df = pd.concat(all_dfs, ignore_index=True)
+
+            print(f"Total debates: {len(combined_df):,}")
 
             # Full version with text
             print("Saving full dataset with text...")
@@ -488,15 +714,19 @@ class EnhancedGenderDatasetCreator:
 
             # Print summary
             stats = self.checkpoint['stats']
+            total_processed = stats.get('total_debates_processed', 0)
+            total_with_mps = stats.get('debates_with_confirmed_mps', 0)
+
             print(f"\n=== PROCESSING SUMMARY ===")
-            print(f"Total debates processed: {stats['total_debates_processed']:,}")
-            print(f"Debates with confirmed MPs: {stats['debates_with_confirmed_mps']:,}")
-            if stats['debates_with_confirmed_mps'] > 0:
-                print(f"  → {100*stats['debates_with_confirmed_mps']/stats['total_debates_processed']:.1f}% of all debates")
+            print(f"Total debates processed: {total_processed:,}")
+            print(f"Debates with confirmed MPs: {total_with_mps:,}")
+
+            if total_with_mps > 0 and total_processed > 0:
+                print(f"  → {100*total_with_mps/total_processed:.1f}% of all debates")
                 print(f"\nDebates with female MPs: {stats['debates_with_female']:,}")
-                print(f"  → {100*stats['debates_with_female']/stats['debates_with_confirmed_mps']:.1f}% of debates with MPs")
+                print(f"  → {100*stats['debates_with_female']/total_with_mps:.1f}% of debates with MPs")
                 print(f"\nDebates with extracted text: {stats['debates_with_text']:,}")
-                print(f"  → {100*stats['debates_with_text']/stats['debates_with_confirmed_mps']:.1f}% of debates with MPs")
+                print(f"  → {100*stats['debates_with_text']/total_with_mps:.1f}% of debates with MPs")
                 print(f"Total text extracted: {stats['total_text_chars']/1e9:.2f} GB of text")
 
             print(f"\n=== UNIQUE ENTITIES ===")
@@ -540,8 +770,14 @@ def main():
                        help='Sample mode - process only first 3 years for testing')
     parser.add_argument('--reset', action='store_true',
                        help='Reset checkpoint and start fresh')
+    parser.add_argument('--workers', type=int, default=None,
+                       help='Number of parallel workers (default: 75%% of CPU cores)')
 
     args = parser.parse_args()
+
+    # Determine worker count
+    if args.workers is None:
+        args.workers = max(1, int(mp.cpu_count() * 0.75))
 
     # Handle reset
     if args.reset:
@@ -554,9 +790,12 @@ def main():
     # Create processor and run
     processor = EnhancedGenderDatasetCreator(
         output_dir=args.output_dir,
-        input_dir=args.input_dir
+        input_dir=args.input_dir,
+        workers=args.workers
     )
     processor.process_all_years(year_range=args.year_range, sample_mode=args.sample)
 
 if __name__ == "__main__":
+    # Set multiprocessing start method for macOS compatibility
+    mp.set_start_method('spawn', force=True)
     main()
