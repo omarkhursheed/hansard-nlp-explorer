@@ -89,12 +89,12 @@ female_speeches = speeches[speeches['gender'] == 'F']
 
 | Metric | Count |
 |--------|-------|
-| Total debates | 1,223,157 |
+| Total debates | 1,197,828 |
 | Total speeches | 5,939,625 |
-| Gendered speeches | 3,098,182 |
-| Female speeches | 107,341 |
-| Male speeches | 2,990,841 |
-| MP-matched debates | 546,080 |
+| Commons speeches | 4,840,797 |
+| Gender-matched speeches (Commons) | 4,385,652 (90.6%) |
+| Female speeches | 136,611 |
+| Male speeches | 4,249,041 |
 | Years covered | 1803-2005 (201 years) |
 
 ## Key Scripts
