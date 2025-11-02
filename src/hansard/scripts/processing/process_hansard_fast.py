@@ -13,8 +13,9 @@ import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import argparse
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+# Add src to path for imports (script is now at src/hansard/scripts/processing/)
+project_root = Path(__file__).resolve().parents[4]  # Up to hansard-nlp-explorer
+sys.path.insert(0, str(project_root / 'src'))
 
 from hansard.parsers.data_pipeline import HansardDataPipeline
 

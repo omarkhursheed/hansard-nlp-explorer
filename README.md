@@ -34,7 +34,7 @@ Complete UK Parliamentary debates corpus (1803-2005) with gender analysis capabi
 - Without: 2.8M speeches (unmatched speakers)
 - Size: 9.6 GB
 
-See `docs/DATA_ARCHITECTURE.md` for details.
+All data organized in data-hansard/ directory.
 
 ## Quick Start
 
@@ -99,20 +99,29 @@ female_speeches = speeches[speeches['gender'] == 'F']
 
 ## Key Scripts
 
-### Data Creation
-- `scripts/create_unified_complete_datasets.py` - Create final speech/debate datasets
-- `src/hansard/scripts/data_creation/create_enhanced_gender_dataset.py` - MP matching
-- `scripts/process_hansard_fast.py` - Extract text from HTML (parallel)
+All scripts organized in `src/hansard/scripts/`:
 
-### Data Collection
-- `src/hansard/crawlers/crawler.py` - Fetch from UK Parliament API
-- `scripts/create_complete_index_fast.py` - Index all available data
-- `scripts/systematic_recrawl.py` - Re-fetch missing data
+### Data Generation Pipeline
+```bash
+# Step 1: Extract text from HTML
+python3 src/hansard/scripts/processing/process_hansard_fast.py
 
-### Utilities
-- `scripts/audit_against_index.py` - Verify completeness
-- `scripts/cleanup_duplicate_debates.py` - Remove duplicates
-- `scripts/verify_completeness.py` - Final verification
+# Step 2: Match MPs and add gender data
+python3 src/hansard/scripts/data_creation/create_enhanced_gender_dataset.py \
+  --input-dir data-hansard/processed_complete \
+  --output-dir data-hansard/gender_analysis_complete
+
+# Step 3: Create unified speech/debate datasets
+python3 src/hansard/scripts/data_creation/create_unified_complete_datasets.py \
+  --processed-dir data-hansard/processed_complete \
+  --gender-dir data-hansard/gender_analysis_complete \
+  --output-dir data-hansard/derived_complete
+```
+
+### Other Tools
+- **Crawling**: `scripts/crawling/` (systematic_recrawl, create_complete_index_fast)
+- **Verification**: `scripts/verification/` (audit, verify, cleanup)
+- **Quality**: `scripts/quality/` (baseline_quality_metrics, false_positive_analysis)
 
 ## Requirements
 

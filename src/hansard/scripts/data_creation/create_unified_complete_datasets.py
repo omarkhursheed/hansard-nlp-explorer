@@ -37,8 +37,8 @@ from tqdm import tqdm
 import pickle
 import signal
 
-# Add to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'hansard'))
+# No path manipulation needed - use package imports
+# Script is at src/hansard/scripts/data_creation/, can import from hansard package
 
 
 def extract_speeches_from_text(text, speakers_list):

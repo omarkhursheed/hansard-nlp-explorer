@@ -18,8 +18,11 @@ from pathlib import Path
 from datetime import datetime
 import time
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "hansard" / "crawlers"))
-from crawler import HansardCrawler
+# Add src to path using project root
+project_root = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(project_root / 'src'))
+
+from hansard.crawlers.crawler import HansardCrawler
 
 class SystematicRecrawler:
     def __init__(self, index_file: Path, recrawl_file: Path, output_dir: Path,

@@ -4,11 +4,15 @@ Deep edge case analysis for potential false positives
 """
 
 import sys
-sys.path.insert(0, 'src/hansard')
+from pathlib import Path
+
+# Add src to path (script is now at src/hansard/scripts/quality/)
+project_root = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
 from pathlib import Path
-from scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
 
 def check_ambiguous_in_different_decades():
     """Check if same ambiguous name gets consistent gender across decades."""
