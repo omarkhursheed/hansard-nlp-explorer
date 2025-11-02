@@ -171,7 +171,7 @@ def main():
     print("Estimated time: 45-90 minutes for 200 years")
     print()
 
-    input("Press Enter to start processing...")
+    # input("Press Enter to start processing...")  # Disabled for automated testing
 
     # Setup
     pipeline = HansardDataPipeline(args.raw_data, args.output)
