@@ -32,9 +32,14 @@ class Paths:
 
     # Data directories - now at top level
     DATA_DIR = ROOT / 'data-hansard'
-    GENDER_ENHANCED_DATA = DATA_DIR / 'gender_analysis_enhanced'
+    GENDER_ENHANCED_DATA = DATA_DIR / 'gender_analysis_complete'  # Updated from gender_analysis_enhanced
     GENDER_WORDLISTS = DATA_DIR / 'gender_wordlists'
-    PROCESSED_FIXED = DATA_DIR / 'processed_fixed'
+    PROCESSED_DATA = DATA_DIR / 'processed_complete'  # Updated from processed_fixed
+    DERIVED_DATA = DATA_DIR / 'derived_complete'  # Unified speeches/debates
+
+    # Legacy names for backward compatibility
+    PROCESSED_FIXED = PROCESSED_DATA  # Alias
+    GENDER_ANALYSIS_ENHANCED = GENDER_ENHANCED_DATA  # Alias
 
     # Analysis directory - single top-level directory for all outputs
     ANALYSIS_DIR = ROOT / 'analysis'
@@ -96,9 +101,11 @@ class Paths:
     @classmethod
     def get_processed_data_dir(cls):
         """Get processed data directory, checking for alternate names."""
-        if cls.PROCESSED_FIXED.exists():
-            return cls.PROCESSED_FIXED
-        raise RuntimeError(f"No processed data directory found at {cls.PROCESSED_FIXED}")
+        if cls.PROCESSED_DATA.exists():
+            return cls.PROCESSED_DATA
+        elif cls.PROCESSED_FIXED.exists():
+            return cls.PROCESSED_FIXED  # Legacy fallback
+        raise RuntimeError(f"No processed data directory found at {cls.PROCESSED_DATA} or {cls.PROCESSED_FIXED}")
 
     @classmethod
     def get_gender_wordlists_dir(cls):
