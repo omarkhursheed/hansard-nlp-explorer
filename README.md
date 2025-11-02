@@ -5,34 +5,37 @@ Complete UK Parliamentary debates corpus (1803-2005) with gender analysis capabi
 ## Overview
 
 - **Complete Corpus**: 1.2M debates, 5.9M speeches, 200+ years
-- **Gender Analysis**: 546K MP-matched debates, 3.1M gendered speeches
-- **Completeness**: 100% of available UK Hansard data
+- **Gender Matching**: 90.6% coverage (4.4M speeches matched to MPs)
+- **Female Representation**: 136,611 speeches across 1919-2005
+- **Data Quality**: 99.993% accuracy, comprehensive testing
 - **Coverage**: Both Commons and Lords chambers
 
 ## Data Architecture
 
 ### Tier 1: Raw HTML (hansard/)
-- 27,414 dates, 1,223,157 debates
-- Original HTML from UK Parliament API
-- Size: 8.2 GB
+- 1,197,828 HTML files from UK Parliament API
+- Years: 1803-2005 (201 years)
+- Size: 5.7 GB (gzipped)
 
 ### Tier 2: Processed (processed_complete/)
-- 1.2M debates with extracted text and metadata
-- Format: JSONL (text) + Parquet (metadata)
-- Size: 20 GB
+- 1,197,828 debates with extracted text and metadata
+- Format: JSONL (full_text) + Parquet (metadata)
+- Parallel processing with checkpointing
+- Size: 14 GB
 
 ### Tier 3: Gender-Enhanced (gender_analysis_complete/)
-- 546K debates with MP matching
-- Includes: gender, party, constituency data
-- 224 female MPs, 7,549 male MPs identified
-- Size: 13 GB
+- 638,220 debates with MP matching (53.3% of all debates)
+- Includes: gender, party, constituency, speech segments
+- MP matching with temporal validation
+- Size: 7.6 GB
 
-### Tier 4: Derived Datasets (derived_complete/)
-- **speeches_complete/**: 5.9M speeches (ALL speakers)
-- **debates_complete/**: 1.2M debates (full metadata)
-- With gender attribution: 3.1M speeches (52%)
-- Without: 2.8M speeches (unmatched speakers)
-- Size: 9.6 GB
+### Tier 4: Unified Datasets (derived_complete/)
+- **speeches_complete/**: 5.9M individual speeches (ALL speakers)
+- **debates_complete/**: 1.2M debates (unified schema)
+- Commons: 4.8M speeches (90.6% with gender)
+- Female: 136,611 speeches (2.82% of Commons)
+- Male: 4,249,041 speeches (87.8% of Commons)
+- Size: ~10 GB
 
 All data organized in data-hansard/ directory.
 
@@ -56,14 +59,25 @@ python3 src/hansard/analysis/suffrage_analysis.py
 ```python
 import pandas as pd
 
-# Load speeches (with conversation data)
+# Load speeches for a specific year
 speeches = pd.read_parquet('data-hansard/derived_complete/speeches_complete/speeches_1990.parquet')
 
-# Reconstruct a conversation
-conversation = speeches[speeches['debate_id'] == 'xxx'].sort_values('position')
+# Filter to Commons only (higher match rate)
+commons = speeches[speeches['chamber'] == 'Commons']
 
 # Gender-specific analysis
-female_speeches = speeches[speeches['gender'] == 'F']
+female_speeches = commons[commons['gender'] == 'F']
+male_speeches = commons[commons['gender'] == 'M']
+
+# Reconstruct a debate conversation
+debate_speeches = speeches[speeches['debate_id'] == 'xxx'].sort_values('sequence_number')
+
+# Load multiple years
+years = range(1990, 2001)
+all_speeches = pd.concat([
+    pd.read_parquet(f'data-hansard/derived_complete/speeches_complete/speeches_{y}.parquet')
+    for y in years
+])
 ```
 
 ## Key Features
@@ -118,10 +132,25 @@ python3 src/hansard/scripts/data_creation/create_unified_complete_datasets.py \
   --output-dir data-hansard/derived_complete
 ```
 
-### Other Tools
-- **Crawling**: `scripts/crawling/` (systematic_recrawl, create_complete_index_fast)
-- **Verification**: `scripts/verification/` (audit, verify, cleanup)
-- **Quality**: `scripts/quality/` (baseline_quality_metrics, false_positive_analysis)
+### Additional Tools
+
+All organized in `src/hansard/scripts/`:
+
+- **Crawling**: `crawling/` - Fetch data from UK Parliament API
+- **Processing**: `processing/` - Extract text from HTML
+- **Matching**: `matching/` - MP name matching with gender attribution
+- **Verification**: `verification/` - Data quality checks and validation
+- **Quality**: `quality/` - Testing and false positive analysis
+
+### Analysis Scripts
+
+Located in `src/hansard/analysis/`:
+
+- `comprehensive_analysis.py` - Full corpus analysis
+- `gendered_comprehensive_analysis.py` - Gender-specific analysis
+- `suffrage_analysis.py` - Historical suffrage analysis
+- `basic_analysis.py` - Simple statistical analysis
+- `analysis_utils.py` - Shared utilities (stop words, preprocessing)
 
 ## Requirements
 
