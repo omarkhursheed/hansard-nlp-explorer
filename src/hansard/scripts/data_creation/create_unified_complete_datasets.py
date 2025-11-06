@@ -41,6 +41,137 @@ import signal
 # Script is at src/hansard/scripts/data_creation/, can import from hansard package
 
 
+def normalize_speaker_name(speaker_name):
+    """
+    Normalize speaker name for better deduplication.
+
+    Matches the normalization used in MP data (aliases_norm).
+
+    Examples:
+        "Mr. Winston Churchill" -> "winston churchill"
+        "Mr. W. Churchill" -> "w churchill"
+        "Sir Winston Churchill" -> "winston churchill"
+        "The Secretary at War (Mr. Churchill)" -> "churchill"
+    """
+    if not speaker_name or pd.isna(speaker_name):
+        return ""
+
+    name = str(speaker_name).strip()
+
+    # Extract name from parenthetical if it's a role description
+    # E.g., "The Secretary at War (Mr. Churchill)" -> "Mr. Churchill"
+    paren_match = re.search(r'\(([^)]+)\)$', name)
+    if paren_match:
+        extracted = paren_match.group(1).strip()
+        # If what's in parentheses looks like a name (has honorific), use that
+        if any(re.match(r'\b(Mr|Mrs|Miss|Ms|Dr|Sir|Lady|Lord)\b', extracted, re.IGNORECASE) for _ in [1]):
+            name = extracted
+        else:
+            # Otherwise remove parentheses
+            name = re.sub(r'\([^)]*\)', '', name)
+
+    # Fix missing spaces after honorifics (Mr.Name -> Mr. Name)
+    name = re.sub(r'(Mr|Mrs|Miss|Ms|Dr|Sir|Lady|Lord)\.([A-Z])', r'\1. \2', name, flags=re.IGNORECASE)
+
+    # Remove honorifics and titles
+    honorifics = [
+        r'\bMr\.?\s*', r'\bMrs\.?\s*', r'\bMiss\.?\s*', r'\bMs\.?\s*',
+        r'\bDr\.?\s*', r'\bSir\.?\s*', r'\bLady\.?\s*', r'\bLord\.?\s*',
+        r'\bDame\.?\s*', r'\bRev\.?\s*', r'\bReverend\.?\s*',
+        r'\bThe\s+Right\s+Hon\.?\s*', r'\bThe\s+Hon\.?\s*',
+        r'\bColonel\.?\s*', r'\bMajor\.?\s*', r'\bCaptain\.?\s*',
+        r'\bGeneral\.?\s*', r'\bAdmiral\.?\s*',
+        r'\bThe\s+Secretary\s+at\s+War\s*', r'\bThe\s+Chancellor\s*',
+        r'\bThe\s+Prime\s+Minister\s*', r'\bThe\s+Earl\s+of\s+',
+        r'\bThe\s+Viscount\s+', r'\bThe\s+Baron\s+',
+        r'\bThe\s+Baroness\s+', r'\bThe\s+Duchess\s+of\s+',
+        r'\bThe\s+Duke\s+of\s+', r'\bThe\s+Marquess\s+of\s+',
+    ]
+
+    for honorific in honorifics:
+        name = re.sub(honorific, '', name, flags=re.IGNORECASE)
+
+    # Remove trailing punctuation and "rose"/"said" suffix
+    name = re.sub(r'\s+(rose|said)$', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'[.,;:]+$', '', name)
+
+    # Normalize whitespace
+    name = re.sub(r'\s+', ' ', name).strip()
+
+    # Convert to lowercase
+    name = name.lower()
+
+    return name
+
+
+def clean_speaker_name(speaker_name):
+    """
+    Clean speaker name for display (remove artifacts but keep capitalization).
+
+    Used for speakers without person_id (unmatched/ambiguous).
+
+    Examples:
+        "*MR. WILLIAM JOHNSTON" -> "William Johnston"
+        "THE SECRETARY (Mr. Churchill,)" -> "Churchill"
+        "*THE LORD ADVOCATE (Mr. A. GRAHAM MURRAY," -> "A. Graham Murray"
+    """
+    if not speaker_name or pd.isna(speaker_name):
+        return ""
+
+    name = str(speaker_name).strip()
+
+    # Remove leading asterisk
+    name = name.lstrip('*').strip()
+
+    # Extract name from parenthetical if it's a role description
+    # E.g., "THE LORD ADVOCATE (Mr. A. GRAHAM MURRAY," -> "Mr. A. GRAHAM MURRAY"
+    paren_match = re.search(r'\(([^)]+)', name)  # Note: might have unclosed paren
+    if paren_match:
+        extracted = paren_match.group(1).strip().rstrip(',')
+        # If what's in parentheses looks like a name (has honorific), use that
+        if re.match(r'\b(Mr|Mrs|Miss|Ms|Dr|Sir|Lady|Lord)\b', extracted, re.IGNORECASE):
+            name = extracted
+
+    # Remove remaining parentheses
+    name = re.sub(r'[()]+', '', name)
+
+    # Remove honorifics and titles
+    honorifics = [
+        r'\bMr\.?\s*', r'\bMrs\.?\s*', r'\bMiss\.?\s*', r'\bMs\.?\s*',
+        r'\bDr\.?\s*', r'\bSir\.?\s*', r'\bLady\.?\s*', r'\bLord\.?\s*',
+        r'\bDame\.?\s*', r'\bRev\.?\s*', r'\bReverend\.?\s*',
+        r'\bThe\s+Right\s+Hon\.?\s*', r'\bThe\s+Hon\.?\s*',
+        r'\bColonel\.?\s*', r'\bMajor\.?\s*', r'\bCaptain\.?\s*',
+        r'\bGeneral\.?\s*', r'\bAdmiral\.?\s*',
+    ]
+
+    for honorific in honorifics:
+        name = re.sub(honorific, '', name, flags=re.IGNORECASE)
+
+    # Remove trailing punctuation and commas
+    name = re.sub(r'[.,;:]+$', '', name)
+
+    # Normalize whitespace
+    name = re.sub(r'\s+', ' ', name).strip()
+
+    # Title case for better display
+    name = name.title()
+
+    return name
+
+
+def load_person_name_lookup(mnis_data_path):
+    """Load person_id -> person_name mapping from MP database."""
+    try:
+        mnis_df = pd.read_parquet(mnis_data_path)
+        # Create lookup: person_id -> person_name
+        lookup = mnis_df[['person_id', 'person_name']].drop_duplicates(subset=['person_id'])
+        return dict(zip(lookup['person_id'], lookup['person_name']))
+    except Exception as e:
+        print(f"Warning: Could not load person_name lookup: {e}")
+        return {}
+
+
 def extract_speeches_from_text(text, speakers_list):
     """
     Extract individual speech segments from debate full_text.
@@ -104,7 +235,10 @@ def extract_speeches_from_text(text, speakers_list):
 
 def process_year(args):
     """Process a single year (for parallel execution)."""
-    year, processed_dir, gender_dir = args
+    year, processed_dir, gender_dir, mnis_data_path = args
+
+    # Load person_name lookup for canonical names
+    person_name_lookup = load_person_name_lookup(mnis_data_path)
 
     # Read processed_complete for this year
     content_file = processed_dir / 'content' / str(year) / f'debates_{year}.jsonl'
@@ -180,10 +314,11 @@ def process_year(args):
                     # Not in gender_complete - extract ourselves
                     speech_segments = extract_speeches_from_text(full_text, speakers)
 
-                # Build speaker gender map
+                # Build speaker maps
                 speaker_gender_map = {}
                 speaker_party_map = {}
                 speaker_constituency_map = {}
+                speaker_person_id_map = {}
 
                 for detail in speaker_details:
                     if isinstance(detail, dict):
@@ -192,16 +327,26 @@ def process_year(args):
                             speaker_gender_map[orig_name] = detail.get('gender')
                             speaker_party_map[orig_name] = detail.get('party')
                             speaker_constituency_map[orig_name] = detail.get('constituency')
+                            speaker_person_id_map[orig_name] = detail.get('person_id')
 
                 # Create speech records
                 for seq_num, segment in enumerate(speech_segments, 1):
                     speaker = segment['speaker']
 
-                    # Get gender data (None if not matched)
+                    # Get MP data (None if not matched)
                     gender = speaker_gender_map.get(speaker)
                     matched_mp = gender is not None
                     party = speaker_party_map.get(speaker)
                     constituency = speaker_constituency_map.get(speaker)
+                    person_id = speaker_person_id_map.get(speaker)
+
+                    # Create canonical_name
+                    # If we have person_id, use clean name from database
+                    # Otherwise, apply basic cleaning to remove artifacts
+                    if person_id and person_id in person_name_lookup:
+                        canonical_name = person_name_lookup[person_id]
+                    else:
+                        canonical_name = clean_speaker_name(speaker)
 
                     speech = {
                         'speech_id': f"{debate_id}_speech_{seq_num}",
@@ -209,6 +354,9 @@ def process_year(args):
                         'file_path': file_path,
                         'sequence_number': seq_num,
                         'speaker': speaker,
+                        'normalized_speaker': normalize_speaker_name(speaker),
+                        'canonical_name': canonical_name,
+                        'person_id': person_id,
                         'gender': gender,
                         'matched_mp': matched_mp,
                         'party': party,
@@ -262,7 +410,30 @@ def process_year(args):
                 
                 # Combine: prefer speakers from segments, fallback to metadata
                 all_speakers = list(speakers_from_segments) if speakers_from_segments else valid_speakers
-                
+
+                # Create normalized speaker list for unique speaker tracking
+                normalized_speakers = list(set([
+                    normalize_speaker_name(speaker)
+                    for speaker in all_speakers
+                    if normalize_speaker_name(speaker)
+                ]))
+
+                # Create list of unique person_ids for matched MPs
+                unique_person_ids = list(set([
+                    speaker_person_id_map.get(speaker)
+                    for speaker in all_speakers
+                    if speaker_person_id_map.get(speaker) is not None
+                ]))
+
+                # Create canonical_names list matching the speakers list
+                canonical_names = []
+                for speaker in all_speakers:
+                    person_id = speaker_person_id_map.get(speaker)
+                    if person_id and person_id in person_name_lookup:
+                        canonical_names.append(person_name_lookup[person_id])
+                    else:
+                        canonical_names.append(clean_speaker_name(speaker))
+
                 # CRITICAL: Build speaker_genders ONLY from speakers with gender matches
                 # This prevents storing hundreds of None entries for unmatched speakers
                 # Use .copy() to avoid Pandas sharing dict references across rows
@@ -271,9 +442,10 @@ def process_year(args):
                     for speaker in all_speakers
                     if speaker_gender_map.get(speaker) is not None
                 }
-                
+
                 # Count statistics (including unmatched speakers)
                 confirmed_mps = len(speaker_genders)
+                unique_mp_count = len(unique_person_ids)
                 female_mps = sum(1 for g in speaker_genders.values() if g == 'F')
                 male_mps = sum(1 for g in speaker_genders.values() if g == 'M')
 
@@ -295,7 +467,12 @@ def process_year(args):
                     'word_count': metadata.get('word_count', 0),
                     'speech_count': len(speech_segments),
                     'total_speakers': len(all_speakers),
-                    'speakers': list(all_speakers),  # Create new list to avoid sharing
+                    'unique_normalized_speakers': len(normalized_speakers),
+                    'unique_mp_count': unique_mp_count,  # Count of unique person_ids
+                    'speakers': list(all_speakers),  # Original speaker names
+                    'normalized_speakers': list(normalized_speakers),  # For unique speaker tracking
+                    'canonical_names': list(canonical_names),  # Clean display names
+                    'unique_person_ids': list(unique_person_ids),  # List of unique person_ids who spoke
                     'speaker_genders': json.dumps(speaker_genders),  # FIX: Store as JSON to avoid Parquet corruption
                     'confirmed_mps': confirmed_mps,
                     'female_mps': female_mps,
@@ -409,11 +586,15 @@ class UnifiedDatasetCreator:
         total_speeches = 0
         total_debates = 0
 
+        # Get MP database path for canonical names
+        project_root = Path(__file__).resolve().parents[4]  # Go up to project root
+        mnis_data_path = project_root / 'data-hansard' / 'house_members_gendered_updated.parquet'
+
         # Process years in parallel
         with ProcessPoolExecutor(max_workers=self.workers) as executor:
             # Prepare arguments
             args_list = [
-                (year, self.processed_dir, self.gender_dir)
+                (year, self.processed_dir, self.gender_dir, mnis_data_path)
                 for year in years_to_process
             ]
 
