@@ -4,11 +4,18 @@ Interactive web app for manual validation of suffrage classification.
 
 Usage:
     streamlit run scripts/classification/validation_app.py
+
+Keyboard Shortcuts:
+    - Arrow Left/Right: Previous/Next speech
+    - 1-5: Set your judgment (1=for, 2=against, 3=both, 4=neutral, 5=irrelevant)
+    - y/n: Stance correct (y=YES, n=NO)
+    - Ctrl+Enter: Save & Continue
 """
 
 import pandas as pd
 import numpy as np
 import streamlit as st
+import streamlit.components.v1 as components
 from pathlib import Path
 
 # Page config
@@ -66,6 +73,47 @@ def get_completion_status(results_df):
     total = len(results_df)
     completed = results_df['stance_correct'].notna().sum()
     return completed, total
+
+def add_keyboard_shortcuts():
+    """Add keyboard shortcuts for faster navigation."""
+    components.html(
+        """
+        <script>
+        const doc = window.parent.document;
+
+        doc.addEventListener('keydown', function(e) {
+            // Don't interfere with typing in text areas
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+                return;
+            }
+
+            // Arrow keys for navigation
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const prevBtn = doc.querySelector('button[kind="secondary"]');
+                if (prevBtn && prevBtn.textContent.includes('Previous')) {
+                    prevBtn.click();
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                const nextBtn = doc.querySelector('button[kind="secondary"]');
+                if (nextBtn && nextBtn.textContent.includes('Next')) {
+                    nextBtn.click();
+                }
+            }
+            // Save with Ctrl+Enter
+            else if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                const saveBtn = doc.querySelector('button[kind="primary"]');
+                if (saveBtn) {
+                    saveBtn.click();
+                }
+            }
+        });
+        </script>
+        """,
+        height=0,
+    )
 
 def display_speech(row, speech_idx):
     """Display a single speech for validation."""
@@ -131,19 +179,20 @@ def display_speech(row, speech_idx):
     else:
         st.info("No arguments extracted")
 
-    # Full speech text
-    st.header("Full Speech Text")
-    if pd.notna(row.get('target_text')):
-        text = row['target_text']
-        st.text_area(
-            "Speech content",
-            text,
-            height=300,
-            key=f"text_{speech_idx}"
-        )
-        st.caption(f"Total: {len(text)} characters, ~{len(text.split())} words")
-    else:
-        st.warning("Speech text not available")
+    # Full speech text (collapsible to save space)
+    with st.expander("📄 Full Speech Text", expanded=False):
+        if pd.notna(row.get('target_text')):
+            text = row['target_text']
+            st.text_area(
+                "Speech content",
+                text,
+                height=400,
+                key=f"text_{speech_idx}",
+                label_visibility="collapsed"
+            )
+            st.caption(f"Total: {len(text)} characters, ~{len(text.split())} words")
+        else:
+            st.warning("Speech text not available")
 
     st.divider()
 
@@ -167,9 +216,9 @@ def display_speech(row, speech_idx):
 
         stance_correct = st.radio(
             "Is the LLM stance correct?",
-            options=['', 'YES', 'NO'],
+            options=['(not answered)', 'YES', 'NO'],
             index=0 if pd.isna(existing['stance_correct']) else
-                  ['', 'YES', 'NO'].index(existing['stance_correct']),
+                  ['(not answered)', 'YES', 'NO'].index(existing['stance_correct']) if existing['stance_correct'] in ['YES', 'NO'] else 0,
             key=f"stance_{speech_idx}",
             horizontal=True
         )
@@ -177,9 +226,9 @@ def display_speech(row, speech_idx):
     with col2:
         reasons_correct = st.radio(
             "Are the extracted reasons correct?",
-            options=['', 'YES', 'PARTIAL', 'NO'],
+            options=['(not answered)', 'YES', 'PARTIAL', 'NO'],
             index=0 if pd.isna(existing['reasons_correct']) else
-                  ['', 'YES', 'PARTIAL', 'NO'].index(existing['reasons_correct']),
+                  ['(not answered)', 'YES', 'PARTIAL', 'NO'].index(existing['reasons_correct']) if existing['reasons_correct'] in ['YES', 'PARTIAL', 'NO'] else 0,
             key=f"reasons_{speech_idx}",
             horizontal=True,
             help="YES = all correct, PARTIAL = some correct, NO = mostly wrong"
@@ -187,9 +236,9 @@ def display_speech(row, speech_idx):
 
         quotes_accurate = st.radio(
             "Are the quotes accurate?",
-            options=['', 'YES', 'PARTIAL', 'NO'],
+            options=['(not answered)', 'YES', 'PARTIAL', 'NO'],
             index=0 if pd.isna(existing['quotes_accurate']) else
-                  ['', 'YES', 'PARTIAL', 'NO'].index(existing['quotes_accurate']),
+                  ['(not answered)', 'YES', 'PARTIAL', 'NO'].index(existing['quotes_accurate']) if existing['quotes_accurate'] in ['YES', 'PARTIAL', 'NO'] else 0,
             key=f"quotes_{speech_idx}",
             horizontal=True,
             help="YES = accurate, PARTIAL = mostly accurate, NO = inaccurate"
@@ -204,29 +253,47 @@ def display_speech(row, speech_idx):
     )
 
     # Save button
-    if st.button("💾 Save & Continue", type="primary", use_container_width=True):
-        # Update results
-        results.loc[results['speech_id'] == row['speech_id'], 'your_judgment'] = your_judgment if your_judgment else None
-        results.loc[results['speech_id'] == row['speech_id'], 'stance_correct'] = stance_correct if stance_correct else None
-        results.loc[results['speech_id'] == row['speech_id'], 'reasons_correct'] = reasons_correct if reasons_correct else None
-        results.loc[results['speech_id'] == row['speech_id'], 'quotes_accurate'] = quotes_accurate if quotes_accurate else None
-        results.loc[results['speech_id'] == row['speech_id'], 'notes'] = notes if notes else None
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        save_btn = st.button("💾 Save & Continue (Ctrl+Enter)", type="primary", use_container_width=True)
+    with col2:
+        skip_btn = st.button("Skip →", use_container_width=True)
 
-        # Save to file
-        save_progress(results)
+    if save_btn:
+        # Validate that required fields are filled
+        if stance_correct == '(not answered)':
+            st.error("⚠️ Please answer 'Is the LLM stance correct?' before saving.")
+        else:
+            # Update results
+            results.loc[results['speech_id'] == row['speech_id'], 'your_judgment'] = your_judgment if your_judgment else None
+            results.loc[results['speech_id'] == row['speech_id'], 'stance_correct'] = stance_correct if stance_correct != '(not answered)' else None
+            results.loc[results['speech_id'] == row['speech_id'], 'reasons_correct'] = reasons_correct if reasons_correct != '(not answered)' else None
+            results.loc[results['speech_id'] == row['speech_id'], 'quotes_accurate'] = quotes_accurate if quotes_accurate != '(not answered)' else None
+            results.loc[results['speech_id'] == row['speech_id'], 'notes'] = notes if notes else None
 
-        st.success("✅ Saved!")
+            # Save to file
+            save_progress(results)
 
-        # Move to next speech
+            st.success("✅ Saved!")
+
+            # Move to next speech
+            if speech_idx < 47:
+                st.session_state.speech_idx = speech_idx + 1
+                st.rerun()
+            else:
+                st.balloons()
+                st.success("🎉 All speeches validated! Run analyze_validation_results.py to see the results.")
+
+    if skip_btn:
         if speech_idx < 47:
             st.session_state.speech_idx = speech_idx + 1
             st.rerun()
-        else:
-            st.balloons()
-            st.success("🎉 All speeches validated! Run analyze_validation_results.py to see the results.")
 
 def main():
     """Main app."""
+
+    # Add keyboard shortcuts
+    add_keyboard_shortcuts()
 
     # Initialize session state
     if 'speech_idx' not in st.session_state:
@@ -274,17 +341,29 @@ def main():
     for stance, count in data['stance'].value_counts().items():
         st.sidebar.write(f"**{stance.upper()}:** {count}")
 
+    # Keyboard shortcuts help
+    st.sidebar.divider()
+    with st.sidebar.expander("⌨️ Keyboard Shortcuts", expanded=True):
+        st.markdown("""
+        **Navigation:**
+        - `←` / `→` Previous/Next speech
+        - `Ctrl+Enter` Save & Continue
+
+        **Tip:** Collapse "Full Speech Text" to see arguments clearly.
+        """)
+
     # Instructions
     st.sidebar.divider()
     with st.sidebar.expander("📖 Instructions"):
         st.markdown("""
         **For each speech:**
-        1. Read the full text
-        2. Check if LLM stance is correct
-        3. Verify reasons are accurate
-        4. Check quotes are from the speech
-        5. Add notes if needed
-        6. Click Save & Continue
+        1. Read arguments & quotes
+        2. Expand full text if needed
+        3. Check if LLM stance is correct
+        4. Verify reasons are accurate
+        5. Check quotes are from the speech
+        6. Add notes if needed
+        7. Click Save & Continue (or Ctrl+Enter)
 
         **Stance definitions:**
         - **FOR**: Supports women's suffrage
