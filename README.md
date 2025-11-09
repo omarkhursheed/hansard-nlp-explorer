@@ -105,11 +105,22 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 - Victorian parliamentary culture: No enforced time limits until 1900 motion for 20-minute cap
 
 **Documentation**:
-- Full methodology: SUFFRAGE_CLASSIFICATION_METHODOLOGY.md
-- Analysis notebook: notebooks/suffrage_classification_analysis.ipynb
-- Validation: MANUAL_VALIDATION_SUMMARY.md, FALSE_POSITIVE_ANALYSIS.md
-- Results: outputs/llm_classification/full_results_v5_context_3_complete.parquet
-- Visualizations: analysis/suffrage_classification/*.png
+- Full methodology: [docs/suffrage_classification/SUFFRAGE_CLASSIFICATION_METHODOLOGY.md](docs/suffrage_classification/SUFFRAGE_CLASSIFICATION_METHODOLOGY.md)
+- Validation results: [docs/suffrage_classification/MANUAL_VALIDATION_SUMMARY.md](docs/suffrage_classification/MANUAL_VALIDATION_SUMMARY.md)
+- False positive analysis: [docs/suffrage_classification/FALSE_POSITIVE_ANALYSIS.md](docs/suffrage_classification/FALSE_POSITIVE_ANALYSIS.md)
+- Setup guide: [docs/suffrage_classification/SETUP_MODAL_CLASSIFICATION.md](docs/suffrage_classification/SETUP_MODAL_CLASSIFICATION.md)
+- Analysis notebook: [notebooks/suffrage_classification_analysis.ipynb](notebooks/suffrage_classification_analysis.ipynb)
+- Prompts: [prompts/](prompts/) (v4 and v5)
+
+**Data**:
+- Classification results: outputs/llm_classification/full_results_v5_context_3_complete.parquet
+- Visualization outputs: analysis/suffrage_classification/*.png
+- Validation samples: outputs/validation/
+
+**Scripts**:
+- Classification pipeline: [src/hansard/scripts/classification/](src/hansard/scripts/classification/)
+- Quality validation: [src/hansard/scripts/quality/](src/hansard/scripts/quality/)
+- Utilities: [scripts/utilities/](scripts/utilities/)
 
 ## Key Features
 

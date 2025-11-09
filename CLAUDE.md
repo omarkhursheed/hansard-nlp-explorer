@@ -362,3 +362,5 @@ PARLIAMENTARY_STOPS = {
 5. **Partial analysis**: Check for arbitrary limits like `[:10]` in loops
 - never give up on a task, always think of new ideas and possible issues, and if things get confusing ask the user as many questions as necessary. don't take shortcuts like "because these two behaviors overlap, i don't need to test each individual behavior separately", don't make empty list or inversion errors, think deeply about data formats and quality, and if there's potential for performance improvement by cheap and simple augmentations such as multiprocessing, suggest them to the user
 - don't limit testing to a single year
+- i dont want random md files and scripts at the top level of my directory, move them, and update the readme accordingly and test that they produce the same output.
+- go through the docs and other directories to make sure we dont have extraneous/old info often, we want a lean, clean repo that's well-tested, write test wherever possible
