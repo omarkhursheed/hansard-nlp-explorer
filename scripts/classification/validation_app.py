@@ -217,17 +217,76 @@ def add_keyboard_shortcuts():
             // Reasons correct: r to cycle
             else if (e.key === 'r' || e.key === 'R') {
                 e.preventDefault();
-                const radios = findRadiosByPartialQuestion('extracted reasons correct');
-                if (radios && radios.length > 0) {
-                    cycleRadioGroup(radios);
+                // Find radio group with PARTIAL option (that's reasons, not quotes or stance)
+                const allRadios = Array.from(doc.querySelectorAll('input[type="radio"]'));
+                const radioGroups = {};
+                allRadios.forEach(radio => {
+                    const name = radio.getAttribute('name');
+                    if (name) {
+                        if (!radioGroups[name]) radioGroups[name] = [];
+                        radioGroups[name].push(radio);
+                    }
+                });
+
+                // Find the first group with a PARTIAL label (that's reasons)
+                for (const [name, radios] of Object.entries(radioGroups)) {
+                    const hasPartial = radios.some(r => {
+                        const label = r.closest('label');
+                        return label && label.textContent.includes('PARTIAL');
+                    });
+                    if (hasPartial) {
+                        // Check if this is the reasons group by looking for "reasons" nearby
+                        let container = radios[0].closest('div[data-testid]') || radios[0].closest('div');
+                        let found = false;
+                        for (let i = 0; i < 10 && container; i++) {
+                            if (container.textContent.includes('reasons')) {
+                                found = true;
+                                break;
+                            }
+                            container = container.parentElement;
+                        }
+                        if (found) {
+                            cycleRadioGroup(radios);
+                            break;
+                        }
+                    }
                 }
             }
             // Quotes accurate: q to cycle
             else if (e.key === 'q' || e.key === 'Q') {
                 e.preventDefault();
-                const radios = findRadiosByPartialQuestion('quotes accurate');
-                if (radios && radios.length > 0) {
-                    cycleRadioGroup(radios);
+                // Find radio group with PARTIAL option (quotes is the second one with PARTIAL)
+                const allRadios = Array.from(doc.querySelectorAll('input[type="radio"]'));
+                const radioGroups = {};
+                allRadios.forEach(radio => {
+                    const name = radio.getAttribute('name');
+                    if (name) {
+                        if (!radioGroups[name]) radioGroups[name] = [];
+                        radioGroups[name].push(radio);
+                    }
+                });
+
+                // Find group with PARTIAL that has "quotes" nearby
+                for (const [name, radios] of Object.entries(radioGroups)) {
+                    const hasPartial = radios.some(r => {
+                        const label = r.closest('label');
+                        return label && label.textContent.includes('PARTIAL');
+                    });
+                    if (hasPartial) {
+                        let container = radios[0].closest('div[data-testid]') || radios[0].closest('div');
+                        let found = false;
+                        for (let i = 0; i < 10 && container; i++) {
+                            if (container.textContent.includes('quotes')) {
+                                found = true;
+                                break;
+                            }
+                            container = container.parentElement;
+                        }
+                        if (found) {
+                            cycleRadioGroup(radios);
+                            break;
+                        }
+                    }
                 }
             }
             // Skip: s
