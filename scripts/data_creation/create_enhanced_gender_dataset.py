@@ -14,7 +14,7 @@ sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
 import numpy as np
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 from hansard.utils.path_config import Paths
 import json
 from tqdm import tqdm
@@ -153,6 +153,7 @@ def process_year_parallel(args):
                         speaker_info = {
                             'original_name': str(speaker),
                             'matched_name': mp_name,
+                            'person_id': result.get('person_id'),
                             'gender': result.get('gender'),
                             'party': result.get('party'),
                             'constituency': result.get('constituency'),
@@ -439,6 +440,7 @@ class EnhancedGenderDatasetCreator:
                             speaker_info = {
                                 'original_name': str(speaker),
                                 'matched_name': mp_name,
+                                'person_id': result.get('person_id'),
                                 'gender': result.get('gender'),
                                 'party': result.get('party'),
                                 'constituency': result.get('constituency'),

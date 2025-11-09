@@ -4,7 +4,7 @@ Test the corrected MP matcher with verified dates
 """
 
 import pandas as pd
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 from hansard.utils.path_config import Paths
 
 def test_corrected_dates():

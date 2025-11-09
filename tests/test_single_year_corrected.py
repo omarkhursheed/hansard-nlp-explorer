@@ -5,7 +5,7 @@ Test corrected matcher on a single year
 
 import pandas as pd
 from pathlib import Path
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 from hansard.utils.path_config import Paths
 
 def test_single_year(year=1950):

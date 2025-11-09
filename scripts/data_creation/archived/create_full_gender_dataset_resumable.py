@@ -13,7 +13,7 @@ sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
 import numpy as np
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 from hansard.utils.path_config import Paths
 import json
 from tqdm import tqdm

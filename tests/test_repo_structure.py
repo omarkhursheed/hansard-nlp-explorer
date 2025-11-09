@@ -46,9 +46,11 @@ def test_prompts_exist():
 
 def test_scripts_organized():
     """Test that scripts are properly organized."""
-    classification_dir = Path("src/hansard/scripts/classification")
-    quality_dir = Path("src/hansard/scripts/quality")
+    classification_dir = Path("scripts/classification")
+    quality_dir = Path("scripts/quality")
     utilities_dir = Path("scripts/utilities")
+    manuscript_dir = Path("scripts/manuscript")
+    analysis_dir = Path("scripts/analysis")
 
     # Check classification scripts
     required_classification = [
@@ -67,6 +69,12 @@ def test_scripts_organized():
     # Check quality script
     assert (quality_dir / "large_sample_validation.py").exists()
 
+    # Check manuscript exists
+    assert manuscript_dir.exists(), f"Missing manuscript directory"
+
+    # Check analysis exists
+    assert analysis_dir.exists(), f"Missing analysis directory"
+
     print("✓ All scripts properly organized")
 
 def test_top_level_clean():
@@ -79,10 +87,13 @@ def test_top_level_clean():
         "CLAUDE.md",
         ".gitignore",
         ".git",
-        "setup.py",
+        "setup.py",  # Package setup
         "requirements.txt",
         "environment.yml"
     }
+
+    # Allowed .py files at top level
+    allowed_py_files = {"setup.py"}
 
     allowed_dirs = {
         "src",
@@ -98,7 +109,7 @@ def test_top_level_clean():
     }
 
     # Check for stray .py files
-    stray_py = list(top_level.glob("*.py"))
+    stray_py = [f for f in top_level.glob("*.py") if f.name not in allowed_py_files]
     assert len(stray_py) == 0, f"Stray Python files at top level: {stray_py}"
 
     # Check for stray .md files (except allowed)

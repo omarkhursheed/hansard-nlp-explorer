@@ -12,7 +12,7 @@ project_root = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 import random
 
 random.seed(42)

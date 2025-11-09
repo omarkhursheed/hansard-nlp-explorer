@@ -41,17 +41,24 @@ All data organized in data-hansard/ directory.
 
 ## Quick Start
 
+### Installation
+
+```bash
+# Install the hansard package in development mode
+pip install -e .
+```
+
 ### Analysis Scripts
 
 ```bash
 # Overall corpus analysis
-python3 src/hansard/analysis/comprehensive_analysis.py
+python3 scripts/analysis/comprehensive_analysis.py
 
 # Gender-specific analysis
-python3 src/hansard/analysis/gendered_comprehensive_analysis.py
+python3 scripts/analysis/gendered_comprehensive_analysis.py
 
 # Historical suffrage analysis
-python3 src/hansard/analysis/suffrage_analysis.py
+python3 scripts/analysis/suffrage_analysis.py
 ```
 
 ### Using the Datasets
@@ -118,8 +125,8 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 - Validation samples: outputs/validation/
 
 **Scripts**:
-- Classification pipeline: [src/hansard/scripts/classification/](src/hansard/scripts/classification/)
-- Quality validation: [src/hansard/scripts/quality/](src/hansard/scripts/quality/)
+- Classification pipeline: [scripts/classification/](scripts/classification/)
+- Quality validation: [scripts/quality/](scripts/quality/)
 - Utilities: [scripts/utilities/](scripts/utilities/)
 
 ## Key Features
@@ -153,22 +160,48 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 | Male speeches | 4,249,041 |
 | Years covered | 1803-2005 (201 years) |
 
-## Key Scripts
+## Repository Structure
 
-All scripts organized in `src/hansard/scripts/`:
+```
+hansard-nlp-explorer/
+├── src/hansard/          # Library code (importable modules)
+│   ├── utils/           # Path config, data loaders
+│   ├── matching/        # MP matching algorithms
+│   ├── parsers/         # HTML parsing
+│   └── analysis/        # Analysis utilities
+│
+├── scripts/             # Executable scripts
+│   ├── crawling/        # Data collection from Parliament API
+│   ├── processing/      # HTML text extraction
+│   ├── data_creation/   # Dataset generation
+│   ├── matching/        # MP matching pipelines
+│   ├── classification/  # LLM-based classification
+│   ├── analysis/        # Analysis scripts
+│   ├── manuscript/      # Figure generation
+│   └── quality/         # Quality validation
+│
+├── docs/                # All documentation
+├── tests/               # All tests
+├── notebooks/           # Jupyter notebooks
+├── prompts/             # LLM prompts
+├── data-hansard/        # Data files (63GB)
+└── outputs/             # Generated outputs
+```
+
+## Key Scripts
 
 ### Data Generation Pipeline
 ```bash
 # Step 1: Extract text from HTML
-python3 src/hansard/scripts/processing/process_hansard_fast.py
+python3 scripts/processing/process_hansard_fast.py
 
 # Step 2: Match MPs and add gender data
-python3 src/hansard/scripts/data_creation/create_enhanced_gender_dataset.py \
+python3 scripts/data_creation/create_enhanced_gender_dataset.py \
   --input-dir data-hansard/processed_complete \
   --output-dir data-hansard/gender_analysis_complete
 
 # Step 3: Create unified speech/debate datasets
-python3 src/hansard/scripts/data_creation/create_unified_complete_datasets.py \
+python3 scripts/data_creation/create_unified_complete_datasets.py \
   --processed-dir data-hansard/processed_complete \
   --gender-dir data-hansard/gender_analysis_complete \
   --output-dir data-hansard/derived_complete
@@ -176,7 +209,7 @@ python3 src/hansard/scripts/data_creation/create_unified_complete_datasets.py \
 
 ### Additional Tools
 
-All organized in `src/hansard/scripts/`:
+All organized in `scripts/`:
 
 - **Crawling**: `crawling/` - Fetch data from UK Parliament API
 - **Processing**: `processing/` - Extract text from HTML

@@ -12,7 +12,7 @@ sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
 from pathlib import Path
-from hansard.scripts.matching.mp_matcher_corrected import CorrectedMPMatcher
+from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 
 def check_ambiguous_in_different_decades():
     """Check if same ambiguous name gets consistent gender across decades."""

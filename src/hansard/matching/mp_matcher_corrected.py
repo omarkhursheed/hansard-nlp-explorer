@@ -188,6 +188,44 @@ class CorrectedMPMatcher:
             'mrdavies': 'mr davies',
         }
 
+    def _lookup_person_id(self, mp_name: str, date: str = None) -> Optional[str]:
+        """
+        Look up person_id for a matched MP name.
+
+        Args:
+            mp_name: The matched MP name (e.g., "Margaret Thatcher")
+            date: Optional date to disambiguate if same name served at different times
+
+        Returns:
+            person_id or None
+        """
+        if not mp_name:
+            return None
+
+        # Search MP data for this name
+        matches = self.mp_data[self.mp_data['person_name'] == mp_name]
+
+        if len(matches) == 0:
+            return None
+        elif len(matches) == 1:
+            return matches.iloc[0]['person_id']
+        else:
+            # Multiple matches - use date to disambiguate if provided
+            if date:
+                try:
+                    check_date = pd.to_datetime(date)
+                    for idx, row in matches.iterrows():
+                        start = pd.to_datetime(row.get('start_year', '1800'), format='%Y', errors='coerce')
+                        end = pd.to_datetime(row.get('end_year', '2100'), format='%Y', errors='coerce')
+                        if pd.notna(start) and pd.notna(end):
+                            if start <= check_date <= end:
+                                return row['person_id']
+                except:
+                    pass
+
+            # Fallback: return first match
+            return matches.iloc[0]['person_id']
+
     def extract_consistent_gender_from_ambiguous(self, result: Dict) -> Dict:
         """
         For ambiguous matches, check if all candidates have same gender.
@@ -264,11 +302,13 @@ class CorrectedMPMatcher:
                 results['strategies_tried'].append('titled_extraction')
                 results['matches'].append({
                     'mp_name': extracted_result['final_match'],
+                    'person_id': extracted_result.get('person_id'),
                     'gender': extracted_result['gender'],
                     'confidence': extracted_result['confidence'] * 0.95,  # Slight discount for extraction
                     'method': 'titled_extraction'
                 })
                 results['final_match'] = extracted_result['final_match']
+                results['person_id'] = extracted_result.get('person_id')
                 results['confidence'] = extracted_result['confidence'] * 0.95
                 results['match_type'] = 'titled_extraction'
                 results['gender'] = extracted_result['gender']
@@ -294,6 +334,7 @@ class CorrectedMPMatcher:
                 results['confidence'] = title_match['confidence']
                 results['match_type'] = 'title'
                 results['gender'] = title_match['gender']
+                results['person_id'] = self._lookup_person_id(title_match['mp_name'], date)
                 return results
 
         # 2. Constituency matching
@@ -306,6 +347,7 @@ class CorrectedMPMatcher:
                 results['confidence'] = const_match['confidence']
                 results['match_type'] = 'constituency'
                 results['gender'] = const_match['gender']
+                results['person_id'] = self._lookup_person_id(const_match['mp_name'], date)
                 return results
 
         # 3. Temporal + Chamber matching
@@ -320,6 +362,7 @@ class CorrectedMPMatcher:
                 results['confidence'] = match['confidence']
                 results['match_type'] = 'temporal_unique'
                 results['gender'] = match['gender']
+                results['person_id'] = self._lookup_person_id(match['mp_name'], date)
                 return results
             elif len(temporal_matches) > 1:
                 # Multiple matches - ambiguous
@@ -340,6 +383,7 @@ class CorrectedMPMatcher:
                 results['confidence'] = fuzzy_match['confidence']
                 results['match_type'] = 'fuzzy'
                 results['gender'] = fuzzy_match.get('gender')
+                results['person_id'] = self._lookup_person_id(fuzzy_match['mp_name'], date)
                 return results
 
         return results
@@ -428,6 +472,7 @@ class CorrectedMPMatcher:
                             if check_date == start_date or check_date == end_date:
                                 return {
                                     'mp_name': mp_name,
+                                    'person_id': self._lookup_person_id(mp_name, date),
                                     'gender': gender,
                                     'confidence': 0.7,  # Lower confidence on transition day
                                     'method': 'title_resolution_transition',
@@ -439,6 +484,7 @@ class CorrectedMPMatcher:
                                 # High confidence for dates clearly within term
                                 return {
                                     'mp_name': mp_name,
+                                    'person_id': self._lookup_person_id(mp_name, date),
                                     'gender': gender,
                                     'confidence': 0.95,
                                     'method': 'title_resolution',
@@ -468,6 +514,7 @@ class CorrectedMPMatcher:
                         if len(candidates) == 1:
                             return {
                                 'mp_name': candidates[0]['full_name'],
+                                'person_id': candidates[0].get('person_id'),
                                 'gender': candidates[0]['gender'],
                                 'confidence': 0.95,
                                 'method': 'constituency'
@@ -526,6 +573,7 @@ class CorrectedMPMatcher:
         elif len(candidates) == 1:
             return [{
                 'mp_name': candidates[0]['full_name'],
+                'person_id': candidates[0].get('person_id'),
                 'gender': candidates[0]['gender'],
                 'confidence': 0.85,
                 'method': 'temporal_chamber_unique'
@@ -538,6 +586,7 @@ class CorrectedMPMatcher:
                 # Same person, multiple membership records - treat as unique match!
                 return [{
                     'mp_name': candidates[0]['full_name'],
+                    'person_id': candidates[0].get('person_id'),
                     'gender': candidates[0]['gender'],
                     'confidence': 0.90,  # High confidence - same person
                     'method': 'temporal_chamber_same_person'
@@ -547,6 +596,7 @@ class CorrectedMPMatcher:
                 return [
                     {
                         'mp_name': c['full_name'],
+                        'person_id': c.get('person_id'),
                         'gender': c['gender'],
                         'confidence': 0.4 / len(candidates),
                         'method': 'temporal_chamber_ambiguous'
@@ -595,6 +645,7 @@ class CorrectedMPMatcher:
             confidence = 0.7 if best_distance == 0 else 0.5
             return {
                 'mp_name': best_match['full_name'],
+                'person_id': best_match.get('person_id'),
                 'gender': best_match['gender'],
                 'confidence': confidence,
                 'method': f'fuzzy_distance_{best_distance}'
