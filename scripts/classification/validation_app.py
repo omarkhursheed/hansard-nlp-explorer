@@ -7,9 +7,7 @@ Usage:
 
 Keyboard Shortcuts:
     - Arrow Left/Right: Previous/Next speech
-    - 1-5: Set your judgment (1=for, 2=against, 3=both, 4=neutral, 5=irrelevant)
-    - y/n: Stance correct (y=YES, n=NO)
-    - Ctrl+Enter: Save & Continue
+    - Cmd+Enter (Mac) or Ctrl+Enter (Windows): Save & Continue
 """
 
 import pandas as pd
@@ -82,29 +80,32 @@ def add_keyboard_shortcuts():
         const doc = window.parent.document;
 
         doc.addEventListener('keydown', function(e) {
-            // Don't interfere with typing in text areas
-            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+            // Don't interfere with typing in text areas or inputs
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.isContentEditable) {
                 return;
             }
 
             // Arrow keys for navigation
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                const prevBtn = doc.querySelector('button[kind="secondary"]');
-                if (prevBtn && prevBtn.textContent.includes('Previous')) {
+                const buttons = Array.from(doc.querySelectorAll('button'));
+                const prevBtn = buttons.find(btn => btn.textContent.includes('Previous'));
+                if (prevBtn) {
                     prevBtn.click();
                 }
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
-                const nextBtn = doc.querySelector('button[kind="secondary"]');
-                if (nextBtn && nextBtn.textContent.includes('Next')) {
+                const buttons = Array.from(doc.querySelectorAll('button'));
+                const nextBtn = buttons.find(btn => btn.textContent.includes('Next'));
+                if (nextBtn) {
                     nextBtn.click();
                 }
             }
-            // Save with Ctrl+Enter
-            else if (e.ctrlKey && e.key === 'Enter') {
+            // Save with Cmd+Enter (Mac) or Ctrl+Enter (Windows/Linux)
+            else if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
-                const saveBtn = doc.querySelector('button[kind="primary"]');
+                const buttons = Array.from(doc.querySelectorAll('button'));
+                const saveBtn = buttons.find(btn => btn.textContent.includes('Save'));
                 if (saveBtn) {
                     saveBtn.click();
                 }
@@ -255,7 +256,7 @@ def display_speech(row, speech_idx):
     # Save button
     col1, col2 = st.columns([3, 1])
     with col1:
-        save_btn = st.button("💾 Save & Continue (Ctrl+Enter)", type="primary", use_container_width=True)
+        save_btn = st.button("💾 Save & Continue (Cmd+Enter)", type="primary", use_container_width=True)
     with col2:
         skip_btn = st.button("Skip →", use_container_width=True)
 
@@ -347,9 +348,9 @@ def main():
         st.markdown("""
         **Navigation:**
         - `←` / `→` Previous/Next speech
-        - `Ctrl+Enter` Save & Continue
+        - `Cmd+Enter` Save & Continue
 
-        **Tip:** Collapse "Full Speech Text" to see arguments clearly.
+        **Tip:** Full speech text is collapsed by default. Arguments show expanded.
         """)
 
     # Instructions
