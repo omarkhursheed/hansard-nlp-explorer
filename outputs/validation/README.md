@@ -13,14 +13,24 @@ streamlit run scripts/classification/validation_app.py
 ```
 
 This opens a web interface where you can:
-- Navigate through all 48 speeches with prev/next buttons
+- Navigate through all 48 speeches with prev/next buttons (or arrow keys)
 - View full speech text and LLM classifications
-- Record judgments with dropdowns and forms
+- Record judgments entirely with keyboard shortcuts
 - See progress tracking (X of 48 complete)
 - Auto-saves as you go
 - Jump to any speech number
 
 **No need to manually edit CSV files!** The app handles everything.
+
+**Full Keyboard Workflow** (fastest way):
+1. Read arguments & quotes
+2. Press `1-5` to set judgment (1=for, 2=against, 3=both, 4=neutral, 5=irrelevant)
+3. Press `y` or `n` for stance correctness
+4. Press `r` to cycle reasons correct (YES→PARTIAL→NO)
+5. Press `q` to cycle quotes accurate (YES→PARTIAL→NO)
+6. Press `Cmd+Enter` to save and move to next speech
+
+With keyboard shortcuts, you can validate clear cases in 10-20 seconds each!
 
 ### Method 2: Command Line + Spreadsheet
 
