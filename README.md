@@ -80,6 +80,37 @@ all_speeches = pd.concat([
 ])
 ```
 
+## Suffrage Classification
+
+LLM-based stance detection and argument extraction for women's suffrage debates (1900-1935).
+
+**Key Results**:
+- 2,808 speeches classified with 100% API success rate
+- 92.9% accuracy (manual validation on 48-speech stratified sample)
+- 5,138 arguments extracted across 9 taxonomy categories
+- Coverage: 1,194 FOR (42.5%), 869 AGAINST (30.9%), 109 BOTH (3.9%), 96 NEUTRAL (3.4%), 540 IRRELEVANT (19.2%)
+- Gender breakdown: 2,535 male MPs, 83 female MPs
+
+**Methodology**:
+- Two-tier suffrage detection (HIGH: explicit terms ~95% precision, MEDIUM: proximity matching ~26% precision)
+- Prompt evolution through 5 versions (v1: full debate → v5: active context with source labeling)
+- Context window optimization (context=3 speeches found optimal, 41% reduction in false IRRELEVANT)
+- LLM: gpt-4o-mini via OpenRouter, deployed on Modal.com serverless platform
+- Cost: $4.11 total (Victorian speeches 7.5x longer than modern due to lack of time limits)
+
+**Historical Findings**:
+- WWI impact: 95% drop in suffrage speeches (1913: 383 speeches → 1915: 20 speeches)
+- 1917 revival: 296 speeches for 1918 Representation of the People Act debates
+- Government obstruction was primary barrier (bills passed second readings but lacked government support to progress)
+- Victorian parliamentary culture: No enforced time limits until 1900 motion for 20-minute cap
+
+**Documentation**:
+- Full methodology: SUFFRAGE_CLASSIFICATION_METHODOLOGY.md
+- Analysis notebook: notebooks/suffrage_classification_analysis.ipynb
+- Validation: MANUAL_VALIDATION_SUMMARY.md, FALSE_POSITIVE_ANALYSIS.md
+- Results: outputs/llm_classification/full_results_v5_context_3_complete.parquet
+- Visualizations: analysis/suffrage_classification/*.png
+
 ## Key Features
 
 ### Conversation Analysis
