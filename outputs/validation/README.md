@@ -4,28 +4,35 @@ This directory contains everything needed to conduct and analyze manual validati
 
 ## Quick Start
 
-### 1. View the Speeches to Validate
+### Method 1: Web App (Recommended)
+
+Launch the interactive validation app:
 
 ```bash
-python3 scripts/classification/show_validation_samples.py \
-  --input outputs/validation/validation_sample_n48.parquet
+streamlit run scripts/classification/validation_app.py
 ```
 
-This will display all 48 speeches with:
-- Speaker, date, gender info
-- LLM classification (stance, confidence, reasons)
-- Supporting quotes
-- Full speech text (first 1000 characters)
+This opens a web interface where you can:
+- Navigate through all 48 speeches with prev/next buttons
+- View full speech text and LLM classifications
+- Record judgments with dropdowns and forms
+- See progress tracking (X of 48 complete)
+- Auto-saves as you go
+- Jump to any speech number
 
-**Tip**: To navigate through speeches one at a time:
+**No need to manually edit CSV files!** The app handles everything.
+
+### Method 2: Command Line + Spreadsheet
+
+If you prefer the traditional approach:
+
+**Step 1: View speeches**
 ```bash
 python3 scripts/classification/show_validation_samples.py \
   --input outputs/validation/validation_sample_n48.parquet | less
 ```
 
-Use spacebar to advance, 'b' to go back, 'q' to quit.
-
-### 2. Record Your Validation
+**Step 2: Record Your Validation**
 
 **Open**: `validation_recording_template.csv` in Excel/Google Sheets
 
@@ -38,15 +45,15 @@ Use spacebar to advance, 'b' to go back, 'q' to quit.
 
 **Detailed instructions**: See `docs/suffrage_classification/MANUAL_VALIDATION_INSTRUCTIONS.md`
 
-### 3. Analyze Results
+## Analyze Results
 
-Once you've completed validation:
+Once you've completed validation (either method):
 
 ```bash
 python3 scripts/classification/analyze_validation_results.py
 ```
 
-This will calculate:
+This script reads the same `validation_recording_template.csv` file and calculates:
 - Overall accuracy
 - Accuracy by stance (for/against/both/neutral/irrelevant)
 - Accuracy by confidence level
