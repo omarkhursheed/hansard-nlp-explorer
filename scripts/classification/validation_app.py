@@ -203,18 +203,23 @@ def display_speech(row, speech_idx):
     # Load existing judgment if any
     existing = results[results['speech_id'] == row['speech_id']].iloc[0]
 
+    # Your judgment - use radio buttons for speed
+    st.subheader("What should the stance be?")
+    your_judgment = st.radio(
+        "Select the correct stance:",
+        options=['(not sure)', 'for', 'against', 'both', 'neutral', 'irrelevant'],
+        index=0 if pd.isna(existing['your_judgment']) else
+              ['(not sure)', 'for', 'against', 'both', 'neutral', 'irrelevant'].index(existing['your_judgment']) if existing['your_judgment'] in ['for', 'against', 'both', 'neutral', 'irrelevant'] else 0,
+        key=f"judgment_{speech_idx}",
+        horizontal=True,
+        help="FOR=supports suffrage, AGAINST=opposes, BOTH=mixed, NEUTRAL=indifferent, IRRELEVANT=not about suffrage"
+    )
+
+    st.divider()
+
     col1, col2 = st.columns(2)
 
     with col1:
-        your_judgment = st.selectbox(
-            "What should the stance be?",
-            options=['', 'for', 'against', 'both', 'neutral', 'irrelevant'],
-            index=0 if pd.isna(existing['your_judgment']) else
-                  ['', 'for', 'against', 'both', 'neutral', 'irrelevant'].index(existing['your_judgment']),
-            key=f"judgment_{speech_idx}",
-            help="Select the correct stance for this speech"
-        )
-
         stance_correct = st.radio(
             "Is the LLM stance correct?",
             options=['(not answered)', 'YES', 'NO'],
@@ -266,7 +271,7 @@ def display_speech(row, speech_idx):
             st.error("⚠️ Please answer 'Is the LLM stance correct?' before saving.")
         else:
             # Update results
-            results.loc[results['speech_id'] == row['speech_id'], 'your_judgment'] = your_judgment if your_judgment else None
+            results.loc[results['speech_id'] == row['speech_id'], 'your_judgment'] = your_judgment if your_judgment not in ['', '(not sure)'] else None
             results.loc[results['speech_id'] == row['speech_id'], 'stance_correct'] = stance_correct if stance_correct != '(not answered)' else None
             results.loc[results['speech_id'] == row['speech_id'], 'reasons_correct'] = reasons_correct if reasons_correct != '(not answered)' else None
             results.loc[results['speech_id'] == row['speech_id'], 'quotes_accurate'] = quotes_accurate if quotes_accurate != '(not answered)' else None
