@@ -85,39 +85,56 @@ def add_keyboard_shortcuts():
         const doc = window.parent.document;
 
         function clickRadioByLabel(labelText) {
+            // Find all labels and look for exact text match
             const labels = Array.from(doc.querySelectorAll('label'));
-            const label = labels.find(l => l.textContent.trim() === labelText);
-            if (label) {
-                const radio = label.querySelector('input[type="radio"]');
-                if (radio) {
-                    radio.click();
-                    return true;
+            for (const label of labels) {
+                // Check if label text contains our target text
+                if (label.textContent.includes(labelText)) {
+                    const radio = label.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.click();
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
-        function getRadioGroupByQuestion(questionText) {
-            const elements = Array.from(doc.querySelectorAll('*'));
-            const questionEl = elements.find(el => el.textContent && el.textContent.includes(questionText));
-            if (questionEl) {
-                let parent = questionEl.parentElement;
-                while (parent && parent !== doc.body) {
-                    const radios = parent.querySelectorAll('input[type="radio"]');
-                    if (radios.length > 0) {
-                        return Array.from(radios);
+        function findRadiosByPartialQuestion(partialQuestion) {
+            // Find all radio inputs
+            const allRadios = Array.from(doc.querySelectorAll('input[type="radio"]'));
+
+            // Group radios by their name attribute (same name = same group)
+            const radioGroups = {};
+            allRadios.forEach(radio => {
+                const name = radio.getAttribute('name');
+                if (name) {
+                    if (!radioGroups[name]) radioGroups[name] = [];
+                    radioGroups[name].push(radio);
+                }
+            });
+
+            // Find the group that's near text matching our question
+            for (const [name, radios] of Object.entries(radioGroups)) {
+                // Look for question text near these radios
+                let container = radios[0].closest('div[data-testid]') || radios[0].closest('div');
+                let searchEl = container;
+                for (let i = 0; i < 5 && searchEl; i++) {
+                    if (searchEl.textContent.includes(partialQuestion)) {
+                        return radios;
                     }
-                    parent = parent.parentElement;
+                    searchEl = searchEl.parentElement;
                 }
             }
             return [];
         }
 
         function cycleRadioGroup(radios) {
-            const checked = Array.from(radios).find(r => r.checked);
+            if (!radios || radios.length === 0) return;
+            const checked = radios.find(r => r.checked);
             let nextIndex = 0;
             if (checked) {
-                const currentIndex = Array.from(radios).indexOf(checked);
+                const currentIndex = radios.indexOf(checked);
                 nextIndex = (currentIndex + 1) % radios.length;
             }
             radios[nextIndex].click();
@@ -166,33 +183,52 @@ def add_keyboard_shortcuts():
             // Stance correct: y/n
             else if (e.key === 'y' || e.key === 'Y') {
                 e.preventDefault();
-                const radios = getRadioGroupByQuestion('Is the LLM stance correct?');
-                const yesRadio = Array.from(radios).find(r => {
-                    const label = r.closest('label');
+                const radios = findRadiosByPartialQuestion('LLM stance correct');
+                const yesRadio = radios.find(r => {
+                    const label = r.closest('label') || r.parentElement.closest('label');
                     return label && label.textContent.includes('YES');
                 });
-                if (yesRadio) yesRadio.click();
+                if (yesRadio) {
+                    yesRadio.click();
+                } else {
+                    // Fallback: try direct label search
+                    clickRadioByLabel('YES');
+                }
             }
             else if (e.key === 'n' || e.key === 'N') {
                 e.preventDefault();
-                const radios = getRadioGroupByQuestion('Is the LLM stance correct?');
-                const noRadio = Array.from(radios).find(r => {
-                    const label = r.closest('label');
-                    return label && label.textContent.includes('NO');
+                const radios = findRadiosByPartialQuestion('LLM stance correct');
+                const noRadio = radios.find(r => {
+                    const label = r.closest('label') || r.parentElement.closest('label');
+                    return label && label.textContent.includes('NO') && !label.textContent.includes('not answered');
                 });
-                if (noRadio) noRadio.click();
+                if (noRadio) {
+                    noRadio.click();
+                } else {
+                    // Fallback: find YES/NO labels, pick NO
+                    const labels = Array.from(doc.querySelectorAll('label'));
+                    const noLabel = labels.find(l => l.textContent.trim() === 'NO');
+                    if (noLabel) {
+                        const radio = noLabel.querySelector('input[type="radio"]');
+                        if (radio) radio.click();
+                    }
+                }
             }
             // Reasons correct: r to cycle
             else if (e.key === 'r' || e.key === 'R') {
                 e.preventDefault();
-                const radios = getRadioGroupByQuestion('Are the extracted reasons correct?');
-                if (radios.length > 0) cycleRadioGroup(radios);
+                const radios = findRadiosByPartialQuestion('extracted reasons correct');
+                if (radios && radios.length > 0) {
+                    cycleRadioGroup(radios);
+                }
             }
             // Quotes accurate: q to cycle
             else if (e.key === 'q' || e.key === 'Q') {
                 e.preventDefault();
-                const radios = getRadioGroupByQuestion('Are the quotes accurate?');
-                if (radios.length > 0) cycleRadioGroup(radios);
+                const radios = findRadiosByPartialQuestion('quotes accurate');
+                if (radios && radios.length > 0) {
+                    cycleRadioGroup(radios);
+                }
             }
             // Skip: s
             else if (e.key === 's' || e.key === 'S') {
