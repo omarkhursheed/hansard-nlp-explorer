@@ -7,7 +7,12 @@ Usage:
 
 Keyboard Shortcuts:
     - Arrow Left/Right: Previous/Next speech
+    - 1-5: Set judgment (1=for, 2=against, 3=both, 4=neutral, 5=irrelevant)
+    - y/n: Stance correct (y=YES, n=NO)
+    - r: Cycle reasons correct (YES→PARTIAL→NO)
+    - q: Cycle quotes accurate (YES→PARTIAL→NO)
     - Cmd+Enter (Mac) or Ctrl+Enter (Windows): Save & Continue
+    - s: Skip to next speech
 """
 
 import pandas as pd
@@ -73,15 +78,54 @@ def get_completion_status(results_df):
     return completed, total
 
 def add_keyboard_shortcuts():
-    """Add keyboard shortcuts for faster navigation."""
+    """Add keyboard shortcuts for faster navigation and form filling."""
     components.html(
         """
         <script>
         const doc = window.parent.document;
 
+        function clickRadioByLabel(labelText) {
+            const labels = Array.from(doc.querySelectorAll('label'));
+            const label = labels.find(l => l.textContent.trim() === labelText);
+            if (label) {
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.click();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getRadioGroupByQuestion(questionText) {
+            const elements = Array.from(doc.querySelectorAll('*'));
+            const questionEl = elements.find(el => el.textContent && el.textContent.includes(questionText));
+            if (questionEl) {
+                let parent = questionEl.parentElement;
+                while (parent && parent !== doc.body) {
+                    const radios = parent.querySelectorAll('input[type="radio"]');
+                    if (radios.length > 0) {
+                        return Array.from(radios);
+                    }
+                    parent = parent.parentElement;
+                }
+            }
+            return [];
+        }
+
+        function cycleRadioGroup(radios) {
+            const checked = Array.from(radios).find(r => r.checked);
+            let nextIndex = 0;
+            if (checked) {
+                const currentIndex = Array.from(radios).indexOf(checked);
+                nextIndex = (currentIndex + 1) % radios.length;
+            }
+            radios[nextIndex].click();
+        }
+
         doc.addEventListener('keydown', function(e) {
-            // Don't interfere with typing in text areas or inputs
-            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.isContentEditable) {
+            // Don't interfere with typing in text areas or inputs (except radio inputs)
+            if ((e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type !== 'radio')) || e.target.isContentEditable) {
                 return;
             }
 
@@ -90,25 +134,79 @@ def add_keyboard_shortcuts():
                 e.preventDefault();
                 const buttons = Array.from(doc.querySelectorAll('button'));
                 const prevBtn = buttons.find(btn => btn.textContent.includes('Previous'));
-                if (prevBtn) {
-                    prevBtn.click();
-                }
-            } else if (e.key === 'ArrowRight') {
+                if (prevBtn) prevBtn.click();
+            }
+            else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 const buttons = Array.from(doc.querySelectorAll('button'));
                 const nextBtn = buttons.find(btn => btn.textContent.includes('Next'));
-                if (nextBtn) {
-                    nextBtn.click();
-                }
+                if (nextBtn) nextBtn.click();
+            }
+            // Judgment shortcuts: 1-5
+            else if (e.key === '1') {
+                e.preventDefault();
+                clickRadioByLabel('for');
+            }
+            else if (e.key === '2') {
+                e.preventDefault();
+                clickRadioByLabel('against');
+            }
+            else if (e.key === '3') {
+                e.preventDefault();
+                clickRadioByLabel('both');
+            }
+            else if (e.key === '4') {
+                e.preventDefault();
+                clickRadioByLabel('neutral');
+            }
+            else if (e.key === '5') {
+                e.preventDefault();
+                clickRadioByLabel('irrelevant');
+            }
+            // Stance correct: y/n
+            else if (e.key === 'y' || e.key === 'Y') {
+                e.preventDefault();
+                const radios = getRadioGroupByQuestion('Is the LLM stance correct?');
+                const yesRadio = Array.from(radios).find(r => {
+                    const label = r.closest('label');
+                    return label && label.textContent.includes('YES');
+                });
+                if (yesRadio) yesRadio.click();
+            }
+            else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const radios = getRadioGroupByQuestion('Is the LLM stance correct?');
+                const noRadio = Array.from(radios).find(r => {
+                    const label = r.closest('label');
+                    return label && label.textContent.includes('NO');
+                });
+                if (noRadio) noRadio.click();
+            }
+            // Reasons correct: r to cycle
+            else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                const radios = getRadioGroupByQuestion('Are the extracted reasons correct?');
+                if (radios.length > 0) cycleRadioGroup(radios);
+            }
+            // Quotes accurate: q to cycle
+            else if (e.key === 'q' || e.key === 'Q') {
+                e.preventDefault();
+                const radios = getRadioGroupByQuestion('Are the quotes accurate?');
+                if (radios.length > 0) cycleRadioGroup(radios);
+            }
+            // Skip: s
+            else if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                const buttons = Array.from(doc.querySelectorAll('button'));
+                const skipBtn = buttons.find(btn => btn.textContent.includes('Skip'));
+                if (skipBtn) skipBtn.click();
             }
             // Save with Cmd+Enter (Mac) or Ctrl+Enter (Windows/Linux)
             else if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
                 const buttons = Array.from(doc.querySelectorAll('button'));
                 const saveBtn = buttons.find(btn => btn.textContent.includes('Save'));
-                if (saveBtn) {
-                    saveBtn.click();
-                }
+                if (saveBtn) saveBtn.click();
             }
         });
         </script>
@@ -353,9 +451,20 @@ def main():
         st.markdown("""
         **Navigation:**
         - `←` / `→` Previous/Next speech
+        - `s` Skip to next (no save)
+
+        **Quick Select:**
+        - `1` for | `2` against | `3` both
+        - `4` neutral | `5` irrelevant
+        - `y` YES | `n` NO (stance)
+        - `r` cycle reasons (Y→P→N)
+        - `q` cycle quotes (Y→P→N)
+
+        **Save:**
         - `Cmd+Enter` Save & Continue
 
-        **Tip:** Full speech text is collapsed by default. Arguments show expanded.
+        **Full keyboard workflow:**
+        Read → `1-5` → `y/n` → `r` → `q` → `Cmd+Enter`
         """)
 
     # Instructions
