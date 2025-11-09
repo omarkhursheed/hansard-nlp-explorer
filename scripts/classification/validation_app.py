@@ -7,6 +7,7 @@ Usage:
 """
 
 import pandas as pd
+import numpy as np
 import streamlit as st
 from pathlib import Path
 
@@ -106,18 +107,21 @@ def display_speech(row, speech_idx):
     # Reasons
     st.subheader("Extracted Arguments")
     reasons = row.get('reasons')
-    if isinstance(reasons, list) and len(reasons) > 0:
+
+    # Handle both list and numpy array
+    if reasons is not None and (isinstance(reasons, (list, np.ndarray)) and len(reasons) > 0):
         for i, reason in enumerate(reasons, 1):
             if isinstance(reason, dict):
                 bucket = reason.get('bucket_key', 'unknown')
                 stance_label = reason.get('stance_label', '?')
                 rationale = reason.get('rationale', 'N/A')
 
-                with st.expander(f"**Argument {i}:** [{bucket.upper()}] → {stance_label}"):
+                with st.expander(f"**Argument {i}:** [{bucket.upper()}] → {stance_label}", expanded=True):
                     st.write(rationale)
 
                     quotes = reason.get('quotes', [])
-                    if isinstance(quotes, list) and len(quotes) > 0:
+                    # Handle numpy array of quotes
+                    if quotes is not None and (isinstance(quotes, (list, np.ndarray)) and len(quotes) > 0):
                         st.write("**Evidence:**")
                         for quote in quotes:
                             if isinstance(quote, dict):
