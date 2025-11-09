@@ -4,6 +4,7 @@ Show validation samples without interactive prompts.
 
 import pandas as pd
 import numpy as np
+import argparse
 
 def display_classification(row, idx=None):
     """Display a single classification for manual review."""
@@ -75,7 +76,34 @@ def display_classification(row, idx=None):
 
 def main():
     """Show stratified validation samples."""
+    parser = argparse.ArgumentParser(description='Display validation samples for manual review')
+    parser.add_argument('--input', type=str, help='Path to validation sample parquet file (if not provided, creates stratified sample from full results)')
+    args = parser.parse_args()
 
+    # If input file provided, display all speeches from it
+    if args.input:
+        df = pd.read_parquet(args.input)
+
+        print("="*80)
+        print("VALIDATION SAMPLE REVIEW")
+        print("="*80)
+        print(f"\nTotal speeches in sample: {len(df)}")
+
+        # Display stance distribution
+        print(f"\nStance distribution:")
+        for stance, count in df['stance'].value_counts().items():
+            print(f"  {stance}: {count}")
+
+        # Display all speeches
+        for i, (_, row) in enumerate(df.iterrows(), 1):
+            display_classification(row, idx=i)
+
+        print("\n\n" + "="*80)
+        print(f"VALIDATION COMPLETE - {len(df)} speeches shown")
+        print("="*80)
+        return
+
+    # Original behavior: create stratified sample from full results
     df = pd.read_parquet('outputs/llm_classification/full_results_v5_context_3_complete.parquet')
 
     print("="*80)
