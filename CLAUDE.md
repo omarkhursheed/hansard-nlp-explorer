@@ -192,6 +192,45 @@ for year in [1820, 1850, 1900, 1950, 2000]:
 - Female MP coverage improves or stays constant
 - Zero matches to wrong gender (verified on known cases)
 
+### CRITICAL: Always Test After Changes - Make No Assumptions
+
+**NEVER assume code still works after moving, refactoring, or reorganizing files:**
+
+1. **After Moving Files**: ALWAYS test that moved scripts still execute
+   - Test with --help flag if supported
+   - Test imports work correctly
+   - Test basic execution (with small sample if needed)
+   - Verify all relative/absolute paths still resolve
+
+2. **After Refactoring**: ALWAYS test affected functionality
+   - Run unit tests if available
+   - Test on small sample data
+   - Verify outputs match expected behavior
+
+3. **Testing Examples**:
+   ```bash
+   # Test script can be imported
+   python3 -c "import module; print('OK')"
+
+   # Test script runs without errors
+   python3 script.py --help
+
+   # Test with minimal input
+   python3 script.py --sample 10
+   ```
+
+4. **NEVER**:
+   - Assume a file move preserves functionality
+   - Skip testing because "it's just a move"
+   - Trust that imports will work without verification
+   - Commit untested changes
+
+5. **ALWAYS**:
+   - Test immediately after making changes
+   - Document test results in commit message
+   - Use small samples for quick validation
+   - Fix issues before committing
+
 #### Implementation Safety:
 - Use feature flags for easy rollback
 - Test on single year before full dataset
