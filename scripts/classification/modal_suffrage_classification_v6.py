@@ -346,8 +346,13 @@ def classify_speech(
 
             classification = json.loads(llm_output)
         except json.JSONDecodeError as e:
-            # Failed to parse JSON - save error
+            # Failed to parse JSON - save error with all expected fields
             classification = {
+                "stance": None,
+                "reasons": None,
+                "top_quote": None,
+                "confidence": None,
+                "context_helpful": None,
                 "error": "json_parse_failed",
                 "error_detail": str(e),
                 "raw_output": llm_output[:500],
@@ -376,10 +381,28 @@ def classify_speech(
         return classification
 
     except requests.exceptions.RequestException as e:
-        # API call failed
+        # API call failed - include all expected fields
         return {
             "speech_id": speech_data['speech_id'],
             "debate_id": speech_data['debate_id'],
+            "speaker": speech_data.get('speaker'),
+            "canonical_name": speech_data.get('canonical_name'),
+            "gender": speech_data.get('gender'),
+            "party": speech_data.get('party'),
+            "year": speech_data.get('year'),
+            "decade": speech_data.get('decade'),
+            "date": speech_data.get('date'),
+            "chamber": speech_data.get('chamber'),
+            "confidence_level": speech_data.get('confidence_level'),
+            "word_count": speech_data.get('word_count'),
+            "stance": None,
+            "reasons": None,
+            "top_quote": None,
+            "confidence": None,
+            "context_helpful": None,
+            "model": model,
+            "prompt_version": prompt_version,
+            "tokens_used": 0,
             "error": "api_call_failed",
             "error_detail": str(e),
             "api_success": False,
