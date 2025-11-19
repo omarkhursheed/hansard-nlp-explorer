@@ -1,0 +1,2285 @@
+Loading data...
+
+================================================================================
+WOMEN AGAINST WOMEN'S SUFFRAGE: 18 SPEECHES
+================================================================================
+
+================================================================================
+SPEECH 1/18
+================================================================================
+Speech ID: 15afbf4e6cc3a3a3_speech_3
+Speaker: Viscountess ASTOR
+Canonical Name: Nancy Astor
+Date: 27 February 1920
+Year: 1920
+Decade: 1920
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: True
+Word count: 671
+
+Top Quote (TARGET):
+  "Girls of twenty-one are, I think hon. Members will agree, far more
+  emotional than men of the same age."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: emotion_morality
+    Stance: against
+    Rationale:
+      The speaker argues that women are more emotional than men,
+      suggesting they are less capable of voting effectively.
+    Quotes:
+      - "Girls of twenty-one are, I think hon. Members will agree, far
+        more emotional than men of the same age." [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that granting equal voting rights would lead to
+      a significant imbalance in the number of female voters compared to
+      male voters.
+    Quotes:
+      - "the result of that, if this Bill were passed... would be that
+        there would be 12,913,000 male voters and 13,479,000 female
+        voters." [TARGET]
+
+  Reason 3:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker expresses concern that extending the franchise could
+      lead to social strife similar to past conflicts.
+    Quotes:
+      - "If the country is not in favour, it means that we are going
+        to go through a somewhat similar period of strife and
+        struggle..." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+Male electors! Mr. MURRAY If the hon. Member will give me a chance, I was
+about to say I have enquired from many female voters in the constituency, and
+I have not found, certainly in the St. Rollox division of Glasgow, that there
+is any general demand for the extension of the franchise which is embodied in
+this Bill. Therefore, when the Minister comes to reply, I sincerely hope he
+will inform this House that the Government has no intention either of
+accepting this Bill or of extending the franchise beyond the present measure
+before the next General Election. There are certain reasons why I believe this
+franchise should not be extended. Girls of twenty-one are, I think hon.
+Members will agree, far more emotional than men of the same age. I speak, of
+course, with all respect in the presence of the hon. Member for Plymouth
+(Viscountess Astor). Still, she must allow me to express such views as I have,
+because this is a very important subject, and I think it is one of which we
+should try to get to the bottom. 2078 Having said that, I want to say that, in
+my opinion, there are very few young men in this country of the age of twenty-
+one who are equally capable of exercising the vote in a proper and an
+efficient manner. I wish to carry the discussion into this particular field;
+that the best solution, to my mind, of this subject will be to increase the
+age of the franchise to men to twenty-five, and to lower the franchise to
+women to the same age. I do not believe that the country is in favour of this
+measure. If the country is not in favour, it means that we are going to go
+through a somewhat similar period of strife and struggle on the part of the
+women below the age of thirty as rent this land before the War. I think that
+is greatly to be deprecated. After all, compromise is the soul of nearly
+everything that is good, and I believe that compromise on these lines will go
+far to meet the women's demand, and at the same time, if it were carried out
+in a gradual way, there would be very little objection in the country from the
+men's point of view, if properly explained to them. One more point to which
+the hon. Gentleman who has just sat down referred; that is the question of the
+predominence of women voters which will be the effect of this Bill. In July
+last I asked the Minister of Health a question as to the number of electors
+registered in the first register of voters under the Representation of the
+People Act, 1918 . His reply was that there were 12,913,000 and 8,479,000
+women. I asked further if the franchise were made equal to men and women what
+was the estimate of the number of women who would be added to the register?
+The reply was that, of course, no definite estimate could be made, but that it
+certainly would be over 5,000,000. The result of that, if this Bill were
+passed and equal franchise given in this country, would be that there would be
+12,913,000 male voters and 13,479,000 female voters. [HON. MEMBERS: "Why
+not?"] That is what I should like to explain, if I may. Hon. Members do not
+agree that that is any reason for not giving this vote. I, however, contend
+that that is every reason. What is demanded is equal opportunities for women?
+This is not giving equal opportunities but greater opportunities than to the
+men. [HON. MEMBERS: "No!"] 2079 Yes. In other words there will be very nearly
+three quarters of a million more women voters in the country than there are
+male voters. Hon. Members say that does not give the women a superiority over
+men. I cannot see how they can put forward that contention. Supposing the
+women were to bind together on any question, like, say, prohibition.
+
+================================================================================
+CONTEXT (marked as helpful):
+================================================================================
+[Mr. GRUNDY]: I beg to move "That the Bill be now read a Second Time." I feel
+it a very great honour and pleasure to move the second reading of this Bill,
+which is designed to amend the Representation of the People Act of 1918. It is
+to confer the franchise on women on exactly the same terms as it is given to
+men, first, by removing the age limit of thirty years and substituting the
+same age limit as applies to men, that is to say, twenty-one years. The Bill
+also seeks to secure equality between the sexes of ...  [Mr. ROBERT YOUNG]: I
+beg to second the Motion. I wish to congratulate my hon. Friend on his
+excellent explanation of the Bill, and I wish also to condole with him on the
+fact that I know he has been speaking under very great disadvantages, he
+having risen from a sick bed and come here largely against the orders of his
+physician to take his part in introducing this Bill today It is indicative of
+the readiness that is felt throughout the country by young men generally on
+behalf
+
+  ... (context truncated, 3648 chars total)
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 2/18
+================================================================================
+Speech ID: 15afbf4e6cc3a3a3_speech_4
+Speaker: Viscountess ASTOR
+Canonical Name: Nancy Astor
+Date: 27 February 1920
+Year: 1920
+Decade: 1920
+Chamber: Commons
+Party: None
+Confidence: 0.70
+Context helpful: True
+Word count: 99
+
+Top Quote (TARGET):
+  "I prefer to record my vote against this Bill, not because I do not believe
+  in women's suffrage"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker believes that while he supports women's suffrage, he
+      feels the timing for its extension is not right.
+    Quotes:
+      - "not because I do not believe in women's suffrage, but because
+        I do not feel that the time has arrived" [TARGET]
+
+  Reason 2:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker implies that extending suffrage may disrupt the current
+      social order.
+    Quotes:
+      - "We should be in exactly the same condition as the United
+        States" [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+Hear, hear! Mr. MURRAY Where would we be in this country? We should be in
+exactly the same condition as the United States, as many of the States of
+Canada, and of New Zealand. I am, however, wandering from the point, but I
+have done so to answer the observations of hon. Members on the opposite
+Benches. I merely wish again to say that I prefer to record my vote against
+this Bill, not because I do not believe in women's suffrage, but because I do
+not feel that the time has arrived when the measure should be extended.
+
+================================================================================
+CONTEXT (marked as helpful):
+================================================================================
+[Mr. GRUNDY]: I beg to move "That the Bill be now read a Second Time." I feel
+it a very great honour and pleasure to move the second reading of this Bill,
+which is designed to amend the Representation of the People Act of 1918. It is
+to confer the franchise on women on exactly the same terms as it is given to
+men, first, by removing the age limit of thirty years and substituting the
+same age limit as applies to men, that is to say, twenty-one years. The Bill
+also seeks to secure equality between the sexes of ...  [Mr. ROBERT YOUNG]: I
+beg to second the Motion. I wish to congratulate my hon. Friend on his
+excellent explanation of the Bill, and I wish also to condole with him on the
+fact that I know he has been speaking under very great disadvantages, he
+having risen from a sick bed and come here largely against the orders of his
+physician to take his part in introducing this Bill today It is indicative of
+the readiness that is felt throughout the country by young men generally on
+behalf
+
+  ... (context truncated, 4193 chars total)
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 3/18
+================================================================================
+Speech ID: 10709cb7abc783fd_speech_27
+Speaker: Miss WILKINSON
+Canonical Name: Ellen Wilkinson
+Date: 02 July 1925
+Year: 1925
+Decade: 1920
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 1275
+
+Top Quote (TARGET):
+  "a woman who is left a widow and has children dependent upon her should be
+  at the mercy of any common informer"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that the current provisions unfairly expose women
+      to potential harm and injustice.
+    Quotes:
+      - "a woman who is left a widow and has children dependent upon
+        her should be at the mercy of any common informer" [TARGET]
+      - "the policeman's word is always taken against the woman who is
+        charged with solicitation" [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that the proposed system will lead to negative
+      outcomes for women and their families.
+    Quotes:
+      - "it is not any real protection to women that it should be said
+        that the Minister has it in his discretion" [TARGET]
+      - "these cases are happening in our Courts every day" [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I beg to move, in page 5, line 28, to leave out Sub-section (4). If I may, I
+should like to continue the argument which was not in Order on the previous
+Amendment. May I point out the serious results which are likely to come about
+from the first two lines of this Sub-section— Where on any representation by
+the local authority, or from any court or otherwise. I regret that, owing to
+circumstances over which I had no control, I was not here to move the previous
+Amendment, which met my point. These words, "or otherwise," which appear
+throughout the Clause, seem to me to be extraordinarily vague. They do not
+state in any way who "otherwise" is or how these representations are to be
+made. It seems to me to be, to say the least of it, extremely undesirable that
+a woman who is left a widow and has children dependent upon her should be at
+the mercy of any common informer who chooses to lay evidence against her.
+Those of us who had experience of these matters in the early days of the War,
+before the routine became settled, know that this was a very serious matter,
+and we are bringing the same kind of evil into this Bill by this Clause. It
+means, as the words stand, that any set of persons, or any single person, can
+lay information against this woman, for instance, a neighbour who may be
+jealous that she 2876 has a pension and the neighbour has not. It lays the
+woman open to the possibility of blackmail. Someone may come along and say,
+"If you do not give us money we will lay information against you." A woman may
+very easily be intimidated by unscrupulous people in that way. It therefore
+seems necessary that in the most definite and categorical way, right from the
+beginning it should be laid down that no casual person can give information
+and that information can only be laid by a properly constituted body or
+authority under the law. You have the words here. "by the local authority."
+Why would it not be possible under the local authority to have a committee
+which should deal entirely with these cases, and make proper and careful
+investigation before any complaint whatever is sent to the Minister? I think
+if the right hon. Gentleman would consider that kind of local machinery his
+Act would work a good more smoothly than it is likely to do if anyone, of any
+standing or reputation, can lay complaint against the woman. Then there is the
+question of representation from any Court or otherwise. I quite agree here
+that the Court is a properly constituted body, but it is again laying the
+woman open to very serious disability. There are certain offences for which
+she may be penalised in a Court of law on the evidence of one policeman. Those
+of us who have been concerned with social work have repeatedly pointed out how
+unfair it is on women that on one policeman's evidence alone—and in a Court of
+law the policeman's word is always taken against the woman who is charged with
+solicitation—she may be penalised, however innocent she may be. In fact, I
+think it will be within the knowledge of Members of the House that, during the
+suffrage agitation previous to the War, there were women connected with the
+suffrage movement who laid themselves open to charges of this kind in order to
+prove to the police authorities the real scandal that, however respectable a
+woman was, if she appeared charged with this class of offence before a Court,
+it was always the policeman's word that should be taken. Look at the situation
+that may arise under this Subsection. You may have a woman charged with this
+class of offence. The policeman's word is taken, and the Court 2877
+immediately comes to the conclusion that she is not fit to have charge of her
+children. She is not only convicted of an offence of which she may be
+perfectly innocent, but she stands to lose her pension, to have her home
+broken up, to have her children taken away from her, and to be placed in
+perpetual tutelage on the word of one policeman. Of course, the Minister will
+say this is an exaggerated case, but these cases are happening in our Courts
+every day. Another point is this: The Minister will say it lies in his
+discretion, and if such a case happened he would be able to put it right. If
+it was an individual woman, coming to see Mr. Neville Chamberlain at his home
+after breakfast, I am certain a soft-hearted Minister would look into the case
+and say, "Of course, this is not a suitable case," but in actual practice that
+is not what is likely to happen. These Acts are not administered by Ministers
+with soft hearts, but by very hard-hearted lawyers and civil servants, and,
+consequently, it is not any real protection to women that it should be said
+that the Minister has it in his discretion. If she is guilty of a very serious
+offence, that renders her unfit to look after her children; it is in the best
+interests of all concerned that someone should look after them for her, I am
+not complaining about that, but it would be very wise if we had some kind of
+uniform procedure in these matters and, if it was possible, to have a
+committee under the local authority, which is likely to administer these
+things with more flexibility, more sympathy, and more realisation of women's
+difficulties, if the local authority should, as it were, be the Court of First
+Instance in this matter, and that if a Court of law finds a woman guilty of a
+serious offence, it should at least consult with the local authorities before
+making a complaint to the Minister, so that there should be no possibility of
+the woman being unduly injured. We are all anxious to safeguard the moral and
+physical welfare of the children. We do not want to leave the children in the
+hands of people who are unsuitable to look after them, but we have somewhat
+old-fashioned notions and we believe that at least 99 per cent. of mothers are
+much the best people to look after their children, and that it is very often
+the fault of poverty, perhaps the fault of bad 2878 training, perhaps only
+words of kindly wisdom and assistance are needed in order that the home should
+be kept together and the children brought up properly. After all, it is the
+poorest women we are talking about. It is not the woman who is accustomed to
+looking after herself, but the poorest and most ignorant of the population who
+will be very really injured possibly by this Bill Therefore I want to ask the
+Minister whether it would not be possible to come to such an arrangement as I
+have suggested. It may of course not be possible at the moment for the
+Minister to adopt a form of words but we should be quite content if he would
+take this back and consider the whole question on the Report stage. I hope we
+shall not have the hon. Member irrevocably committing the House and the
+country to this Sub-section. Viscountess ASTOR Many people on this side feel
+as strongly about this matter a? the hon. Lady herself, who has put her case
+so well. It is an injustice which sooner or later must be remedied, and I hope
+the hon. Gentleman will take this opportunity.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 4/18
+================================================================================
+Speech ID: 5728a56e8e637788_speech_9
+Speaker: Miss RATHBONE
+Canonical Name: Eleanor Rathbone
+Date: 20 May 1931
+Year: 1931
+Decade: 1930
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 2698
+
+Top Quote (TARGET):
+  "the risk attached to this reform is that we may shortly be faced with a
+  class domination"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker warns that abolishing plural voting could lead to a
+      narrow class domination in Parliament.
+    Quotes:
+      - "the risk attached to this reform is that we may shortly be
+        faced with a class domination" [TARGET]
+      - "I believe it is a real danger which is approaching day by day
+        nearer and nearer." [TARGET]
+
+  Reason 2:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that a Parliament dominated by one class would
+      not represent the whole nation fairly.
+    Quotes:
+      - "Would they maintain that that is going to be a Parliament
+        which will truly and genuinely represent the whole nation?"
+        [TARGET]
+      - "it does not make for sincerity and straightforwardness in
+        political life." [TARGET]
+
+  Reason 3:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that the proposed changes will complicate the
+      representation of diverse classes.
+    Quotes:
+      - "the disadvantages of the flat geographical basis have been
+        greatly intensified" [TARGET]
+      - "I believe the time is coming when we shall have to revise our
+        Parliamentary system" [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I am one of those who, on most constitutional questions, are in sympathy with
+those who have proposed this Clause rather than with those who are opposing
+it, and for that very reason I should like to tell the House why I regret the
+Clause. I admit that at first sight the arguments against plural voting seem
+so self-evident as scarcely to need stating, and, indeed, they are self-
+evident provided that one grants the premises on which they are founded. I
+take it that the case is really based on a conception of Parliament and its
+function in the life of the nation which is very attractively simple, and
+which was admirably set forth by the right hon. Gentleman the Member for
+Camborne (Mr. Leif Jones), who spoke on behalf of the Liberal party; but it
+is, I venture to suggest, a very simple idea which, when applied to
+complicated conditions, becames superficial and crude. The conception of
+Parliament which it implies is really that Parliament consists of 615
+individuals, each representing, on an average, with the exception of
+University Members, roughly speaking 50,000 individuals; and, since those
+50,000 individuals cannot all have their way in the choice of a
+representative, rough justice will be done, so the argument goes, if every one
+of the 50,000 is enabled to poll his or her full weight in the ultimate choice
+between two candidates, every other candidate having been eliminated by the
+device of the Alternative Vote. That is the whole hypothesis upon which the
+Alternative Vote and the voting proposals of this Bill are based. According to
+this view, which regards an elector merely as an arithmetical unit, I admit
+that the system of grouping these arithmetical units in geographical areas
+which contain roughly speaking the bedrooms of 50,000 electors is as good as
+any other; but is that the right conception of Parliament, or of the nation of
+which Parliament is supposed to be the mirror? What, after all, is a nation?
+Is a nation just an aggregate of 44,000,000 human beings, or has the nation an
+individuality which transcends its parts? Has it a head, a brain, a trunk, and
+limbs? If so, then I suggest that, as a mirror for such a nation, a Parliament
+elected on a flat geographical basis is just about as good a representation of
+a nation as a gollywog is of a 2013 human being. Everything that gives
+distinctness of outline, flexibility of limb, or clarity of articulation in
+the human being is furred and blurred. The real truth is that one and the same
+person cannot simultaneously represent stockbrokers, domestic servants,
+university professors, dock labourers, clerks, and artisans, and, when these
+individuals are shepherded into groups under banners labelled "Liberal,"
+"Labour," or "Conservative," it does not really meet the difficulty. It
+becomes more and more clear as time goes on that these political distinctions
+are relatively confused and fictitious, while the real differences which arise
+from differences of education and occupational status are real and permanent.
+Not long ago, the hon. Member for Westhoughton (Mr. Rhys Davies) pointed out
+that very view in almost the very words that I have been using. He complained
+that so many representatives of working-class constituencies were
+stockbrokers, lawyers, doctors, and the rest. He said that could not rightly
+represent the working-class point of view, and he looked forward to the time
+when all working-class constituencies would be represented by genuine working-
+class representatives. I sometimes wonder whether the House realises exactly
+what that would mean. It would mean a House representative of one class only,
+and that the class of weekly wage earners. I have not the figures by me which
+afford arithmetical proof, though I am endeavouring to obtain them, but I
+think it is certain that in almost every constituency in the country,
+certainly in the vast majority of constituencies, the weekly wage earners and
+those of equivalent economic status are in the majority, and I sometimes
+wonder if people realise the great change in that respect which was brought
+about by the Acts of 1918 and 1925 in the class character of constituencies. I
+am not referring to the fact for which all women must class the right hon.
+Gentleman the Member for Bewdley (Mr. S. Baldwin) among those for whom more
+especially we are bound to pray for enfranchising women. I am referring to the
+fact of the enfranchisement of domestic servants, and I think that small fact
+has seldom been recognised in respect of the importance it gives to the
+character of constituencies. 2014 Take an example which has been recently made
+out for me in connection, with an analysis of working class conditions by the
+University of Liverpool. It has ben reckoned that, taking Liverpool as a
+whole, the proportion of persons belonging to the wage-earning class is
+between 67 and 82 per cent. That is the figure for all the constituencies. I
+tried to get figures taken out for three typical working-class wards and three
+exceptionally prosperous wards in Liverpool, and, taking householders alone,
+it shows that in the working-class wards about 89 per cent. belong to the
+working-classes and in the more prosperous wards the proportion falls as low
+as 31 per cent. That leaves out the domestic servants. If you consider a well-
+to-do neighbourhood, roughly speaking, it comes to this, that in the very
+wealthy houses the proportion of domestic servants over 21 years of age would
+more than balance the number of members of the family over 21, in a middle
+class household they would be about equal, and in the small servant keeping
+class of house the members of the family would outbalance the domestic
+servants. The importance of that fact is that, when you add the domestic
+servant class to the householders in residential neighbourhoods, in the vast
+majority of constituencies they bring up the weekly wage-earner vote to the
+majority of the constituency. I should think there is a bare handful of
+constituencies in which that is not the case. We sometimes speak of the
+dictatorship of the proletariat in Russia. Few people realise that here and
+now in Great Britain we have the dictatorship of the proletariat. It is an
+arithmetical fact. If we do not feel the heel of the oppressor, it is because
+the proletariat is innately conservative and uses the enormous power that is
+placed in its hands with sometimes almost excessive moderation. I do not want
+to have it supposed that I regret universal suffrage, I worked for it and I
+gave the best years of my life to bringing it about, and I believe it has
+worked results which transcend all that I ever expected from it. It is one of
+those great forces which arise from time to time which Sweep through the dull,
+dense world, compelling there All new successions to the forms they wear. 2015
+If we had to choose between disfranchising the dock labourer and the domestic
+servant, or the stockbroker and the graduate of the university, without
+hesitation I would sacrifice the stockbroker and the graduate, because they
+have other means of defence. All great reforms bring their risks. The risk
+attached to this reform is that we may shortly be faced with a class
+domination just as selfish and just as narrow as the class domination of the
+18th and the earlier part of the 19th century, only with the relative position
+of the different classes reversed. I sometimes find myself marvelling at the
+short-sightedness of members of the Labour and the Liberal parties who
+themselves belong by birth, by education, by their occupational status and
+interests to the middle and upper classes, and yet persistently ignore that
+possibility. I deny altogether that it is a remote and imaginary possibility.
+I believe it is a real danger which is approaching day by day nearer and
+nearer. There is a great deal of pretence and humbug in the atmosphere of to-
+day. That applies most to realities which are really knocking their shins and
+staring them in the face every hour. Just because snobbishness of the more
+obvious kind is out of fashion, because we neither talk nor think about the
+lower classes or about our inferiors, we pretend that class differences have
+ceased to exist. They are just as real as ever they were. They may have ceased
+to exist vertically, but they still exist horizontally. A bricklayer is as
+good as a stockbroker, but a bricklayer is not the same thing as a
+stockbroker, and I believe it would be true to say that a Conservative
+bricklayer has far more in common with a Labour bricklayer than a Conservative
+bricklayer has with a stockbroker who belongs to the same party as himself.
+Hon. Members opposite applaud that, but do they realise what it practically
+implies with regard to this question of university representation? Do they
+realise that their very cheers are an acknowledgment of the fact that we have
+a dictatorship of the proletariat and that they want more and more that the
+dictatorship should become not only potential, as it is at present, but actual
+by replacing the past domination of the upper and middle classes by the
+complete 2016 domination, as far as political power is concerned, of their own
+class? I know there are Members who think this is an imaginary danger,
+because, though they belong to what is sometimes insultingly called the
+intelligentsia, they have found it easier to get returned to Parliament for
+industrial constituencies. Are they sure it is always going to be so? Are they
+sure that it arises from conditions which are static or whether it is not one
+of those instances that all students of political conditions must have
+observed of the extremely slow time lag in political reactions? A newly
+enfranchised class is always naturally timid and uncertain of itself. It likes
+to cling on to the shoulders of the more expedient classes; it likes to select
+its representatives from among those classes. As it feels its feet and becomes
+more confident, not unnaturally it seeks to be represented by persons who live
+the same life, have the same standards, read the same books, play the same
+games and enjoy the same jokes. When the middle and upper classes were in
+complete domination, did they choose representatives of the working classes?
+Is there a single instance when they did so? How, then, can those who
+themselves belong to the middle and upper classes be certain that we may not
+be faced in the future with a genuine, purely working-class Parliament? Would
+they maintain that that is going to be a Parliament which will truly and
+genuinely represent the whole nation? Do they think it fair and reasonable
+that, because they are in a minority, because the people at the top, the
+supervisory people, must always be few in comparison with the routine jobs,
+those classes should be deprived of all representation, or that they should
+have no right to choose their own representatives belonging to their own
+class? Even as it is at present, the fact that the representatives of the
+intelligentsia are chosen by constituencies the vast majority of whom belong
+to the weekly wage earning class, does not make for sincerity and
+straightforwardness in political life. It means, in effect, that most
+political candidates have to talk with two voices. They cannot confess to the
+motives which animate them or express the thoughts which are really in their
+own minds. It is inevitably so, because they are trying 2017 to pretend
+equality with those with whom they do not feel equality. I do not mean
+equality in the sense that their constituents are as good as they are, but
+they are not the same as themselves and they cannot represent them in the same
+sense as those of their own class would do. I may seem to be putting up rather
+heavy artillery in a Clause which makes so small a change as this Clause,
+which sweeps away plural voting, but so long as we have only a small bulwark
+against a very great and real danger we had better stick to that bulwark until
+we can get something better. I believe the time is coming when we shall have
+to revise our Parliamentary system in a much more drastic manner than even the
+passing or the doing away with this Clause will do. We may have to see that
+Parliament shall become more truly representative of all classes, of all
+sections, of all modes of thought and all points of view than it can be on a
+flat geographical basis. May I make one point that I have never heard made in
+all these discussions. The disadvantages of the flat geographical basis have
+been greatly intensified by the housing legislation of the last few years. The
+reason is that, so long as houses were put up by private landowners, there was
+no danger that the private landowner would put up houses in a particular
+constituency in such a way as to strengthen the Conservative, the Liberal or
+the Labour party, but now that the great majority of houses are being put up
+by local authorities, that is what is happening. There is an acute controversy
+in the Liverpool City Council over a proposed housing scheme which would have
+the effect of transferring a very large block of working-class voters,
+belonging mainly to a particular religion, into a constituency which hitherto
+has been almost entirely Conservative, and the pros and cons of that housing
+policy are being quite openly discussed as a sort of political gerrymandering.
+That is bad for the housing policy and bad for the representative system. I do
+not say what is the final way out. It may be by a reformed House of Lords. I
+hope not, because we should have a clash between two systems. We should have a
+House of Commons elected on a flat geographical basis and a House of Lords
+elected on some quite different basis, and it would be merely a pull 2018
+between the two. The remedy may lie in a system of Proportional Representation
+and, if that could be properly guarded, I am not sure that that is not the
+best way. Or it may lie in an alteration of the basis of Parliament, which
+would be placed on some system of functional representation. 5.0 p.m. May I
+give one reason for specially deploring the doing away with plural voting in
+the case of universities. It will have a serious disadvantage. It has always
+been my dream since I thought of becoming a university representative myself
+that we should be able to cut away this vital connection between party
+politics and university representation. Over and over again in my electoral
+contests I put forward the view—and I find it attracts more warm applause from
+all the audiences I address than any other views I put before them—that it is
+altogether wrong that university representatives should be elected upon
+grounds of party politics. I use the argument that they should use their votes
+in their local constituencies and that through the exercise of that vote they
+could give expression to their party political opinions, and keep their
+university vote for the purpose for which it was intended of expressing an
+independent and detached point of view. It will be very much harder to use
+arguments of that sort when university voters have no choice between the two.
+There will be more temptation to log roll. If you are in a geographical
+constituency where the Conservative candidate is in danger, it may be said,
+"You must use your local vote," and, if you are in a constituency where your
+vote is not going to make any difference, "You must stick to your university
+vote." It will be a grave disadvantage if this Clause is passed. It will make
+it much more difficult to separate the principle of university representation
+from the principle of party politics. For that, and for all the other reasons
+which I have given, I deplore that this Clause is to be added to the Bill.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 5/18
+================================================================================
+Speech ID: 90413c2aaeb84833_speech_5
+Speaker: Miss BONDFIELD
+Canonical Name: Margaret Bondfield
+Date: 21 July 1931
+Year: 1931
+Decade: 1930
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: True
+Word count: 446
+
+Top Quote (TARGET):
+  "one woman, or even two women, will be ruthlessly outvoted by these brutal
+  men"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that adding women to committees does not ensure
+      their representation or influence.
+    Quotes:
+      - "one woman, or even two women, will be ruthlessly outvoted by
+        these brutal men" [TARGET]
+      - "I cannot dictate to the textile women and say, 'You must send
+        me a woman'" [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that mandating women's representation may not
+      effectively represent women's interests.
+    Quotes:
+      - "the first duty of the Advisory Committee will be to call into
+        consultation representatives of that particular trade"
+        [TARGET]
+      - "if the textile unions decide they are going to send men"
+        [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I am bound to say that the two speeches to which we have just listened have
+made me doubt the wisdom of my first concession. The first speech was alien in
+spirit to the whole idea of the Labour movement. The first intention was that
+we should have this Committee equally balanced, quite irrespective of sex
+considerations, consisting of representatives of employed contributors,
+employer contributors and State contributors—that is, the taxpayers generally;
+but owing to the special representations made that it was possible that
+neither of those representatives would be a woman I yielded to a desire which
+was expressed and put an extra member on the Committee. If the sentiment of
+the Committee is going to be as described by the hon. Member for the English
+Universities (Miss Rathbone) 1363 one woman, or even two women, will be
+ruthlessly outvoted by these brutal men who, it appears, will have no
+consideration for women at all; and in that case what are the insured women
+going to do? I beg both those hon. Ladies to remember that if there is one
+voceriferous section of the movement when they come up against something which
+they regard as not right it is the women of the movement, and I have not the
+faintest shadow of doubt that if we put out any regulations which are liable
+to create an injustice to women as women that we shall hear of it in loud,
+large tones. The position has been to some extent overstrained by those
+who—though I do not wish to say anything offensive—have this obsession about
+women. What are the Committee going to do? If there is a danger of a trade in
+which large numbers of women are employed being caught by any new regulations,
+the first duty of the Advisory Committee will be to call into consultation
+representatives of that particular trade, and I should expect the Committee to
+inquire of the women themselves as to whether the regulations were suitable
+for their case or not. Large areas of women's labour are represented by men;
+the women themselves have elected them. I cannot dictate to the textile women
+and say, "You must send me a woman," if the textile unions decide they are
+going to send men. I really will not agree that that is the best way to assist
+the expression of women's views. But I have very readily given the concession
+of adding one woman, and I hope there will be more than one woman among those
+who are nominated as members, and with that I must ask the House to be
+content. Under the circumstances I cannot accept the Amendment. § 10.0 p.m.
+
+================================================================================
+CONTEXT (marked as helpful):
+================================================================================
+[Miss RATHBONE]: I beg to move in page 3, line 12, to leave out the words "one
+shall be a woman" and to insert instead thereof the words "two shall be
+women." I think that the discussions during the proceedings on this Bill upon
+the question of married women show the great need that the case for the
+married women should be adequately put in the Advisory Committee and I think
+that in a committee of nine persons a guarantee of one member is quite
+insufficient. All who have listened to these discussions, must have ...  [Mr.
+SPEAKER]: I think that the hon. Lady is on the wrong Amendment. The Amendment
+I called is in page 3, line 12, to leave out the words, "one shall be a
+woman," and to insert instead thereof the words, "two shall be women."  [Miss
+RATHBONE]: That is the Amendment that I am moving, and I was merely giving an
+illustration to show the great power which is put in the hands of the Advisory
+Committee to differentiate against married women, and to show how they might
+by a simple
+
+  ... (context truncated, 2321 chars total)
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 6/18
+================================================================================
+Speech ID: 08f9cc381de2a059_speech_31
+Speaker: Miss RATHBONE
+Canonical Name: Eleanor Rathbone
+Date: 11 May 1932
+Year: 1932
+Decade: 1930
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 1936
+
+Top Quote (TARGET):
+  "Married women are getting tired of these attacks on their pocket and on
+  their repute."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker argues that the Bill's provisions unfairly penalize
+      married women, suggesting that it does not effectively address their
+      needs.
+    Quotes:
+      - "it is difficult to see in what way... it is going to help the
+        married women" [TARGET]
+      - "Married women are getting tired of these attacks on their
+        pocket and on their repute." [TARGET]
+
+  Reason 2:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker highlights the inequality faced by married women in the
+      context of the Bill, emphasizing their disadvantaged position.
+    Quotes:
+      - "the married woman inhabits a No Man's Land." [TARGET]
+      - "the married woman of the working class always gets the worst
+        of it every way." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+Not perhaps for the segregation of married women, but there is a provision in
+the Bill for the cutting down of the benefit of married women and the
+disablement benefit of single women also because they have 'an excessive
+sickness rate. They are treated as a separate class, and that is all that I
+mean. Apart from the question of the anomaly in the different kinds of
+treatment accorded to the two sexes, this Bill has another defect. One of the
+features of the present Bill and also about the recent Unemployment Insurance
+(Anomalies) Act which has been most resented by women is the implication 1976
+which is being drawn by the general public that women in general, and married
+women in particular, are malingerers who willingly sponge on the State, or on
+their fellow-contributors, to a greater extent than do men. I think the
+figures that I have just given about the much smaller proportion of women's
+claims in unemployment insurance to men's, and the much smaller number of
+weeks for which they claim, do not at all bear out the theory that they sponge
+more readily than the men. At the same time, I am not going to deny that there
+is a real difficulty here. The married woman has undeniably a greater
+temptation to malinger than the married man. I think there is some confusion,
+because hon. Members have spoken as if sickness was a clearly defined thing.
+The fact is that sickness is a relative thing. Many married women know, when
+they go out to work, that their work is badly needed at home, and if they are
+feeling slightly ill, they may deem it better policy to give up their work and
+claim on the fund, so that they may remain at home with the children. They are
+not actually working at home, but the value of their supervisory services at
+home, plus their sickness pay, is better worth their while than to continue at
+work. A man in similar circumstances, if he was slightly ill, would not be
+able to stay at home. He would know that he would be merely a nuisance at
+home, and that his money could not be spared, and he is driven to go to work,
+even though it may be greatly to the detriment of his own health. I am not
+sure that in many cases it really does pay in the long run for a sick
+contributor to hold out too long before applying for sickness pay, but I admit
+that there is a certain greater risk of malingering in the sense of too
+eagerly going on the fund on the part of married women. But that ought to be
+met by stricter administration, and, what is more, it is being so met, and, as
+was pointed out in the report, special steps are being already taken to
+tighten up the administration, and are having some effect. Malingering is
+certainly not the sole cause of the higher sickness rate. There is one other
+factor, to which I have already alluded, and that is the sickness which
+follows on pregnancy and 1977 arises out of labour, but, in addition to that,
+there is the fact that often a married woman goes out to work because she
+knows that her husband is unemployed or suffering from short-time or lower
+wages, and the double strain of working and carrying on the duties at home of
+cook, housemaid, washerwoman, and general servant is a very heavy strain on
+her health. Then again, when the woman is carrying this double strain, she is
+very likely getting a smaller share of the family food than anybody else.
+Every social worker knows that in hard times, when there is unemployment or
+when money is short, the woman, because she is the housewife, comes off worst.
+Mr. Rowntree writes in his book, "Poverty": Extraordinary expenditure, such as
+the purchase of a piece of furniture, is met by reducing the sum spent on
+food. As a rule, in such cases, it is the wife and sometimes the children who
+have to forgo a portion of their food—the importance of maintaining the
+strength of the wage-earner is recognised, and he obtains his ordinary share.
+Speaking of the excessive sickness of married women, the secretary of the
+National Association of Trade Union Approved Societies said last year: If food
+is short in the home, the man does not go without. The wife feeds the brute
+because he is earning the money. Then she feeds the kiddies. If there is any
+left, she has it, but often mother says she is not hungry. That happens
+because as the person who provides the food she has to see that the rest of
+the family get their share first. 7.0 p.m. These three factors, the effects of
+pregnancy and labour, the double strain of earning and of housework, and the
+traditional self-sacrifice of the housewife, very largely account for this
+excessive sickness. The question is whether they justify the separation of the
+married women's claims and the expediency of cutting down their benefit. It is
+a well-known maxim that the most economical method of treating sickness is to
+cure sickness. It is difficult to see in what way, except on the principle of
+taking a hair of the dog that bit you, it is going to help the married women
+with debilitated health through insufficient food not to give them enough to
+eat. Married women are getting tired of these attacks on their pocket and on
+their repute. All the attacks of 1978 the last six months have hit the married
+woman heavily. Six months ago her unemployment pay was cut down. Now her
+sickness pay is to be cut down. If she is the wife of an unemployed man, she
+has had her dependant's allowance reduced. I often wondered why the Government
+were so ready to attack the married woman. The Debate to-day furnishes the
+reason. It is because in the economic structure the married woman inhabits a
+No Man's Land. The economists used to talk of the Economic Man, who responded
+solely to economic considerations. If there is an Economic Woman, she must be
+a spinster because no Economic Woman of the working class would be such a fool
+as to get married. The married woman of the working class always gets the
+worst of it every way. If she decides when she marries to give up her job and
+look after her home and children, she is entering one of the most dangerous
+occupations in the world. She does not get a penny of wages and is expected to
+live on what her husband can spare her out of an income which is no larger
+than that of a bachelor, but out of which she has to keep her husband and
+children. If she retains her job, everybody looks at her askance. Her employer
+looks at her as one who may be irregular in her work, the trade union looks at
+her as a potential blackleg, and the spinster often asks why there should be
+two incomes coming into the same house. The Government, watching these things
+with one eye on their finances and the other on the electorate, think that
+married women are fair game. I do not mean that the present Bill is fair on
+the spinster, because she too is to receive less disablement benefit, although
+she already has to contribute to old age pensions and widows' pensions from
+which she derives no benefit either in her own capacity or if she becomes the
+wife of a man who is not insured. Her wages are low because she has no family
+to keep, but under the means test she has to contribute to the upkeep of any
+member of the family who is unemployed. Now, with her debilitated state of
+health, if she is driven to claim disablement pay, her miserable 7s. 6d. a
+week is to be cut down by 1s. 6d. 1979 I ask the Government to consider
+whether there is not some way, which is fairer and more consistent with the
+other forms of State insurance, of meeting the acknowledged difficulty. We
+recognise that the gap has to be bridged in some way or other, but is there no
+other way? I do not claim to be an expert on insurance, but I know that in the
+report of the Royal Commission on Health Insurance in 1926 it was definitely
+suggested that some scheme should be adopted of pooling a certain amount of
+the surplus enjoyed by the more prosperous societies in order to meet the
+claims on the less fortunate. It was suggested that in a universal compulsory
+scheme of insurance, towards which a substantial contribution was made from
+the resources of the State, some element of mutual aid should be included by
+which the more fortunate members of the insurance community should contribute
+out of their abundance to the needs of the less happily placed. The Royal
+Commission declared: These considerations …. would incline us to view with
+favour the introduction of a measure of partial equalisation of benefits so
+limited in its operation as to preserve the incentives to sound and economical
+administration …. but at the same time going considerably beyond the
+restricted scheme of pooling which was introduced, so far as Societies
+actually in deficiency are concerned, by the establishment of the Central
+Fund. Does the Minister say that the means adopted in this Bill is the only
+possible means of meeting this deficiency? Might it not still be possible to
+meet it by some form of pooling the surpluses of those societies, a very
+substantial number, which still have such large disposable resources that they
+are able to give substantial additional benefits, such as dental benefits and
+convalescent benefits? Is it not right that, in a State system of insurance
+contributed to by the State, the principle of equality should be carried at
+least far enough to assure that the rates of benefit necessary for subsistence
+should be paid to everybody before any group of fortunate contributors are
+allowed to enjoy additional benefits? I believe there is a strong ease for
+such a method of dealing with the matter. I do not believe it is beyond the
+power of the Minister of Health to devise such a method if he wished to do so.
+He told us that the means he has 1980 devised meets with the approval of the
+great majority of approved societies. I do not doubt that the great majority
+of approved societies approve it, because they have a substantial surplus
+which they can use to make themselves more attractive to their contributors by
+giving every kind of additional benefit. Naturally they want to retain those
+surpluses, and do not want to share them with the less fortunate. But it does
+not follow that the State, as a substantial contributor to the scheme, should
+not say that the underlying principle is, "Bear ye one another's burdens," or
+that that principle must be carried to such an extent that the burdens of the
+poorest section of the community, the section most liable to sickness, shall
+be borne by the men of the community as well as by the women of the community,
+and that the whole burden shall not be placed on the shoulders of the
+unfortunate married woman or of her still more unfortunate sister, the single
+woman who is disabled. I shall have no hesitation in opposing the Bill as long
+as it remains in its present form.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 7/18
+================================================================================
+Speech ID: 1bae0b1b66e41903_speech_136
+Speaker: Mrs. RUNGE
+Canonical Name: Norah Runge
+Date: 15 May 1935
+Year: 1935
+Decade: 1930
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 87
+
+Top Quote (TARGET):
+  "the best service that one can render to the women of India is to vote with
+  the Government against the Amendment."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker believes that supporting the Amendment does not serve
+      the best interests of women in India.
+    Quotes:
+      - "I want to do the best I can for the women of India" [TARGET]
+      - "the common sense thing to do and the best service that one
+        can render to the women of India is to vote with the
+        Government against the Amendment." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+Because I am a woman I suppose I shall be expected to support this Amendment,
+but I am not going to do anything of the sort. I expect I shall be called a
+traitor to my sex. I want to do the best I can for the women of India, and I
+am perfectly certain that the common sense thing to do and the best service
+that one can render to the women of India is to vote with the Government
+against the Amendment. § 7.50 p.m.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 8/18
+================================================================================
+Speech ID: 65c0f7fd8fe796aa_speech_8
+Speaker: Mrs. Tate
+Canonical Name: Mavis Tate
+Date: 18 April 1939
+Year: 1939
+Decade: 1930
+Chamber: Commons
+Party: None
+Confidence: 0.70
+Context helpful: False
+Word count: 752
+
+Top Quote (TARGET):
+  "I do not agree with it in the very least..."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: competence_capacity
+    Stance: against
+    Rationale:
+      The speaker argues that nursing, a profession dominated by women, is
+      undervalued and suggests women should pursue higher-status
+      professions like medicine.
+    Quotes:
+      - "I regret to say that I believe one of the reasons for
+        conditions in the nursing profession being unsatisfactory..."
+        [TARGET]
+      - "I thought it a most extraordinary remark. I do not agree with
+        it in the very least..." [TARGET]
+
+  Reason 2:
+    Bucket: emotion_morality
+    Stance: against
+    Rationale:
+      The speaker expresses distress over the perception that nursing is
+      more suitable for women than medicine, implying a moral objection to
+      such views.
+    Quotes:
+      - "I was very distressed to hear the hon. Member for St.
+        Albans...say that he would like a larger number of women enter
+        this profession..." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+As the hon. Lady the Member for Anglesey (Miss Lloyd George) has said, this
+matter is one of real urgency. In this report, and in every speech which has
+been made this afternoon, we have had presented a most unsatisfactory picture.
+From the point of view of the nurse we have had a picture of over-work,
+inadequate food, a life hedged in by petty restrictions, bad attention to
+health and— one aspect which has not, I think, been sufficiently stressed—a
+very poor prospect at the end of a long and arduous training. The hon. Member
+for Mile End (Mr. Frankel) spoke of the improvements which had been made by
+the London County Council, and I would like to add my tribute to that body for
+what has been done, in improving conditions for nurses. But I cannot agree
+with all he said. The hon. Member spoke very strongly in favour of residence
+in the hospital for trained staff, and said that he desired this on the ground
+that women who lived on their own outside the hospital, would not pay
+sufficient attention to their food, and would not be able to do their work
+properly or do justice to their patients as a result. I cannot believe that
+231 the hon. Member who knows a great deal about the subject can have omitted
+to note the reference on page 59 of the report to the question of food in
+hospitals. The Committee say: It is quite clear to us, however, that the
+quality of the catering provided by different hospitals at the present time
+varies within very wide limits and that in a considerable proportion of
+hospitals, it falls well below what may be considered a reasonable standard. I
+do not think that residence in hospital and getting meals there, necessarily
+ensures to the nurses the standard of nourishment which they ought to have. I
+turn for a moment to the other side of the picture, namely, the present
+position of the sick. No one can suggest that either inside or outside
+hospital the conditions as regards the patients are satisfactory. If in the
+hospital the patient is nursed by a perhaps rather ill-fed, perhaps slightly
+dissatisfied, certainly very over-tired woman and by a staff which is
+constantly hampered because of shortage of numbers. Outside the hospital the
+conditions for patients may also be unsatisfactory. We have heard from two or
+three hon. Members of the conditions which prevail in some of the nursing
+cooperation societies which send out nurses. Many of them are admirable and
+their nurses are competent and fully trained, but the number of cases in which
+the patient has no guarantee that the nurse is either a suitable woman or is
+properly trained are all too frequent. It does not stop with the nursing co-
+operation societies. Conditions in London nursing homes which I have referred
+to on many occasions in this House, are equally unsatisfactory. There are many
+nursing homes in this country where conditions are unhygienic and where,
+again, the patient has no guarantee that the nurse incharge is a really
+trained or competent woman. I regret to say that I believe one of the reasons
+for conditions in the nursing profession being unsatisfactory, and for it
+being so underpaid a profession, is that it is a profession which has been
+almost entirely reserved for women. It was indeed for many years almost the
+only profession which was open to women. I was very distressed to hear the
+hon. Member for St. Albans (Sir F. Fremantle)—he very wisely turned his back
+on me while he said it—say that he would like 232 a larger number of women
+enter this profession, which was perhaps much more suitable to them than the
+medical profession. I thought it a most extraordinary remark. I do not agree
+with it in the very least, and I can only say that when I had the honour of
+representing West Willesden there were in that constituency—a very poor
+constituency, where the fees paid are never very high—at least three women
+doctors, all of whom were doing extraordinarily well, earning devoted
+gratitude from their patients and comparing very favourably with their male
+competitors. I therefore think it is curious that any hon. Member in the year
+1939 should get up and say, in effect, that the nursing profession is more
+suitable for them and that they should leave the medical profession, with, of
+course, its higher emoluments and status, to that wonderful being the male.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 9/18
+================================================================================
+Speech ID: f6b9408d4b1d2183_speech_177
+Speaker: Miss Quennell
+Canonical Name: Joan Quennell
+Date: 26 November 1968
+Year: 1968
+Decade: 1960
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 779
+
+Top Quote (TARGET):
+  "I would prefer to advance slowly, step by step, than to take a step that we
+  cannot reverse."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that expanding the franchise may not lead to
+      significant changes in the House of Commons.
+    Quotes:
+      - "the voting habits of an enlarged electorate will produce
+        roughly the same sort of Members" [TARGET]
+
+  Reason 2:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker expresses skepticism about the urgency for changing the
+      voting age, indicating a lack of demand from constituents.
+    Quotes:
+      - "I have had no evidence from young people in my constituency
+        that they have any great urge to have the voting age altered."
+        [TARGET]
+
+  Reason 3:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker prefers a cautious approach to changes in voting rights,
+      fearing irreversible consequences.
+    Quotes:
+      - "I would prefer to advance slowly, step by step, than to take
+        a step that we cannot reverse." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I hope that the hon. Member for Nuneaton (Mr. Leslie Huckfield) will forgive
+me if I do not follow him at length in his argument. However, I would say to
+him that, although, as a new intake to the House of Commons, he had to wait
+until 8.45 p.m. to be called, I, who was a member of Mr. Speaker's Conference
+and have progressed up the ladder of seniority a little further than he in the
+service of the House, had to wait until 9 p.m. to be called. Such is the
+fairness of the Chair in its selection. As the hon. Gentleman progresses up
+the ladder of seniority, I assure him that, night after night, he will go home
+frustrated and furious, those great speeches which would have made a
+difference to the world consigned to the many wastepaper baskets in the House,
+which I think are provided for that purpose. One finds oneself much in
+agreement with some parts of nearly every speech made. The hon. Member for
+Caithness and Sutherland (Mr. Maclennan) wisely said that, in a matter like
+this, dogmatism cannot prevail and that it is something we should set aside.
+The hon. Member for Rushcliffe (Mr. Gardner) observed, also wisely, that there
+is no measurement of political maturity and that there cannot be, since it
+must be a subjective view for every one of us. He also said that enlargement
+of the franchise will produce, contrary to what so many hon. Members have
+said, roughly the same sort of House of Commons, because the voting habits of
+an enlarged electorate will produce roughly the same sort of Members of the
+House in much the same way as an enlarged electorate always has. I am sure
+that he is right. Therefore, many of the expressions of fear uttered in the
+Committee do not really arise. My hon. Friend the Member for Ilford, North
+(Mr. Iremonger) said that there was great antagonism to this proposal among
+the old. That may be so in his type of constituency but in mine I have met
+nothing of that. Nevertheless, I intend to support the Amendment because what
+we are about to take is a step that will be irrevocable, and I would prefer to
+advance slowly, step by step, than to take a step that we cannot reverse. 411
+Much has been said of Mr. Speaker's Conference, of the fact that it was not
+unanimous, and of the Latey Committee. Little has been said, except by
+accident, about the lack of unanimity in the Latey Committee. But the
+Committee is not supposed to be debating either of these reports. We are
+supposed to be considering the Bill. I have said that once the law is changed
+in this way, we cannot reverse it. We cannot deprive people of votes once we
+have given them the franchise. We can only extend it. To remark that the
+suffragette movement is comparable with what we are discussing is fantastic.
+Extension of the votes to women came as a result of a long and arduous
+campaign by women. For my part—and I can speak only subjectively, as I say—I
+have had no evidence from young people in my constituency that they have any
+great urge to have the voting age altered. Not only have I received no letters
+from them, or any body in the constituency, but I have not been approached or
+questioned about it at any of the many public meetings which I have held.
+Therefore, we should approach Clause I calmly and soberly. One of the things
+which we should also bear in mind is that Mr. Speaker's Conference took no
+evidence which is not available to the Committee. The complaints about
+inaccessibility to its minutes simply do not apply. I wonder what effect the
+availability of the minutes would have on hon. Members. Some time ago, I had
+to speak to a senior form of a school on the work of a Member of Parliament. I
+thought that one of the best illustrations I could give would be the big
+yellow sheets, which set out the Standing and other Committees of the House of
+Commons, to try to explain how the House operated, and I also took with me the
+big files of minutes of the two years which I have served on Mr. Speaker's
+Conference, and that weighed 10½lbs. Some hon. Members had the pleasure of
+serving for three years and if hon. Members wanted to have those minutes, they
+would get about 14 lbs. of paper which they would have to try to digest, and I
+do not think that that is a starter for anybody.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 10/18
+================================================================================
+Speech ID: 1f711aa7a6e5c2cf_speech_13
+Speaker: The Under-Secretary of State for the Home Department (Dr. Shirley Summerskill)
+Canonical Name: Shirley Summerskill
+Date: 16 May 1975
+Year: 1975
+Decade: 1970
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 1062
+
+Top Quote (TARGET):
+  "the primary reason for selecting a person to serve on a public body is and
+  must be that he or she is a person whom the appointing Minister thinks can
+  make a valuable contribution"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: competence_capacity
+    Stance: against
+    Rationale:
+      The speaker argues that appointments should prioritize competence
+      over gender balance.
+    Quotes:
+      - "the primary reason for selecting a person to serve on a
+        public body is and must be that he or she is a person whom the
+        appointing Minister thinks can make a valuable contribution"
+        [TARGET]
+      - "the moment that Governments lose sight of that principle,
+        they will get into difficulties." [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      Imposing quotas could undermine the effectiveness of public
+      appointments.
+    Quotes:
+      - "If we start imposing quotas, there is no obvious reason for
+        imposing quotas based on—" [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I congratulate my hon. Friend the Member for Northampton, North (Mrs.
+Colquhoun) on her success in the Ballot for Privates Members' Bills and on
+giving 947 us another opportunity to debate the important subject of the
+position of women in our society today. I totally agree with a large part of
+my hon. Friend's analysis and survey of the subject. This is an extremely
+significant year for women. Not only is it International Women's Year, but the
+many events which are being held in this country and abroad indicate that
+Governments and other bodies are taking their responsibilities seriously in
+this field. We all hope that 1975 will see further developments advancing the
+equality of the sexes all over the world. In this country in particular this
+year will include several most significant advances. We shall see the Equal
+Pay Act finally take full effect. There will be important developments in
+social security through the Social Security Pensions Bill . My right hon.
+Friend the Secretary of State for Social Services this year sees the
+introduction of the Child Benefit Bill . Above all, it will see the Sex
+Discrimination Bill becoming law. That Bill will make discrimination on the
+ground of sex unlawful for a wide range of activities and situations. Hon.
+Members will recall the debate on Second Reading of the Bill. I think I can
+fairly say that the view of the great majority of Members present on both
+sides of the House was that the Bill presented a comprehensive, constructive
+and positive approach to tackling a long-needed reform. Altogether, the
+present Government have a record to be proud of in their efforts to achieve
+equality for women in our society. We are fully aware that much remains to be
+done and that legislation alone, although it has an essential part to play,
+will not bring about that essential change in attitudes which we wish to see.
+However, it can create a climate of opinion in which prejudice finds it harder
+to thrive and flourish. I share my hon. Friend's concern about the extremely
+important aspect of women's rights which she is emphasising in her Bill. As
+she knows, I have spent a large part of my political life concerning myself
+with the very issues about which she has spoken. We all agree that women
+should have a greater opportunity to play a full and equal part in public
+life. My hon. Friend has rightly drawn attention to the serious problem 948 of
+the under-representation of women in one particular respect—the holding of
+public appointments. Nobody who has examined the relative number of men and
+women appointed to public boards and bodies can fail to detect an extreme
+numerical imbalance of the sexes. But it is not a numerical imbalance by
+legislation, and in my view the remedy should not be a numerical balance by
+legislation. My hon. Friend's approach in her Bill is in my view unacceptable,
+because it is inconsistent with the approach in the Government's Sex
+Discrimination Bill, as shall show. What would my hon. Friend's Bill do? It is
+concerned with appointments to public bodies and to juries. Its object is to
+require that future appointments to the bodies listed in its schedule, most of
+which are set up by legislation, are made in such a way as to secure that an
+exactly equal number of men and women are appointed. It would impose the same
+requirement in respect of all ministerial appointments to bodies other than
+those listed in the schedule—for example, to the commissions, committees and
+working parties. It would impose the same requirements in respect of the
+selection of jurors. There is a reference to the House of Lords in the Long
+Title, but this is not pursued in the Bill. The Bill is an attempt to reach an
+equality of representation between the sexes throughout a huge area. I shall
+deal first with public appointments. The Bill's approach has its attractions.
+Women comprise a little more than half the population, yet such appointments
+have gone overwhelmingly to men. On some public boards there are no women at
+all. The White Paper which lists members of public boards of a commercial
+character as at 1st April 1974 shows that there were no women members on the
+British Railways Board, the British Transport Board, the British Waterways
+Board, the National Bus Company and the National Freight Corporation. There
+are many other boards where women constitute only a small minority. Hon.
+Members have been confronted with evidence of the under-representation of
+women in the making of appointments on various occasions. My hon. Friend the
+Minister of State for Agriculture, Fisheries and Food has 949 pursued this
+matter with great vigour and energy for a number of years. He succeeded in
+eliciting information from Ministers of the previous Conservative
+administration as well as from this administration We are fully aware of the
+stream of Questions on the matter that are tabled by many hon. Members. I must
+assure the House that the Government are in no way complacent. As I shall
+indicate, the Government are taking positive steps to tackle the problem at
+its root. However, I must put some of the issues in perspective. I make the
+obvious point that the reason for making appointments is that there is a job
+to be done. Public boards have responsibilities for running nationalised
+industries. A Royal Commission or a departmental committee is established to
+consider and report on a particular subject of public concern. Such bodies are
+fulfilling a public duty for the benefit of the public. The primary reason for
+selecting a person to serve on a public body is and must be that he or she is
+a person whom the appointing Minister thinks can make a valuable contribution
+to the work of that body. Although it may well be desirable to secure some
+balance of knowledge and experience on a particular body, there is the
+overriding need to choose people who are likely to make the greatest and most
+valuable contribution as a result of their knowledge, wisdom, experience or
+other personal qualities. The moment that Governments lose sight of that
+principle, they will get into difficulties. The emphasis then shifts to some
+characteristic other than personal qualities. If we start imposing quotas,
+there is no obvious reason for imposing quotas based on—
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 11/18
+================================================================================
+Speech ID: 74ef8bb600d66c31_speech_40
+Speaker: Mrs. Marion Roe
+Canonical Name: Marion Roe
+Date: 09 December 1983
+Year: 1983
+Decade: 1980
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 441
+
+Top Quote (TARGET):
+  "the end result of which is likely to be greater but more hidden
+  discrimination"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that imposing equality through legislation may
+      restrict opportunities for women.
+    Quotes:
+      - "promoting equality at the expense of opportunity." [TARGET]
+      - "the end result of which is likely to be greater but more
+        hidden discrimination" [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that legislation will not effectively change
+      attitudes and may lead to negative outcomes.
+    Quotes:
+      - "the route to changed attitudes is not through legislation
+        imposed from above." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+(Broxbourne) Having stood against the hon. Member for Barking (Ms. Richardson)
+in the 1979 general election, I know that she is an experienced and sincere
+champion of women's rights and I have a deep respect for the conviction and
+purpose in her campaign to secure greater commitment to equality of
+opportunity in social, economic and political life. I say that despite the
+fact that she denied me the opportunity to represent her constituents. The
+hon. Member for Barking also understands that equality begins at home. She has
+fought vigorously to lead her own party out of the wilderness towards the
+recognition of women in policy making. I have no doubt that the formidable
+talent that she now brings to the Opposition Front Bench has been honed and
+polished by debate within her party. I am surprised, therefore, that the hon.
+Member, as a seasoned campaigner on women's rights, seeks to introduce a
+measure which, despite the undoubted sincerity of its sentiments, is so badly
+flawed in its practical application. There is one fundamental misconception.
+The hon. Member seeks to legislate for a change of attitude of mind, thus
+promoting equality at the expense of opportunity. In seeking to impose
+equality between the sexes she will succeed merely in restricting it to a tiny
+minority of women. Long gone are the days when women were constitutionally
+confined to the Strangers Gallery while a few brave men struggled timorously
+to argue on their behalf. Today we are not debating just the principle of
+equality of opportunity between the sexes. We are trying to find a practical
+solution to attitudes which lag so far behind the economic and social reality
+of women in the 1980s. In so doing, we must confront not just the attitudes of
+men but even more, the attitudes of women about themselves. Enlightened
+attitudes can follow only from an understanding that men and women are equal
+but not the same. The human difficulties of attitudes and prejudices are not
+confined to individuals. They are pervasive in professional associations,
+trade unions, clubs and societies. In this context, I should add, however,
+that I am privileged to be an honorary life member of a working men's club. As
+reflected by the number of hon. Members qualified by their sex to speak today,
+the highest learning curve perhaps lies in our political parties, in which
+women remain the exception rather than the norm. The route to changed
+attitudes is not through legislation imposed from above. That is a singularly
+naive and undemocratic path, the end result of which is likely to be greater
+but more hidden discrimination, to the detriment of all women.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 12/18
+================================================================================
+Speech ID: 74ef8bb600d66c31_speech_36
+Speaker: Mrs. Anna McCurley
+Canonical Name: Anna McCurley
+Date: 09 December 1983
+Year: 1983
+Decade: 1980
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 558
+
+Top Quote (TARGET):
+  "the case for the advancement of women's rights into general disrepute"
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker believes the Bill undermines women's rights by mixing
+      serious issues with trivial matters.
+    Quotes:
+      - "the case for the advancement of women's rights into general
+        disrepute" [TARGET]
+      - "placing the trivia of regulations to force privately run
+        clubs to admit women" [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker argues that the Bill could lead to hasty legislation
+      with negative financial implications.
+    Quotes:
+      - "hasty, ill-conceived legislation and expensive wrangling in
+        courts" [TARGET]
+      - "the financial implications of doing so would be high"
+        [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+(Renfrew, West and Inverclyde) The Bill that the hon. Member for Barking (Ms.
+Richardson) has presented to the House is prodigious in its aims and I
+congratulate her on the effort which she has made. It is a pity that I, who
+have no wish to arrest the effort that is being made to remedy some of the
+appalling discriminations against my sex, feel unable to support it. There are
+many nuggets of good sense in the Bill but they are buried in an overwhelming
+mass of dross, mostly of an ill-conceived and illogical nature, which is heavy
+with feminist overtones. I believe that the hon. Lady is doing the members of
+her sex a disservice by mixing sense with nonsense and bringing the case for
+the advancement of women's rights into general disrepute. To place the
+banalities of sexual harassment, which from time to time is only a matter of
+stimulus and response, in the same context as occupational rights and
+regulations, and placing the trivia of regulations to force privately run
+clubs to admit women in the same context as discussing the merits of complex
+pension and taxation rights, shows an over-inclusiveness that is unworthy of
+the hon. Lady. I agree that there is a possible reason for the hon. Lady and
+her hon. Friends, especially her female colleagues, introducing the Bill. The
+hon. Lady is attempting to legislate for her own party's attitudes to women,
+which have been less than generous despite the banning of discrimination in
+the circumstances that have already been mentioned. Unlike the Conservative
+party, which is dominated by women—some might say that it is manipulated by
+them —the Labour party keeps women under its thumb, to the extent that the
+majority of its regional officers are men. As my hon. and learned Friend the
+Member for Burton 630 (Mr. Lawrence) said, the equal representation
+legislation met with hostility from the Labour party. Discourtesies such as
+those endured by women attending the Labour party conference would not occur
+at a Conservative party conference, where equal respect is shown to the
+contributions of both sexes. I urge the public to consider that fact carefully
+when they decide which party will give them a better deal on female rights.
+The Conservative party's legislative record is good; and if the legislation is
+sometimes cautious it at least avoids the trap of hasty, ill-conceived
+legislation and expensive wrangling in courts and tribunals, which has ruinous
+financial implications, as my hon. Friend the Member for Mid-Worcestershire
+(Mr. Forth) said in his excellent maiden speech. Much of the legislation about
+which the hon. Lady is worried is already under review. As my hon. Friend the
+Minister said, much of it is being dealt with in response to EC directives. My
+hon. and noble Friend the Earl of Gowrie reaffirmed recently in another place
+the Government's commitment to equality. However, the Bill is not all bad. I,
+too, hope that the humiliation of the household duties test on severely
+disabled women will be abolished as soon as possible. I understand that the
+financial implications of doing so would be high, and that the net benefit
+cost to the taxpayer of reducing the housewife's non-contributory invalidity
+pension with a universal non-contributory invalidity pension would be £275
+million. However, I urge the Government to find a less distasteful method of
+assessment.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 13/18
+================================================================================
+Speech ID: c00317771969ba0b_speech_107
+Speaker: Ms. Richardson
+Canonical Name: Jo Richardson
+Date: 16 February 1984
+Year: 1984
+Decade: 1980
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 2416
+
+Top Quote (TARGET):
+  "the Bill does nothing to improve their lot."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that the Bill undermines the financial support
+      necessary for women, particularly custodial parents, to achieve
+      equality and independence.
+    Quotes:
+      - "the children of many one-parent families could be worse off."
+        [TARGET]
+      - "the Bill essentially involves reducing the right to
+        maintenance of the parent who is the carer of the children."
+        [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker highlights that the Bill fails to provide adequate
+      support for children and custodial parents, which could lead to
+      negative outcomes.
+    Quotes:
+      - "the Bill does nothing to improve their lot." [TARGET]
+      - "there is no real attempt to plug the gap left by the removal
+        of the duty of the courts." [TARGET]
+
+  Reason 3:
+    Bucket: emotion_morality
+    Stance: against
+    Rationale:
+      The speaker expresses concern for the welfare of children and the
+      unfair treatment of women in divorce situations.
+    Quotes:
+      - "the welfare of the children is paramount." [TARGET]
+      - "the first wife will never become a widow." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I hope to disprove that. This may be dubbed the "Divorce Bill" in the public
+mind, but it is much more about maintenance. That is revealed by the large
+number of speeches that have been made putting both sides of the argument. It
+has clearly been worrying everyone. I still do not have any firm views about
+the automatic right to petition for divorce after a year of marriage. I shall
+be able to make up my mind in the course of the Committee stage, although I
+intend to vote against the Bill tonight. I was tempted by the falling in love
+and marriage of my hon. Friend the Member for Peckham (Ms. Harman) and the
+hon. and learned Member for Perth and Kinross (Mr. Fairbairn). They both seem
+to be in favour of having no time limit at all. I found their arguments very
+persuasive. However, like other hon. Members, I shall concentrate my remarks
+on part II. The Bill removes the aim of placing both parties in the financial
+position that they would have been in if the marriage had not broken down, but
+it does not replace it with anything else. It empowers the court to dismiss
+outright an application for maintenance and requires it to consider whether it
+would be appropriate for payments to be made for a limited period to enable
+the party in whose favour the order is made to adjust without undue hardship.
+As many hon. Members have said, the Bill also reintroduces—and it is a
+reintroduction—the concept, of conduct. That concept has always been there,
+but in the past few years it has not basically been used or brought into play.
+It is linked to the payment of maintenance. When I listened, in particular, to
+Conservative Members talking about conduct, it occurred to be that it was all
+very well to apportion blame to one or other, or both of the partners, but
+that it was the children who would suffer. Apparently, 457 the Bill's stated
+aim is that the welfare of the children is paramount. Therefore, it would be a
+retrograde step if we were to reintroduce the question of conduct. The
+supposed aim of the Bill is to give priority to the welfare of the children,
+but I cannot see how it achieves that. It really contains only a very bland
+statement of support for children. It then concentrates on spouses. As a
+result of the Bill, the children of many one-parent families could be worse
+off. If the Bill's principal aim had been the welfare of children, no hon.
+Member would have been keener to support it than me. I have always believed
+that there should be greater state and community support for children. I am
+sure that hon. Members know that I have compaigned for many years, both in the
+House and within my party, for increased child support. We, as a society,
+should consider child support in a much more meaningful and generous way.
+However, search as may, I cannot find much about that in the Bill. There is no
+real attempt to plug the gap left by the removal of the duty of the courts to
+see that the children do not suffer financially from the divorce. The Law
+Commission recommended that the courts should be given information about the
+cost of maintaining a child, but there is nothing in the Bill about that.
+Thus, there are no real criteria for deciding how to divide the liability for
+maintaining a child between the partners. The Bill essentially involves
+reducing the right to maintenance of the parent who is the carer of the
+children, and tips the balance towards the non-custodial parent. That must
+mean less support for the children of a first marriage. The whole Bill is
+based on the false image of the divorced woman being an alimony drone, and
+indeed other hon. Members have referred to that. That woman is seen as someone
+who is lazy, unwilling to work and lying around wanting a meal ticket for
+life, but in real life that is not so in other than a very small number of
+cases. The situation is much more complex than that. To try to divide the Bill
+into drones and non-drones is to deal with the matter wrongly. I deal next
+with the care of children and the ability of the caring or custodial parent to
+stand on her own feet. I say "her" because it is usually the woman who is the
+caring parent. Reference has been made to the minimal study by the centre of
+socio-legal studies at Oxford. We would all agree that much more research
+needs to be done. Indeed, I do not know why it has not been done. So much
+research is done these days into much more obscure subjects, that good
+research on this subject is surely warranted. The study revealed some
+interesting things. Of the sample which it took of those who were dependent
+upon maintenance, half received under £10 per week, a quarter received between
+£10 and £20 per week and a quarter received over £20 per week. Many of them
+had more than one child. Research done by the National Foster Care Campaign
+shows that it would cost a parent in the provinces £23.87 per week to care for
+a child of under four, and in London it would cost £26.95 per week. The
+amounts increase gradually until for a youngster aged 16 to 18 it would cost
+in the provinces over £45 per week and in London £53 per week. When we compare
+those figures with the paltry levels of maintenance, we can see that if
+someone has to depend upon average maintenance it is no meal ticket for life.
+These figures do not take account of any contribution 458 towards the living
+costs of the custodial parent. Therefore, I do not believe that the Bill is
+about helping children, as it should be and as it states it is. It is about
+material support for the first family. Therefore, it is about the money for
+the caring parent. It has been said that we should be thinking about other
+provisions which would give women the possibility of standing on their own
+feet in a real way. I would support amendments which would contribute towards
+better training, retraining and educational facilities to enable women to
+stand on their own feet and earn a decent living. The majority of divorced
+mothers whom I know have great difficulty in finding a job paying more than a
+very small wage. The jobs they are able to take have to fit in with their
+responsibilities towards the children for whom they are caring. Simply to say
+glibly, as has been said by many people, though not during the debate, that
+this is an opportunity to make women financially independent, is not to face
+reality. These women are deprived by divorce of support from their husbands
+and told, "Stand on your own feet and do not rely on me." The House will know
+that I am keen to extend the whole area of women's equality and that I am
+interested in progressing towards the financial independence of women,
+including financial independence within the family. We must provide the
+climate and make the reforms to bring that about before we simply cut off
+poorer women from the only support that they can receive. I should like to
+give one example of how women are trying to retrain themselves in situations
+like this. As we all know, we have skillcentres, some of which are running
+TOPs courses in manual trades. It has been mentioned in the House that there
+is one in Deptford, which borders the constituencies of my right hon. Friend
+the Member for Lewisham, Deptford (Mr. Silkin) and my hon. Friend the Member
+for Greenwich (Mr. Barnett). I accompanied them when they went to the
+Department of Employment recently to try to persuade it to allow the two
+boroughs to provide, at their expense, creche facilities at the skill-centre
+for the women who wanted to train in those manual trades. The matter is not
+yet resolved. The boroughs are willing to pay, but the Department is not
+willing to contribute a penny. We are told that that is partly because the
+Manpower Services Commission must be run on a commercial basis, but it is also
+partly because the Minister has suggested that it would be unfair to give
+women the impression that because there were creche facilities at skillcentres
+there would be creche facilities when they eventually worked. If we are not
+even willing to try to help women to retrain and gain a skill, how can we
+expect them to stand on their own feet? The House has tonight regarded the
+matter with the utmost seriousness but I honestly wish that it would take more
+seriously the difficulties of low-paid women — who are mainly married women —
+who suffer so badly. The hon. Member for Broxbourne (Mrs. Roe) mentioned one
+other category of women. She is an old opponent of mine—indeed, she opposed me
+in Barking at the 1979 general election. She referred to the older woman whose
+children have left home. Such a woman may have been a support to her husband.
+She may have no skills and may never have worked. I know women who have always
+remained at home — not simply because they wished to, but because their
+husbands expected them to do so. Their husbands wanted them to be there,
+wanted 459 them to put their dinner on the table or to entertain their
+business friends. Even without children, to be cut off from any support—when
+she may have contributed to the upkeep of her home through her work there-is a
+cruel act. The House should take another factor into account. The first wife
+will never become a widow. If the husband marries again, the second wife
+becomes the widow and obtains widow's benefits. The first wife does not
+receive the widow's pension, nor does she in any way benefit from the
+husband's occupational pension—that will go to the second wife. I understand
+from reading Hansard of another place that the question of occupational
+pensions was raised in the debate there and that the Lord Chancellor promised
+to consider the matter. The Bill ignores the fact that many women are not
+adequately trained and have not had opportunities to get themselves off the
+ground or to stand on their own feet. I hope that the House will look
+carefully at the reintroduction of the question of conduct. That will bring
+back all the bitterness that we thought had disappeared. Divorce is a bitter
+matter, and to introduce conduct will be to return to the old battleground of
+accusation. I can remember—although not from personal experience—the days when
+detectives were employed. That was a common occurrence. They were employed to
+spy on a partner of the marriage and to report on his or her conduct. Surely
+we do not want to return to that terrible practice. I hope that we shall
+dispose of the question of conduct in our consideration of this difficult
+matter. The higher legal costs that may fall upon most parties to a divorce,
+and the increasing burden on legal aid, should be examined. The Bill omits a
+number of matters that should have been taken into account and to which hon.
+Members have referred. The question of family courts is not properly covered.
+The hon. Member for Montgomery (Mr. Cathie) mentioned the Finer report. While
+listening to him I was struck by the fact that, at the end of this month, it
+will be 10 years since I became a Member of Parliament. In that time the Finer
+report has come up in one debate or another almost every year, yet we are no
+further forward in achieving its aims. Progress must be made in establishing
+family courts. Much more thought should be given to conciliation services. I
+was interested to hear what the hon. Member for Chislehurst (Mr. Sims) said
+about the experiment in his constituency. We should focus on the crucial and
+central point of child support. I do not say in a broad brush way that all
+second wives are wrong and that all first wives are right. Of course there are
+difficulties, and there is often a lack of financial support when there are
+two families. I agree with my right hon. and learned Friend the Member for
+Monklands, East (Mr. Smith) that we should consider a non-means-tested benefit
+for people in that situation, and also greatly increased child support. After
+the careful thought given to the subject by my hon. Friend the Member for
+Torfaen (Mr. Abse), it is a pity that these matters have not been taken into
+account and that the House is considering this Bill rather than a child
+support Bill, which I believe would have commanded support from both sides of
+the House. A number of organisations which are known to all hon. Members have
+opposed the Bill vigorously. These include the Child Poverty Action Group, the
+National Council for 460 One Parent Families, Gingerbread and the Married
+Women's Association, among whose patrons are a large number of Members on both
+sides of the House. Although Conservative Members have a free vote, the
+Government of course support the Bill. The Opposition have a free vote, but
+the Labour party is opposed to the Bill. The women's organisation in the
+Labour party has expressed concern about the Bill since the initiation of its
+consideration. The national executive of the Labour party took the position
+that it was opposed to the Bill. The Bill has emerged as the result of a
+powerful, well-organised and well-financed lobby of wealthy middle-class men.
+The cost of making life a little easier for this small elite will be paid for
+by the 392,000 divorced women who are bringing up families on supplementary
+benefit. The Bill is loosely drafted, on what I believe to be inadequate
+information. It should be remembered that 1,500,000 individuals are living in
+one-parent families, the majority headed by women, of which a high proportion
+are living on, or near, the poverty line. The Bill does nothing to improve
+their lot. If it had, I should have been the first into the Lobby to support
+it. As it is, I invite my right hon. and hon. Friends to join me in opposing
+the Bill. 9.35 pm
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 14/18
+================================================================================
+Speech ID: 122ecb31f2dfa355_speech_74
+Speaker: Ms. Short
+Canonical Name: Clare Short
+Date: 22 January 1988
+Year: 1988
+Decade: 1980
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 490
+
+Top Quote (TARGET):
+  "Every man in this House who has ever used a woman's body and walked away...
+  has no right to vote on the Bill."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: emotion_morality
+    Stance: against
+    Rationale:
+      The speaker argues that men should not have the right to vote on
+      abortion issues, emphasizing the moral implications of their
+      actions.
+    Quotes:
+      - "Every man in this House who has ever used a woman's body and
+        walked away... has no right to vote on the Bill." [TARGET]
+
+  Reason 2:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker highlights the need for humility in a male-dominated
+      House when discussing women's rights and choices.
+    Quotes:
+      - "this overwhelmingly male House of Commons — that it should
+        have more humility when approaching this issue." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+I have no idea. I was not a Member of the House when that Bill was put forward
+and I have never met anyone who says that there should be an extension beyond
+28 weeks. I do not understand the hon. Gentleman's position. Many people
+believe, in deep conscience, that abortion is always wrong. I respect that
+position. Within the existing law, people who hold that view can exercise
+their conscience. No one is required to have an abortion if she thinks it is
+wrong. We are not talking about that position. We are talking about people who
+claim the right to impose their conscience on other people whose conscience
+says otherwise. There are people who say in conscience that there should be no
+abortion but who introduce a Bill that says that abortion can be allowed up to
+18 weeks. Where are the morality, conscience and ethics of that? It is a fudge
+and a muddle, and it is leading to a debate that is bringing the House into
+disrepute             At least some of the truth is coming out in the debate.
+Hordes of Members of Parliament who are not here yet will come in later to
+vote for or against the Bill and determine what will happen. The overwhelming
+bulk of them do not support the Bill but say that they support the 24-weeks
+proposal. The hon. Member for Liverpool, Mossley Hill (Mr. Alton) has adopted
+a deeply duplicitous position. He had the right to draft the Bill. He could
+have proposed a 24-week rule. He could have proposed an exception for foetal
+abnormality. But he has deliberately put in a provision that says that
+abortion would be al lowed up to 28 weeks only if the child would be born
+dead. The hon. Gentleman has the cheek—because, as he tells us, he taught
+disabled children for one year — to say to women and parents who have borne,
+cared for and loved disabled children who died in deep pain after some years
+that they should not have the right to make the choice next time. How dare the
+hon. Gentleman and others say that. May I say to this House of Commons — this
+overwhelmingly male House of Commons — that it should have more humility when
+approaching this issue. When I was 10 I thought that I was against abortion. I
+came from a large, happy, Catholic family, and that was the teaching. It all
+seemed simple. Then I started to grow up. I am a woman, and my body changed.
+Some of my friends became pregnant because men sometimes misused them and
+walked away. Every man in this House who has ever used a woman's body and
+walked away and did not know the consequence has no right to vote on the Bill.
+Women's bodies carry the consequences of such behaviour. If men in the House
+were honest, most would have to walk away. 1261
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 15/18
+================================================================================
+Speech ID: f89d331c5e48f3d5_speech_2
+Speaker: Mrs. Ann Winterton
+Canonical Name: Ann Winterton
+Date: 14 July 1993
+Year: 1993
+Decade: 1990
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 549
+
+Top Quote (TARGET):
+  "but I completely oppose any attempt to change the rules, to fiddle the
+  rules, to enable them so to do."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: tradition_precedent
+    Stance: against
+    Rationale:
+      The speaker believes that existing electoral arrangements have
+      worked well and should not be altered.
+    Quotes:
+      - "the speed with which women have, in the last few decades,
+        alone, seized the initiative is truly remarkable." [TARGET]
+      - "the Representation of the People Acts, which are one of the
+        foundation stones upon which our system of free elections is
+        based." [TARGET]
+
+  Reason 2:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker argues that changing the electoral system would disrupt
+      the current order and empower party hierarchies.
+    Quotes:
+      - "It would divide the electorate, so that, for example,
+        Conservative voters would approach a Conservative Member of
+        Parliament." [TARGET]
+      - "even more power would be put in the hands of the party
+        hierarchy over the selection of candidates." [TARGET]
+
+  Reason 3:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker supports women's participation but opposes changing
+      rules to facilitate it, suggesting current progress is sufficient.
+    Quotes:
+      - "I support 100 per cent. any attempt to encourage more women
+        Members into this House of Commons." [TARGET]
+      - "but I completely oppose any attempt to change the rules, to
+        fiddle the rules, to enable them so to do." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+(Congleton) It is with some diffidence that I oppose the motion moved by my
+hon. Friend the Member for Billericay (Mrs. Gorman). I sympathise with much of
+what my hon. Friend and her supporters seek to achieve, but I disagree
+fundamentally with the method that they have chosen to achieve those
+objectives—that of tinkering with our present electoral system, which is
+epitomised in the Representation of the People Acts. One of the greatest
+strengths of our democratic system is the single-member constituency. I have
+always opposed any suggestion of introducing proportional representation. It
+would divide the electorate, so that, for example, Conservative voters would
+approach a Conservative Member of Parliament to deal with their problems,
+socialist voters would approach a socialist Member of Parliament and Liberal
+voters would approach a Liberal Member of Parliament. A secondary result would
+be that even more power would be put in the hands of the party hierarchy over
+the selection of candidates, and that centre of decision-making would be taken
+away from where it should rightly be, at grass-roots level in the
+constituencies. The people who live 987 in an area should have the freedom to
+choose an individual to represent them, whether that individual be male or
+female. Our existing arrangements for electoral representation have worked
+well, and have not debarred women from coming forward as candidates. Women
+Members have made a considerable contribution to the House, to the political
+life of the country and to society as a whole. With you in the Chair, Madam
+Speaker, hon. Members are continually reminded that it is possible for women
+to achieve the highest and most influential of offices, and to fulfil the
+ensuing responsibilities with great distinction. I remind the House that the
+Head of State and the head of the established Church in this country is a
+woman. Until relatively recently, we had our first woman Prime Minister, who
+was outstanding in terms of both leadership and intellect. Currently, two
+members of the Cabinet are women, seven members of the Government are women
+and 59 right hon. and hon. Members are women. The leaders of countless county
+borough and parish councils are women. The hard-working grass-roots majority
+of the membership, certainly of the Conservative party, are women. If we
+consider the gradual manner in which our parliamentary democracy came into
+being over a period of centuries and the way in which the franchise was
+extended from a limited number to include all adults, we see that the speed
+with which women have, in the last few decades, alone, seized the initiative
+is truly remarkable. The enthusiasm of my hon. Friend further to hasten this
+process by any form of positive discrimination should not be allowed to
+undermine the progress which has been made, or to alter the Representation of
+the People Acts, which are one of the foundation stones upon which our system
+of free elections is based. I support 100 per cent. any attempt to encourage
+more women Members into this House of Commons, but I completely oppose any
+attempt to change the rules, to fiddle the rules, to enable them so to do. §
+Question put and agreed to. § Bill ordered to be brought in by Mrs. Teresa
+Gorman, Ms Jean Corston, Mrs. Margaret Ewing and Mrs. Ray Michie.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 16/18
+================================================================================
+Speech ID: bd0971cdbc9049b3_speech_131
+Speaker: Lady Olga Maitland
+Canonical Name: Olga Maitland
+Date: 10 March 1994
+Year: 1994
+Decade: 1990
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 558
+
+Top Quote (TARGET):
+  "Positive discrimination is very degrading to women."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues that positive discrimination and quotas are
+      degrading to women and counterproductive.
+    Quotes:
+      - "Positive discrimination is very degrading to women." [TARGET]
+      - "Its call for the minimum wage... would mean fewer jobs
+        available to women, not more." [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker believes that Labour's proposals would create more
+      regulations that harm women's employment opportunities.
+    Quotes:
+      - "a mountain of regulations and controls which would make it
+        almost impossible for an employer to be able to afford to take
+        on more women" [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+(Sutton and Cheam) In case my later remarks should somehow be misinterpreted,
+may I first say that I appreciate the commitment of the hon. Lady for
+Birmingham, Ladywood (Ms Short) and the enormous amount of work that she has
+put in to help the cause of women. I know that she is sincere and has been
+working in this area for a long time. In many ways, we share common goals, but
+we differ in the means by which we want to achieve the fairest and best
+possible deal for women. I admit that there has been prejudice over the
+centuries and even nowadays, but, in attempting to right a wrong, there is
+always an enormous danger of lurching so far in the other direction that one
+make things worse. The Conservatives are trying to keep common sense and a
+sense of proportion to the fore. Having listened hard and long to the debate,
+and having read many articles and features about the Labour party's position
+and its attitude towards women, I must take exception to the way in which 464
+it lectures us about the promotion of equal opportunities. I take particular
+exception to its attempts to remedy the problem by what I would call
+artificial social engineering. Positive discrimination is very degrading to
+women. I do not understand how Labour's proposals could possibly help us. The
+Labour party proposes a mountain of regulations and controls which would make
+it almost impossible for an employer to be able to afford to take on more
+women, let alone keep those whom he already employs. Its call for the minimum
+wage and its support for the European Community's social chapter would mean
+fewer jobs available to women, not more. How can that possibly be regarded as
+a fair deal? I see things differently and more clearly. I believe that there
+is a very strong socialist streak in the so-called reasonableness of the
+Labour party. That socialist streak is an attempt to control our lives rather
+than allow us women to make our own decisions. We should be carefully
+examining Labour's proposals and seeking examples of what it is doing so that
+we can make our own judgment. I was a little surprised that the hon. Member
+for Lady wood omitted to mention a vote at the Labour party's annual
+conference last year in which more than 80 per cent. decided to accept women's
+quotas. In short, it was decided: This conference notes the Party's commitment
+to achieving 40 per cent. of women as MPs for Labour by 1999 or two elections
+time". I pay tribute to my hon. Friend the Member for Chesham and Amersham
+(Mrs. Gillan) for drawing that to the House's attention, but the fact that she
+did so does not mean that I should not reinforce her remarks. It is
+extraordinary that the Labour party believes that the only realistic way of
+achieving its aims is to implement the women-only shortlist in 50 per cent. of
+seats where a sitting Labour Member of Parliament is not standing for re-
+election. Not surprisingly, the move has been scorned by some Labour Members.
+The right hon. Member for Birmingham, Sparkbrook (Mr. Hattersley) was reported
+in the Evening Standard of 23 November as saying that the plan was wrong in
+principle and probably unworkable in practice". How right he is.
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 17/18
+================================================================================
+Speech ID: 3dd6bff7d570f903_speech_71
+Speaker: Lady Hermon
+Canonical Name: Sylvia Hermon
+Date: 24 October 2001
+Year: 2001
+Decade: 2000
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 932
+
+Top Quote (TARGET):
+  "We in the UUP are opposed to all forms of discrimination, including
+  positive discrimination."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker opposes positive discrimination, arguing it contradicts
+      the principles of equality and non-discrimination.
+    Quotes:
+      - "my party would be strongly opposed to any legislation that
+        ran counter to those themes." [TARGET]
+      - "We in the UUP are opposed to all forms of discrimination,
+        including positive discrimination." [TARGET]
+
+  Reason 2:
+    Bucket: social_order_stability
+    Stance: against
+    Rationale:
+      The speaker believes that positive discrimination is counter-
+      productive and divisive, which undermines social stability.
+    Quotes:
+      - "we believe that the discriminatory recruitment policy is the
+        way forward." [TARGET]
+      - "if the selection of political candidates were brought about
+        by positive discrimination, it would be counter-productive and
+        divisive." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+(North Down) I am sorry that the hon. Member for Sheffield, Hillsborough
+(Helen Jackson) is no longer in the Chamber, as I should have liked to thank
+her for her kind words about how active women are in communities in Northern
+Ireland. I want to add to her remarks by bringing a Northern Ireland
+perspective to our debate and registering the Ulster Unionist party's deep
+concern that the Bill may result in positive discrimination. We in Northern
+Ireland have just embarked on a form of positive discrimination that we find
+deeply divisive and counter-productive; I shall speak about that in due
+course. I am one of only three women in Parliament who represent
+constituencies in Northern Ireland out of a total of 18 MPs in that part of
+the United Kingdom. Of course, that is a deeply unsatisfactory state of
+affairs, but it is a great improvement when one considers that for the last 30
+years or so all our MPs were men. However, the House might also note—this
+gives me no pleasure—that the total of three is inflated, as the Member for
+Fermanagh and South Tyrone (Michelle Gildernew) achieved her 53-vote 366
+majority only with the aid of intimidatory tactics in a polling station. Those
+tactics were described only last Friday by Lord Chief Justice Carswell in an
+electoral court in his home town of Belfast as "extremely reprehensible".
+There is little doubt that women are grossly under-represented in political
+life in Northern Ireland. particularly when compared to other regions of the
+United Kingdom. I understand that 42 per cent. of Members of the National
+Assembly for Wales are women. The figure falls to 37 per cent. for membership
+of the Scottish Parliament. Much worse is the figure for the new Northern
+Ireland Assembly, where just 13 per cent. of Members are women. I am glad to
+see the hon. Member for Sheffield, Hillsborough back in her place, and I thank
+her. Fortunately, the Belfast agreement was not silent about the role of women
+in public life. As a strong supporter of the agreement, I was pleased that it
+enshrined, among many things, a clear commitment by all the parties to the
+right of women to full and equal political participation". That is a
+commitment which the Ulster Unionist party greatly welcomed and still does.
+The agreement also included a provision whereby all the parties affirmed the
+right to equal opportunity in all social and economic activity, regardless of
+class, creed, disability, gender or ethnicity". Given the central themes of
+equality and nondiscrimination which run through the Belfast agreement, which
+I repeat that I welcome, my party would be strongly opposed to any legislation
+that ran counter to those themes. We in the UUP are opposed to all forms of
+discrimination, including positive discrimination. I alluded earlier to a
+recent example of positive discrimination. It relates to the recruitment
+process for the new Police Service of Northern Ireland. For the benefit of
+right hon. and hon. Members who might not be aware of the fact, I should
+explain that the Police (Northern Ireland) Act 2000 incorporated a provision
+which legalised religious discrimination in recruitment, so that 50 per cent.
+of recruits would come from the Roman Catholic community and the other 50 per
+cent. would not. In practice, that means that Jewish, Protestant, Chinese,
+atheist and Muslim recruits who have made it through all the tests on merit
+may nevertheless be rejected on the grounds of their community
+background—their religion. My party shares the desire to make the Police
+Service of Northern Ireland much more representative of the entire community,
+but we emphatically do not believe that the discriminatory recruitment policy
+is the way forward. We believe it to be counter-productive and divisive for
+the new Police Service, and that is not what I wish to see. Likewise, we
+believe that if the selection of political candidates were brought about by
+positive discrimination, it would be counter-productive and divisive. I have
+listened carefully to the debate and the contributions from other right hon.
+and hon. Members. We need a much clearer understanding of the reasons behind
+the low numbers of women in political life throughout the United Kingdom. I
+therefore commend to the House the work of the recently established centre for
+the advancement of women into politics. I must declare that I sit on a
+voluntary basis as a member of its advisory board. The centre was launched
+last month, 367 on 28 September 2001. It is based in the school of politics in
+Queen's university, Belfast, and aims to foster an appreciation of women's
+contribution to politics, government and public decision making in the United
+Kingdom and Ireland. I believe it to be the only centre of its kind in Europe.
+The centre considers women's political participation as having two important
+dimensions: the proportion of women in decision making, and the inclusion of
+women's perspectives in Government policies and programmes. I take the
+opportunity to pay tribute to its director, Yvonne Galligan, and also to the
+lady who opened the centre, who is no other than Mary McAleese, formerly of
+Queen's university and now the President of the Republic of Ireland. I think
+that President Mary McAleese's well-deserved rise to become her country's
+elected Head of State demonstrates that the correct blend of determination and
+ability can bring political dividends for a woman in these islands. I
+appreciate that the Bill is permissive, as opposed to prescriptive. However,
+although the Ulster Unionist party will always support equality we shall not
+be persuaded to support positive discrimination. § 9 pm
+
+
+Press Enter to continue to next speech...
+================================================================================
+SPEECH 18/18
+================================================================================
+Speech ID: a63403d05360bc57_speech_66
+Speaker: Virginia Bottomley
+Canonical Name: Virginia Bottomley
+Date: 14 November 2001
+Year: 2001
+Decade: 2000
+Chamber: Commons
+Party: None
+Confidence: 0.80
+Context helpful: False
+Word count: 634
+
+Top Quote (TARGET):
+  "I find all-women shortlists, or indeed twinning, extraordinarily
+  invidious."
+
+Reasons extracted:
+
+  Reason 1:
+    Bucket: equality
+    Stance: against
+    Rationale:
+      The speaker argues against all-women shortlists, suggesting they
+      create an unfair precedent for other demographics.
+    Quotes:
+      - "I find all-women shortlists, or indeed twinning,
+        extraordinarily invidious." [TARGET]
+      - "once we say that there must be a woman, next we shall say
+        that there must be a disabled person..." [TARGET]
+
+  Reason 2:
+    Bucket: instrumental_effects
+    Stance: against
+    Rationale:
+      The speaker expresses concern that measures for women may not
+      effectively address broader representation issues.
+    Quotes:
+      - "I worry whether the ends justify the means." [TARGET]
+      - "we are missing out. We are not registering with the
+        public—whether that is about gender, or age..." [TARGET]
+
+================================================================================
+FULL SPEECH TEXT:
+================================================================================
+There were certainly none today. Many questions have been asked about the
+measures that hon. Members would take. I want energetic recruitment,
+mentoring, coaching and monitoring. I want best practice guidance. Selection
+panels should be required to undertake training and outsiders should monitor
+their activities. I want vigorous positive action. I should find an all-woman
+shortlist extremely invidious in constituencies—whether parliamentary,
+European or council—where there was only one elected representative. The
+person who most persuaded me of that was the late Baroness Seear—a most
+distinguished woman. She pointed out that once we say that there must be a
+woman, next we shall say that there must be a disabled person, an ethnic
+minority person, somebody aged over 60, or somebody in their 20s. Above all,
+we are elected to represent all the people, whether or not they voted for us,
+and whatever their gender, race or age. I find all-women shortlists, or indeed
+twinning, extraordinarily invidious. Were they to apply, I should have to
+think carefully about my interpretation of the role of a Member of Parliament.
+I remain concerned about why we should want such different arrangements for
+Members of Parliament compared with other occupations and professions. The
+Minister did not adequately address that point in his brief summing up on
+Second Reading, or in his remarks in Committee and the debate today. The point
+about redress through employment law is one element, but it is not a complete
+answer. The House will be aware that, at present, the civil service is,
+rightly, making a great effort to try to promote diversity, so that public
+servants reflect the Britain of today. I strongly welcome that, but few
+permanent secretaries are women and few come from ethnic minorities. The
+majority of medical students are women, but the majority of consultants are
+not. I gave an example on Second Reading—about which I have received an
+enormous amount of correspondence—of a primary school with an all-female staff
+and asked whether an all-male shortlist would be permitted. The answer is that
+it would not. The issues arise in other sectors. Last week, black police
+officers met in Manchester. There are real issues about ethnic minorities in
+the police force and the services. In social work, there is a real desire to
+appoint more black and ethnic minority social workers and inspectors. In all
+these sectors, positive action—legal or illegal—is under way. Coaching and
+mentoring are available. People are being encouraged to come forward. As long
+as an appointment is made on merit, people in the public services have become
+fairly vigorous—rightly so—in saying that the public face of those services
+should reflect the diversity of Britain today. I fail to understand why
+Members of Parliament are such a different case. We should reflect the
+diversity of Britain today. We should take all the steps taken by others and
+we should not be thought to be legislating for ourselves in a vacuum, as
+though we were blinkered. 914 Similarly, I find it difficult to support
+measures relating to women rather than considering other ways to make us look
+as though we were more representative of Britain. At a time when 40 per cent.
+of the electorate fail to vote, we are missing out. We are not registering
+with the public—whether that is about gender, or age, none of us really knows.
+I commend those who have worked so hard on the Bill. I worry whether the ends
+justify the means. It seems like a form of social engineering to treat
+politicians as a special case. I continue to find that disturbing, but I, with
+others, will continue to do everything in my power to encourage more women to
+come forward, more selection committees to choose women and more members of
+the electorate to vote for them. 6.55 pm
+
+
+Press Enter to continue to next speech...
+================================================================================
+SUMMARY
+================================================================================
+Total speeches by women against suffrage: 18
+
+By decade:
+decade
+1920    3
+1930    5
+1960    1
+1970    1
+1980    4
+1990    2
+2000    2
+dtype: int64
+
+By speaker:
+canonical_name
+Eleanor Rathbone       2
+Nancy Astor            2
+Ann Winterton          1
+Anna McCurley          1
+Clare Short            1
+Ellen Wilkinson        1
+Jo Richardson          1
+Joan Quennell          1
+Margaret Bondfield     1
+Marion Roe             1
+Mavis Tate             1
+Norah Runge            1
+Olga Maitland          1
+Shirley Summerskill    1
+Sylvia Hermon          1
+Virginia Bottomley     1
+dtype: int64

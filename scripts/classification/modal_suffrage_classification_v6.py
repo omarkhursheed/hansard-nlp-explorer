@@ -80,9 +80,9 @@ Stance inference rules (apply after reasons are set):
 - If TARGET is genuinely indifferent (no directional reasons, is okay with either), then stance="neutral"
 
 Confidence scoring (set a value in [0,1]):
-- HIGH (0.7-1.0): TARGET contains explicit, direct statements about women's suffrage with clear supporting arguments. Multiple strong quotes. Speaker's position is unambiguous
-- MEDIUM (0.4-0.7): TARGET discusses women's suffrage with reasonable clarity, but arguments may be indirect, brief, or require some inference. Adequate quotes available. CONTEXT helps clarify
-- LOW (0.0-0.4): Weak evidence (vague references, very brief mentions, or highly ambiguous statements). For "both" stance, or when TARGET barely mentions suffrage. For "irrelevant", always use 0.0
+- HIGH (0.7-1.0): Clear, unambiguous classification with strong evidence. For suffrage stances: explicit arguments with multiple quotes. For "irrelevant": clearly about a different topic with no ambiguity
+- MEDIUM (0.4-0.7): Moderate clarity. For suffrage stances: reasonable evidence but may be indirect or brief. For "irrelevant": probably not about suffrage but some ambiguity remains
+- LOW (0.0-0.4): Weak or ambiguous evidence. For suffrage stances: vague references or highly uncertain. For "irrelevant": unclear whether it relates to suffrage or not
 
 Return ONLY this JSON object (no extra text):
 {{
@@ -212,9 +212,9 @@ Stance inference rules (apply after reasons are set):
 - If TARGET is genuinely indifferent (no directional reasons, is okay with either), then stance="neutral"
 
 Confidence scoring (set a value in [0,1]):
-- HIGH (0.7-1.0): TARGET contains explicit, direct statements about women's suffrage with clear supporting arguments. Multiple strong quotes. Speaker's position is unambiguous
-- MEDIUM (0.4-0.7): TARGET discusses women's suffrage with reasonable clarity, but arguments may be indirect, brief, or require some inference. Adequate quotes available. CONTEXT helps clarify
-- LOW (0.0-0.4): Weak evidence (vague references, very brief mentions, or highly ambiguous statements). For "both" stance, or when TARGET barely mentions suffrage. For "irrelevant", always use 0.0
+- HIGH (0.7-1.0): Clear, unambiguous classification with strong evidence. For suffrage stances: explicit arguments with multiple quotes. For "irrelevant": clearly about a different topic with no ambiguity
+- MEDIUM (0.4-0.7): Moderate clarity. For suffrage stances: reasonable evidence but may be indirect or brief. For "irrelevant": probably not about suffrage but some ambiguity remains
+- LOW (0.0-0.4): Weak or ambiguous evidence. For suffrage stances: vague references or highly uncertain. For "irrelevant": unclear whether it relates to suffrage or not
 
 Return ONLY this JSON object (no extra text):
 {{
@@ -283,7 +283,7 @@ PROMPTS = {
 )
 def classify_speech(
     speech_data: Dict,
-    model: str = "openai/gpt-4o-mini",
+    model: str = "anthropic/claude-sonnet-4.5",
     prompt_version: str = "v6",
 ) -> Dict:
     """
@@ -332,11 +332,11 @@ def classify_speech(
 
         result = response.json()
 
-        # Extract LLM response
-        llm_output = result['choices'][0]['message']['content'].strip()
-
-        # Try to parse JSON
+        # Try to extract and parse LLM response
         try:
+            # Extract LLM response
+            llm_output = result['choices'][0]['message']['content'].strip()
+
             # Remove markdown code blocks if present
             if llm_output.startswith("```"):
                 llm_output = llm_output.split("```")[1]
@@ -345,17 +345,33 @@ def classify_speech(
                 llm_output = llm_output.strip()
 
             classification = json.loads(llm_output)
-        except json.JSONDecodeError as e:
-            # Failed to parse JSON - save error with all expected fields
+
+            # Normalize field types to ensure consistency for parquet serialization
+            # top_quote MUST be a dict with text and source keys
+            top_quote = classification.get("top_quote")
+            if not isinstance(top_quote, dict):
+                classification["top_quote"] = {"text": "", "source": ""}
+            elif "text" not in top_quote or "source" not in top_quote:
+                # Has dict but missing required keys
+                classification["top_quote"] = {"text": str(top_quote.get("text", "")), "source": str(top_quote.get("source", ""))}
+
+            # reasons MUST be a list
+            reasons = classification.get("reasons")
+            if not isinstance(reasons, list):
+                classification["reasons"] = []
+
+        except (json.JSONDecodeError, KeyError, IndexError, TypeError) as e:
+            # Failed to parse response or extract fields - save error with all expected fields
+            error_type = "response_format_error" if isinstance(e, (KeyError, IndexError, TypeError)) else "json_parse_failed"
             classification = {
                 "stance": None,
-                "reasons": None,
-                "top_quote": None,
+                "reasons": [],
+                "top_quote": {"text": "", "source": ""},
                 "confidence": None,
                 "context_helpful": None,
-                "error": "json_parse_failed",
+                "error": error_type,
                 "error_detail": str(e),
-                "raw_output": llm_output[:500],
+                "raw_output": str(result)[:500] if 'result' in locals() else "",
             }
 
         # Add metadata
@@ -396,8 +412,8 @@ def classify_speech(
             "confidence_level": speech_data.get('confidence_level'),
             "word_count": speech_data.get('word_count'),
             "stance": None,
-            "reasons": None,
-            "top_quote": None,
+            "reasons": [],
+            "top_quote": {"text": "", "source": ""},
             "confidence": None,
             "context_helpful": None,
             "model": model,
@@ -456,6 +472,14 @@ def run_classification_batch(
         results = checkpoint_df.to_dict('records')
         processed_count = len(results)
         processed_ids = set(checkpoint_df['speech_id'].values)
+
+        # Normalize any old checkpoint data that might have None values
+        for result in results:
+            if result.get("top_quote") is None:
+                result["top_quote"] = {"text": "", "source": ""}
+            if result.get("reasons") is None:
+                result["reasons"] = []
+
         print(f"\nFound checkpoint with {len(results)} speeches")
         print(f"Resuming from {len(results)}/{len(speeches)} ({100*len(results)/len(speeches):.1f}%)")
     except:
@@ -562,51 +586,63 @@ def upload_input_data(parquet_bytes: bytes, remote_filename: str):
 @app.local_entrypoint()
 def main(
     pilot: bool = False,
-    model: str = "openai/gpt-4o-mini",
+    model: str = "anthropic/claude-sonnet-4.5",
     prompt_version: str = "v6",
-    batch_size: int = 50,
+    batch_size: int = 100,
+    experiment_name: str = "",
 ):
     """
-    Main entry point for running classification.
+    Main entry point for running classification with proper experiment tracking.
 
     Usage:
-        # Pilot study with v6 prompt (default)
-        modal run modal_suffrage_classification_v6.py --pilot
+        # Test with Claude Sonnet 4.5 (pilot)
+        modal run modal_suffrage_classification_v6.py --pilot --model anthropic/claude-sonnet-4.5 --experiment-name claude_sonnet_45_pilot
 
-        # Full dataset with v6 prompt
-        modal run modal_suffrage_classification_v6.py
+        # Test with GPT-4o (pilot)
+        modal run modal_suffrage_classification_v6.py --pilot --model openai/gpt-4o --experiment-name gpt4o_pilot
 
-        # Full dataset with v5 prompt (for comparison)
-        modal run modal_suffrage_classification_v6.py --prompt-version v5
+        # Full run with best model
+        modal run modal_suffrage_classification_v6.py --model anthropic/claude-sonnet-4.5 --experiment-name claude_sonnet_45_full
 
     Args:
-        pilot: Run on pilot sample (100 speeches) instead of full dataset
-        model: OpenRouter model to use
+        pilot: Run on pilot sample (300 speeches) instead of full dataset (6,531)
+        model: OpenRouter model identifier (e.g., "anthropic/claude-sonnet-4.5", "openai/gpt-4o-mini")
         prompt_version: Prompt version to use ("v5" or "v6")
         batch_size: Number of parallel API calls
+        experiment_name: Unique name for this experiment (auto-generated if not provided)
     """
+    import datetime
+
+    # Auto-generate experiment name if not provided
+    if not experiment_name:
+        model_short = model.split('/')[-1].replace('-', '_').replace('.', '_')
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        dataset_label = "pilot" if pilot else "full"
+        experiment_name = f"{model_short}_{prompt_version}_{dataset_label}_{timestamp}"
+
+    # Determine input/output paths
     if pilot:
         local_input = "outputs/llm_classification/pilot_input.parquet"
-        remote_input = "pilot_input.parquet"
-        output_file = f"pilot_results_{prompt_version}.parquet"
-        print("="*60)
-        print(f"PILOT STUDY MODE (prompt {prompt_version})")
-        print("="*60)
+        remote_input = f"{experiment_name}_input.parquet"
+        output_file = f"{experiment_name}_results.parquet"
+        dataset_label = "PILOT (300 speeches)"
     else:
         local_input = "outputs/llm_classification/full_input_context_3_expanded.parquet"
-        remote_input = "full_input_context_3_expanded.parquet"
-        output_file = f"full_results_{prompt_version}_context_3_expanded.parquet"
-        print("="*60)
-        print(f"FULL DATASET MODE (prompt {prompt_version} with context=3)")
-        print("="*60)
+        remote_input = f"{experiment_name}_input.parquet"
+        output_file = f"{experiment_name}_results.parquet"
+        dataset_label = "FULL DATASET (6,531 speeches)"
 
-    print(f"Local input: {local_input}")
-    print(f"Remote input: {remote_input}")
-    print(f"Output: {output_file}")
+    print("="*70)
+    print(f"EXPERIMENT: {experiment_name}")
+    print("="*70)
+    print(f"Dataset: {dataset_label}")
     print(f"Model: {model}")
     print(f"Prompt version: {prompt_version}")
     print(f"Batch size: {batch_size}")
-    print("="*60)
+    print(f"")
+    print(f"Input: {local_input}")
+    print(f"Output: outputs/llm_classification/{experiment_name}_results.parquet")
+    print("="*70)
 
     # Upload input file to Modal volume
     print("\nUploading input data to Modal volume...")
@@ -635,14 +671,43 @@ def main(
         model=model,
         prompt_version=prompt_version,
         batch_size=batch_size,
+        checkpoint_interval=99999,  # Effectively disable checkpoints
     )
 
-    print("\n" + "="*60)
-    print("JOB COMPLETE")
-    print("="*60)
+    # Log experiment metadata
+    experiment_log = {
+        "experiment_name": experiment_name,
+        "model": model,
+        "prompt_version": prompt_version,
+        "dataset": "pilot" if pilot else "full",
+        "n_speeches": summary["total_speeches"],
+        "successful": summary["successful"],
+        "failed": summary["failed"],
+        "total_tokens": summary["total_tokens"],
+        "elapsed_minutes": summary["elapsed_seconds"] / 60,
+        "timestamp": datetime.datetime.now().isoformat(),
+    }
+
+    print("\n" + "="*70)
+    print("EXPERIMENT COMPLETE")
+    print("="*70)
+    print(f"Experiment: {experiment_name}")
+    print(f"Model: {model}")
+    print(f"Speeches: {summary['successful']}/{summary['total_speeches']} successful")
+    print(f"Tokens: {summary['total_tokens']:,}")
+    print(f"Time: {summary['elapsed_seconds']/60:.1f} minutes")
+    print(f"")
     print(f"Results saved to Modal volume: /results/{output_file}")
-    print(f"\nTo download results:")
-    print(f"  modal volume get suffrage-results {output_file} ./outputs/llm_classification/")
-    print("="*60)
+    print(f"")
+    print(f"To download:")
+    print(f"  modal volume get suffrage-results {output_file} outputs/llm_classification/")
+    print("="*70)
+
+    # Save experiment log locally
+    import json
+    log_file = f"outputs/llm_classification/{experiment_name}_log.json"
+    with open(log_file, "w") as f:
+        json.dump(experiment_log, f, indent=2)
+    print(f"\nExperiment log saved: {log_file}")
 
     return summary

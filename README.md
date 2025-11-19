@@ -4,11 +4,11 @@ Complete UK Parliamentary debates corpus (1803-2005) with gender analysis capabi
 
 ## Overview
 
-- **Complete Corpus**: 1.2M debates, 5.9M speeches, 200+ years
-- **Gender Matching**: 90.6% coverage (4.4M speeches matched to MPs)
-- **Female Representation**: 136,611 speeches across 1919-2005
+- **Complete Corpus**: 1.2M debates, 6.0M speeches, 200+ years
+- **Gender Matching**: 90.6% coverage in Commons (4.4M speeches matched to MPs)
+- **Female Representation**: 136,611 speeches across 1920-2005 (240 unique female MPs)
 - **Data Quality**: 99.993% accuracy, comprehensive testing
-- **Coverage**: Both Commons and Lords chambers
+- **Coverage**: Both Commons and Lords chambers (gender analysis Commons-only)
 
 ## Data Architecture
 
@@ -24,17 +24,18 @@ Complete UK Parliamentary debates corpus (1803-2005) with gender analysis capabi
 - Size: 14 GB
 
 ### Tier 3: Gender-Enhanced (gender_analysis_complete/)
-- 638,220 debates with MP matching (53.3% of all debates)
+- 652,271 debates with MP matching (54.5% of all debates)
 - Includes: gender, party, constituency, speech segments
 - MP matching with temporal validation
 - Size: 7.6 GB
 
 ### Tier 4: Unified Datasets (derived_complete/)
-- **speeches_complete/**: 5.9M individual speeches (ALL speakers)
+- **speeches_complete/**: 6.0M individual speeches (ALL speakers, both chambers)
 - **debates_complete/**: 1.2M debates (unified schema)
 - Commons: 4.8M speeches (90.6% with gender)
-- Female: 136,611 speeches (2.82% of Commons)
-- Male: 4,249,041 speeches (87.8% of Commons)
+- Female: 136,611 speeches (2.8% of Commons, 240 unique MPs)
+- Male: 4,249,041 speeches (87.8% of Commons, 8,429 unique MPs)
+- Lords: 1.1M speeches (1.4% gender match rate - insufficient for gender analysis)
 - Size: ~10 GB
 
 All data organized in data-hansard/ directory.
@@ -150,15 +151,23 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 
 ## Data Statistics
 
+> **For detailed statistics and explanations, see [docs/DATASET_STATISTICS.md](docs/DATASET_STATISTICS.md)**
+
 | Metric | Count |
 |--------|-------|
 | Total debates | 1,197,828 |
-| Total speeches | 5,939,625 |
+| Total speeches | 5,967,440 |
 | Commons speeches | 4,840,797 |
+| Lords speeches | 1,126,643 |
 | Gender-matched speeches (Commons) | 4,385,652 (90.6%) |
-| Female speeches | 136,611 |
-| Male speeches | 4,249,041 |
-| Years covered | 1803-2005 (201 years) |
+| Gender-matched speeches (Lords) | 15,863 (1.4%) |
+| Female speeches (Commons) | 136,611 |
+| Male speeches (Commons) | 4,249,041 |
+| Unique female MPs | 240 |
+| Unique male MPs | 8,429 |
+| Years covered | 1803-2005 (203 years) |
+
+**Note**: Gender analysis is reliable for Commons only (90.6% match rate). Lords has insufficient coverage (1.4% match rate).
 
 ## Repository Structure
 

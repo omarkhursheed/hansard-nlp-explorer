@@ -1,11 +1,11 @@
 RELIABLE SUFFRAGE DATASET SUMMARY
 ======================================================================
 
-total_speeches: 2808
-high_confidence: 1485
-medium_confidence: 1323
-estimated_true_positives: 1750
-date_range: 01 April 1910 to 31 October 1929
-year_range: 1900 to 1935
-matched_to_mps: 2618
-match_rate: 93.2%
+total_speeches: 6531
+high_confidence: 2725
+medium_confidence: 3806
+estimated_true_positives: 3566
+date_range: 01 April 1844 to 31 October 2001
+year_range: 1809 to 2004
+matched_to_mps: 6041
+match_rate: 92.5%
