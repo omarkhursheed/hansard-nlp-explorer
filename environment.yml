@@ -20,7 +20,8 @@ dependencies:
   - psutil >=5.9
   - python-Levenshtein >=0.25
   - streamlit >=1.35
-
+  - sentence-transformers>=5.1.0
+  - concurry>=0.8.3
   # (optional) dev helpers
   - black
   - ruff
