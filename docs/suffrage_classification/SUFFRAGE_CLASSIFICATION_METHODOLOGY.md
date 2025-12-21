@@ -26,16 +26,14 @@
 This project classifies UK Parliamentary speeches on women's suffrage (1900-1935) using LLM-based stance detection and argument mining. The pipeline identifies suffrage-related speeches, classifies their stance (for/against/both/neutral/irrelevant), extracts supporting arguments, and analyzes temporal and gender patterns.
 
 **Key Statistics:**
-- 2,808 speeches classified (100% API success rate)
-- 92.9% classification accuracy (manual validation)
-- 5,138 arguments extracted from 2,268 substantive speeches
+- 6,531 speeches classified (99.8% API success rate)
 - Coverage: 1900-1935 (35 years)
-- Gender: 2,535 male MPs, 83 female MPs, 190 unmatched
+- Gender: 5,430 male, 611 female
 
 **Source Code:**
-- `src/hansard/analysis/extract_suffrage_*.py` - Dataset extraction
-- `prepare_suffrage_input.py` - Input preparation
-- `modal_suffrage_classification_v5.py` - LLM classification
+- `scripts/analysis/extract_suffrage_*.py` - Dataset extraction
+- `scripts/classification/prepare_suffrage_input.py` - Input preparation
+- `scripts/classification/modal_suffrage_classification_v6.py` - LLM classification
 - `notebooks/suffrage_classification_analysis.ipynb` - Analysis
 
 ---
@@ -117,21 +115,7 @@ women.*social.*political.*union
 - Expected: 1,323 speeches
 
 **Output**: `outputs/suffrage_reliable/speeches_reliable.parquet`
-- Total: 2,808 speeches
-- HIGH: 1,485 speeches (~95% precision)
-- MEDIUM: 1,323 speeches (~26% precision)
-- Estimated true positives: ~1,750 speeches (62.3%)
-- Date range: 1910-04-01 to 1929-10-31
-- Matched to MPs: 2,618 (93.2%)
-
-**Key Statistics** (from `SUMMARY.txt`):
-```
-total_speeches: 2808
-high_confidence: 1485
-medium_confidence: 1323
-estimated_true_positives: 1750
-match_rate: 93.2%
-```
+- Total: 6,531 speeches
 
 ### 1.4 Debate Context Extraction
 
@@ -609,30 +593,29 @@ def classify_speech(speech_data, model="anthropic/claude-sonnet-4.5", prompt_ver
 
 ### 7.1 Dataset Statistics
 
-**File**: `outputs/llm_classification/full_results_v5_context_3_complete.parquet`
+**File**: `outputs/llm_classification/claude_sonnet_45_full_results.parquet`
 
-**Total Speeches**: 2,808
-- API Success: 2,808/2,808 (100.0%)
-- Classification Accuracy: 92.9% (manual validation)
+**Total Speeches**: 6,531
+- API Success: 6,519/6,531 (99.8%)
 
 **Stance Distribution**:
 ```
-for:        1,194 (42.5%) - Support women's suffrage
-against:      869 (30.9%) - Oppose women's suffrage
-irrelevant:   540 (19.2%) - Not about suffrage (upstream filter error)
-both:         109 (3.9%)  - Mixed position
-neutral:       96 (3.4%)  - Uncertain or genuinely neutral
+for:        1,288 (19.7%) - Support women's suffrage
+against:      508 (7.8%)  - Oppose women's suffrage
+irrelevant: 4,642 (71.1%) - Not about suffrage
+both:          65 (1.0%)  - Mixed position
+neutral:        3 (0.0%)  - Uncertain or genuinely neutral
 ```
 
-**Substantive Speeches** (for/against/both/neutral): 2,268 (80.8%)
-- Clear stance (for/against/both): 2,172 (77.4%)
-- Uncertain (neutral): 96 (3.4%)
+**Substantive Speeches** (for/against/both/neutral): 1,889 (28.9%)
+- Clear stance (for/against/both): 1,861 (28.5%)
+- Uncertain (neutral): 3 (0.0%)
 
 **Gender Distribution**:
 ```
-Male:       2,535 (90.3%)
-Female:        83 (3.0%)
-Unmatched:    190 (6.8%) - Speaker not matched to MP database
+Male:       5,430 (83.1%)
+Female:       611 (9.4%)
+Unmatched:    490 (7.5%) - Speaker not matched to MP database
 ```
 
 **Temporal Coverage**:
@@ -816,8 +799,7 @@ outputs/suffrage_debates/
   debate_summary.parquet                   # Debate-level stats
 
 outputs/llm_classification/
-  full_input_context_3.parquet           # Classification input
-  full_results_v5_context_3_complete.parquet # FINAL RESULTS
+  claude_sonnet_45_full_results.parquet  # FINAL RESULTS (6,531 speeches)
 ```
 
 **Analysis Outputs**:
@@ -877,16 +859,10 @@ All statistics in this document are verified against the following data files:
 
 **Dataset Creation**:
 - Source: `data-hansard/derived_complete/speeches_complete/speeches_{1900-1935}.parquet`
-- Reliable extraction: `outputs/suffrage_reliable/speeches_reliable.parquet` (2,808 speeches)
-- Debate context: `outputs/suffrage_debates/all_speeches_in_suffrage_debates.parquet` (53,339 speeches)
+- Reliable extraction: `outputs/suffrage_reliable/speeches_reliable.parquet` (6,531 speeches)
 
 **Classification Results**:
-- Input: `outputs/llm_classification/full_input_context_3.parquet` (2,808 rows)
-- Output: `outputs/llm_classification/full_results_v5_context_3_complete.parquet` (2,808 rows, 100% success)
-
-**Validation**:
-- Manual review: `MANUAL_VALIDATION_SUMMARY.md` (14 speeches, 92.9% accuracy)
-- Known issues: `FALSE_POSITIVE_ANALYSIS.md` (1 false positive documented)
+- Output: `outputs/llm_classification/claude_sonnet_45_full_results.parquet` (6,531 speeches, 99.8% success)
 
 **Analysis**:
 - Notebook: `notebooks/suffrage_classification_analysis.ipynb`
