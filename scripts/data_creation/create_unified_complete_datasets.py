@@ -37,8 +37,18 @@ from tqdm import tqdm
 import pickle
 import signal
 
-# No path manipulation needed - use package imports
-# Script is at src/hansard/scripts/data_creation/, can import from hansard package
+# Add src to path for imports
+project_root = Path(__file__).resolve().parents[2]  # Up to hansard-nlp-explorer
+sys.path.insert(0, str(project_root / 'src'))
+
+from hansard.utils.speech_extractor import (
+    extract_speeches_from_html,
+    load_html_from_file,
+    extract_speeches_from_file,
+    extract_speeches_from_raw_html,
+    get_raw_html_path
+)
+from hansard.utils.path_config import Paths
 
 
 def normalize_speaker_name(speaker_name):
@@ -172,70 +182,9 @@ def load_person_name_lookup(mnis_data_path):
         return {}
 
 
-def extract_speeches_from_text(text, speakers_list):
-    """
-    Extract individual speech segments from debate full_text.
-
-    This is the same logic used in gender_complete creation,
-    now applied to ALL debates.
-    """
-    if not text or not speakers_list:
-        return []
-
-    speeches = []
-
-    # Create patterns for each known speaker
-    speaker_patterns = []
-    for speaker in speakers_list:
-        if pd.notna(speaker) and speaker:
-            # Escape special regex characters
-            escaped_speaker = re.escape(str(speaker))
-            # Create pattern that matches speaker name at start of speech
-            patterns = [
-                f"§\\s*\\*?\\s*{escaped_speaker}",      # With section marker (optional asterisk)
-                f"\\n{escaped_speaker}\\s*:",           # At line start with colon
-                f"\\n{escaped_speaker}\\s*\\(",         # At line start with parenthesis
-            ]
-            speaker_patterns.extend([(p, speaker) for p in patterns])
-
-    # Find all speaker positions
-    speaker_positions = []
-    for pattern, speaker in speaker_patterns:
-        try:
-            for match in re.finditer(pattern, text, re.IGNORECASE):
-                speaker_positions.append((match.start(), speaker))
-        except:
-            continue
-
-    # Sort by position
-    speaker_positions.sort(key=lambda x: x[0])
-
-    # Extract speech segments
-    for i, (pos, speaker) in enumerate(speaker_positions):
-        # Get end position (start of next speech or end of text)
-        end_pos = speaker_positions[i+1][0] if i+1 < len(speaker_positions) else len(text)
-
-        # Extract speech text
-        speech_text = text[pos:end_pos].strip()
-
-        # Clean up the text (remove speaker name from beginning)
-        for pattern in [f"§\\s*{re.escape(speaker)}", f"{re.escape(speaker)}\\s*:", f"{re.escape(speaker)}\\s*\\("]:
-            speech_text = re.sub(f"^{pattern}", "", speech_text, flags=re.IGNORECASE).strip()
-
-        # Only keep substantial speeches
-        if speech_text and len(speech_text) > 50:
-            speeches.append({
-                'speaker': speaker,
-                'text': speech_text,
-                'position': pos
-            })
-
-    return speeches
-
-
 def process_year(args):
     """Process a single year (for parallel execution)."""
-    year, processed_dir, gender_dir, mnis_data_path = args
+    year, processed_dir, gender_dir, mnis_data_path, hansard_base = args
 
     # Load person_name lookup for canonical names
     person_name_lookup = load_person_name_lookup(mnis_data_path)
@@ -302,17 +251,13 @@ def process_year(args):
                 else:
                     debate_id = content_hash[:16] if content_hash else f"debate_{year}_{debate_count}"
 
-                # Use pre-extracted speech_segments from gender_complete if available
-                # Otherwise extract from full_text
-                if file_path in gender_data:
-                    # Use pre-extracted segments from gender_complete
-                    speech_segments = gender_info.get('speech_segments', [])
-                    if not isinstance(speech_segments, list) or len(speech_segments) == 0:
-                        # Fallback to extraction
-                        speech_segments = extract_speeches_from_text(full_text, speakers)
-                else:
-                    # Not in gender_complete - extract ourselves
-                    speech_segments = extract_speeches_from_text(full_text, speakers)
+                # Extract speeches from raw HTML (accurate, structure-based)
+                # This replaces the buggy regex-based extraction
+                speech_segments = []
+                if file_path:
+                    raw_html_path = get_raw_html_path(file_path, hansard_base)
+                    if raw_html_path.exists():
+                        speech_segments = extract_speeches_from_raw_html(raw_html_path)
 
                 # Build speaker maps
                 speaker_gender_map = {}
@@ -361,7 +306,10 @@ def process_year(args):
                         'matched_mp': matched_mp,
                         'party': party,
                         'constituency': constituency,
-                        'position': segment['position'],
+                        # Handle both old format (position) and new format (contribution_id)
+                        'contribution_id': segment.get('contribution_id', segment.get('position', seq_num)),
+                        'is_question': segment.get('is_question', False),
+                        'question_number': segment.get('question_number'),
                         'text': segment['text'],
                         'word_count': len(segment['text'].split()),
                         'year': year,
@@ -504,6 +452,9 @@ class UnifiedDatasetCreator:
         self.output_dir = Path(output_dir)
         self.workers = workers
 
+        # Path to raw HTML files for HTML-based speech extraction
+        self.hansard_base = Paths.get_data_dir() / 'hansard'
+
         self.speeches_dir = self.output_dir / 'speeches_complete'
         self.debates_dir = self.output_dir / 'debates_complete'
 
@@ -587,14 +538,14 @@ class UnifiedDatasetCreator:
         total_debates = 0
 
         # Get MP database path for canonical names
-        project_root = Path(__file__).resolve().parents[4]  # Go up to project root
+        project_root = Path(__file__).resolve().parents[2]  # Up to hansard-nlp-explorer
         mnis_data_path = project_root / 'data-hansard' / 'house_members_gendered_updated.parquet'
 
         # Process years in parallel
         with ProcessPoolExecutor(max_workers=self.workers) as executor:
             # Prepare arguments
             args_list = [
-                (year, self.processed_dir, self.gender_dir, mnis_data_path)
+                (year, self.processed_dir, self.gender_dir, mnis_data_path, self.hansard_base)
                 for year in years_to_process
             ]
 

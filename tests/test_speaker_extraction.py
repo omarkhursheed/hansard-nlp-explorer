@@ -1,109 +1,131 @@
 #!/usr/bin/env python3
 """
-Test speaker extraction from raw HTML to debug the pipeline issue.
+Test speaker/speech extraction using the HTML-based extractor.
+
+Tests the hansard.utils.speech_extractor module which replaces the buggy
+regex-based extraction with HTML structure-based extraction.
 """
 
-import gzip
 from pathlib import Path
 import pytest
 from hansard.utils.path_config import Paths
-from bs4 import BeautifulSoup
-import re
+from hansard.utils.speech_extractor import (
+    extract_speeches_from_file,
+    extract_speeches_from_html,
+    extract_speakers_from_html,
+    load_html_from_file,
+    get_raw_html_path,
+    get_chamber_from_html,
+)
 
-def extract_speakers_current_method(lines):
-    """Current broken method using regex on text lines."""
-    speakers = []
-    for line in lines[1:20]:  # Check first 20 lines
-        # Look for speaker patterns
-        speaker_patterns = [
-            r'^(Mr\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-            r'^(Mrs\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-            r'^(The\s+[A-Z][a-z]+(?:\s+of\s+[A-Z][a-z]+)*)',
-            r'^(Lord\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
-            r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*$'
-        ]
-        for pattern in speaker_patterns:
-            match = re.match(pattern, line.strip())
-            if match and len(match.group(1)) < 50:
-                speakers.append(match.group(1))
-                break
-    
-    return list(set(speakers))  # Remove duplicates
 
-def extract_speakers_html_method(soup):
-    """Fixed method using HTML structure."""
-    speakers = []
-    
-    # Find main content div
-    content_div = soup.find('div', class_='house-of-commons-sitting')
-    if not content_div:
-        content_div = soup.find('div', class_='house-of-lords-sitting')
-    
-    if content_div:
-        # Find all member citations
-        member_cites = content_div.find_all('cite', class_='member')
-        for cite in member_cites:
-            speaker_text = cite.get_text(strip=True)
-            if speaker_text and len(speaker_text) < 100:  # Reasonable length
-                speakers.append(speaker_text)
-    
-    return list(set(speakers))  # Remove duplicates
+def test_extract_speeches_from_file():
+    """Test speech extraction from a sample file."""
+    # Use 1950 stud-farms file which has clear Q&A format
+    file_path = Paths.get_data_dir() / "hansard/1950/may/11_53_stud-farms.html.gz"
 
-def test_speaker_extraction():
-    """Test both methods on the toy pistols debate."""
-    file_path = Paths.get_data_dir() / "hansard/1925/mar/12_17_toy-pistols.html.gz"
-    
-    print("Testing speaker extraction methods...")
-    print("=" * 60)
-    
-    if not Path(file_path).exists():
+    if not file_path.exists():
         pytest.skip(f"Sample HTML not found: {file_path}")
 
-    with gzip.open(str(file_path), 'rt', encoding='utf-8') as f:
-        html = f.read()
-    
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    # Get text lines for current method
-    content_div = soup.find('div', class_='house-of-commons-sitting')
-    if content_div:
-        # Remove unwanted elements
-        for unwanted in content_div(['nav', 'footer', 'script', 'style']):
-            unwanted.decompose()
-        
-        content_text = content_div.get_text(separator='\n', strip=True)
-        lines = [line for line in content_text.split('\n') if line.strip()]
-    else:
-        lines = []
-    
-    # Test current broken method
-    print("CURRENT METHOD (broken regex):")
-    current_speakers = extract_speakers_current_method(lines)
-    print(f"Found {len(current_speakers)} speakers: {current_speakers}")
-    
-    print("\nFirst 20 lines of text (what regex sees):")
-    for i, line in enumerate(lines[:20], 1):
-        print(f"{i:2}: {line}")
-    
-    print("\n" + "=" * 60)
-    
-    # Test fixed HTML method
-    print("FIXED METHOD (using HTML structure):")
-    html_speakers = extract_speakers_html_method(soup)
-    print(f"Found {len(html_speakers)} speakers: {html_speakers}")
-    
-    print("\nHTML structure (what we should use):")
-    content_div = soup.find('div', class_='house-of-commons-sitting')
-    if content_div:
-        member_cites = content_div.find_all('cite', class_='member')
-        for i, cite in enumerate(member_cites[:10], 1):  # Show first 10
-            print(f"{i:2}: {cite.get_text(strip=True)}")
-    
-    print("\n" + "=" * 60)
-    print("CONCLUSION:")
-    print(f"Current method: {len(current_speakers)} speakers (BROKEN)")
-    print(f"Fixed method: {len(html_speakers)} speakers (CORRECT)")
-    print("The HTML has perfect structure - we should use it!")
+    speeches = extract_speeches_from_file(file_path)
+
+    # Should extract 6 speeches
+    assert len(speeches) == 6, f"Expected 6 speeches, got {len(speeches)}"
+
+    # Check that speeches have required keys
+    for speech in speeches:
+        assert 'speaker' in speech
+        assert 'text' in speech
+        assert 'contribution_id' in speech
+        assert 'is_question' in speech
+        assert 'question_number' in speech
+
+    # Check specific speakers
+    speakers = [s['speaker'] for s in speeches]
+    assert 'Mr. Nabarro' in speakers
+    assert 'Sir T. Dugdale' in speakers
+
+    # First speech should be a question
+    assert speeches[0]['is_question'] == True
+    assert speeches[0]['question_number'] == '61'
+
+
+def test_speeches_are_not_mixed():
+    """Test that speeches don't contain text from other speakers."""
+    file_path = Paths.get_data_dir() / "hansard/1950/may/11_53_stud-farms.html.gz"
+
+    if not file_path.exists():
+        pytest.skip(f"Sample HTML not found: {file_path}")
+
+    speeches = extract_speeches_from_file(file_path)
+
+    # Check Sir T. Dugdale's speech doesn't contain Mr. Williams' response
+    # This was the bug reported in the audit
+    dugdale_speech = next((s for s in speeches if 'Dugdale' in s['speaker']), None)
+    assert dugdale_speech is not None
+
+    # His speech should NOT contain "It will be" (which is Mr. Williams' response)
+    assert "It will be" not in dugdale_speech['text']
+
+
+def test_extract_speakers_from_html():
+    """Test speaker name extraction."""
+    file_path = Paths.get_data_dir() / "hansard/1950/may/11_53_stud-farms.html.gz"
+
+    if not file_path.exists():
+        pytest.skip(f"Sample HTML not found: {file_path}")
+
+    soup = load_html_from_file(file_path)
+    speakers = extract_speakers_from_html(soup)
+
+    # Should find unique speakers
+    assert len(speakers) >= 3
+    assert any('Nabarro' in s for s in speakers)
+
+
+def test_get_chamber_from_html():
+    """Test chamber detection."""
+    file_path = Paths.get_data_dir() / "hansard/1950/may/11_53_stud-farms.html.gz"
+
+    if not file_path.exists():
+        pytest.skip(f"Sample HTML not found: {file_path}")
+
+    soup = load_html_from_file(file_path)
+    chamber = get_chamber_from_html(soup)
+
+    # 1950 Commons file
+    assert chamber == 'commons'
+
+
+def test_get_raw_html_path():
+    """Test file path conversion."""
+    hansard_base = Path('/data/hansard')
+
+    # Test various input formats
+    assert get_raw_html_path('hansard/1950/may/test.html.gz', hansard_base) == \
+           Path('/data/hansard/1950/may/test.html.gz')
+
+    assert get_raw_html_path('data-hansard/hansard/1950/may/test.html.gz', hansard_base) == \
+           Path('/data/hansard/1950/may/test.html.gz')
+
+    assert get_raw_html_path('1950/may/test.html.gz', hansard_base) == \
+           Path('/data/hansard/1950/may/test.html.gz')
+
+
+def test_empty_file_handling():
+    """Test handling of non-existent files."""
+    from hansard.utils.speech_extractor import extract_speeches_from_raw_html
+
+    # Should return empty list for non-existent file
+    result = extract_speeches_from_raw_html(Path('/nonexistent/file.html.gz'))
+    assert result == []
+
 
 if __name__ == "__main__":
-    test_speaker_extraction()
+    test_extract_speeches_from_file()
+    test_speeches_are_not_mixed()
+    test_extract_speakers_from_html()
+    test_get_chamber_from_html()
+    test_get_raw_html_path()
+    test_empty_file_handling()
+    print("All tests passed!")

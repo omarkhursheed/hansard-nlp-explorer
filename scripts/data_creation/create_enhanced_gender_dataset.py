@@ -9,13 +9,20 @@ import sys
 from pathlib import Path
 
 # Add src to path for imports
-project_root = Path(__file__).resolve().parents[4]  # Up to hansard-nlp-explorer
+project_root = Path(__file__).resolve().parents[2]  # Up to hansard-nlp-explorer
 sys.path.insert(0, str(project_root / 'src'))
 
 import pandas as pd
 import numpy as np
 from hansard.matching.mp_matcher_corrected import CorrectedMPMatcher
 from hansard.utils.path_config import Paths
+from hansard.utils.speech_extractor import (
+    extract_speeches_from_html,
+    load_html_from_file,
+    extract_speeches_from_file,
+    extract_speeches_from_raw_html,
+    get_raw_html_path
+)
 import json
 from tqdm import tqdm
 import hashlib
@@ -25,68 +32,20 @@ import argparse
 import signal
 import os
 import re
+import gzip
 from concurrent.futures import ProcessPoolExecutor
 import multiprocessing as mp
+from bs4 import BeautifulSoup
 
 
 # Module-level functions for parallel processing
-
-def extract_speeches_from_text(text, speakers_list):
-    """Extract individual speech segments from debate text"""
-    if not text or not speakers_list:
-        return []
-
-    speeches = []
-
-    # Create patterns for each known speaker
-    speaker_patterns = []
-    for speaker in speakers_list:
-        if pd.notna(speaker):
-            # Escape special regex characters
-            escaped_speaker = re.escape(str(speaker))
-            # Create pattern that matches speaker name at start of speech
-            patterns = [
-                f"§\\s*\\*?\\s*{escaped_speaker}",  # With section marker (optional asterisk)
-                f"\\n{escaped_speaker}\\s*:",  # At line start with colon
-                f"\\n{escaped_speaker}\\s*\\(",  # At line start with parenthesis
-            ]
-            speaker_patterns.extend([(p, speaker) for p in patterns])
-
-    # Find all speaker positions
-    speaker_positions = []
-    for pattern, speaker in speaker_patterns:
-        for match in re.finditer(pattern, text, re.IGNORECASE):
-            speaker_positions.append((match.start(), speaker))
-
-    # Sort by position
-    speaker_positions.sort(key=lambda x: x[0])
-
-    # Extract speech segments
-    for i, (pos, speaker) in enumerate(speaker_positions):
-        # Get end position (start of next speech or end of text)
-        end_pos = speaker_positions[i+1][0] if i+1 < len(speaker_positions) else len(text)
-
-        # Extract speech text
-        speech_text = text[pos:end_pos].strip()
-
-        # Clean up the text (remove speaker name from beginning)
-        for pattern in [f"§\\s*{re.escape(speaker)}", f"{re.escape(speaker)}\\s*:", f"{re.escape(speaker)}\\s*\\("]:
-            speech_text = re.sub(f"^{pattern}", "", speech_text, flags=re.IGNORECASE).strip()
-
-        # Only keep substantial speeches
-        if speech_text and len(speech_text) > 50:
-            speeches.append({
-                'speaker': speaker,
-                'text': speech_text,
-                'position': pos
-            })
-
-    return speeches
+# Note: extract_speeches_from_raw_html and get_raw_html_path are imported from
+# hansard.utils.speech_extractor to avoid code duplication
 
 
 def process_year_parallel(args):
     """Process a single year (for parallel execution)"""
-    year, content_base, metadata_base, mnis_data_path = args
+    year, content_base, metadata_base, mnis_data_path, hansard_base = args
 
     # Load MNIS data and create matcher in worker process
     mnis_df = pd.read_parquet(mnis_data_path)
@@ -99,7 +58,7 @@ def process_year_parallel(args):
 
     debates_df = pd.read_parquet(metadata_file)
 
-    # Load texts for this year
+    # Load texts for this year (used for full_text and metadata)
     year_content_file = content_base / str(year) / f"debates_{year}.jsonl"
     texts_by_path = {}
 
@@ -178,10 +137,12 @@ def process_year_parallel(args):
             debate_text_data = texts_by_path.get(file_path, {})
             full_text = debate_text_data.get('full_text', '')
 
-            # Extract speech segments if we have text
+            # Extract speech segments from raw HTML (accurate, structure-based)
             speech_segments = []
-            if full_text:
-                speech_segments = extract_speeches_from_text(full_text, speakers)
+            if file_path:
+                raw_html_path = get_raw_html_path(file_path, hansard_base)
+                if raw_html_path.exists():
+                    speech_segments = extract_speeches_from_raw_html(raw_html_path)
 
             debate_id = hashlib.md5(f"{file_path}_{date}".encode()).hexdigest()[:16]
             decade = (year // 10) * 10
@@ -257,6 +218,9 @@ class EnhancedGenderDatasetCreator:
 
         self.content_base = input_dir / 'content'
         self.metadata_base = input_dir / 'metadata'
+
+        # Path to raw HTML files for HTML-based speech extraction
+        self.hansard_base = Paths.get_data_dir() / 'hansard'
 
         # Store path to MNIS data for worker processes
         self.mnis_data_path = Paths.get_data_dir() / "house_members_gendered_updated.parquet"
@@ -340,57 +304,25 @@ class EnhancedGenderDatasetCreator:
         self.text_cache[year] = texts_by_path
         return texts_by_path
 
-    def extract_speeches_from_text(self, text, speakers_list):
-        """Extract individual speech segments from debate text"""
-        if not text or not speakers_list:
+    def extract_speeches_from_html_file(self, file_path: str) -> list:
+        """
+        Extract speeches from raw HTML file using structural boundaries.
+
+        This replaces the buggy regex-based extraction that caused speaker misattribution.
+
+        Args:
+            file_path: Path to the debate from metadata
+
+        Returns:
+            List of speech dictionaries with 'speaker', 'text', 'contribution_id'
+        """
+        if not file_path:
             return []
 
-        speeches = []
-
-        # Create patterns for each known speaker
-        speaker_patterns = []
-        for speaker in speakers_list:
-            if pd.notna(speaker):
-                # Escape special regex characters
-                escaped_speaker = re.escape(str(speaker))
-                # Create pattern that matches speaker name at start of speech
-                patterns = [
-                    f"§\\s*{escaped_speaker}",  # With section marker
-                    f"\\n{escaped_speaker}\\s*:",  # At line start with colon
-                    f"\\n{escaped_speaker}\\s*\\(",  # At line start with parenthesis
-                ]
-                speaker_patterns.extend([(p, speaker) for p in patterns])
-
-        # Find all speaker positions
-        speaker_positions = []
-        for pattern, speaker in speaker_patterns:
-            for match in re.finditer(pattern, text, re.IGNORECASE):
-                speaker_positions.append((match.start(), speaker))
-
-        # Sort by position
-        speaker_positions.sort(key=lambda x: x[0])
-
-        # Extract speech segments
-        for i, (pos, speaker) in enumerate(speaker_positions):  # Process all speeches
-            # Get end position (start of next speech or end of text)
-            end_pos = speaker_positions[i+1][0] if i+1 < len(speaker_positions) else len(text)
-
-            # Extract speech text
-            speech_text = text[pos:end_pos].strip()
-
-            # Clean up the text (remove speaker name from beginning)
-            for pattern in [f"§\\s*{re.escape(speaker)}", f"{re.escape(speaker)}\\s*:", f"{re.escape(speaker)}\\s*\\("]:
-                speech_text = re.sub(f"^{pattern}", "", speech_text, flags=re.IGNORECASE).strip()
-
-            # Only keep substantial speeches
-            if speech_text and len(speech_text) > 50:
-                speeches.append({
-                    'speaker': speaker,
-                    'text': speech_text,  # Full speech text
-                    'position': pos
-                })
-
-        return speeches
+        raw_html_path = get_raw_html_path(file_path, self.hansard_base)
+        if raw_html_path.exists():
+            return extract_speeches_from_raw_html(raw_html_path)
+        return []
 
     def process_year(self, year, debates_df):
         """Process a single year of data with enhanced fields"""
@@ -474,10 +406,9 @@ class EnhancedGenderDatasetCreator:
                 debate_text_data = year_texts.get(file_path, {})
                 full_text = debate_text_data.get('full_text', '')
 
-                # Extract speech segments if we have text
-                speech_segments = []
+                # Extract speech segments from raw HTML (accurate, structure-based)
+                speech_segments = self.extract_speeches_from_html_file(file_path)
                 if full_text:
-                    speech_segments = self.extract_speeches_from_text(full_text, speakers)
                     stats['debates_with_text'] += 1
                     stats['total_text_chars'] += len(full_text)
 
@@ -622,7 +553,7 @@ class EnhancedGenderDatasetCreator:
         with ProcessPoolExecutor(max_workers=self.workers) as executor:
             # Prepare arguments for each year
             args_list = [
-                (year, self.content_base, self.metadata_base, self.mnis_data_path)
+                (year, self.content_base, self.metadata_base, self.mnis_data_path, self.hansard_base)
                 for year in years_to_process
             ]
 

@@ -188,6 +188,48 @@ class CorrectedMPMatcher:
             'mrdavies': 'mr davies',
         }
 
+    def _extract_gender_from_title(self, speaker: str) -> Optional[str]:
+        """
+        Extract gender from title prefixes as fallback mechanism.
+
+        Used when speaker cannot be matched to MP database but has
+        a clear gender-indicating title prefix.
+
+        Args:
+            speaker: Original speaker string (may include title)
+
+        Returns:
+            'M', 'F', or None if no title prefix found
+
+        Title mappings:
+            Female: Mrs, Miss, Ms, Lady, Dame, Baroness
+            Male: Mr, Sir, Lord, Colonel, Major, Captain, General, Admiral
+        """
+        if not speaker:
+            return None
+
+        speaker_lower = speaker.lower().strip()
+
+        # Female titles (check first - more specific patterns)
+        female_patterns = [
+            r'^\s*(mrs|miss|ms|lady|dame|baroness)[\.\s]',
+            r'\b(mrs|miss|ms|lady|dame|baroness)[\.\s]+[a-z]',  # Title in middle
+        ]
+        for pattern in female_patterns:
+            if re.search(pattern, speaker_lower):
+                return 'F'
+
+        # Male titles
+        male_patterns = [
+            r'^\s*(mr|sir|lord|colonel|major|captain|general|admiral|viscount|earl|baron)[\.\s]',
+            r'\b(mr|sir|lord)[\.\s]+[a-z]',  # Title in middle
+        ]
+        for pattern in male_patterns:
+            if re.search(pattern, speaker_lower):
+                return 'M'
+
+        return None
+
     def _lookup_person_id(self, mp_name: str, date: str = None) -> Optional[str]:
         """
         Look up person_id for a matched MP name.
@@ -314,6 +356,27 @@ class CorrectedMPMatcher:
                 results['gender'] = extracted_result['gender']
                 return results
 
+        # 0b. Strip parenthetical suffix: "Mr. BONAR LAW (Leader of the House)" -> "Mr. BONAR LAW"
+        stripped_name = self._strip_parenthetical_suffix(speaker)
+        if stripped_name and stripped_name != speaker:
+            # Recursively match the stripped name
+            stripped_result = self.match_comprehensive(stripped_name, date, chamber)
+            if stripped_result['final_match']:
+                results['strategies_tried'].append('parenthetical_stripped')
+                results['matches'].append({
+                    'mp_name': stripped_result['final_match'],
+                    'person_id': stripped_result.get('person_id'),
+                    'gender': stripped_result['gender'],
+                    'confidence': stripped_result['confidence'] * 0.95,  # Slight discount for stripping
+                    'method': 'parenthetical_stripped'
+                })
+                results['final_match'] = stripped_result['final_match']
+                results['person_id'] = stripped_result.get('person_id')
+                results['confidence'] = stripped_result['confidence'] * 0.95
+                results['match_type'] = 'parenthetical_stripped'
+                results['gender'] = stripped_result['gender']
+                return results
+
         # 1. Title resolution (highest confidence)
         title_match = self._resolve_title(speaker_clean, date)
         if title_match:
@@ -386,6 +449,17 @@ class CorrectedMPMatcher:
                 results['person_id'] = self._lookup_person_id(fuzzy_match['mp_name'], date)
                 return results
 
+        # 5. Title-based gender inference (fallback when no MP match found)
+        # Only used when we couldn't match to an MP but speaker has a clear title
+        if results['gender'] is None and results['match_type'] == 'no_match':
+            title_gender = self._extract_gender_from_title(speaker)
+            if title_gender:
+                results['strategies_tried'].append('title_gender')
+                results['gender'] = title_gender
+                results['match_type'] = 'title_gender_inference'
+                results['confidence'] = 0.3  # Low confidence - only title, no person match
+                results['note'] = 'Gender inferred from title prefix only (no MP match)'
+
         return results
 
     def _extract_titled_name(self, speaker: str) -> str:
@@ -401,9 +475,45 @@ class CorrectedMPMatcher:
         match = re.search(r'\(([^)]+)\)$', speaker)
         if match:
             extracted = match.group(1).strip()
-            # Only extract if it looks like a person name (has title or name)
-            if any(title in extracted for title in ['Mr', 'Mrs', 'Ms', 'Miss', 'Sir', 'Dame', 'Lord', 'Lady', 'Dr', 'Baroness', 'Viscount', 'Earl']):
+            # Only extract if it looks like a person name
+            # Title must be at START and followed by a capitalized name (not "of", "the", etc.)
+            # This avoids matching roles like "Lord of the Treasury"
+            title_pattern = r'^(Mr|Mrs|Ms|Miss|Sir|Dame|Lord|Lady|Dr|Baroness|Viscount|Earl|Colonel|Captain|Major|Commander|Lieut|Lieutenant)\.?\s+[A-Z]'
+            if re.match(title_pattern, extracted):
                 return extracted
+
+        return None
+
+    def _strip_parenthetical_suffix(self, speaker: str) -> str:
+        """
+        Strip trailing parenthetical content that is NOT a name.
+        Handles patterns like:
+        - "Mr. BONAR LAW (Leader of the House)" -> "Mr. BONAR LAW"
+        - "Captain ELLIOT (by Private Notice)" -> "Captain ELLIOT"
+        - "Dr. MACNAMARA (resuming)" -> "Dr. MACNAMARA"
+        - "Commander EYRES-MONSELL (Treasurer of the Household)" -> "Commander EYRES-MONSELL"
+        - "Lieut.-Colonel Sir ROBERT A. SANDERS (Lord of the Treasury)" -> "Lieut.-Colonel Sir ROBERT A. SANDERS"
+        - "Mr. ASQUITH (by Private Notice)." -> "Mr. ASQUITH"
+
+        Does NOT strip if parentheses contain a name (handled by _extract_titled_name).
+        """
+        if not speaker or '(' not in speaker:
+            return None
+
+        import re
+        # Match parentheses at end, optionally followed by punctuation
+        match = re.search(r'\(([^)]+)\)[.,;:]*$', speaker)
+        if match:
+            paren_content = match.group(1).strip()
+            # If parentheses contain a name (title at start followed by capitalized name), don't strip
+            # This avoids stripping "(Mr. Baldwin)" but allows stripping "(Lord of the Treasury)"
+            title_pattern = r'^(Mr|Mrs|Ms|Miss|Sir|Dame|Lord|Lady|Dr|Baroness|Viscount|Earl|Colonel|Captain|Major|Commander|Lieut|Lieutenant)\.?\s+[A-Z]'
+            if re.match(title_pattern, paren_content):
+                return None
+            # Strip the parenthetical suffix (and any trailing punctuation)
+            stripped = re.sub(r'\s*\([^)]*\)[.,;:]*$', '', speaker).strip()
+            if stripped and stripped != speaker:
+                return stripped
 
         return None
 
@@ -420,6 +530,9 @@ class CorrectedMPMatcher:
 
         # Strip trailing punctuation (common in early Hansard: "Mr. HANBURY,")
         speaker_lower = speaker_lower.rstrip('.,;:')
+
+        # Normalize spaces around hyphens (e.g., "EYRES - MONSELL" -> "EYRES-MONSELL")
+        speaker_lower = re.sub(r'\s*-\s*', '-', speaker_lower)
 
         # Apply OCR corrections
         for error, correction in self.ocr_corrections.items():
@@ -650,8 +763,5 @@ class CorrectedMPMatcher:
                 'confidence': confidence,
                 'method': f'fuzzy_distance_{best_distance}'
             }
-
-        return None
-
 
         return None
