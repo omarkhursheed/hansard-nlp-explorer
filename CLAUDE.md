@@ -44,16 +44,16 @@ plt.rcParams['grid.alpha'] = 0.3
 ## Quick Start
 ```bash
 # Quick test
-python3 src/hansard/analysis/comprehensive_analysis.py --years 1990-2000 --sample 5000
+python3 scripts/analysis/comprehensive_analysis.py --years 1990-2000 --sample 5000
 
 # Full analysis
-python3 src/hansard/analysis/comprehensive_analysis.py --filtering aggressive
+python3 scripts/analysis/comprehensive_analysis.py --filtering aggressive
 ```
 
 ## Repository Structure
-- `src/hansard/analysis/` - Analysis scripts
-- `src/hansard/utils/` - Data loaders, path config
-- `data-hansard/processed_fixed/` - Source of truth (14GB)
+- `scripts/analysis/` - Analysis scripts
+- `src/hansard/` - Library code (utils, matching, parsers, analysis_utils)
+- `data-hansard/processed_complete/` - Source of truth (14GB)
 - `analysis/` - Output visualizations
 
 ## Core Rules

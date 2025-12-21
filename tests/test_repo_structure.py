@@ -27,7 +27,7 @@ def test_documentation_exists():
         path = docs_dir / doc
         assert path.exists(), f"Missing documentation: {path}"
 
-    print("✓ All documentation files exist")
+    print("[OK] All documentation files exist")
 
 def test_prompts_exist():
     """Test that prompt files exist."""
@@ -42,7 +42,7 @@ def test_prompts_exist():
         path = prompts_dir / prompt
         assert path.exists(), f"Missing prompt: {path}"
 
-    print("✓ All prompt files exist")
+    print("[OK] All prompt files exist")
 
 def test_scripts_organized():
     """Test that scripts are properly organized."""
@@ -56,7 +56,7 @@ def test_scripts_organized():
     required_classification = [
         "extract_suffrage_debates_from_reliable.py",
         "prepare_suffrage_input.py",
-        "modal_suffrage_classification_v5.py",
+        "modal_suffrage_classification_v6.py",
         "generate_validation_sample.py",
         "manual_validation.py",
         "show_validation_samples.py"
@@ -75,7 +75,7 @@ def test_scripts_organized():
     # Check analysis exists
     assert analysis_dir.exists(), f"Missing analysis directory"
 
-    print("✓ All scripts properly organized")
+    print("[OK] All scripts properly organized")
 
 def test_top_level_clean():
     """Test that top level directory is clean (no stray scripts/docs)."""
@@ -120,7 +120,7 @@ def test_top_level_clean():
     stray_sh = list(top_level.glob("*.sh"))
     assert len(stray_sh) == 0, f"Stray shell scripts at top level: {stray_sh}"
 
-    print("✓ Top level directory is clean")
+    print("[OK] Top level directory is clean")
 
 def test_data_outputs_exist():
     """Test that expected data/output directories exist."""
@@ -135,7 +135,7 @@ def test_data_outputs_exist():
         path = Path(dir_path)
         assert path.exists(), f"Missing output directory: {path}"
 
-    print("✓ All output directories exist")
+    print("[OK] All output directories exist")
 
 if __name__ == "__main__":
     print("Testing repository structure...")

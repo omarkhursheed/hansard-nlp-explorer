@@ -226,13 +226,14 @@ All organized in `scripts/`:
 
 ### Analysis Scripts
 
-Located in `src/hansard/analysis/`:
+Located in `scripts/analysis/`:
 
 - `comprehensive_analysis.py` - Full corpus analysis
 - `gendered_comprehensive_analysis.py` - Gender-specific analysis
 - `suffrage_analysis.py` - Historical suffrage analysis
 - `basic_analysis.py` - Simple statistical analysis
-- `analysis_utils.py` - Shared utilities (stop words, preprocessing)
+
+Shared utilities in `src/hansard/analysis/analysis_utils.py`.
 
 ## Requirements
 
