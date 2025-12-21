@@ -103,7 +103,7 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 - Two-tier suffrage detection (HIGH: explicit terms ~95% precision, MEDIUM: proximity matching ~26% precision)
 - Prompt evolution through 5 versions (v1: full debate -> v5: active context with source labeling)
 - Context window optimization (context=3 speeches found optimal, 41% reduction in false IRRELEVANT)
-- LLM: gpt-4o-mini via OpenRouter, deployed on Modal.com serverless platform
+- LLM: Claude Sonnet 4.5 via OpenRouter, deployed on Modal.com serverless platform
 - Cost: $4.11 total (Victorian speeches 7.5x longer than modern due to lack of time limits)
 
 **Historical Findings**:
