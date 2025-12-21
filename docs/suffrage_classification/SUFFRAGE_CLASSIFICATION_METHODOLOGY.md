@@ -444,7 +444,7 @@ The primary barrier to suffrage legislation was government obstruction, not indi
     timeout=3600,
     volumes={"/data": volume}
 )
-def classify_speech(speech_data, model="openai/gpt-4o-mini", prompt_version="v5"):
+def classify_speech(speech_data, model="anthropic/claude-sonnet-4.5", prompt_version="v5"):
     """Classify a single speech using LLM."""
     # Load prompt
     # Build context + target text
@@ -466,19 +466,10 @@ def classify_speech(speech_data, model="openai/gpt-4o-mini", prompt_version="v5"
 - Access to OpenAI, Anthropic, Google, etc.
 - Usage-based pricing
 
-**Model**: `gpt-4o-mini`
-- Fast, cost-effective for structured classification
-- Good at following JSON schema instructions
+**Model**: `claude-sonnet-4.5`
+- High accuracy for nuanced stance detection
+- Strong at following JSON schema instructions
 - Temperature: 0.1 (low for consistency)
-
-**Token Pricing** (OpenRouter + gpt-4o-mini):
-- Input: $0.15 per 1M tokens
-- Output: $0.60 per 1M tokens
-
-**Actual Cost**:
-- Pilot (100 speeches, context=3): $0.07
-- Full run (2,808 speeches, context=3): $4.11
-- Average per speech: $0.00146
 
 ### 5.3 Processing Timeline
 
