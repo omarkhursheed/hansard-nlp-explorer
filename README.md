@@ -104,7 +104,6 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 - Prompt evolution through 5 versions (v1: full debate -> v5: active context with source labeling)
 - Context window optimization (context=3 speeches found optimal, 41% reduction in false IRRELEVANT)
 - LLM: Claude Sonnet 4.5 via OpenRouter, deployed on Modal.com serverless platform
-- Cost: $4.11 total (Victorian speeches 7.5x longer than modern due to lack of time limits)
 
 **Historical Findings**:
 - WWI impact: 95% drop in suffrage speeches (1913: 383 speeches -> 1915: 20 speeches)
@@ -133,7 +132,6 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 ## Key Features
 
 ### Conversation Analysis
-- **position**: Character offset for chronological ordering
 - **sequence_number**: Speech order within debate (1, 2, 3...)
 - **speaker**: Speaker identification
 - **gender**: Gender where matched to MP database
