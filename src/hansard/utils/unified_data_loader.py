@@ -45,13 +45,7 @@ class UnifiedDataLoader:
     """
     
     def __init__(self, data_dir: Path = None, cache_dir: Path = None):
-        """
-        Initialize unified data loader.
-        
-        Args:
-            data_dir: Path to processed_fixed directory
-            cache_dir: Path for caching loaded data
-        """
+        """Initialize unified data loader."""
         if data_dir is None:
             data_dir = Paths.PROCESSED_FIXED
         
@@ -71,7 +65,7 @@ class UnifiedDataLoader:
         self._year_cache = {}
         self._metadata_cache = None
     
-    def load_debates(self, 
+    def load_debates(self,
                     source: str = 'processed_fixed',
                     year_range: Optional[Tuple[int, int]] = None,
                     sample_size: Optional[int] = None,
@@ -80,7 +74,7 @@ class UnifiedDataLoader:
                     gender_filter: Optional[str] = None) -> Dict:
         """
         Load debates with unified interface.
-        
+
         Args:
             source: Data source ('processed_fixed', 'gender_enhanced', 'derived_speeches')
             year_range: Tuple of (start_year, end_year) or None for all years
@@ -88,7 +82,7 @@ class UnifiedDataLoader:
             load_text: Whether to load full text content
             use_cache: Whether to use cached data
             gender_filter: Filter by gender ('male', 'female') for gender sources
-        
+
         Returns:
             Dict with 'metadata', 'text_data', 'statistics'
         """
@@ -412,17 +406,16 @@ class UnifiedDataLoader:
         }
 
 
-# Convenience function for quick loading
 def load_hansard_data(source='processed_fixed', year_range=None, sample_size=None, load_text=True):
     """
     Quick convenience function for loading Hansard data.
-    
+
     Args:
         source: Data source ('processed_fixed', 'gender_enhanced', 'derived_speeches')
         year_range: Tuple of (start_year, end_year) or None for all years
         sample_size: Number of debates to sample
         load_text: Whether to load full text content
-    
+
     Returns:
         Dict with loaded data
     """

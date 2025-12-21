@@ -101,13 +101,13 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 
 **Methodology**:
 - Two-tier suffrage detection (HIGH: explicit terms ~95% precision, MEDIUM: proximity matching ~26% precision)
-- Prompt evolution through 5 versions (v1: full debate → v5: active context with source labeling)
+- Prompt evolution through 5 versions (v1: full debate -> v5: active context with source labeling)
 - Context window optimization (context=3 speeches found optimal, 41% reduction in false IRRELEVANT)
 - LLM: gpt-4o-mini via OpenRouter, deployed on Modal.com serverless platform
 - Cost: $4.11 total (Victorian speeches 7.5x longer than modern due to lack of time limits)
 
 **Historical Findings**:
-- WWI impact: 95% drop in suffrage speeches (1913: 383 speeches → 1915: 20 speeches)
+- WWI impact: 95% drop in suffrage speeches (1913: 383 speeches -> 1915: 20 speeches)
 - 1917 revival: 296 speeches for 1918 Representation of the People Act debates
 - Government obstruction was primary barrier (bills passed second readings but lacked government support to progress)
 - Victorian parliamentary culture: No enforced time limits until 1900 motion for 20-minute cap
@@ -141,7 +141,7 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 ### Full Traceability
 - **file_path**: Links to source HTML
 - **debate_id**: Groups speeches by debate
-- Complete chain: speech → debate → processed → raw HTML
+- Complete chain: speech -> debate -> processed -> raw HTML
 
 ### Data Completeness
 - 100% of UK Hansard API coverage
@@ -173,28 +173,26 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 
 ```
 hansard-nlp-explorer/
-├── src/hansard/          # Library code (importable modules)
-│   ├── utils/           # Path config, data loaders
-│   ├── matching/        # MP matching algorithms
-│   ├── parsers/         # HTML parsing
-│   └── analysis/        # Analysis utilities
-│
-├── scripts/             # Executable scripts
-│   ├── crawling/        # Data collection from Parliament API
-│   ├── processing/      # HTML text extraction
-│   ├── data_creation/   # Dataset generation
-│   ├── matching/        # MP matching pipelines
-│   ├── classification/  # LLM-based classification
-│   ├── analysis/        # Analysis scripts
-│   ├── manuscript/      # Figure generation
-│   └── quality/         # Quality validation
-│
-├── docs/                # All documentation
-├── tests/               # All tests
-├── notebooks/           # Jupyter notebooks
-├── prompts/             # LLM prompts
-├── data-hansard/        # Data files (63GB)
-└── outputs/             # Generated outputs
+  src/hansard/          # Library code (importable modules)
+    utils/              # Path config, data loaders
+    matching/           # MP matching algorithms
+    parsers/            # HTML parsing
+    analysis/           # Analysis utilities
+  scripts/              # Executable scripts
+    crawling/           # Data collection from Parliament API
+    processing/         # HTML text extraction
+    data_creation/      # Dataset generation
+    matching/           # MP matching pipelines
+    classification/     # LLM-based classification
+    analysis/           # Analysis scripts
+    manuscript/         # Figure generation
+    quality/            # Quality validation
+  docs/                 # All documentation
+  tests/                # All tests
+  notebooks/            # Jupyter notebooks
+  prompts/              # LLM prompts
+  data-hansard/         # Data files (63GB)
+  outputs/              # Generated outputs
 ```
 
 ## Key Scripts

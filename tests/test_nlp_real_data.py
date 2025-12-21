@@ -29,7 +29,7 @@ def test_nlp_analysis_small_sample():
         # We need to check if the data exists first
         content_dir = Path("../data/processed_fixed/content")
         if not content_dir.exists():
-            print(f"✗ Content directory not found: {content_dir}")
+            print(f"[FAIL] Content directory not found: {content_dir}")
             return False
 
         # Check for 1920 data
@@ -41,7 +41,7 @@ def test_nlp_analysis_small_sample():
                 test_year = sorted(years)[len(years)//2]  # Pick middle year
                 print(f"  1920 not found, using {test_year} instead")
             else:
-                print("✗ No year directories found in content")
+                print("[FAIL] No year directories found in content")
                 return False
         else:
             test_year = "1920"
@@ -63,15 +63,15 @@ def test_nlp_analysis_small_sample():
 
             # Check results
             if results:
-                print(f"✓ Analysis completed successfully")
+                print(f"[OK] Analysis completed successfully")
 
                 # Verify results structure
                 expected_keys = ['metadata', 'unigrams', 'bigrams']
                 for key in expected_keys:
                     if key in results:
-                        print(f"  ✓ Found {key} in results")
+                        print(f"  [OK] Found {key} in results")
                     else:
-                        print(f"  ✗ Missing {key} in results")
+                        print(f"  [FAIL] Missing {key} in results")
 
                 # Check for real data
                 if 'unigrams' in results and results['unigrams']:
@@ -85,17 +85,17 @@ def test_nlp_analysis_small_sample():
 
                 return True
             else:
-                print("✗ Analysis returned no results")
+                print("[FAIL] Analysis returned no results")
                 return False
 
         finally:
             sys.argv = old_argv
 
     except ImportError as e:
-        print(f"✗ Failed to import analysis module: {e}")
+        print(f"[FAIL] Failed to import analysis module: {e}")
         return False
     except Exception as e:
-        print(f"✗ Analysis failed: {e}")
+        print(f"[FAIL] Analysis failed: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -111,13 +111,13 @@ def test_gender_analysis():
     # Check if gender wordlists exist
     wordlist_dir = Path("src/hansard/data/gender_wordlists")
     if not wordlist_dir.exists():
-        print(f"✗ Gender wordlist directory not found: {wordlist_dir}")
+        print(f"[FAIL] Gender wordlist directory not found: {wordlist_dir}")
         return False
 
     # List available wordlists
     wordlists = list(wordlist_dir.glob("*.txt"))
     if wordlists:
-        print(f"✓ Found {len(wordlists)} wordlist files:")
+        print(f"[OK] Found {len(wordlists)} wordlist files:")
         for wl in wordlists[:5]:
             print(f"    {wl.name}")
 
@@ -131,13 +131,13 @@ def test_gender_analysis():
         if male_file.exists():
             with open(male_file, 'r') as f:
                 male_words = set(line.strip().lower() for line in f if line.strip())
-            print(f"  ✓ Loaded {len(male_words)} male words")
+            print(f"  [OK] Loaded {len(male_words)} male words")
             print(f"    Sample: {list(male_words)[:5]}")
 
         if female_file.exists():
             with open(female_file, 'r') as f:
                 female_words = set(line.strip().lower() for line in f if line.strip())
-            print(f"  ✓ Loaded {len(female_words)} female words")
+            print(f"  [OK] Loaded {len(female_words)} female words")
             print(f"    Sample: {list(female_words)[:5]}")
 
         # Test on sample text
@@ -153,7 +153,7 @@ def test_gender_analysis():
 
         return True
     else:
-        print("✗ No wordlist files found")
+        print("[FAIL] No wordlist files found")
         return False
 
 
@@ -169,10 +169,10 @@ def test_stop_words():
         extended = get_extended_stop_words()
         parliamentary = get_parliamentary_stop_words()
 
-        print(f"✓ Extended stop words: {len(extended)} words")
+        print(f"[OK] Extended stop words: {len(extended)} words")
         print(f"  Sample: {list(extended)[:10]}")
 
-        print(f"✓ Parliamentary stop words: {len(parliamentary)} words")
+        print(f"[OK] Parliamentary stop words: {len(parliamentary)} words")
         print(f"  Sample: {list(parliamentary)[:10]}")
 
         # Test that they filter correctly
@@ -187,7 +187,7 @@ def test_stop_words():
         return True
 
     except Exception as e:
-        print(f"✗ Stop words test failed: {e}")
+        print(f"[FAIL] Stop words test failed: {e}")
         os.chdir('../../..')
         return False
 
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     print("TEST SUMMARY")
     print("="*60)
     for name, passed in results:
-        status = "✓ PASS" if passed else "✗ FAIL"
+        status = "PASS" if passed else "FAIL"
         print(f"{name}: {status}")
 
     all_passed = all(r[1] for r in results)

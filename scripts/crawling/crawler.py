@@ -1,18 +1,17 @@
 from __future__ import annotations
-"""Historic Hansard crawler **v4.2** – production‑ready, disk‑efficient, and notebook‑friendly.
+"""Historic Hansard crawler v4.2 - production-ready, disk-efficient, and notebook-friendly.
 
-Changes vs v4.1 (2025‑07‑12)
-────────────────────────────
-✓ **FIXED API navigation** - properly handles 3-level hierarchy (decade → year → month → day)
-✓ **Improved error handling** throughout the crawler
-✓ **Better regex patterns** for link extraction
-✓ **Enhanced path validation** in save method
-✓ **Optimized batch processing** with better timeout handling
-✓ **Added progress tracking** and better logging
-✓ **Fixed potential encoding issues** in file operations
-✓ **Added data validation** to prevent corrupted saves
+Changes vs v4.1 (2025-07-12):
+- FIXED API navigation - properly handles 3-level hierarchy (decade -> year -> month -> day)
+- Improved error handling throughout the crawler
+- Better regex patterns for link extraction
+- Enhanced path validation in save method
+- Optimized batch processing with better timeout handling
+- Added progress tracking and better logging
+- Fixed potential encoding issues in file operations
+- Added data validation to prevent corrupted saves
 
-The API structure is: /sittings/1860s → /sittings/1864 → /sittings/1864/feb → /sittings/1864/feb/15
+The API structure is: /sittings/1860s -> /sittings/1864 -> /sittings/1864/feb -> /sittings/1864/feb/15
 
 Usage examples are unchanged; see `python crawler.py --help`.
 """
@@ -31,7 +30,7 @@ from typing import Any, Dict, List, Optional, Set
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-# ───────────────────── Optional fast HTML parser ─────────────────────
+# Optional fast HTML parser
 try:
     from selectolax.parser import HTMLParser as _HTML
     _USE_SELECTOLAX = True
@@ -40,7 +39,7 @@ except ImportError:  # fallback
     _HTML = None  # type: ignore
     _USE_SELECTOLAX = False
 
-# ───────────────────────── Env helpers ───────────────────────────────
+# Env helpers
 try:
     import nest_asyncio  # notebook loop patch
 except ImportError:
@@ -59,10 +58,10 @@ FULL_MONTHS = [
     "july","august","september","october","november","december",
 ]
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s – %(levelname)s – %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 log = logging.getLogger("hansard")
 
-# ────────────────────── Rate‑limited semaphore ───────────────────────
+# Rate-limited semaphore
 class _Limiter:
     def __init__(self, concurrent: int, rps: float):
         self.sem = asyncio.Semaphore(concurrent)
@@ -86,7 +85,7 @@ class _Limiter:
             await asyncio.sleep(sleep_time)
         self._t_last = loop.time()
 
-# ───────────────────────── Crawler class ─────────────────────────────
+# Crawler class
 class HansardCrawler:
     def __init__(self, concurrency: int = DEFAULT_CONCURRENCY):
         self.concurrency = concurrency
@@ -109,7 +108,7 @@ class HansardCrawler:
         if self.http:
             await self.http.aclose()
 
-    # ─────────────── Fetch helper with retry & 404 swallow ───────────
+    # Fetch helper with retry & 404 swallow
     @retry(wait=wait_exponential(multiplier=1, min=2, max=8),
            stop=stop_after_attempt(3),
            retry=retry_if_exception_type((httpx.HTTPStatusError, httpx.RequestError)))
@@ -127,7 +126,7 @@ class HansardCrawler:
             log.debug(f"Failed to fetch {url}: {e}")
             return None
 
-    # ─────────────── Extract links from HTML ──────────────
+    # Extract links from HTML
     def _extract_links(self, html: str) -> List[str]:
         """Extract all href links from HTML."""
         try:
@@ -143,9 +142,9 @@ class HansardCrawler:
             log.debug(f"Error extracting links: {e}")
             return []
 
-    # ─────────────── Discovery: Decade → Years ──────────────
+    # Discovery: Decade -> Years
     async def discover_years_in_decade(self, decade: str) -> List[str]:
-        """Get all years in a decade (e.g., '1860s' → ['1860', '1861', ...])."""
+        """Get all years in a decade (e.g., '1860s' -> ['1860', '1861', ...])."""
         try:
             html = await self._get(f"{BASE_URL}/sittings/{decade}")
             if not html:
@@ -154,7 +153,7 @@ class HansardCrawler:
             links = self._extract_links(html)
             years = []
             
-            decade_start = int(decade[:-1])  # '1860s' → 1860
+            decade_start = int(decade[:-1])  # '1860s' -> 1860
             decade_end = decade_start + 9
             
             for link in links:
@@ -175,9 +174,9 @@ class HansardCrawler:
             log.error(f"Error discovering years in decade {decade}: {e}")
             return []
 
-    # ─────────────── Discovery: Year → Months ──────────────
+    # Discovery: Year -> Months
     async def discover_months_in_year(self, year: str) -> List[str]:
-        """Get all months in a year (e.g., '1864' → ['1864/feb', '1864/mar', ...])."""
+        """Get all months in a year (e.g., '1864' -> ['1864/feb', '1864/mar', ...])."""
         try:
             html = await self._get(f"{BASE_URL}/sittings/{year}")
             if not html:
@@ -201,9 +200,9 @@ class HansardCrawler:
             log.error(f"Error discovering months in year {year}: {e}")
             return []
 
-    # ─────────────── Discovery: Month → Days ──────────────
+    # Discovery: Month -> Days
     async def discover_days_in_month(self, year_month: str) -> List[str]:
-        """Get all sitting days in a month (e.g., '1864/feb' → ['1864/feb/15', '1864/feb/16', ...])."""
+        """Get all sitting days in a month (e.g., '1864/feb' -> ['1864/feb/15', '1864/feb/16', ...])."""
         try:
             html = await self._get(f"{BASE_URL}/sittings/{year_month}")
             if not html:
@@ -237,9 +236,9 @@ class HansardCrawler:
             log.error(f"Error discovering days in month {year_month}: {e}")
             return []
 
-    # ─────────────── Complete Discovery: Decade → All Days ──────────────
+    # Complete Discovery: Decade -> All Days
     async def discover_all_sitting_days(self, decade: str, year_filter: Optional[Set[int]] = None) -> List[str]:
-        """Full hierarchy traversal: decade → years → months → days."""
+        """Full hierarchy traversal: decade -> years -> months -> days."""
         try:
             log.info(f"Discovering years in {decade}...")
             years = await self.discover_years_in_decade(decade)
@@ -271,7 +270,7 @@ class HansardCrawler:
             log.error(f"Error in complete discovery for {decade}: {e}")
             return []
 
-    # ───────────── Debate link extractor ─────────────
+    # Debate link extractor
     def _links(self, html: str, date_path: str) -> List[str]:
         """Extract debate links from a sitting day page."""
         try:
@@ -347,7 +346,7 @@ class HansardCrawler:
             log.error(f"Error extracting debate links from {date_path}: {e}")
             return []
 
-    # ───────────── Debate fetch ─────────────
+    # Debate fetch
     async def _debate(self, path: str) -> Optional[Dict[str, Any]]:
         """Fetch a single debate."""
         try:
@@ -359,7 +358,7 @@ class HansardCrawler:
             log.debug(f"Error fetching debate {path}: {e}")
             return None
 
-    # ───────────── One sitting day crawler ─────────────
+    # One sitting day crawler
     async def crawl_day(self, date_path: str, house: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Crawl all debates for a single sitting day."""
         try:
@@ -408,7 +407,7 @@ class HansardCrawler:
             log.error(f"Error crawling day {date_path}: {e}")
             return None
 
-    # ───────────── Save (gzipped) ─────────────
+    # Save (gzipped)
     def _save(self, data: Dict[str, Any], outdir: Path) -> None:
         """Save crawled data to disk."""
         try:
@@ -468,7 +467,7 @@ class HansardCrawler:
         except Exception as e:
             log.error(f"Error saving data: {e}")
 
-    # ───────────── Crawl range ─────────────
+    # Crawl range
     async def crawl(self, start: int, end: int, out: Path, house: Optional[str], decade: bool) -> None:
         """Crawl a range of years."""
         try:
@@ -546,7 +545,7 @@ class HansardCrawler:
             log.error(f"Error in crawl method: {e}")
             raise
 
-# ───────────────────────── CLI helpers ───────────────────────────────
+# CLI helpers
 
 def _parse_year(s: str) -> tuple[int, Optional[int], bool]:
     """Parse year argument, supporting decade literals like '1860s'."""

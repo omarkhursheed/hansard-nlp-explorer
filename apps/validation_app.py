@@ -12,7 +12,7 @@ from datetime import datetime
 
 st.set_page_config(
     page_title="Validation Interface",
-    page_icon="✓",
+    page_icon="V",
     layout="wide"
 )
 
@@ -74,7 +74,7 @@ def format_reasons(reasons):
     return "\n\n".join(formatted)
 
 def main():
-    st.title("✓ Validation Interface")
+    st.title("Validation Interface")
 
     # Load data
     df = load_validation_data()
@@ -210,7 +210,7 @@ def main():
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        if st.button("◀ PREVIOUS", key="prev", disabled=(current_idx == 0), use_container_width=True):
+        if st.button("< PREVIOUS", key="prev", disabled=(current_idx == 0), use_container_width=True):
             st.session_state.current_index = max(0, current_idx - 1)
             st.rerun()
 
@@ -227,7 +227,7 @@ def main():
     with col3:
         can_save = stance is not None and quality is not None
 
-        if st.button("💾 SAVE & NEXT", key="save", disabled=not can_save, use_container_width=True, type="primary"):
+        if st.button("SAVE & NEXT", key="save", disabled=not can_save, use_container_width=True, type="primary"):
             # Save current validation
             df.loc[df['validation_index'] == current_idx, 'stance_correct'] = stance
             df.loc[df['validation_index'] == current_idx, 'reasons_quality'] = quality
@@ -247,7 +247,7 @@ def main():
             st.rerun()
 
     with col4:
-        if st.button("NEXT ▶", key="next", disabled=(current_idx >= total - 1), use_container_width=True):
+        if st.button("NEXT >", key="next", disabled=(current_idx >= total - 1), use_container_width=True):
             st.session_state.current_index = min(total - 1, current_idx + 1)
             st.rerun()
 

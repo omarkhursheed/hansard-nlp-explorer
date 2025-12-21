@@ -10,7 +10,7 @@ from pathlib import Path
 
 st.set_page_config(
     page_title="Female MPs Anti-Suffrage Speeches",
-    page_icon="📜",
+    page_icon="H",
     layout="wide"
 )
 
@@ -69,7 +69,7 @@ def format_reasons(reasons):
 
 
 def main():
-    st.title("📜 Female MPs: Anti-Suffrage Speeches")
+    st.title("Female MPs: Anti-Suffrage Speeches")
     st.markdown("""
     Browse speeches by female MPs that were classified as **against** or **mixed** (both for and against)
     women's suffrage. These span 1920-2004 and reveal diverse perspectives on voting rights.
