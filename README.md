@@ -93,17 +93,16 @@ all_speeches = pd.concat([
 LLM-based stance detection and argument extraction for women's suffrage debates (1900-1935).
 
 **Key Results**:
-- 2,808 speeches classified with 100% API success rate
-- 92.9% accuracy (manual validation on 48-speech stratified sample)
-- 5,138 arguments extracted across 9 taxonomy categories
-- Coverage: 1,194 FOR (42.5%), 869 AGAINST (30.9%), 109 BOTH (3.9%), 96 NEUTRAL (3.4%), 540 IRRELEVANT (19.2%)
-- Gender breakdown: 2,535 male MPs, 83 female MPs
+- 6,531 speeches classified (99.8% API success rate)
+- Coverage: 1,288 FOR (19.7%), 508 AGAINST (7.8%), 65 BOTH (1.0%), 3 NEUTRAL, 4,642 IRRELEVANT (71.1%)
+- Gender breakdown: 5,430 male, 611 female
 
 **Methodology**:
-- Two-tier suffrage detection (HIGH: explicit terms ~95% precision, MEDIUM: proximity matching ~26% precision)
-- Prompt evolution through 5 versions (v1: full debate -> v5: active context with source labeling)
-- Context window optimization (context=3 speeches found optimal, 41% reduction in false IRRELEVANT)
-- LLM: Claude Sonnet 4.5 via OpenRouter, deployed on Modal.com serverless platform
+- Two-tier suffrage detection (HIGH: explicit terms, MEDIUM: proximity matching)
+- Prompt v6 with active context and source labeling
+- Context window: 3 speeches (optimal for reducing false IRRELEVANT)
+- LLM: Claude Sonnet 4.5 via OpenRouter, deployed on Modal.com
+- Processing: 26.6M tokens in 33 minutes
 
 **Historical Findings**:
 - WWI impact: 95% drop in suffrage speeches (1913: 383 speeches -> 1915: 20 speeches)

@@ -473,33 +473,23 @@ def classify_speech(speech_data, model="anthropic/claude-sonnet-4.5", prompt_ver
 
 ### 5.3 Processing Timeline
 
-**Pilot Experiments** (100 speeches each):
-- Context optimization (6 sizes): ~6 minutes total
-- Each context size: ~1 minute
+**Pilot Run** (300 speeches):
+- Model: Claude Sonnet 4.5
+- Duration: 1.2 minutes
+- Tokens: 1.3M
+- Success: 300/300 (100%)
 
-**Full Classification** (2,808 speeches):
-- Duration: ~45 minutes (with 50 parallel calls)
-- Retry failures (8 speeches): ~2 minutes
-- Total: ~47 minutes
-
-**Success Rate**:
-- Initial run: 2,800/2,808 (99.7%) - 2 API timeouts, 6 JSON parse errors
-- After retry: 2,808/2,808 (100.0%)
+**Full Classification** (6,531 speeches):
+- Model: Claude Sonnet 4.5
+- Duration: 33 minutes (with parallel calls)
+- Tokens: 26.6M
+- Success: 6,519/6,531 (99.8%)
 
 ### 5.4 Error Handling
 
-**Initial Failures** (8 speeches):
-- 2 API timeouts (network issues)
-- 6 JSON parsing errors (malformed LLM output)
-
-**Retry Strategy**:
-- Extract failed speech IDs
-- Re-run with same configuration
-- All 8 succeeded on second attempt
-
-**Merge Process**:
-- Remove failed versions from main results
-- Append successful retries
+**Failures** (12 speeches):
+- API timeouts or JSON parsing errors
+- Acceptable loss rate for analysis
 - Verify no duplicate speech_ids
 - Final dataset: 100% success rate
 
