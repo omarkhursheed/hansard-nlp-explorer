@@ -9,10 +9,22 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 
+def find_project_root() -> Path:
+    """Find project root by looking for marker files (.git, CLAUDE.md)."""
+    current = Path(__file__).resolve().parent
+    for _ in range(10):  # Max 10 levels up
+        if (current / '.git').exists() or (current / 'CLAUDE.md').exists():
+            return current
+        if current.parent == current:  # Reached filesystem root
+            break
+        current = current.parent
+    # Fallback to old method if markers not found
+    return Path(__file__).resolve().parents[2]
+
+
 def get_data_dir() -> Path:
     """Get data-hansard directory path."""
-    project_root = Path(__file__).resolve().parents[3]
-    return project_root / 'data-hansard'
+    return find_project_root() / 'data-hansard'
 
 
 def load_speeches(

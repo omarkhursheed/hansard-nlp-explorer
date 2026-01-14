@@ -60,13 +60,13 @@ def compute_milestone_statistics(speeches_df, milestone_years, window=5):
 
         # Compute statistics
         before_total = len(before)
-        before_female = (before['gender'] == 'f').sum()
-        before_male = (before['gender'] == 'm').sum()
+        before_female = (before['gender'] == 'F').sum()
+        before_male = (before['gender'] == 'M').sum()
         before_pct = before_female / (before_female + before_male) * 100 if (before_female + before_male) > 0 else 0
 
         after_total = len(after)
-        after_female = (after['gender'] == 'f').sum()
-        after_male = (after['gender'] == 'm').sum()
+        after_female = (after['gender'] == 'F').sum()
+        after_male = (after['gender'] == 'M').sum()
         after_pct = after_female / (after_female + after_male) * 100 if (after_female + after_male) > 0 else 0
 
         results.append({
@@ -161,9 +161,9 @@ def plot_milestone_timeseries(speeches_df, milestone_years, window=10):
     annual = gendered.groupby('year').apply(
         lambda x: pd.Series({
             'total': len(x),
-            'female': (x['gender'] == 'f').sum(),
-            'male': (x['gender'] == 'm').sum(),
-            'female_pct': (x['gender'] == 'f').sum() / len(x) * 100
+            'female': (x['gender'] == 'F').sum(),
+            'male': (x['gender'] == 'M').sum(),
+            'female_pct': (x['gender'] == 'F').sum() / len(x) * 100
         })
     ).reset_index()
 
@@ -256,7 +256,7 @@ def plot_milestone_small_multiples(speeches_df, milestone_years, window=5):
         # Compute annual proportions
         annual = window_data.groupby('year').apply(
             lambda x: pd.Series({
-                'female_pct': (x['gender'] == 'f').sum() / len(x) * 100 if len(x) > 0 else 0
+                'female_pct': (x['gender'] == 'F').sum() / len(x) * 100 if len(x) > 0 else 0
             })
         ).reset_index()
 

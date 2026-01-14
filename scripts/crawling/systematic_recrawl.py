@@ -18,8 +18,18 @@ from pathlib import Path
 from datetime import datetime
 import time
 
-# Add src to path using project root
-project_root = Path(__file__).resolve().parents[4]
+# Find project root by looking for marker files
+def find_project_root():
+    current = Path(__file__).resolve().parent
+    for _ in range(10):
+        if (current / '.git').exists() or (current / 'CLAUDE.md').exists():
+            return current
+        if current.parent == current:
+            break
+        current = current.parent
+    return Path(__file__).resolve().parents[2]
+
+project_root = find_project_root()
 sys.path.insert(0, str(project_root / 'src'))
 
 from hansard.crawlers.crawler import HansardCrawler
