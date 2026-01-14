@@ -1,6 +1,6 @@
 # Hansard Dataset Statistics - Authoritative Reference
 
-**Last Updated**: 2025-11-16
+**Last Updated**: 2026-01-13
 **Dataset Coverage**: 1803-2005 (203 years)
 **Verification Status**: All counts verified via direct parquet file analysis
 
@@ -11,11 +11,11 @@
 This document provides definitive statistics for the Hansard NLP Explorer dataset. All numbers are derived from direct analysis of the `derived_complete/` dataset, which is the primary dataset for research and analysis.
 
 **Key Numbers:**
-- **5,967,440** total speeches
-- **1,197,828** total debates
-- **4,401,515** gender-matched speeches (73.8%)
-- **240** unique female MPs with speeches
-- **8,429** unique male MPs with speeches
+- **6,783,015** total speeches
+- **1,223,157** total debates
+- **4,994,809** gender-matched speeches (73.6%)
+- **5,575,783** Commons speeches (89.3% gender-matched)
+- **1,207,232** Lords speeches
 
 ---
 
@@ -82,13 +82,13 @@ Derived Complete (derived_complete/)  ← PRIMARY DATASET FOR RESEARCH
 
 | Metric | Count | Notes |
 |--------|-------|-------|
-| **Total speeches** | 5,967,440 | All speakers, both chambers |
-| **Total debates** | 1,197,828 | Both Commons and Lords |
+| **Total speeches** | 6,783,015 | All speakers, both chambers |
+| **Total debates** | 1,223,157 | Both Commons and Lords |
 | **Years covered** | 1803-2005 | 203 years, 201 with data |
-| **Gender-matched speeches** | 4,401,515 | 73.8% of all speeches |
-| **Female speeches** | 138,461 | 3.1% of gendered speeches |
-| **Male speeches** | 4,263,054 | 96.9% of gendered speeches |
-| **Unmatched speeches** | 1,565,925 | 26.2% of all speeches |
+| **Gender-matched speeches** | 4,994,809 | 73.6% of all speeches |
+| **Commons speeches** | 5,575,783 | 82.2% of all speeches |
+| **Lords speeches** | 1,207,232 | 17.8% of all speeches |
+| **Unmatched speeches** | 1,788,206 | 26.4% of all speeches |
 
 ### Unique Speakers
 
@@ -124,27 +124,21 @@ Derived Complete (derived_complete/)  ← PRIMARY DATASET FOR RESEARCH
 
 | Metric | Count | Percentage |
 |--------|-------|------------|
-| **Total speeches** | 4,840,797 | 81.1% of all speeches |
-| **Gender-matched** | 4,385,652 | **90.6% match rate** ✓ |
-| **Female speeches** | 136,611 | 2.8% of Commons |
-| **Male speeches** | 4,249,041 | 87.8% of Commons |
-| **Unmatched** | 455,145 | 9.4% of Commons |
-| **Unique MPs** | 8,657 | Via person_id |
+| **Total speeches** | 5,575,783 | 82.2% of all speeches |
+| **Gender-matched** | 4,980,711 | **89.3% match rate** ✓ |
+| **Unmatched** | 595,072 | 10.7% of Commons |
 
-**Recommendation**: Use Commons for gender analysis (excellent 90.6% match rate)
+**Recommendation**: Use Commons for gender analysis (excellent 89.3% match rate)
 
 ### House of Lords
 
 | Metric | Count | Percentage |
 |--------|-------|------------|
-| **Total speeches** | 1,126,643 | 18.9% of all speeches |
-| **Gender-matched** | 15,863 | **1.4% match rate** ⚠️ |
-| **Female speeches** | 1,850 | 0.2% of Lords |
-| **Male speeches** | 14,013 | 1.2% of Lords |
-| **Unmatched** | 1,110,780 | 98.6% of Lords |
-| **Unique speakers** | 5,065 | By name only |
+| **Total speeches** | 1,207,232 | 17.8% of all speeches |
+| **Gender-matched** | ~14,098 | **~1.2% match rate** (estimated) |
+| **Unmatched** | ~1,193,134 | ~98.8% of Lords |
 
-**Warning**: Lords gender matching is unreliable (1.4% coverage). MP database primarily covers Commons.
+**Warning**: Lords gender matching is unreliable (~1.2% coverage). MP database primarily covers Commons.
 
 ---
 
@@ -347,17 +341,13 @@ gender_analysis = speeches[
 
 | Metric | Count | Percentage | Chamber |
 |--------|-------|------------|---------|
-| **Total speeches** | 5,967,440 | 100.0% | Both |
-| **Total debates** | 1,197,828 | 100.0% | Both |
-| **Commons speeches** | 4,840,797 | 81.1% | Commons |
-| **Lords speeches** | 1,126,643 | 18.9% | Lords |
-| **Gender-matched** | 4,401,515 | 73.8% | Both |
-| **Female speeches** | 138,461 | 2.3% | Both |
-| **Male speeches** | 4,263,054 | 71.4% | Both |
-| **Unmatched** | 1,565,925 | 26.2% | Both |
-| **Unique MPs** | 8,668 | - | Both |
-| **Female MPs** | 240 | 2.8% of MPs | Both |
-| **Male MPs** | 8,429 | 97.2% of MPs | Both |
+| **Total speeches** | 6,783,015 | 100.0% | Both |
+| **Total debates** | 1,223,157 | 100.0% | Both |
+| **Commons speeches** | 5,575,783 | 82.2% | Commons |
+| **Lords speeches** | 1,207,232 | 17.8% | Lords |
+| **Gender-matched** | 4,994,809 | 73.6% | Both |
+| **Commons gender-matched** | 4,980,711 | 89.3% | Commons |
+| **Unmatched** | 1,788,206 | 26.4% | Both |
 
 ---
 
@@ -373,6 +363,6 @@ This script performs direct parquet file analysis and outputs all counts.
 
 ---
 
-**Last Updated**: 2025-11-16
+**Last Updated**: 2026-01-13
 **Data Source**: `data-hansard/derived_complete/`
 **Verification Method**: Direct parquet file analysis across all 201 year files

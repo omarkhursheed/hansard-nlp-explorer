@@ -152,19 +152,14 @@ LLM-based stance detection and argument extraction for women's suffrage debates 
 
 | Metric | Count |
 |--------|-------|
-| Total debates | 1,197,828 |
-| Total speeches | 5,967,440 |
-| Commons speeches | 4,840,797 |
-| Lords speeches | 1,126,643 |
-| Gender-matched speeches (Commons) | 4,385,652 (90.6%) |
-| Gender-matched speeches (Lords) | 15,863 (1.4%) |
-| Female speeches (Commons) | 136,611 |
-| Male speeches (Commons) | 4,249,041 |
-| Unique female MPs | 240 |
-| Unique male MPs | 8,429 |
+| Total debates | 1,223,157 |
+| Total speeches | 6,783,015 |
+| Commons speeches | 5,575,783 |
+| Lords speeches | 1,207,232 |
+| Gender-matched speeches (Commons) | 4,980,711 (89.3%) |
 | Years covered | 1803-2005 (203 years) |
 
-**Note**: Gender analysis is reliable for Commons only (90.6% match rate). Lords has insufficient coverage (1.4% match rate).
+**Note**: Gender analysis is reliable for Commons only (89.3% match rate). Lords has insufficient coverage (~1% match rate).
 
 ## Repository Structure
 
