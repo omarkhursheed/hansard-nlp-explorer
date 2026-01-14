@@ -22,9 +22,27 @@ def find_project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+# Dataset version - should match path_config.py
+DATASET_VERSION = "v2"
+
+
 def get_data_dir() -> Path:
     """Get data-hansard directory path."""
     return find_project_root() / 'data-hansard'
+
+
+def get_derived_dir() -> Path:
+    """Get versioned derived data directory, with fallback to v1."""
+    data_dir = get_data_dir()
+    versioned = data_dir / f'derived_{DATASET_VERSION}'
+    if versioned.exists():
+        return versioned
+    # Fallback to original (v1) if versioned doesn't exist yet
+    legacy = data_dir / 'derived_complete'
+    if legacy.exists():
+        return legacy
+    # Return versioned path (will be created by pipeline)
+    return versioned
 
 
 def load_speeches(
@@ -34,7 +52,7 @@ def load_speeches(
     sample: Optional[int] = None
 ) -> pd.DataFrame:
     """
-    Load speeches from derived_complete/speeches_complete.
+    Load speeches from versioned derived dataset (derived_v2/speeches_complete).
 
     Args:
         year_range: (start_year, end_year) tuple, e.g., (1990, 2005)
@@ -46,7 +64,7 @@ def load_speeches(
         DataFrame with columns: speech_id, speaker, gender, text, word_count,
         year, chamber, party, constituency, etc.
     """
-    data_dir = get_data_dir() / 'derived_complete' / 'speeches_complete'
+    data_dir = get_derived_dir() / 'speeches_complete'
 
     # Determine years to load
     if year_range:
@@ -91,7 +109,7 @@ def load_debates(
     chamber: Optional[str] = None
 ) -> pd.DataFrame:
     """
-    Load debate metadata from derived_complete/debates_complete.
+    Load debate metadata from versioned derived dataset (derived_v2/debates_complete).
 
     Args:
         year_range: (start_year, end_year) tuple
@@ -100,7 +118,7 @@ def load_debates(
     Returns:
         DataFrame with debate-level information
     """
-    data_dir = get_data_dir() / 'derived_complete' / 'debates_complete'
+    data_dir = get_derived_dir() / 'debates_complete'
 
     # Determine years to load
     if year_range:

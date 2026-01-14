@@ -672,8 +672,8 @@ def main():
                        help='Input processed_complete directory')
     parser.add_argument('--gender-dir', required=True,
                        help='Input gender_complete directory')
-    parser.add_argument('--output-dir', default='data-hansard/derived_complete',
-                       help='Output directory')
+    parser.add_argument('--output-dir', default=str(Paths.DERIVED_DATA),
+                       help='Output directory (default: versioned derived_v2)')
     parser.add_argument('--start-year', type=int, default=1803,
                        help='Start year')
     parser.add_argument('--end-year', type=int, default=2005,

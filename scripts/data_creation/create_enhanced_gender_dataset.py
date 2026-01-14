@@ -203,16 +203,20 @@ def process_year_parallel(args):
 class EnhancedGenderDatasetCreator:
     def __init__(self, output_dir=None, input_dir=None, checkpoint_file="checkpoint.pkl", workers=12):
         if output_dir is None:
-            # Default to data folder
-            output_dir = Path(__file__).resolve().parents[2] / 'data' / 'gender_analysis_enhanced'
+            # Default to versioned output directory
+            output_dir = Paths.GENDER_ENHANCED_DATA
         self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(exist_ok=True)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.checkpoint_file = self.output_dir / checkpoint_file
         self.workers = workers
 
         # Path to extracted content (configurable)
         if input_dir is None:
-            input_dir = Path(__file__).resolve().parents[2] / 'data' / 'processed_fixed'
+            # Use versioned input, fallback to v1 if it doesn't exist
+            if Paths.PROCESSED_DATA.exists():
+                input_dir = Paths.PROCESSED_DATA
+            else:
+                input_dir = Paths.PROCESSED_V1
         else:
             input_dir = Path(input_dir)
 
@@ -694,9 +698,9 @@ class EnhancedGenderDatasetCreator:
 def main():
     parser = argparse.ArgumentParser(description='Create enhanced gender analysis dataset')
     parser.add_argument('--output-dir', default=None,
-                       help='Output directory for dataset (default: data/gender_analysis_enhanced)')
+                       help='Output directory for dataset (default: versioned gender_analysis_v2)')
     parser.add_argument('--input-dir', default=None,
-                       help='Input processed data directory (default: data/processed_fixed)')
+                       help='Input processed data directory (default: versioned processed_v2)')
     parser.add_argument('--year-range', nargs=2, type=int, metavar=('START', 'END'),
                        help='Process only years in range (e.g., 1900 2000)')
     parser.add_argument('--sample', action='store_true',
