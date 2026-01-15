@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansard Debate Viewer</title>
+    <style>
+        :root {
+            --male-color: #3B82C4;
+            --female-color: #EC4899;
+            --male-bg: #1E3A5F;
+            --female-bg: #4A1942;
+            --background: #0f0f13;
+            --surface: #18181f;
+            --border: rgba(255,255,255,0.08);
+            --text: #f5f5f7;
+            --text-muted: #71717a;
+            --accent: #8b5cf6;
+            --sidebar-width: 380px;
+        }
+
+        .light {
+            --male-bg: #EBF5FF;
+            --female-bg: #FDF2F8;
+            --background: #FFFFFF;
+            --surface: #F9FAFB;
+            --border: #E5E7EB;
+            --text: #1F2937;
+            --text-muted: #6B7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .filters {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-row select,
+        .filter-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .filter-row input[type="checkbox"] {
+            flex: 0;
+            width: 18px;
+            height: 18px;
+        }
+
+        .filter-row label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .debate-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .debate-item {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .debate-item:hover {
+            background: var(--background);
+            border-color: var(--border);
+        }
+
+        .debate-item.selected {
+            background: var(--background);
+            border-color: var(--male-color);
+        }
+
+        .debate-title {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .debate-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .debate-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .gender-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .gender-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .gender-dot.male {
+            background: var(--male-color);
+        }
+
+        .gender-dot.female {
+            background: var(--female-color);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .main-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-shrink: 0;
+        }
+
+        .debate-info h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .debate-info .meta {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .jump-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .jump-control input {
+            width: 60px;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .jump-control button {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .jump-control button:hover {
+            background: var(--background);
+        }
+
+        .highlight-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .highlight-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .highlight-btn.active-male {
+            background: var(--male-color);
+            color: white;
+            border-color: var(--male-color);
+        }
+
+        .highlight-btn.active-female {
+            background: var(--female-color);
+            color: white;
+            border-color: var(--female-color);
+        }
+
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Debate view */
+        .debate-view {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .speeches-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .speech {
+            display: flex;
+            margin-bottom: 16px;
+            max-width: 70%;
+        }
+
+        .speech.male {
+            margin-right: auto;
+        }
+
+        .speech.female {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .speech.unknown {
+            margin-right: auto;
+        }
+
+        .speech.dimmed {
+            opacity: 0.25;
+        }
+
+        .speech-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .speech.male .speech-bubble {
+            background: var(--male-bg);
+            border-bottom-left-radius: 4px;
+        }
+
+        .speech.female .speech-bubble {
+            background: var(--female-bg);
+            border-bottom-right-radius: 4px;
+        }
+
+        .speech.unknown .speech-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .speech-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .speaker-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .speech.male .speaker-name {
+            color: var(--male-color);
+        }
+
+        .speech.female .speaker-name {
+            color: var(--female-color);
+        }
+
+        .speech.unknown .speaker-name {
+            color: var(--text-muted);
+        }
+
+        .speaker-party {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--background);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .speech-sequence {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .speech-text {
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        .speech-stats {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Timeline */
+        .timeline-container {
+            width: 60px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .timeline-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline {
+            flex: 1;
+            width: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to bottom, var(--male-color), var(--female-color));
+            border-radius: 3px;
+            transition: height 0.1s;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            left: -4px;
+            transform: translateY(-50%);
+            transition: top 0.1s;
+        }
+
+        /* Summary panel */
+        .summary-panel {
+            width: 280px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            padding: 16px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .summary-section {
+            margin-bottom: 24px;
+        }
+
+        .summary-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .gender-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .gender-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gender-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .gender-icon.male {
+            background: var(--male-color);
+        }
+
+        .gender-icon.female {
+            background: var(--female-color);
+        }
+
+        .gender-icon.unknown {
+            background: var(--text-muted);
+        }
+
+        .gender-label {
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .gender-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .gender-bar {
+            height: 24px;
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .gender-bar-segment {
+            transition: width 0.3s;
+        }
+
+        .gender-bar-segment.male {
+            background: var(--male-color);
+        }
+
+        .gender-bar-segment.female {
+            background: var(--female-color);
+        }
+
+        .gender-bar-segment.unknown {
+            background: var(--text-muted);
+        }
+
+        .speaker-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .speaker-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .speaker-stat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speaker-stat-name {
+            font-size: 13px;
+            font-weight: 500;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .speaker-stat-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .speaker-stat-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .speaker-stat-bar-fill.male {
+            background: var(--male-color);
+        }
+
+        .speaker-stat-bar-fill.female {
+            background: var(--female-color);
+        }
+
+        .speaker-stat-bar-fill.unknown {
+            background: var(--text-muted);
+        }
+
+        .speaker-stat-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Empty state */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* Mobile */
+        .mobile-menu-btn {
+            display: none;
+            padding: 8px;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .summary-panel {
+                display: none;
+            }
+
+            .speech {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 100%;
+            }
+
+            .speech {
+                max-width: 95%;
+            }
+
+            .timeline-container {
+                width: 40px;
+                padding: 8px 4px;
+            }
+
+            .header-controls {
+                flex-wrap: wrap;
+            }
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        .debate-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>Hansard Debates</h1>
+                <div class="filters">
+                    <div class="filter-row">
+                        <select id="yearFilter">
+                            <option value="">All Years</option>
+                        </select>
+                        <select id="chamberFilter">
+                            <option value="">All Chambers</option>
+                            <option value="Commons">Commons</option>
+                            <option value="Lords">Lords</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <select id="speechCountFilter">
+                            <option value="">Any Speech Count</option>
+                            <option value="1-10">1-10 speeches</option>
+                            <option value="11-25">11-25 speeches</option>
+                            <option value="26-50">26-50 speeches</option>
+                            <option value="51+">51+ speeches</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <label>
+                            <input type="checkbox" id="femaleSpeakersFilter">
+                            Has female speakers
+                        </label>
+                    </div>
+                    <div class="filter-row">
+                        <input type="text" id="searchFilter" placeholder="Search debates...">
+                    </div>
+                </div>
+            </div>
+            <div class="debate-count" id="debateCount">Loading...</div>
+            <div class="debate-list" id="debateList"></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <button class="mobile-menu-btn" id="menuBtn">&#9776;</button>
+                    <div class="debate-info" id="debateInfo">
+                        <h2>Select a debate</h2>
+                        <div class="meta">Choose a debate from the sidebar to view</div>
+                    </div>
+                </div>
+                <div class="header-controls" id="headerControls" style="display: none;">
+                    <div class="jump-control">
+                        <input type="number" id="jumpInput" min="1" placeholder="#">
+                        <button id="jumpBtn">Jump</button>
+                    </div>
+                    <div class="highlight-toggle">
+                        <button class="highlight-btn" id="highlightMale">Male</button>
+                        <button class="highlight-btn" id="highlightFemale">Female</button>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">Light Mode</button>
+                </div>
+            </header>
+
+            <div class="debate-view" id="debateView">
+                <div class="empty-state" id="emptyState">
+                    Select a debate from the sidebar to view the conversation
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            debates: [],
+            filteredDebates: [],
+            selectedDebate: null,
+            highlightGender: null,
+            isLightMode: false,
+            scrollPosition: 0
+        };
+
+        // DOM Elements
+        const elements = {
+            debateList: document.getElementById('debateList'),
+            debateCount: document.getElementById('debateCount'),
+            debateInfo: document.getElementById('debateInfo'),
+            debateView: document.getElementById('debateView'),
+            headerControls: document.getElementById('headerControls'),
+            emptyState: document.getElementById('emptyState'),
+            yearFilter: document.getElementById('yearFilter'),
+            chamberFilter: document.getElementById('chamberFilter'),
+            speechCountFilter: document.getElementById('speechCountFilter'),
+            femaleSpeakersFilter: document.getElementById('femaleSpeakersFilter'),
+            searchFilter: document.getElementById('searchFilter'),
+            jumpInput: document.getElementById('jumpInput'),
+            jumpBtn: document.getElementById('jumpBtn'),
+            highlightMale: document.getElementById('highlightMale'),
+            highlightFemale: document.getElementById('highlightFemale'),
+            themeToggle: document.getElementById('themeToggle'),
+            menuBtn: document.getElementById('menuBtn'),
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebarOverlay')
+        };
+
+        // Utility Functions
+        function estimateReadingTime(wordCount) {
+            const wordsPerMinute = 150;
+            const minutes = Math.ceil(wordCount / wordsPerMinute);
+            if (minutes < 1) return '<1 min';
+            return minutes + ' min';
+        }
+
+        function countWords(text) {
+            return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        }
+
+        function cleanTitle(title) {
+            return title.replace(/\s*\(Hansard,.*\)/, '');
+        }
+
+        // API configuration
+        const API_URL = 'http://localhost:5001';
+        let useAPI = false;
+
+        // Data Loading - try API first, fallback to sample
+        async function loadDebates() {
+            try {
+                elements.debateList.innerHTML = '<div style="padding: 16px; color: var(--text-muted);">Loading debates...</div>';
+
+                // Try API first for full data
+                try {
+                    const apiResponse = await fetch(`${API_URL}/api/search?limit=500`);
+                    if (apiResponse.ok) {
+                        const apiData = await apiResponse.json();
+                        if (apiData.length > 0) {
+                            useAPI = true;
+                            state.debates = apiData;
+                            state.filteredDebates = [...state.debates];
+                            populateYearFilter();
+                            renderDebateList();
+                            updateDebateCount();
+                            console.log('Using API mode: ' + apiData.length + ' debates');
+                            return;
+                        }
+                    }
+                } catch (apiError) {
+                    console.log('API not available, falling back to sample data');
+                }
+
+                // Fallback to sample data
+                const response = await fetch('data/debates_sample.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                state.debates = await response.json();
+                state.filteredDebates = [...state.debates];
+                populateYearFilter();
+                renderDebateList();
+                updateDebateCount();
+                console.log('Using sample mode: ' + state.debates.length + ' debates');
+            } catch (error) {
+                console.error('Failed to load debates:', error);
+                elements.debateList.innerHTML = `<div style="padding: 16px; color: var(--text-muted);">
+                    Failed to load debates<br>
+                    <small style="opacity: 0.7;">${error.message}</small><br>
+                    <small style="opacity: 0.5;">Make sure you're serving via HTTP (python3 -m http.server)</small>
+                </div>`;
+            }
+        }
+
+        function populateYearFilter() {
+            const years = [...new Set(state.debates.map(d => d.year))].sort((a, b) => b - a);
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                elements.yearFilter.appendChild(option);
+            });
+        }
+
+        // Filtering
+        function filterDebates() {
+            const yearValue = elements.yearFilter.value;
+            const chamberValue = elements.chamberFilter.value;
+            const speechCountValue = elements.speechCountFilter.value;
+            const femaleSpeakersOnly = elements.femaleSpeakersFilter.checked;
+            const searchTerm = elements.searchFilter.value.toLowerCase();
+
+            state.filteredDebates = state.debates.filter(debate => {
+                if (yearValue && debate.year != yearValue) return false;
+                if (chamberValue && debate.chamber !== chamberValue) return false;
+                // Check has_female (API) or female_mps (sample data)
+                if (femaleSpeakersOnly && !debate.has_female && debate.female_mps === 0) return false;
+                if (searchTerm && !debate.title.toLowerCase().includes(searchTerm)) return false;
+
+                if (speechCountValue) {
+                    const count = debate.speech_count;
+                    if (speechCountValue === '1-10' && (count < 1 || count > 10)) return false;
+                    if (speechCountValue === '11-25' && (count < 11 || count > 25)) return false;
+                    if (speechCountValue === '26-50' && (count < 26 || count > 50)) return false;
+                    if (speechCountValue === '51+' && count < 51) return false;
+                }
+
+                return true;
+            });
+
+            renderDebateList();
+            updateDebateCount();
+        }
+
+        function updateDebateCount() {
+            const total = state.debates.length;
+            const filtered = state.filteredDebates.length;
+            if (filtered === total) {
+                elements.debateCount.textContent = `${total} debates`;
+            } else {
+                elements.debateCount.textContent = `${filtered} of ${total} debates`;
+            }
+        }
+
+        // Rendering
+        function renderDebateList() {
+            elements.debateList.innerHTML = '';
+
+            state.filteredDebates.forEach(debate => {
+                const item = document.createElement('div');
+                item.className = 'debate-item' + (state.selectedDebate?.debate_id === debate.debate_id ? ' selected' : '');
+                item.innerHTML = `
+                    <div class="debate-title">${cleanTitle(debate.title)}</div>
+                    <div class="debate-meta">
+                        <span>${debate.date}</span>
+                        <span>${debate.chamber}</span>
+                        <span>${debate.speech_count} speeches</span>
+                        ${(debate.has_female !== undefined) ? `
+                            <span class="gender-dots">
+                                ${!debate.has_female ? '<span class="gender-dot male" title="Male speakers"></span>' : ''}
+                                ${debate.has_female ? '<span class="gender-dot female" title="Has female speakers"></span>' : ''}
+                            </span>
+                        ` : (debate.female_mps > 0 || debate.male_mps > 0) ? `
+                            <span class="gender-dots">
+                                ${debate.male_mps > 0 ? '<span class="gender-dot male" title="' + debate.male_mps + ' male MPs"></span>' : ''}
+                                ${debate.female_mps > 0 ? '<span class="gender-dot female" title="' + debate.female_mps + ' female MPs"></span>' : ''}
+                            </span>
+                        ` : ''}
+                    </div>
+                `;
+                item.addEventListener('click', () => selectDebate(debate));
+                elements.debateList.appendChild(item);
+            });
+        }
+
+        async function selectDebate(debate) {
+            state.selectedDebate = debate;
+            state.highlightGender = null;
+            elements.highlightMale.classList.remove('active-male');
+            elements.highlightFemale.classList.remove('active-female');
+
+            renderDebateList();
+
+            // If debate doesn't have speeches loaded, fetch them from API
+            if (!debate.speeches || debate.speeches.length === 0) {
+                elements.debateInfo.innerHTML = `
+                    <h2>${cleanTitle(debate.title)}</h2>
+                    <div class="meta">Loading speeches...</div>
+                `;
+                try {
+                    const response = await fetch(`${API_URL}/api/debate?id=${encodeURIComponent(debate.debate_id)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.speeches) {
+                            // Add sequence_number extracted from speech_id (format: {debate_id}_speech_{n})
+                            debate.speeches = data.speeches.map((s, idx) => ({
+                                ...s,
+                                sequence_number: s.sequence_number ||
+                                    (s.speech_id ? parseInt(s.speech_id.split('_speech_')[1]) : idx + 1)
+                            }));
+                            debate.speech_count = data.speeches.length;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch speeches:', e);
+                }
+            }
+
+            renderDebate(debate);
+            closeMobileMenu();
+        }
+
+        function renderDebate(debate) {
+            // Update header
+            elements.debateInfo.innerHTML = `
+                <h2>${cleanTitle(debate.title)}</h2>
+                <div class="meta">${debate.date} | ${debate.chamber} | ${debate.speech_count || 0} speeches</div>
+            `;
+            elements.headerControls.style.display = 'flex';
+            elements.jumpInput.max = debate.speech_count || 0;
+            elements.jumpInput.value = '';
+
+            // Handle missing speeches
+            if (!debate.speeches || debate.speeches.length === 0) {
+                elements.speechList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <p>No speeches available for this debate.</p>
+                        <p style="font-size: 12px; margin-top: 8px;">The API may not have speech data for this debate.</p>
+                    </div>
+                `;
+                elements.speakerList.innerHTML = '';
+                return;
+            }
+
+            // Sort speeches by sequence_number
+            const sortedSpeeches = [...debate.speeches].sort((a, b) => a.sequence_number - b.sequence_number);
+
+            // Calculate speaker stats
+            const speakerStats = {};
+            sortedSpeeches.forEach(speech => {
+                const name = speech.canonical_name || speech.speaker;
+                if (!speakerStats[name]) {
+                    speakerStats[name] = {
+                        name: name,
+                        gender: speech.gender,
+                        party: speech.party,
+                        speechCount: 0,
+                        wordCount: 0
+                    };
+                }
+                speakerStats[name].speechCount++;
+                speakerStats[name].wordCount += countWords(speech.text);
+            });
+
+            const totalWords = Object.values(speakerStats).reduce((sum, s) => sum + s.wordCount, 0);
+
+            // Gender breakdown
+            let maleSpeeches = 0, femaleSpeeches = 0, unknownSpeeches = 0;
+            let maleWords = 0, femaleWords = 0, unknownWords = 0;
+            sortedSpeeches.forEach(speech => {
+                const words = countWords(speech.text);
+                if (speech.gender === 'M') {
+                    maleSpeeches++;
+                    maleWords += words;
+                } else if (speech.gender === 'F') {
+                    femaleSpeeches++;
+                    femaleWords += words;
+                } else {
+                    unknownSpeeches++;
+                    unknownWords += words;
+                }
+            });
+
+            // Build main view
+            elements.debateView.innerHTML = `
+                <div class="speeches-container" id="speechesContainer">
+                    ${sortedSpeeches.map(speech => {
+                        const genderClass = speech.gender === 'M' ? 'male' : (speech.gender === 'F' ? 'female' : 'unknown');
+                        const dimmed = state.highlightGender && speech.gender !== state.highlightGender ? 'dimmed' : '';
+                        const wordCount = countWords(speech.text);
+                        return `
+                            <div class="speech ${genderClass} ${dimmed}" data-sequence="${speech.sequence_number}">
+                                <div class="speech-bubble">
+                                    <div class="speech-header">
+                                        <span class="speaker-name">${speech.speaker}</span>
+                                        ${speech.party ? `<span class="speaker-party">${speech.party}</span>` : ''}
+                                        <span class="speech-sequence">#${speech.sequence_number}</span>
+                                    </div>
+                                    <div class="speech-text">${speech.text}</div>
+                                    <div class="speech-stats">
+                                        <span>${wordCount} words</span>
+                                        <span>${estimateReadingTime(wordCount)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-label">Progress</div>
+                    <div class="timeline" id="timeline">
+                        <div class="timeline-progress" id="timelineProgress"></div>
+                        <div class="timeline-marker" id="timelineMarker"></div>
+                    </div>
+                </div>
+                <aside class="summary-panel">
+                    <div class="summary-section">
+                        <h3>Gender Breakdown</h3>
+                        <div class="gender-breakdown">
+                            <div class="gender-row">
+                                <span class="gender-icon male"></span>
+                                <span class="gender-label">Male</span>
+                                <span class="gender-value">${maleSpeeches} speeches</span>
+                            </div>
+                            <div class="gender-row">
+                                <span class="gender-icon female"></span>
+                                <span class="gender-label">Female</span>
+                                <span class="gender-value">${femaleSpeeches} speeches</span>
+                            </div>
+                            ${unknownSpeeches > 0 ? `
+                                <div class="gender-row">
+                                    <span class="gender-icon unknown"></span>
+                                    <span class="gender-label">Unknown</span>
+                                    <span class="gender-value">${unknownSpeeches} speeches</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="gender-bar">
+                            <div class="gender-bar-segment male" style="width: ${totalWords ? (maleWords / totalWords * 100) : 0}%"></div>
+                            <div class="gender-bar-segment female" style="width: ${totalWords ? (femaleWords / totalWords * 100) : 0}%"></div>
+                            <div class="gender-bar-segment unknown" style="width: ${totalWords ? (unknownWords / totalWords * 100) : 0}%"></div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                            Word count by gender
+                        </div>
+                    </div>
+                    <div class="summary-section">
+                        <h3>Speakers (${Object.keys(speakerStats).length})</h3>
+                        <div class="speaker-stats">
+                            ${Object.values(speakerStats)
+                                .sort((a, b) => b.wordCount - a.wordCount)
+                                .slice(0, 10)
+                                .map(speaker => {
+                                    const genderClass = speaker.gender === 'M' ? 'male' : (speaker.gender === 'F' ? 'female' : 'unknown');
+                                    const pct = totalWords ? (speaker.wordCount / totalWords * 100) : 0;
+                                    return `
+                                        <div class="speaker-stat">
+                                            <div class="speaker-stat-header">
+                                                <span class="gender-icon ${genderClass}"></span>
+                                                <span class="speaker-stat-name" title="${speaker.name}">${speaker.name}</span>
+                                            </div>
+                                            <div class="speaker-stat-bar">
+                                                <div class="speaker-stat-bar-fill ${genderClass}" style="width: ${pct}%"></div>
+                                            </div>
+                                            <div class="speaker-stat-values">
+                                                <span>${speaker.speechCount} speeches</span>
+                                                <span>${speaker.wordCount} words (${estimateReadingTime(speaker.wordCount)})</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                        </div>
+                    </div>
+                </aside>
+            `;
+
+            // Setup timeline
+            setupTimeline();
+        }
+
+        function setupTimeline() {
+            const container = document.getElementById('speechesContainer');
+            const timeline = document.getElementById('timeline');
+            const progress = document.getElementById('timelineProgress');
+            const marker = document.getElementById('timelineMarker');
+
+            if (!container || !timeline) return;
+
+            function updateTimeline() {
+                const scrollTop = container.scrollTop;
+                const scrollHeight = container.scrollHeight - container.clientHeight;
+                const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+                progress.style.height = pct + '%';
+                marker.style.top = pct + '%';
+            }
+
+            container.addEventListener('scroll', updateTimeline);
+
+            timeline.addEventListener('click', (e) => {
+                const rect = timeline.getBoundingClientRect();
+                const clickY = e.clientY - rect.top;
+                const pct = clickY / rect.height;
+                const scrollHeight = container.scrollHeight - container.clientHeight;
+                container.scrollTop = pct * scrollHeight;
+            });
+
+            updateTimeline();
+        }
+
+        function jumpToSpeech(sequenceNumber) {
+            const speech = document.querySelector(`[data-sequence="${sequenceNumber}"]`);
+            if (speech) {
+                speech.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                speech.style.outline = '3px solid var(--accent)';
+                setTimeout(() => {
+                    speech.style.outline = '';
+                }, 2000);
+            }
+        }
+
+        function toggleHighlight(gender) {
+            if (state.highlightGender === gender) {
+                state.highlightGender = null;
+                elements.highlightMale.classList.remove('active-male');
+                elements.highlightFemale.classList.remove('active-female');
+            } else {
+                state.highlightGender = gender;
+                elements.highlightMale.classList.toggle('active-male', gender === 'M');
+                elements.highlightFemale.classList.toggle('active-female', gender === 'F');
+            }
+
+            // Update dimming
+            document.querySelectorAll('.speech').forEach(el => {
+                const speechGender = el.classList.contains('male') ? 'M' : (el.classList.contains('female') ? 'F' : '');
+                if (state.highlightGender && speechGender !== state.highlightGender) {
+                    el.classList.add('dimmed');
+                } else {
+                    el.classList.remove('dimmed');
+                }
+            });
+        }
+
+        function toggleTheme() {
+            state.isLightMode = !state.isLightMode;
+            document.body.classList.toggle('light', state.isLightMode);
+            elements.themeToggle.textContent = state.isLightMode ? 'Dark Mode' : 'Light Mode';
+        }
+
+        function closeMobileMenu() {
+            elements.sidebar.classList.remove('open');
+            elements.sidebarOverlay.classList.remove('open');
+        }
+
+        function openMobileMenu() {
+            elements.sidebar.classList.add('open');
+            elements.sidebarOverlay.classList.add('open');
+        }
+
+        // Event Listeners
+        elements.yearFilter.addEventListener('change', filterDebates);
+        elements.chamberFilter.addEventListener('change', filterDebates);
+        elements.speechCountFilter.addEventListener('change', filterDebates);
+        elements.femaleSpeakersFilter.addEventListener('change', filterDebates);
+        elements.searchFilter.addEventListener('input', filterDebates);
+
+        elements.jumpBtn.addEventListener('click', () => {
+            const seq = parseInt(elements.jumpInput.value);
+            if (seq) jumpToSpeech(seq);
+        });
+
+        elements.jumpInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const seq = parseInt(elements.jumpInput.value);
+                if (seq) jumpToSpeech(seq);
+            }
+        });
+
+        elements.highlightMale.addEventListener('click', () => toggleHighlight('M'));
+        elements.highlightFemale.addEventListener('click', () => toggleHighlight('F'));
+        elements.themeToggle.addEventListener('click', toggleTheme);
+
+        elements.menuBtn.addEventListener('click', openMobileMenu);
+        elements.sidebarOverlay.addEventListener('click', closeMobileMenu);
+
+        // Check for debate ID in URL parameters (called after loadDebates completes)
+        async function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const debateId = params.get('debate');
+            if (!debateId) return;
+
+            // Try to find in loaded debates first
+            let debate = state.debates.find(d => d.debate_id === debateId);
+
+            // If not found, try to fetch from API
+            if (!debate) {
+                try {
+                    const response = await fetch(`${API_URL}/api/debate?id=${encodeURIComponent(debateId)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        // API returns { debate: {...}, speeches: [...] }
+                        if (data.debate) {
+                            debate = data.debate;
+                            // Add sequence_number extracted from speech_id
+                            debate.speeches = (data.speeches || []).map((s, idx) => ({
+                                ...s,
+                                sequence_number: s.sequence_number ||
+                                    (s.speech_id ? parseInt(s.speech_id.split('_speech_')[1]) : idx + 1)
+                            }));
+                            debate.speech_count = debate.speeches.length;
+                            // Add to debates list and filtered list
+                            state.debates.unshift(debate);
+                            state.filteredDebates.unshift(debate);
+                            renderDebateList();
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch debate from API:', e);
+                }
+            }
+
+            if (debate) {
+                selectDebate(debate);
+                // Scroll the debate into view in the sidebar
+                setTimeout(() => {
+                    const debateItem = elements.debateList.querySelector('.debate-item.selected');
+                    if (debateItem) debateItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                // Show message that debate wasn't found
+                elements.debateInfo.innerHTML = `
+                    <h2>Debate Not Found</h2>
+                    <div class="meta">The requested debate (${debateId}) could not be loaded. Try selecting a debate from the sidebar.</div>
+                `;
+            }
+        }
+
+        // Initialize
+        async function init() {
+            await loadDebates();
+            await checkUrlParams();
+        }
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Workbench - Hansard Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a26;
+      --bg-card: #16161f;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --text-primary: #f0f0f5;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      --accent-blue: #3B82C4;
+      --accent-pink: #EC4899;
+      --accent-gold: #F59E0B;
+      --accent-emerald: #10B981;
+      --accent-purple: #8B5CF6;
+      --glow-blue: rgba(59, 130, 196, 0.3);
+      --glow-pink: rgba(236, 72, 153, 0.3);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #fafafa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f5f5f5;
+      --bg-card: #ffffff;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --border-medium: rgba(0, 0, 0, 0.1);
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a5a;
+      --text-muted: #8a8a9a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-emerald));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-blue);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Main layout */
+    .main-container {
+      display: grid;
+      grid-template-columns: 360px 1fr 320px;
+      margin-top: 64px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Left panel - Research Questions */
+    .left-panel {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-subtle);
+      padding: 24px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .question-form {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      margin-bottom: 12px;
+      resize: vertical;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .question-card:hover {
+      border-color: var(--border-medium);
+    }
+
+    .question-card.active {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .question-type {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-purple);
+      margin-bottom: 6px;
+    }
+
+    .question-text {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .question-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .question-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Center panel - Evidence Browser */
+    .center-panel {
+      padding: 24px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .search-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 6px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover, .filter-chip.active {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .results-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .evidence-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .evidence-card.annotated {
+      border-left: 3px solid var(--accent-emerald);
+    }
+
+    .evidence-card.flagged {
+      border-left: 3px solid var(--accent-gold);
+    }
+
+    .evidence-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .evidence-speaker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .speaker-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .speaker-avatar.female {
+      background: var(--accent-pink);
+    }
+
+    .speaker-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .speaker-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .evidence-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .action-btn.active {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      color: white;
+    }
+
+    .evidence-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .evidence-text mark {
+      background: rgba(245, 158, 11, 0.3);
+      color: var(--text-primary);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .evidence-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .evidence-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-behavior {
+      background: rgba(139, 92, 246, 0.2);
+      color: var(--accent-purple);
+    }
+
+    .tag-sentiment {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    .tag-topic {
+      background: rgba(59, 130, 196, 0.2);
+      color: var(--accent-blue);
+    }
+
+    .evidence-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Right panel - Analysis */
+    .right-panel {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-subtle);
+      padding: 24px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+    }
+
+    .analysis-section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-change {
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .stat-change.positive { color: var(--accent-emerald); }
+    .stat-change.negative { color: var(--accent-pink); }
+
+    .effect-size-meter {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .effect-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .effect-bar {
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .effect-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .effect-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .effect-interpretation {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .annotation-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .annotation-item {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .annotation-label {
+      font-weight: 600;
+      color: var(--accent-purple);
+      margin-bottom: 4px;
+    }
+
+    .annotation-text {
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .export-btn {
+      width: 100%;
+      padding: 12px;
+      border: 1px dashed var(--border-medium);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .export-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    /* Annotation modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 16px;
+      width: 500px;
+      max-width: 90vw;
+      padding: 24px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .label-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .label-option {
+      padding: 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .label-option:hover {
+      border-color: var(--border-medium);
+    }
+
+    .label-option.selected {
+      border-color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .label-name {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .label-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent-purple);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">R</div>
+      <div>
+        <div class="logo-text">Research Workbench</div>
+        <div class="logo-subtitle">Scientific Analysis</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="exportResearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export
+      </button>
+      <button class="btn btn-primary" onclick="showNewQuestionModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        New Question
+      </button>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Left Panel: Research Questions -->
+    <aside class="left-panel">
+      <div class="panel-header">
+        <span class="panel-title">Research Questions</span>
+      </div>
+
+      <div class="question-form">
+        <label class="form-label">Question Type</label>
+        <select class="form-select" id="questionType">
+          <option value="comparison">Gender Comparison</option>
+          <option value="temporal">Temporal Trend</option>
+          <option value="behavioral">Behavioral Pattern</option>
+          <option value="topical">Topic Analysis</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <label class="form-label">Research Question</label>
+        <textarea class="form-input" id="questionText" rows="3" placeholder="e.g., Do female MPs use more emotional language when discussing healthcare?"></textarea>
+
+        <label class="form-label">Hypothesis</label>
+        <textarea class="form-input" id="hypothesisText" rows="2" placeholder="e.g., Female MPs will show higher rates of empathetic language..."></textarea>
+
+        <button class="btn btn-primary" style="width: 100%;" onclick="createQuestion()">Add Question</button>
+      </div>
+
+      <div id="questionsList">
+        <!-- Sample questions -->
+        <div class="question-card active" onclick="selectQuestion(0)">
+          <div class="question-type">Gender Comparison</div>
+          <div class="question-text">Do female MPs receive more interruptions than male MPs?</div>
+          <div class="question-meta">
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              247 examples
+            </span>
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              34 annotated
+            </span>
+          </div>
+        </div>
+
+        <div class="question-card" onclick="selectQuestion(1)">
+          <div class="question-type">Temporal Trend</div>
+          <div class="question-text">How has female representation in debates about education changed since 1918?</div>
+          <div class="question-meta">
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              1,892 examples
+            </span>
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              156 annotated
+            </span>
+          </div>
+        </div>
+
+        <div class="question-card" onclick="selectQuestion(2)">
+          <div class="question-type">Behavioral Pattern</div>
+          <div class="question-text">Are female MPs more likely to cite personal experiences when debating social policy?</div>
+          <div class="question-meta">
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              523 examples
+            </span>
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              89 annotated
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Panel: Evidence Browser -->
+    <main class="center-panel">
+      <div class="search-bar">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" class="search-input" id="searchQuery" placeholder="Search speeches for evidence..." onkeydown="if(event.key==='Enter')searchEvidence()">
+        </div>
+        <button class="btn btn-primary" onclick="searchEvidence()">Search</button>
+      </div>
+
+      <div class="filter-row">
+        <span class="filter-chip active" data-filter="all">All</span>
+        <span class="filter-chip" data-filter="annotated">Annotated</span>
+        <span class="filter-chip" data-filter="flagged">Flagged</span>
+        <span class="filter-chip" data-filter="female">Female MPs</span>
+        <span class="filter-chip" data-filter="male">Male MPs</span>
+        <input type="number" class="form-input" style="width: 100px; margin: 0; padding: 6px 10px;" placeholder="Year from" id="yearFrom">
+        <input type="number" class="form-input" style="width: 100px; margin: 0; padding: 6px 10px;" placeholder="Year to" id="yearTo">
+      </div>
+
+      <div class="results-info" id="resultsInfo">Search for speeches to find evidence for your research question</div>
+
+      <div id="evidenceList">
+        <div class="empty-state">
+          <div class="empty-title">No evidence loaded</div>
+          <div>Search for speeches related to your research question, then annotate them as positive or negative examples</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Panel: Analysis -->
+    <aside class="right-panel">
+      <div class="analysis-section">
+        <div class="section-title">Current Question</div>
+        <div class="stat-card">
+          <div class="stat-label">Research Question</div>
+          <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;" id="currentQuestionText">
+            Do female MPs receive more interruptions than male MPs?
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="section-title">Evidence Statistics</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="stat-card">
+            <div class="stat-label">Total Examples</div>
+            <div class="stat-value" id="totalExamples">247</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Annotated</div>
+            <div class="stat-value" id="annotatedCount">34</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Positive Cases</div>
+            <div class="stat-value" style="color: var(--accent-emerald);" id="positiveCases">28</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Negative Cases</div>
+            <div class="stat-value" style="color: var(--accent-pink);" id="negativeCases">6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="section-title">Effect Size</div>
+        <div class="effect-size-meter">
+          <div class="effect-label">Cohen's d (Gender difference)</div>
+          <div class="effect-bar">
+            <div class="effect-fill" style="width: 65%;" id="effectBar"></div>
+          </div>
+          <div class="effect-value" id="effectValue">d = 0.47</div>
+          <div class="effect-interpretation" id="effectInterpretation">Medium effect - notable difference</div>
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="section-title">Breakdown by Gender</div>
+        <div class="stat-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: var(--accent-pink);">Female MPs</span>
+            <span style="font-size: 14px; font-weight: 600;">23.4%</span>
+          </div>
+          <div class="effect-bar" style="margin-bottom: 0;">
+            <div class="effect-fill" style="width: 23.4%; background: var(--accent-pink);"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: var(--accent-blue);">Male MPs</span>
+            <span style="font-size: 14px; font-weight: 600;">11.2%</span>
+          </div>
+          <div class="effect-bar" style="margin-bottom: 0;">
+            <div class="effect-fill" style="width: 11.2%; background: var(--accent-blue);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="section-title">Recent Annotations</div>
+        <div class="annotation-list" id="annotationList">
+          <div class="annotation-item">
+            <div class="annotation-label">Positive - Interruption</div>
+            <div class="annotation-text">"...if the honourable lady would allow me to finish..." - debate on housing policy, 1997</div>
+          </div>
+          <div class="annotation-item">
+            <div class="annotation-label">Positive - Interruption</div>
+            <div class="annotation-text">"I ask the member to give way..." - debate on NHS funding, 2003</div>
+          </div>
+          <div class="annotation-item">
+            <div class="annotation-label">Negative - Normal exchange</div>
+            <div class="annotation-text">"Will the member give way?" - standard parliamentary procedure</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="export-btn" onclick="exportAnalysis()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Export Analysis Report
+      </button>
+    </aside>
+  </div>
+
+  <!-- Annotation Modal -->
+  <div class="modal-overlay" id="annotationModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Annotate Evidence</h3>
+        <button class="modal-close" onclick="closeAnnotationModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; font-size: 13px; color: var(--text-secondary);" id="annotationExcerpt">
+        Selected speech excerpt will appear here...
+      </div>
+
+      <div class="form-label">Classification</div>
+      <div class="label-grid" id="labelGrid">
+        <div class="label-option" onclick="selectLabel(this, 'positive')">
+          <div class="label-name">Positive Example</div>
+          <div class="label-desc">Supports the hypothesis</div>
+        </div>
+        <div class="label-option" onclick="selectLabel(this, 'negative')">
+          <div class="label-name">Negative Example</div>
+          <div class="label-desc">Contradicts hypothesis</div>
+        </div>
+        <div class="label-option" onclick="selectLabel(this, 'unclear')">
+          <div class="label-name">Unclear</div>
+          <div class="label-desc">Needs more context</div>
+        </div>
+        <div class="label-option" onclick="selectLabel(this, 'flag')">
+          <div class="label-name">Flag for Review</div>
+          <div class="label-desc">Interesting edge case</div>
+        </div>
+      </div>
+
+      <div class="form-label">Notes (optional)</div>
+      <textarea class="form-input" id="annotationNotes" rows="3" placeholder="Add any relevant notes..."></textarea>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="saveAnnotation()">Save Annotation</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8766';
+
+    let currentQuestion = 0;
+    let searchResults = [];
+    let annotations = JSON.parse(localStorage.getItem('research_annotations') || '{}');
+    let questions = JSON.parse(localStorage.getItem('research_questions') || '[]');
+    let currentAnnotationId = null;
+    let selectedLabel = null;
+
+    // Initialize with default questions if empty
+    if (questions.length === 0) {
+      questions = [
+        {
+          type: 'comparison',
+          text: 'Do female MPs receive more interruptions than male MPs?',
+          hypothesis: 'Female MPs will experience higher rates of interruption in parliamentary debates.',
+          examples: 247,
+          annotated: 34
+        },
+        {
+          type: 'temporal',
+          text: 'How has female representation in debates about education changed since 1918?',
+          hypothesis: 'Female participation in education debates has increased over time.',
+          examples: 1892,
+          annotated: 156
+        },
+        {
+          type: 'behavioral',
+          text: 'Are female MPs more likely to cite personal experiences when debating social policy?',
+          hypothesis: 'Female MPs use personal narrative more frequently in social policy debates.',
+          examples: 523,
+          annotated: 89
+        }
+      ];
+      localStorage.setItem('research_questions', JSON.stringify(questions));
+    }
+
+    // Search for evidence
+    async function searchEvidence() {
+      const query = document.getElementById('searchQuery').value.trim();
+      const yearFrom = document.getElementById('yearFrom').value;
+      const yearTo = document.getElementById('yearTo').value;
+
+      if (!query) {
+        document.getElementById('resultsInfo').textContent = 'Enter a search query';
+        return;
+      }
+
+      document.getElementById('evidenceList').innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+
+      try {
+        const params = new URLSearchParams({ q: query, limit: '100', search_content: 'true' });
+        if (yearFrom) params.append('year_from', yearFrom);
+        if (yearTo) params.append('year_to', yearTo);
+
+        const response = await fetch(`${API_BASE}/api/search?${params}`);
+        const debates = await response.json();
+
+        // Flatten to speeches
+        searchResults = [];
+        for (const debate of debates) {
+          try {
+            const traceRes = await fetch(`${API_BASE}/api/trace?id=${debate.debate_id}&year=${debate.year}`);
+            const traceData = await traceRes.json();
+            const speeches = traceData.stages?.final_speeches || [];
+            speeches.forEach(s => {
+              if (s.text && s.text.toLowerCase().includes(query.toLowerCase())) {
+                searchResults.push({
+                  ...s,
+                  debate_id: debate.debate_id,
+                  debate_title: debate.title,
+                  year: debate.year,
+                  id: `${debate.debate_id}_${s.sequence_number}`
+                });
+              }
+            });
+          } catch (e) {
+            console.error('Failed to trace debate:', e);
+          }
+          if (searchResults.length >= 50) break;
+        }
+
+        document.getElementById('resultsInfo').textContent = `Found ${searchResults.length} speeches matching "${query}"`;
+        renderEvidence();
+      } catch (error) {
+        console.error('Search failed:', error);
+        document.getElementById('resultsInfo').textContent = 'Search failed - make sure API server is running';
+        document.getElementById('evidenceList').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-title">API Connection Failed</div>
+            <div>Start the API server: cd apps && python api_server.py</div>
+          </div>
+        `;
+      }
+    }
+
+    // Render evidence cards
+    function renderEvidence() {
+      const container = document.getElementById('evidenceList');
+
+      if (searchResults.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-title">No results found</div>
+            <div>Try a different search query or adjust the year filters</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = searchResults.map((speech, i) => {
+        const annotation = annotations[speech.id];
+        const isAnnotated = !!annotation;
+        const isFlagged = annotation?.label === 'flag';
+        const gender = speech.gender || 'U';
+        const initials = getInitials(speech.canonical_name || speech.speaker);
+
+        return `
+          <div class="evidence-card ${isAnnotated ? 'annotated' : ''} ${isFlagged ? 'flagged' : ''}">
+            <div class="evidence-header">
+              <div class="evidence-speaker">
+                <div class="speaker-avatar ${gender === 'F' ? 'female' : ''}">${initials}</div>
+                <div>
+                  <div class="speaker-name">${escapeHtml(speech.canonical_name || speech.speaker || 'Unknown')}</div>
+                  <div class="speaker-meta">
+                    ${gender === 'F' ? 'Female' : gender === 'M' ? 'Male' : 'Unknown'}
+                    ${speech.party ? ' - ' + escapeHtml(speech.party) : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="evidence-actions">
+                <button class="action-btn ${isAnnotated ? 'active' : ''}" onclick="openAnnotationModal(${i})" title="Annotate">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                  </svg>
+                </button>
+                <button class="action-btn" onclick="copyEvidence(${i})" title="Copy">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="evidence-text">${highlightQuery(escapeHtml(truncate(speech.text, 500)))}</div>
+            <div class="evidence-footer">
+              <div class="evidence-tags">
+                ${isAnnotated ? `<span class="tag tag-behavior">${annotation.label}</span>` : ''}
+                ${gender === 'F' ? '<span class="tag tag-sentiment">Female MP</span>' : ''}
+              </div>
+              <div class="evidence-date">${speech.year || 'Unknown year'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Annotation modal
+    function openAnnotationModal(index) {
+      const speech = searchResults[index];
+      currentAnnotationId = speech.id;
+
+      document.getElementById('annotationExcerpt').textContent = truncate(speech.text, 300);
+
+      // Reset label selection
+      selectedLabel = null;
+      document.querySelectorAll('.label-option').forEach(el => el.classList.remove('selected'));
+
+      // Load existing annotation if any
+      const existing = annotations[speech.id];
+      if (existing) {
+        document.getElementById('annotationNotes').value = existing.notes || '';
+        selectedLabel = existing.label;
+        document.querySelectorAll('.label-option').forEach(el => {
+          if (el.onclick.toString().includes(`'${existing.label}'`)) {
+            el.classList.add('selected');
+          }
+        });
+      } else {
+        document.getElementById('annotationNotes').value = '';
+      }
+
+      document.getElementById('annotationModal').classList.add('active');
+    }
+
+    function closeAnnotationModal() {
+      document.getElementById('annotationModal').classList.remove('active');
+      currentAnnotationId = null;
+    }
+
+    function selectLabel(element, label) {
+      document.querySelectorAll('.label-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedLabel = label;
+    }
+
+    function saveAnnotation() {
+      if (!selectedLabel) {
+        alert('Please select a classification');
+        return;
+      }
+
+      const notes = document.getElementById('annotationNotes').value.trim();
+      const speech = searchResults.find(s => s.id === currentAnnotationId);
+
+      annotations[currentAnnotationId] = {
+        label: selectedLabel,
+        notes: notes,
+        speech_id: currentAnnotationId,
+        speaker: speech?.canonical_name || speech?.speaker,
+        year: speech?.year,
+        text: truncate(speech?.text, 200),
+        timestamp: new Date().toISOString(),
+        question_index: currentQuestion
+      };
+
+      localStorage.setItem('research_annotations', JSON.stringify(annotations));
+      updateStats();
+      renderEvidence();
+      closeAnnotationModal();
+    }
+
+    // Question management
+    function selectQuestion(index) {
+      currentQuestion = index;
+      document.querySelectorAll('.question-card').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+      document.getElementById('currentQuestionText').textContent = questions[index]?.text || '';
+      updateStats();
+    }
+
+    function createQuestion() {
+      const type = document.getElementById('questionType').value;
+      const text = document.getElementById('questionText').value.trim();
+      const hypothesis = document.getElementById('hypothesisText').value.trim();
+
+      if (!text) {
+        alert('Please enter a research question');
+        return;
+      }
+
+      questions.push({
+        type,
+        text,
+        hypothesis,
+        examples: 0,
+        annotated: 0
+      });
+
+      localStorage.setItem('research_questions', JSON.stringify(questions));
+      renderQuestions();
+
+      // Clear form
+      document.getElementById('questionText').value = '';
+      document.getElementById('hypothesisText').value = '';
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsList');
+      container.innerHTML = questions.map((q, i) => `
+        <div class="question-card ${i === currentQuestion ? 'active' : ''}" onclick="selectQuestion(${i})">
+          <div class="question-type">${formatType(q.type)}</div>
+          <div class="question-text">${escapeHtml(q.text)}</div>
+          <div class="question-meta">
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              ${q.examples} examples
+            </span>
+            <span class="question-stat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              ${q.annotated} annotated
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function formatType(type) {
+      const types = {
+        comparison: 'Gender Comparison',
+        temporal: 'Temporal Trend',
+        behavioral: 'Behavioral Pattern',
+        topical: 'Topic Analysis',
+        custom: 'Custom'
+      };
+      return types[type] || type;
+    }
+
+    // Stats update
+    function updateStats() {
+      const questionAnnotations = Object.values(annotations).filter(a => a.question_index === currentQuestion);
+      const positive = questionAnnotations.filter(a => a.label === 'positive').length;
+      const negative = questionAnnotations.filter(a => a.label === 'negative').length;
+      const total = searchResults.length;
+
+      document.getElementById('totalExamples').textContent = total;
+      document.getElementById('annotatedCount').textContent = questionAnnotations.length;
+      document.getElementById('positiveCases').textContent = positive;
+      document.getElementById('negativeCases').textContent = negative;
+
+      // Calculate effect size (Cohen's d approximation)
+      if (positive + negative > 0) {
+        const proportion = positive / (positive + negative);
+        const d = Math.abs(proportion - 0.5) * 2 * 2; // Scale to roughly 0-1
+        const width = Math.min(d * 100, 100);
+        document.getElementById('effectBar').style.width = width + '%';
+        document.getElementById('effectValue').textContent = 'd = ' + d.toFixed(2);
+
+        if (d < 0.2) {
+          document.getElementById('effectInterpretation').textContent = 'Small effect - minimal difference';
+        } else if (d < 0.5) {
+          document.getElementById('effectInterpretation').textContent = 'Medium effect - notable difference';
+        } else {
+          document.getElementById('effectInterpretation').textContent = 'Large effect - substantial difference';
+        }
+      }
+
+      // Update recent annotations
+      renderRecentAnnotations();
+    }
+
+    function renderRecentAnnotations() {
+      const recent = Object.values(annotations)
+        .filter(a => a.question_index === currentQuestion)
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 5);
+
+      const container = document.getElementById('annotationList');
+      if (recent.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 20px;">No annotations yet</div>';
+        return;
+      }
+
+      container.innerHTML = recent.map(a => `
+        <div class="annotation-item">
+          <div class="annotation-label">${a.label.charAt(0).toUpperCase() + a.label.slice(1)}${a.notes ? ' - ' + truncate(a.notes, 30) : ''}</div>
+          <div class="annotation-text">"${truncate(a.text, 100)}" - ${a.speaker || 'Unknown'}, ${a.year || 'Unknown year'}</div>
+        </div>
+      `).join('');
+    }
+
+    // Export functions
+    function exportAnalysis() {
+      const questionAnnotations = Object.values(annotations).filter(a => a.question_index === currentQuestion);
+      const question = questions[currentQuestion];
+
+      const report = {
+        question: question,
+        annotations: questionAnnotations,
+        statistics: {
+          total: questionAnnotations.length,
+          positive: questionAnnotations.filter(a => a.label === 'positive').length,
+          negative: questionAnnotations.filter(a => a.label === 'negative').length,
+          unclear: questionAnnotations.filter(a => a.label === 'unclear').length,
+          flagged: questionAnnotations.filter(a => a.label === 'flag').length
+        },
+        exported: new Date().toISOString()
+      };
+
+      downloadJSON(report, `research_analysis_${currentQuestion}.json`);
+    }
+
+    function exportResearch() {
+      const data = {
+        questions: questions,
+        annotations: annotations,
+        exported: new Date().toISOString()
+      };
+      downloadJSON(data, 'hansard_research_export.json');
+    }
+
+    function downloadJSON(data, filename) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Utility functions
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function truncate(text, length) {
+      if (!text) return '';
+      if (text.length <= length) return text;
+      return text.slice(0, length) + '...';
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function highlightQuery(text) {
+      const query = document.getElementById('searchQuery').value.trim();
+      if (!query) return text;
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    function copyEvidence(index) {
+      const speech = searchResults[index];
+      const text = `"${speech.text}"\n- ${speech.canonical_name || speech.speaker}, ${speech.year}`;
+      navigator.clipboard.writeText(text);
+    }
+
+    // Filter chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        applyFilter(this.dataset.filter);
+      });
+    });
+
+    function applyFilter(filter) {
+      // Re-render with filter
+      renderEvidence();
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const body = document.body;
+      const isLight = body.getAttribute('data-theme') === 'light';
+      body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      localStorage.setItem('theme', isLight ? 'dark' : 'light');
+    }
+
+    // Initialize
+    function init() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.setAttribute('data-theme', savedTheme);
+
+      renderQuestions();
+      selectQuestion(0);
+    }
+
+    init();
+  </script>
+</body>
+</html>

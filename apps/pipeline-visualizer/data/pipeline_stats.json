@@ -1,0 +1,87 @@
+{
+  "raw_html": {
+    "description": "Raw HTML files from UK Parliament API",
+    "location": "data-hansard/hansard/",
+    "format": "Gzipped HTML files organized by year/month",
+    "total_files": 1197828,
+    "years": []
+  },
+  "processed": {
+    "description": "Extracted text and metadata from HTML",
+    "location": "data-hansard/processed_complete/",
+    "format": "JSONL (text) + Parquet (metadata)",
+    "total_debates": 5099338,
+    "columns": [
+      "file_path",
+      "year",
+      "month",
+      "chamber",
+      "speaker_name",
+      "reference_date"
+    ]
+  },
+  "gender_enhanced": {
+    "description": "Debates with MP matching and gender attribution",
+    "location": "data-hansard/gender_analysis_complete/",
+    "format": "Parquet files by year",
+    "total_debates": 652168,
+    "columns": [
+      "debate_id",
+      "year",
+      "decade",
+      "month",
+      "reference_date",
+      "chamber",
+      "title",
+      "topic",
+      "hansard_reference",
+      "reference_volume",
+      "reference_columns",
+      "debate_text",
+      "text_length",
+      "has_text",
+      "content_hash",
+      "extraction_timestamp",
+      "speech_segments",
+      "speech_count",
+      "total_speakers",
+      "confirmed_mps"
+    ]
+  },
+  "unified": {
+    "description": "Final speech-level dataset with all metadata",
+    "location": "data-hansard/derived_complete/",
+    "format": "Parquet files partitioned by year",
+    "total_speeches": 6783015,
+    "total_debates": 1197828,
+    "columns": [
+      "speech_id",
+      "debate_id",
+      "file_path",
+      "sequence_number",
+      "speaker",
+      "normalized_speaker",
+      "canonical_name",
+      "person_id",
+      "gender",
+      "matched_mp",
+      "party",
+      "constituency",
+      "contribution_id",
+      "is_question",
+      "question_number",
+      "text",
+      "word_count",
+      "year",
+      "decade",
+      "month",
+      "date",
+      "chamber",
+      "title",
+      "topic",
+      "hansard_reference",
+      "reference_volume",
+      "reference_columns"
+    ]
+  }
+}

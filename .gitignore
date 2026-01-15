@@ -107,6 +107,10 @@ cython_debug/
 *.sqlite
 *.sqlite3
 
+# Allow sample JSON data in apps (for GitHub Pages)
+!apps/**/data/*.json
+!apps/**/*.json
+
 # Compressed data files
 *.gz
 *.bz2
@@ -121,6 +125,7 @@ cython_debug/
 *.html
 !templates/*.html
 !docs/*.html
+!apps/**/*.html
 
 # Large data directories
 data/
@@ -130,6 +135,12 @@ processed_data/
 cache/
 temp/
 tmp/
+
+# Allow app data directories (sample data for GitHub Pages)
+!apps/**/data/
+
+# But exclude large static-data (contains 14GB+ databases)
+apps/static-data/
 
 # Model files
 *.model
@@ -195,3 +206,7 @@ figures/
 /analysis/
 src/hansard/analysis/corpus_results/
 src/hansard/analysis/milestone_results/
+
+# Claude Code local state
+.claude/
+apps/.claude/

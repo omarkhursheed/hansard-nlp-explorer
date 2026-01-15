@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hansard Research Studio - Scientific Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <style>
+    :root {
+      /* Dark theme colors (matching main index) */
+      --white: #1e1e27;
+      --gray-50: #0f0f13;
+      --gray-100: #18181f;
+      --gray-200: rgba(255,255,255,0.08);
+      --gray-300: rgba(255,255,255,0.12);
+      --gray-400: #71717a;
+      --gray-500: #71717a;
+      --gray-600: #a1a1aa;
+      --gray-700: #d4d4d8;
+      --gray-800: #e4e4e7;
+      --gray-900: #f5f5f7;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+      --red-500: #ef4444;
+      --red-600: #dc2626;
+      --amber-100: rgba(234, 179, 8, 0.2);
+      --amber-600: #eab308;
+      --purple-500: #8b5cf6;
+      --accent: #8b5cf6;
+      --male-color: #3b82f6;
+      --female-color: #ec4899;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      height: 100vh;
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .app { display: flex; flex-direction: column; height: 100vh; }
+
+    /* Header */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      gap: 32px;
+    }
+
+    .brand {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--gray-100);
+      padding: 3px;
+      border-radius: 8px;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .nav-tab:hover { color: var(--gray-900); }
+    .nav-tab.active {
+      background: var(--white);
+      color: var(--gray-900);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .header-spacer { flex: 1; }
+
+    .header-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Tasks View */
+    .tasks-view .view-content { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 52px); }
+
+    .sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .main-content {
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .task-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .task-card:hover { border-color: var(--gray-300); }
+    .task-card.active {
+      background: var(--blue-500);
+      border-color: var(--blue-500);
+    }
+    .task-card.active .task-name,
+    .task-card.active .task-meta { color: white; }
+
+    .task-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .task-meta {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .task-progress {
+      height: 2px;
+      background: var(--gray-200);
+      border-radius: 1px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .task-card.active .task-progress { background: rgba(255,255,255,0.3); }
+
+    .task-progress-fill {
+      height: 100%;
+      background: var(--blue-500);
+      border-radius: 1px;
+    }
+
+    .task-card.active .task-progress-fill { background: white; }
+
+    .new-task-btn {
+      width: 100%;
+      padding: 10px;
+      border: 1px dashed var(--gray-300);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--gray-500);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .new-task-btn:hover {
+      border-color: var(--blue-500);
+      color: var(--blue-500);
+    }
+
+    /* Task Detail */
+    .task-detail { max-width: 640px; }
+
+    .task-detail h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .task-description {
+      color: var(--gray-600);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .search-strategies { display: flex; flex-direction: column; gap: 12px; }
+
+    .strategy-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .strategy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .strategy-name {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .strategy-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .strategy-badge.keyword { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .strategy-badge.fuzzy { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+    .strategy-badge.pattern { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+
+    .strategy-terms { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .term-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border-radius: 4px;
+      color: var(--gray-700);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .run-btn {
+      padding: 6px 14px;
+      background: var(--gray-900);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .run-btn:hover { background: var(--gray-700); }
+
+    /* Search View */
+    .search-view .view-content { display: grid; grid-template-columns: 1fr 260px; height: calc(100vh - 52px); }
+
+    .search-main { display: flex; flex-direction: column; overflow: hidden; }
+
+    .search-header {
+      padding: 16px 20px;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      color: var(--gray-900);
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--blue-500);
+      background: var(--white);
+    }
+
+    .mode-tabs { display: flex; gap: 4px; }
+
+    .mode-tab {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .mode-tab:hover { background: var(--gray-200); }
+    .mode-tab.active { background: var(--gray-900); color: white; }
+
+    .filter-section { margin-top: 12px; }
+
+    .filter-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-500);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .term-editor {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 10px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      min-height: 40px;
+      align-items: center;
+    }
+
+    .term-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .term-chip.include { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .term-chip.exclude { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+    .term-chip button {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 14px;
+      opacity: 0.6;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .term-chip button:hover { opacity: 1; }
+
+    .add-term-input {
+      background: transparent;
+      border: none;
+      color: var(--gray-900);
+      font-size: 12px;
+      min-width: 140px;
+      font-family: inherit;
+    }
+
+    .add-term-input:focus { outline: none; }
+
+    .search-results {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+
+    .result-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .result-card:hover { border-color: var(--gray-300); }
+
+    .result-card.marked-positive {
+      border-left: 3px solid var(--green-500);
+    }
+
+    .result-card.marked-negative {
+      border-left: 3px solid var(--red-500);
+    }
+
+    .result-header {
+      padding: 10px 14px;
+      background: var(--gray-50);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-speaker { display: flex; align-items: center; gap: 8px; }
+
+    .gender-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .gender-dot.female { background: #ec4899; }
+    .gender-dot.male { background: #3b82f6; }
+
+    .result-name { font-size: 13px; font-weight: 600; }
+    .result-meta { font-size: 11px; color: var(--gray-500); margin-left: 6px; }
+
+    .result-actions { display: flex; gap: 4px; }
+
+    .result-btn {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-btn:hover { border-color: var(--gray-400); color: var(--gray-700); }
+    .result-btn.active-pos { background: var(--green-500); border-color: var(--green-500); color: white; }
+    .result-btn.active-neg { background: var(--red-500); border-color: var(--red-500); color: white; }
+
+    .result-body { padding: 12px 14px; }
+
+    .result-excerpt {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+
+    .result-excerpt mark {
+      background: var(--amber-100);
+      color: var(--amber-600);
+      padding: 0 2px;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+
+    /* Similar View */
+    .similar-view .view-content { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 52px); }
+
+    .example-list {
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .similar-main { padding: 20px 24px; overflow-y: auto; }
+
+    .example-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .example-card.selected {
+      border-color: var(--green-500);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .example-speaker { font-weight: 600; margin-bottom: 4px; }
+    .example-excerpt { color: var(--gray-600); line-height: 1.4; }
+
+    .similar-controls {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .similar-controls h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .similar-controls p {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+
+    .word-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .word-tag {
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .word-tag:hover { background: var(--gray-200); }
+    .word-tag.selected { background: var(--green-500); color: white; }
+    .word-tag.excluded { background: var(--red-500); color: white; text-decoration: line-through; }
+
+    /* Analysis Panel */
+    .analysis-panel {
+      background: var(--white);
+      border-left: 1px solid var(--gray-200);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 12px;
+    }
+
+    .stat-label { color: var(--gray-500); }
+
+    .stat-value {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+    }
+
+    .effect-card {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .effect-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .effect-value.positive { color: var(--green-600); }
+    .effect-value.negative { color: var(--red-600); }
+    .effect-value.neutral { color: var(--gray-400); }
+
+    .effect-label {
+      font-size: 10px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--gray-900);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.2s;
+      z-index: 100;
+    }
+
+    .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .loading, .empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray-500);
+      font-size: 13px;
+    }
+
+    .data-source {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .source-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-400);
+    }
+
+    .source-dot.online { background: var(--green-500); }
+    .source-dot.offline { background: var(--amber-600); animation: pulse 1.5s infinite; }
+    .source-dot.loading { background: var(--purple-500); animation: pulse 0.8s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Question View */
+    .question-view .view-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 24px 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .question-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .panel-number {
+      width: 28px;
+      height: 28px;
+      background: var(--gray-900);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--gray-900);
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--blue-500);
+      background: var(--white);
+    }
+
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    .example-box {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .example-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .example-text {
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--gray-900);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: var(--gray-700); }
+
+    /* Analysis View */
+    .analysis-view .view-content {
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      height: calc(100vh - 52px);
+    }
+
+    .evidence-list {
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .effect-panel {
+      background: var(--white);
+      border-left: 1px solid var(--gray-200);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .effect-display {
+      background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .effect-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .effect-number.positive { color: var(--green-600); }
+    .effect-number.negative { color: var(--red-600); }
+    .effect-number.neutral { color: var(--gray-400); }
+
+    .effect-metric {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .effect-ci {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* Forest plot style CI visualization */
+    .ci-plot {
+      position: relative;
+      height: 40px;
+      margin: 16px 0;
+      background: var(--gray-100);
+      border-radius: 4px;
+    }
+
+    .ci-axis {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: var(--gray-400);
+      transform: translateX(-50%);
+    }
+
+    .ci-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .ci-bar {
+      position: absolute;
+      top: 50%;
+      height: 4px;
+      background: var(--purple-500);
+      border-radius: 2px;
+      transform: translateY(-50%);
+    }
+
+    .ci-point {
+      position: absolute;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      background: var(--gray-900);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .ci-point.significant { background: var(--green-600); }
+    .ci-point.not-significant { background: var(--gray-500); }
+
+    .ci-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: rgba(156, 163, 175, 0.1);
+    }
+
+    .ci-zone.negligible {
+      left: calc(50% - 10%);
+      width: 20%;
+      border-left: 1px dashed var(--gray-300);
+      border-right: 1px dashed var(--gray-300);
+    }
+
+    .interpretation-box {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .interpretation-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .interpretation-text {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+
+    .evidence-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .evidence-card:hover { border-color: var(--gray-300); }
+    .evidence-card.positive { border-left: 3px solid var(--green-500); }
+    .evidence-card.negative { border-left: 3px solid var(--red-500); }
+
+    .evidence-speaker { font-size: 12px; font-weight: 600; }
+    .evidence-meta { font-size: 10px; color: var(--gray-500); }
+    .evidence-excerpt {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .chart-container { padding: 20px; overflow-y: auto; }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .breakdown-table th, .breakdown-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .breakdown-table th {
+      font-weight: 600;
+      color: var(--gray-500);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .bar-cell { width: 120px; }
+
+    .proportion-bar {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .proportion-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .proportion-fill.female { background: #ec4899; }
+    .proportion-fill.male { background: #3b82f6; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">Research Studio</div>
+      <div class="nav-tabs">
+        <div class="nav-tab active" data-view="question">Question</div>
+        <div class="nav-tab" data-view="search">Find Examples</div>
+        <div class="nav-tab" data-view="analysis">Analysis</div>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="data-source" id="dataSource">
+        <span class="source-dot offline"></span>
+        <span id="sourceLabel">Loading...</span>
+      </div>
+    </header>
+
+    <!-- Question View: Define research question and hypothesis -->
+    <div class="view question-view active" id="question-view">
+      <div class="view-content">
+        <div class="question-panel">
+          <div class="panel-header">
+            <div class="panel-number">1</div>
+            <div class="panel-title">Research Question</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">What are you investigating?</label>
+            <textarea class="form-textarea" id="questionText" placeholder="e.g., Do female MPs use more personal anecdotes in speeches than male MPs?"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hypothesis</label>
+            <textarea class="form-textarea" id="hypothesisText" placeholder="e.g., Female MPs are more likely to reference personal experiences and constituent stories to make policy arguments."></textarea>
+          </div>
+          <div class="example-box">
+            <div class="example-label">Example Questions</div>
+            <div class="example-text">
+              - Are female MPs more likely to be interrupted?<br>
+              - Do women reference family/children more often?<br>
+              - How did suffrage debates differ by gender?
+            </div>
+          </div>
+        </div>
+
+        <div class="question-panel">
+          <div class="panel-header">
+            <div class="panel-number">2</div>
+            <div class="panel-title">Define Evidence</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">What counts as POSITIVE evidence? (supports hypothesis)</label>
+            <textarea class="form-textarea" id="positiveDefinition" placeholder="e.g., Speech contains 'my constituent', 'I have seen', 'in my experience', or references to personal encounters."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">What counts as NEGATIVE evidence? (contradicts hypothesis)</label>
+            <textarea class="form-textarea" id="negativeDefinition" placeholder="e.g., Speech discusses policy without any personal references, focuses purely on statistics/data."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Search terms to find examples</label>
+            <input class="form-input" id="searchTerms" placeholder="e.g., constituent, experience, story, family">
+          </div>
+          <button class="btn-primary" onclick="startSearch()">Find Examples</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search View: Find and annotate examples -->
+    <div class="view search-view" id="search-view">
+      <div class="view-content">
+        <div class="search-main">
+          <div class="search-header">
+            <div class="search-row">
+              <input type="text" class="search-input" id="searchInput" placeholder="Search speeches (text for Fuse.js, speaker/title for SQLite)...">
+              <button class="run-btn" onclick="runSearch()">Search</button>
+              <button class="run-btn" style="background:var(--purple-500);" onclick="randomSample()">Random Sample</button>
+            </div>
+            <div class="mode-tabs">
+              <div class="mode-tab" data-mode="fuse">Full-text (380K)</div>
+              <div class="mode-tab active" data-mode="sql">Metadata (6.8M)</div>
+              <div class="mode-tab" data-mode="api" title="Requires: python api_server.py">FTS API (6.8M)</div>
+            </div>
+            <div class="filter-section" style="display:flex;gap:24px;flex-wrap:wrap;">
+              <div>
+                <div class="filter-label">Filter by Gender</div>
+                <div class="mode-tabs" style="margin-top:6px;">
+                  <div class="mode-tab gender-tab" data-gender="">All</div>
+                  <div class="mode-tab gender-tab" data-gender="F">Female</div>
+                  <div class="mode-tab gender-tab" data-gender="M">Male</div>
+                </div>
+              </div>
+              <div>
+                <div class="filter-label">Blinded Mode</div>
+                <div class="mode-tabs" style="margin-top:6px;">
+                  <div class="mode-tab blind-tab active" data-blind="false">Show Gender</div>
+                  <div class="mode-tab blind-tab" data-blind="true">Hide Gender</div>
+                </div>
+              </div>
+              <div>
+                <div class="filter-label">Sample Size</div>
+                <input type="number" class="form-input" id="sampleSize" value="50" min="10" max="500" style="width:80px;margin-top:6px;padding:6px 10px;">
+              </div>
+            </div>
+          </div>
+          <div class="search-results" id="searchResults">
+            <div class="loading" id="searchLoading">
+              <div style="color:var(--gray-500);font-size:13px;">Loading data sources...</div>
+            </div>
+          </div>
+        </div>
+        <div class="analysis-panel">
+          <div class="section-label">Annotation Progress</div>
+          <div class="stat-row">
+            <span class="stat-label">Results</span>
+            <span class="stat-value" id="searchStatResults">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Positive (+)</span>
+            <span class="stat-value" style="color: var(--green-600);" id="searchStatPos">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Negative (-)</span>
+            <span class="stat-value" style="color: var(--red-600);" id="searchStatNeg">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Female in results</span>
+            <span class="stat-value" id="searchStatFemale">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Male in results</span>
+            <span class="stat-value" id="searchStatMale">0</span>
+          </div>
+          <div class="effect-card">
+            <div class="effect-value neutral" id="quickEffectValue">--</div>
+            <div class="effect-label">Quick Cohen's h</div>
+          </div>
+          <button class="new-task-btn" style="margin-top: 16px;" onclick="goToAnalysis()">View Full Analysis</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analysis View: Effect size and interpretation -->
+    <div class="view analysis-view" id="analysis-view">
+      <div class="view-content">
+        <div class="evidence-list">
+          <div class="section-label">Annotated Evidence</div>
+          <div class="section-label" style="margin-top:12px;color:var(--green-600);">Positive (<span id="evidencePosCount">0</span>)</div>
+          <div id="positiveEvidence"></div>
+          <div class="section-label" style="margin-top:16px;color:var(--red-600);">Negative (<span id="evidenceNegCount">0</span>)</div>
+          <div id="negativeEvidence"></div>
+        </div>
+
+        <div class="chart-container">
+          <div class="section-label">Gender Breakdown</div>
+          <table class="breakdown-table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Positive</th>
+                <th>Negative</th>
+                <th>Rate</th>
+                <th class="bar-cell">Proportion</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownTable">
+              <tr><td colspan="5" class="empty">No annotations yet</td></tr>
+            </tbody>
+          </table>
+
+          <div class="section-label" style="margin-top:24px;">Research Summary</div>
+          <div id="researchSummary" style="background:var(--white);border:1px solid var(--gray-200);border-radius:10px;padding:16px;font-size:13px;line-height:1.6;">
+            Define your research question and annotate examples to generate a summary.
+          </div>
+        </div>
+
+        <div class="effect-panel">
+          <div class="section-label">Effect Size</div>
+          <div class="effect-display">
+            <div class="effect-number neutral" id="effectValue">--</div>
+            <div class="effect-metric">Cohen's h</div>
+            <div class="effect-ci" id="effectCI">95% CI: [-, -]</div>
+            <!-- Forest plot style CI visualization -->
+            <div class="ci-plot" id="ciPlot">
+              <div class="ci-zone negligible"></div>
+              <div class="ci-axis"></div>
+              <div class="ci-bar" id="ciBar" style="display:none;"></div>
+              <div class="ci-point" id="ciPoint" style="display:none;"></div>
+            </div>
+            <div class="ci-labels">
+              <span>-1.0 (Male higher)</span>
+              <span>0</span>
+              <span>+1.0 (Female higher)</span>
+            </div>
+          </div>
+
+          <div class="interpretation-box">
+            <div class="interpretation-label">Interpretation</div>
+            <div class="interpretation-text" id="effectInterpretation">
+              Need at least 5 annotations per gender group to calculate effect size.
+            </div>
+          </div>
+
+          <div class="interpretation-box">
+            <div class="interpretation-label">Sample Sizes</div>
+            <div class="stat-row">
+              <span class="stat-label">Female annotated</span>
+              <span class="stat-value" id="analysisFemaleN">0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Male annotated</span>
+              <span class="stat-value" id="analysisMaleN">0</span>
+            </div>
+          </div>
+
+          <div class="interpretation-box" id="powerBox">
+            <div class="interpretation-label">Power Analysis</div>
+            <div class="interpretation-text" id="powerAnalysis">
+              Collect more annotations to estimate required sample size.
+            </div>
+            <div style="margin-top:12px;">
+              <div class="stat-row">
+                <span class="stat-label">80% power needs</span>
+                <span class="stat-value" id="powerNeeded">--</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Current progress</span>
+                <span class="stat-value" id="powerProgress">0%</span>
+              </div>
+            </div>
+            <div class="proportion-bar" style="margin-top:8px;height:12px;">
+              <div class="proportion-fill" id="powerBar" style="background:var(--purple-500);width:0%;transition:width 0.3s;"></div>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="exportResults()">Export Results</button>
+          <button class="new-task-btn" style="margin-top:8px;" onclick="clearAnnotations()">Clear All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // State
+    let db = null;
+    let fuseIndex = null;
+    let fuseData = [];
+    let searchMode = 'sql';
+    let genderFilter = '';
+    let blindedMode = false;
+    let searchResults = [];
+    let annotations = JSON.parse(localStorage.getItem('research_annotations_v2') || '{}');
+    let researchConfig = JSON.parse(localStorage.getItem('research_config_v1') || '{}');
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNavigation();
+      setupSearchHandlers();
+      loadResearchConfig();
+      loadDataSources();
+    });
+
+    // Load research config from localStorage
+    function loadResearchConfig() {
+      if (researchConfig.question) document.getElementById('questionText').value = researchConfig.question;
+      if (researchConfig.hypothesis) document.getElementById('hypothesisText').value = researchConfig.hypothesis;
+      if (researchConfig.positiveDefinition) document.getElementById('positiveDefinition').value = researchConfig.positiveDefinition;
+      if (researchConfig.negativeDefinition) document.getElementById('negativeDefinition').value = researchConfig.negativeDefinition;
+      if (researchConfig.searchTerms) document.getElementById('searchTerms').value = researchConfig.searchTerms;
+    }
+
+    // Save research config
+    function saveResearchConfig() {
+      researchConfig = {
+        question: document.getElementById('questionText').value,
+        hypothesis: document.getElementById('hypothesisText').value,
+        positiveDefinition: document.getElementById('positiveDefinition').value,
+        negativeDefinition: document.getElementById('negativeDefinition').value,
+        searchTerms: document.getElementById('searchTerms').value
+      };
+      localStorage.setItem('research_config_v1', JSON.stringify(researchConfig));
+    }
+
+    // Load data sources (SQLite + Fuse.js index)
+    async function loadDataSources() {
+      const dot = document.querySelector('.source-dot');
+      const label = document.getElementById('sourceLabel');
+      dot.className = 'source-dot loading';
+      label.textContent = 'Loading SQLite...';
+
+      // Try loading SQLite
+      try {
+        const SQL = await initSqlJs({
+          locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`
+        });
+
+        const res = await fetch('../static-data/hansard.db');
+        if (res.ok) {
+          const total = +res.headers.get('content-length') || 0;
+          const reader = res.body.getReader();
+          let received = 0;
+          const chunks = [];
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            label.textContent = `SQLite: ${(received/1024/1024).toFixed(0)}MB`;
+          }
+
+          const data = new Uint8Array(received);
+          let pos = 0;
+          for (const c of chunks) { data.set(c, pos); pos += c.length; }
+          db = new SQL.Database(data);
+          window._db = db; // Expose for debugging
+          // Verify db is working
+          const testRes = db.exec("SELECT COUNT(*) FROM speeches");
+          const count = testRes[0]?.values[0][0] || 0;
+          console.log('SQLite loaded, speech count:', count);
+          label.textContent = `SQLite: ${(count/1000000).toFixed(1)}M speeches`;
+          dot.className = 'source-dot online';
+        }
+      } catch (e) {
+        console.error('SQLite load failed:', e);
+        label.textContent = 'SQLite failed';
+      }
+
+      // Try loading Fuse.js index
+      label.textContent += ' | Loading Fuse...';
+      try {
+        const res = await fetch('../static-data/speeches_sample.json');
+        if (res.ok) {
+          fuseData = await res.json();
+          fuseIndex = new Fuse(fuseData, {
+            keys: ['speaker', 'text', 'title'],
+            threshold: 0.3,
+            includeScore: true,
+            ignoreLocation: true
+          });
+          label.textContent = 'SQLite: 6.8M | Fuse: 380K';
+        }
+      } catch (e) {
+        console.error('Fuse load failed:', e);
+      }
+
+      if (db || fuseIndex) {
+        dot.className = 'source-dot online';
+        document.getElementById('searchLoading').style.display = 'none';
+      } else {
+        dot.className = 'source-dot offline';
+        label.textContent = 'No data loaded';
+      }
+    }
+
+    // Navigation
+    function setupNavigation() {
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(`${tab.dataset.view}-view`).classList.add('active');
+          if (tab.dataset.view === 'analysis') renderAnalysis();
+        });
+      });
+    }
+
+    function setupSearchHandlers() {
+      // Search mode tabs
+      document.querySelectorAll('.mode-tab[data-mode]').forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (tab.dataset.mode === 'fuse' || tab.dataset.mode === 'sql' || tab.dataset.mode === 'api') {
+            document.querySelectorAll('.mode-tab[data-mode]').forEach(t => {
+              if (t.dataset.mode === 'fuse' || t.dataset.mode === 'sql' || t.dataset.mode === 'api') t.classList.remove('active');
+            });
+            tab.classList.add('active');
+            searchMode = tab.dataset.mode;
+          }
+        });
+      });
+
+      // Gender filter tabs
+      document.querySelectorAll('.gender-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.gender-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          genderFilter = tab.dataset.gender;
+          if (searchResults.length > 0) runSearch();
+        });
+      });
+
+      // Blinded mode tabs
+      document.querySelectorAll('.blind-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.blind-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          blindedMode = tab.dataset.blind === 'true';
+          if (searchResults.length > 0) renderSearchResults(document.getElementById('searchInput').value);
+        });
+      });
+
+      document.getElementById('searchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') runSearch();
+      });
+
+      // Auto-save research config
+      ['questionText', 'hypothesisText', 'positiveDefinition', 'negativeDefinition', 'searchTerms'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', saveResearchConfig);
+      });
+    }
+
+    // Start search from question view
+    function startSearch() {
+      saveResearchConfig();
+      const terms = document.getElementById('searchTerms').value;
+      if (terms) {
+        document.getElementById('searchInput').value = terms;
+        // Switch to search view
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelector('[data-view="search"]').classList.add('active');
+        document.getElementById('search-view').classList.add('active');
+        runSearch();
+      }
+    }
+
+    // Random sampling - critical for avoiding cherry-picking bias
+    async function randomSample() {
+      const sampleSize = parseInt(document.getElementById('sampleSize').value) || 50;
+      const query = document.getElementById('searchInput').value.trim();
+
+      document.getElementById('searchResults').innerHTML = '<div class="loading">Random sampling...</div>';
+      searchResults = [];
+
+      if (searchMode === 'api') {
+        await randomSampleAPI(query, sampleSize);
+      } else if (searchMode === 'sql' && db) {
+        randomSampleSQL(query, sampleSize);
+      } else if (searchMode === 'fuse' && fuseIndex) {
+        randomSampleFuse(query, sampleSize);
+      } else {
+        document.getElementById('searchResults').innerHTML = '<div class="empty">Data source not loaded</div>';
+      }
+    }
+
+    function randomSampleSQL(query, sampleSize) {
+      try {
+        let where = [];
+
+        // If query provided, filter first (use simple string interpolation like sql-explorer)
+        if (query) {
+          const escaped = query.replace(/'/g, "''");
+          where.push(`(speaker LIKE '%${escaped}%' OR title LIKE '%${escaped}%')`);
+        }
+
+        if (genderFilter) {
+          where.push(`gender = '${genderFilter}'`);
+        }
+
+        const whereClause = where.length ? 'WHERE ' + where.join(' AND ') : '';
+
+        // Random sample using RANDOM()
+        const sql = `SELECT rowid, * FROM speeches ${whereClause} ORDER BY RANDOM() LIMIT ${sampleSize}`;
+        console.log('Random sample SQL:', sql);
+        const res = db.exec(sql);
+
+        if (res.length && res[0].values.length) {
+          const cols = res[0].columns;
+          searchResults = res[0].values.map(row => {
+            const obj = {};
+            cols.forEach((c, i) => obj[c] = row[i]);
+            return {
+              id: `sql_${obj.rowid}`,
+              speaker: obj.speaker,
+              gender: obj.gender,
+              year: obj.year,
+              title: obj.title,
+              chamber: obj.chamber,
+              date: obj.date,
+              excerpt: obj.title
+            };
+          });
+        }
+
+        renderSearchResults(query);
+        updateSearchStats();
+        showToast(`Random sample: ${searchResults.length} speeches`);
+      } catch (e) {
+        console.error(e);
+        document.getElementById('searchResults').innerHTML = '<div class="empty">Sampling error</div>';
+      }
+    }
+
+    function randomSampleFuse(query, sampleSize) {
+      let pool = fuseData;
+
+      // If query provided, filter with Fuse first
+      if (query) {
+        const results = fuseIndex.search(query, { limit: 1000 });
+        pool = results.map(r => r.item);
+      }
+
+      // Filter by gender if set
+      if (genderFilter) {
+        pool = pool.filter(item => item.gender === genderFilter);
+      }
+
+      // Shuffle and take sample
+      const shuffled = pool.sort(() => Math.random() - 0.5);
+      const sample = shuffled.slice(0, sampleSize);
+
+      searchResults = sample.map((item, i) => ({
+        id: `fuse_${item.id || i}`,
+        speaker: item.speaker,
+        gender: item.gender,
+        year: item.year,
+        title: item.title,
+        excerpt: item.text?.substring(0, 300) || item.title
+      }));
+
+      renderSearchResults(query);
+      updateSearchStats();
+      showToast(`Random sample: ${searchResults.length} speeches`);
+    }
+
+    // Search
+    async function runSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+
+      document.getElementById('searchResults').innerHTML = '<div class="loading">Searching...</div>';
+      searchResults = [];
+
+      if (searchMode === 'api') {
+        await searchAPI(query);
+      } else if (searchMode === 'sql' && db) {
+        searchSQL(query);
+      } else if (searchMode === 'fuse' && fuseIndex) {
+        searchFuse(query);
+      } else {
+        document.getElementById('searchResults').innerHTML = '<div class="empty">Data source not loaded</div>';
+      }
+    }
+
+    // FTS API search (requires python api_server.py running)
+    async function searchAPI(query) {
+      const API_URL = 'http://localhost:8766/api/fts';
+      try {
+        const params = new URLSearchParams({ q: query, limit: 100 });
+        if (genderFilter) params.append('gender', genderFilter);
+
+        const res = await fetch(`${API_URL}?${params}`);
+        if (!res.ok) throw new Error('API not available. Start: python api_server.py');
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        searchResults = data.results.map(r => ({
+          id: `api_${r.id}`,
+          speaker: r.speaker || r.canonical_name,
+          gender: r.gender,
+          year: r.year,
+          title: r.title,
+          chamber: r.chamber,
+          date: r.date,
+          excerpt: r.snippet || r.title,
+          text: r.text
+        }));
+
+        showToast(`Found ${data.total.toLocaleString()} speeches (showing ${data.results.length})`);
+        renderSearchResults(query);
+        updateSearchStats();
+      } catch (e) {
+        console.error('API search error:', e);
+        document.getElementById('searchResults').innerHTML = `<div class="empty">
+          <div style="margin-bottom:8px;">${e.message}</div>
+          <div style="font-size:11px;color:var(--gray-500);">Run: python apps/api_server.py</div>
+        </div>`;
+      }
+    }
+
+    // API random sample
+    async function randomSampleAPI(query, sampleSize) {
+      const API_URL = 'http://localhost:8766/api/random';
+      try {
+        const params = new URLSearchParams({ limit: sampleSize });
+        if (genderFilter) params.append('gender', genderFilter);
+
+        const res = await fetch(`${API_URL}?${params}`);
+        if (!res.ok) throw new Error('API not available');
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        searchResults = data.results.map(r => ({
+          id: `api_${r.id}`,
+          speaker: r.speaker || r.canonical_name,
+          gender: r.gender,
+          year: r.year,
+          title: r.title,
+          chamber: r.chamber,
+          date: r.date,
+          excerpt: r.text?.substring(0, 300) || r.title,
+          text: r.text
+        }));
+
+        renderSearchResults(query);
+        updateSearchStats();
+        showToast(`Random sample: ${searchResults.length} speeches`);
+      } catch (e) {
+        console.error('API random error:', e);
+        document.getElementById('searchResults').innerHTML = `<div class="empty">
+          ${e.message}. Run: python apps/api_server.py
+        </div>`;
+      }
+    }
+
+    function searchSQL(query) {
+      try {
+        let where = [];
+        const escaped = query.replace(/'/g, "''");
+
+        // Search speaker and title with LIKE
+        where.push(`(speaker LIKE '%${escaped}%' OR title LIKE '%${escaped}%')`);
+
+        if (genderFilter) {
+          where.push(`gender = '${genderFilter}'`);
+        }
+
+        const sql = `SELECT rowid, * FROM speeches WHERE ${where.join(' AND ')} ORDER BY year DESC LIMIT 100`;
+        console.log('Search SQL:', sql);
+        const res = db.exec(sql);
+
+        if (res.length && res[0].values.length) {
+          const cols = res[0].columns;
+          searchResults = res[0].values.map(row => {
+            const obj = {};
+            cols.forEach((c, i) => obj[c] = row[i]);
+            return {
+              id: `sql_${obj.rowid}`,
+              speaker: obj.speaker,
+              gender: obj.gender,
+              year: obj.year,
+              title: obj.title,
+              chamber: obj.chamber,
+              date: obj.date,
+              excerpt: obj.title
+            };
+          });
+        }
+
+        renderSearchResults(query);
+        updateSearchStats();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('searchResults').innerHTML = '<div class="empty">Search error</div>';
+      }
+    }
+
+    function searchFuse(query) {
+      const results = fuseIndex.search(query, { limit: 100 });
+
+      searchResults = results
+        .filter(r => !genderFilter || r.item.gender === genderFilter)
+        .map(r => ({
+          id: `fuse_${r.item.id || r.refIndex}`,
+          speaker: r.item.speaker,
+          gender: r.item.gender,
+          year: r.item.year,
+          title: r.item.title,
+          excerpt: r.item.text?.substring(0, 300) || r.item.title
+        }));
+
+      renderSearchResults(query);
+      updateSearchStats();
+    }
+
+    function renderSearchResults(query) {
+      const container = document.getElementById('searchResults');
+
+      if (searchResults.length === 0) {
+        container.innerHTML = '<div class="empty">No results found</div>';
+        return;
+      }
+
+      container.innerHTML = searchResults.map((r, i) => {
+        const ann = annotations[r.id];
+        const markedClass = ann ? (ann.label === 'positive' ? 'marked-positive' : 'marked-negative') : '';
+
+        // In blinded mode, hide gender indicators
+        const genderDotClass = blindedMode ? 'unknown' : (r.gender === 'F' ? 'female' : 'male');
+        const speakerName = blindedMode ? `Speaker #${i + 1}` : esc(r.speaker || 'Unknown');
+        const meta = blindedMode ? r.year : `${r.year} ${r.chamber || ''}`;
+
+        return `
+          <div class="result-card ${markedClass}">
+            <div class="result-header">
+              <div class="result-speaker">
+                <div class="gender-dot ${genderDotClass}" style="${blindedMode ? 'background:var(--gray-400);' : ''}"></div>
+                <span class="result-name">${speakerName}</span>
+                <span class="result-meta">${meta}</span>
+              </div>
+              <div class="result-actions">
+                <button class="result-btn ${ann?.label === 'positive' ? 'active-pos' : ''}" onclick="markResult(${i}, 'positive')">+</button>
+                <button class="result-btn ${ann?.label === 'negative' ? 'active-neg' : ''}" onclick="markResult(${i}, 'negative')">-</button>
+              </div>
+            </div>
+            <div class="result-body">
+              <div class="result-excerpt">${highlight(esc(r.excerpt || ''), query)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function markResult(index, label) {
+      const r = searchResults[index];
+      const existing = annotations[r.id];
+
+      if (existing?.label === label) {
+        delete annotations[r.id];
+      } else {
+        annotations[r.id] = {
+          label,
+          speaker: r.speaker,
+          gender: r.gender,
+          year: r.year,
+          excerpt: r.excerpt,
+          title: r.title,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      localStorage.setItem('research_annotations_v2', JSON.stringify(annotations));
+      renderSearchResults(document.getElementById('searchInput').value);
+      updateSearchStats();
+      showToast(existing?.label === label ? 'Removed' : `Marked ${label}`);
+    }
+
+    function updateSearchStats() {
+      const pos = searchResults.filter(r => annotations[r.id]?.label === 'positive');
+      const neg = searchResults.filter(r => annotations[r.id]?.label === 'negative');
+      const female = searchResults.filter(r => r.gender === 'F');
+      const male = searchResults.filter(r => r.gender === 'M');
+
+      document.getElementById('searchStatResults').textContent = searchResults.length;
+      document.getElementById('searchStatPos').textContent = pos.length;
+      document.getElementById('searchStatNeg').textContent = neg.length;
+      document.getElementById('searchStatFemale').textContent = female.length;
+      document.getElementById('searchStatMale').textContent = male.length;
+
+      // Quick effect size (Cohen's h)
+      const allAnnotations = Object.values(annotations);
+      const h = calculateCohensH(allAnnotations);
+      const effectEl = document.getElementById('quickEffectValue');
+      if (h !== null) {
+        effectEl.textContent = h.toFixed(2);
+        effectEl.className = 'effect-value ' + (h > 0.2 ? 'positive' : h < -0.2 ? 'negative' : 'neutral');
+      } else {
+        effectEl.textContent = '--';
+        effectEl.className = 'effect-value neutral';
+      }
+    }
+
+    // Cohen's h effect size for proportions
+    function calculateCohensH(annotations) {
+      const femaleAnns = annotations.filter(a => a.gender === 'F');
+      const maleAnns = annotations.filter(a => a.gender === 'M');
+
+      if (femaleAnns.length < 5 || maleAnns.length < 5) return null;
+
+      const femalePos = femaleAnns.filter(a => a.label === 'positive').length;
+      const malePos = maleAnns.filter(a => a.label === 'positive').length;
+
+      const p1 = femalePos / femaleAnns.length;
+      const p2 = malePos / maleAnns.length;
+
+      // Cohen's h = 2 * arcsin(sqrt(p1)) - 2 * arcsin(sqrt(p2))
+      const phi1 = 2 * Math.asin(Math.sqrt(p1));
+      const phi2 = 2 * Math.asin(Math.sqrt(p2));
+      return phi1 - phi2;
+    }
+
+    // Calculate 95% CI for Cohen's h
+    function cohensHCI(h, n1, n2) {
+      // SE of Cohen's h approximately 1/sqrt(n) where n is harmonic mean
+      const nHarm = 2 * n1 * n2 / (n1 + n2);
+      const se = Math.sqrt(1 / nHarm);
+      return [h - 1.96 * se, h + 1.96 * se];
+    }
+
+    function goToAnalysis() {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelector('[data-view="analysis"]').classList.add('active');
+      document.getElementById('analysis-view').classList.add('active');
+      renderAnalysis();
+    }
+
+    // Analysis view
+    function renderAnalysis() {
+      const allAnnotations = Object.entries(annotations);
+      const pos = allAnnotations.filter(([id, a]) => a.label === 'positive');
+      const neg = allAnnotations.filter(([id, a]) => a.label === 'negative');
+
+      document.getElementById('evidencePosCount').textContent = pos.length;
+      document.getElementById('evidenceNegCount').textContent = neg.length;
+
+      // Render evidence lists
+      document.getElementById('positiveEvidence').innerHTML = pos.slice(0, 20).map(([id, a]) => `
+        <div class="evidence-card positive" onclick="removeAnnotation('${id}')">
+          <div class="evidence-speaker">${esc(a.speaker || 'Unknown')}</div>
+          <div class="evidence-meta">${a.year} - ${a.gender === 'F' ? 'Female' : 'Male'}</div>
+          <div class="evidence-excerpt">${esc((a.excerpt || '').substring(0, 100))}</div>
+        </div>
+      `).join('') || '<div class="empty">None yet</div>';
+
+      document.getElementById('negativeEvidence').innerHTML = neg.slice(0, 20).map(([id, a]) => `
+        <div class="evidence-card negative" onclick="removeAnnotation('${id}')">
+          <div class="evidence-speaker">${esc(a.speaker || 'Unknown')}</div>
+          <div class="evidence-meta">${a.year} - ${a.gender === 'F' ? 'Female' : 'Male'}</div>
+          <div class="evidence-excerpt">${esc((a.excerpt || '').substring(0, 100))}</div>
+        </div>
+      `).join('') || '<div class="empty">None yet</div>';
+
+      // Gender breakdown
+      const annsArray = allAnnotations.map(([id, a]) => a);
+      const femaleAnns = annsArray.filter(a => a.gender === 'F');
+      const maleAnns = annsArray.filter(a => a.gender === 'M');
+      const femalePos = femaleAnns.filter(a => a.label === 'positive').length;
+      const malePos = maleAnns.filter(a => a.label === 'positive').length;
+
+      const fRate = femaleAnns.length > 0 ? femalePos / femaleAnns.length : 0;
+      const mRate = maleAnns.length > 0 ? malePos / maleAnns.length : 0;
+
+      document.getElementById('breakdownTable').innerHTML = `
+        <tr>
+          <td style="color:#ec4899;font-weight:600;">Female</td>
+          <td>${femalePos}</td>
+          <td>${femaleAnns.length - femalePos}</td>
+          <td>${(fRate * 100).toFixed(1)}%</td>
+          <td class="bar-cell">
+            <div class="proportion-bar">
+              <div class="proportion-fill female" style="width:${fRate * 100}%"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#3b82f6;font-weight:600;">Male</td>
+          <td>${malePos}</td>
+          <td>${maleAnns.length - malePos}</td>
+          <td>${(mRate * 100).toFixed(1)}%</td>
+          <td class="bar-cell">
+            <div class="proportion-bar">
+              <div class="proportion-fill male" style="width:${mRate * 100}%"></div>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      document.getElementById('analysisFemaleN').textContent = femaleAnns.length;
+      document.getElementById('analysisMaleN').textContent = maleAnns.length;
+
+      // Effect size
+      const h = calculateCohensH(annsArray);
+      const effectEl = document.getElementById('effectValue');
+      const ciEl = document.getElementById('effectCI');
+      const interpEl = document.getElementById('effectInterpretation');
+
+      if (h !== null) {
+        effectEl.textContent = h.toFixed(3);
+        effectEl.className = 'effect-number ' + (h > 0.2 ? 'positive' : h < -0.2 ? 'negative' : 'neutral');
+
+        const [ciLo, ciHi] = cohensHCI(h, femaleAnns.length, maleAnns.length);
+        ciEl.textContent = `95% CI: [${ciLo.toFixed(3)}, ${ciHi.toFixed(3)}]`;
+
+        // Render forest plot
+        renderForestPlot(h, ciLo, ciHi);
+
+        // Interpretation
+        const absH = Math.abs(h);
+        let size = absH < 0.2 ? 'negligible' : absH < 0.5 ? 'small' : absH < 0.8 ? 'medium' : 'large';
+        let direction = h > 0 ? 'Female MPs show higher rates' : 'Male MPs show higher rates';
+        if (absH < 0.2) direction = 'No meaningful difference between genders';
+
+        // Check if CI crosses zero
+        const significant = (ciLo > 0 && ciHi > 0) || (ciLo < 0 && ciHi < 0);
+
+        interpEl.innerHTML = `
+          <strong>${size.charAt(0).toUpperCase() + size.slice(1)} effect</strong> (|h| = ${absH.toFixed(2)})<br><br>
+          ${direction} of positive evidence.<br><br>
+          ${significant ? '<span style="color:var(--green-600);">Statistically significant</span> (CI does not cross zero)' : '<span style="color:var(--gray-500);">Not statistically significant</span> (CI crosses zero)'}<br><br>
+          Female rate: ${(fRate * 100).toFixed(1)}% (n=${femaleAnns.length})<br>
+          Male rate: ${(mRate * 100).toFixed(1)}% (n=${maleAnns.length})
+        `;
+      } else {
+        effectEl.textContent = '--';
+        effectEl.className = 'effect-number neutral';
+        ciEl.textContent = '95% CI: [-, -]';
+        hideForestPlot();
+        interpEl.textContent = `Need at least 5 annotations per gender. Currently: Female=${femaleAnns.length}, Male=${maleAnns.length}`;
+      }
+
+      // Research summary
+      const question = researchConfig.question || '[No question defined]';
+      const hypothesis = researchConfig.hypothesis || '[No hypothesis defined]';
+      document.getElementById('researchSummary').innerHTML = `
+        <strong>Question:</strong> ${esc(question)}<br><br>
+        <strong>Hypothesis:</strong> ${esc(hypothesis)}<br><br>
+        <strong>Sample:</strong> ${annsArray.length} total annotations (${femaleAnns.length} female, ${maleAnns.length} male)<br><br>
+        <strong>Finding:</strong> ${h !== null ? (Math.abs(h) < 0.2 ? 'No significant gender difference detected.' : h > 0 ? 'Evidence supports higher female rates.' : 'Evidence supports higher male rates.') : 'Insufficient data for conclusion.'}
+      `;
+
+      // Power analysis - estimate sample size needed for 80% power
+      updatePowerAnalysis(h, fRate, mRate, femaleAnns.length, maleAnns.length);
+    }
+
+    // Power analysis: estimate N needed for 80% power to detect current effect
+    function updatePowerAnalysis(h, p1, p2, n1, n2) {
+      const powerEl = document.getElementById('powerAnalysis');
+      const neededEl = document.getElementById('powerNeeded');
+      const progressEl = document.getElementById('powerProgress');
+      const barEl = document.getElementById('powerBar');
+
+      // Need at least some data to estimate
+      if (n1 < 3 || n2 < 3) {
+        powerEl.textContent = 'Need at least 3 annotations per group to estimate power.';
+        neededEl.textContent = '--';
+        progressEl.textContent = '0%';
+        barEl.style.width = '0%';
+        return;
+      }
+
+      // Estimate effect size from current data (use absolute h)
+      const absH = h !== null ? Math.abs(h) : null;
+
+      if (absH === null || absH < 0.05) {
+        // Effect too small or indeterminate
+        powerEl.innerHTML = 'Current effect size too small to estimate power reliably.<br><br>If no effect exists, no sample size will achieve significance.';
+        neededEl.textContent = 'N/A';
+        progressEl.textContent = '--';
+        barEl.style.width = '0%';
+        return;
+      }
+
+      // Sample size formula for Cohen's h, 80% power, alpha=0.05
+      // n per group = 2 * ((z_alpha + z_beta) / h)^2
+      // z_alpha = 1.96, z_beta = 0.84 for 80% power
+      const z = 1.96 + 0.84; // 2.8
+      const nPerGroup = Math.ceil(2 * Math.pow(z / absH, 2));
+      const totalNeeded = nPerGroup * 2;
+
+      const currentMin = Math.min(n1, n2);
+      const progress = Math.min(100, Math.round((currentMin / nPerGroup) * 100));
+
+      let interpretation;
+      if (progress >= 100) {
+        interpretation = `Sample size sufficient for 80% power to detect h=${absH.toFixed(2)}. Your results are statistically meaningful.`;
+      } else {
+        const moreNeeded = Math.max(0, nPerGroup - currentMin);
+        interpretation = `For 80% power to detect h=${absH.toFixed(2)}, need ~${nPerGroup} per group. Annotate ~${moreNeeded} more per group.`;
+      }
+
+      powerEl.innerHTML = interpretation;
+      neededEl.textContent = `${nPerGroup}/group`;
+      progressEl.textContent = `${progress}%`;
+      barEl.style.width = `${progress}%`;
+      barEl.style.background = progress >= 100 ? 'var(--green-500)' : 'var(--purple-500)';
+    }
+
+    // Forest plot visualization for confidence interval
+    function renderForestPlot(h, ciLo, ciHi) {
+      const bar = document.getElementById('ciBar');
+      const point = document.getElementById('ciPoint');
+
+      // Scale: -1 to +1 maps to 0% to 100%
+      // Clamp values to visible range
+      const scale = (val) => Math.max(0, Math.min(100, (val + 1) / 2 * 100));
+
+      const loPos = scale(ciLo);
+      const hiPos = scale(ciHi);
+      const hPos = scale(h);
+
+      // Render CI bar
+      bar.style.display = 'block';
+      bar.style.left = `${loPos}%`;
+      bar.style.width = `${hiPos - loPos}%`;
+
+      // Render point estimate
+      point.style.display = 'block';
+      point.style.left = `${hPos}%`;
+
+      // Color based on significance (CI doesn't cross zero)
+      const significant = (ciLo > 0 && ciHi > 0) || (ciLo < 0 && ciHi < 0);
+      point.className = 'ci-point ' + (significant ? 'significant' : 'not-significant');
+      bar.style.background = significant ? 'var(--green-500)' : 'var(--purple-500)';
+    }
+
+    function hideForestPlot() {
+      document.getElementById('ciBar').style.display = 'none';
+      document.getElementById('ciPoint').style.display = 'none';
+    }
+
+    function removeAnnotation(id) {
+      if (confirm('Remove this annotation?')) {
+        delete annotations[id];
+        localStorage.setItem('research_annotations_v2', JSON.stringify(annotations));
+        renderAnalysis();
+        showToast('Removed');
+      }
+    }
+
+    function clearAnnotations() {
+      if (confirm('Clear ALL annotations? This cannot be undone.')) {
+        annotations = {};
+        localStorage.setItem('research_annotations_v2', JSON.stringify(annotations));
+        renderAnalysis();
+        showToast('Cleared all');
+      }
+    }
+
+    function exportResults() {
+      const data = {
+        config: researchConfig,
+        annotations: annotations,
+        exportedAt: new Date().toISOString(),
+        stats: {
+          total: Object.keys(annotations).length,
+          positive: Object.values(annotations).filter(a => a.label === 'positive').length,
+          negative: Object.values(annotations).filter(a => a.label === 'negative').length,
+          cohensH: calculateCohensH(Object.values(annotations))
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `research_${Date.now()}.json`;
+      a.click();
+    }
+
+    // Utilities
+    function esc(t) {
+      return t ? t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+    }
+
+    function highlight(text, query) {
+      if (!query) return text;
+      const terms = query.split(/\s+/).filter(t => t.length > 2);
+      let result = text;
+      terms.forEach(term => {
+        const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        result = result.replace(regex, '<mark>$1</mark>');
+      });
+      return result;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+  </script>
+</body>
+</html>

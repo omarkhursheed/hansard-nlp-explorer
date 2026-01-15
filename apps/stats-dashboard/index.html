@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansard Dataset Statistics Dashboard</title>
+    <style>
+        :root {
+            --male: #3B82C4;
+            --female: #EC4899;
+            --background: #FFFFFF;
+            --background-alt: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #1F2937;
+            --text-muted: #6B7280;
+            --accent1: #10B981;
+            --accent2: #F59E0B;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark {
+            --background: #111827;
+            --background-alt: #1F2937;
+            --card-bg: #1F2937;
+            --border: #374151;
+            --text: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--background-alt);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--male) 0%, var(--female) 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .hero h2 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-stat {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Chamber Cards */
+        .chamber-card {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chamber-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chamber-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .chamber-icon.commons {
+            background: rgba(59, 130, 196, 0.1);
+            color: var(--male);
+        }
+
+        .chamber-icon.lords {
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--female);
+        }
+
+        .chamber-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .chamber-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .chamber-stat {
+            background: var(--background-alt);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .chamber-stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chamber-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 12px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--background-alt);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.commons {
+            background: var(--male);
+        }
+
+        .progress-fill.lords {
+            background: var(--female);
+        }
+
+        /* Gender Breakdown */
+        .gender-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .gender-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .gender-bar {
+            flex: 1;
+            height: 40px;
+            background: var(--background-alt);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .gender-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            transition: width 0.5s ease;
+        }
+
+        .gender-segment.male {
+            background: var(--male);
+        }
+
+        .gender-segment.female {
+            background: var(--female);
+        }
+
+        .gender-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.male {
+            background: var(--male);
+        }
+
+        .legend-dot.female {
+            background: var(--female);
+        }
+
+        .legend-text {
+            font-size: 0.875rem;
+        }
+
+        .legend-count {
+            font-weight: 600;
+        }
+
+        /* Sparkline */
+        .sparkline-container {
+            margin-top: 16px;
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 60px;
+        }
+
+        .sparkline-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Year Range Visualization */
+        .year-range {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .year-range-bar {
+            position: relative;
+            height: 48px;
+            background: var(--background-alt);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .year-range-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--male), var(--female));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .year-range-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .year-label {
+            text-align: center;
+        }
+
+        .year-label-year {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .year-label-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Data Quality */
+        .quality-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .quality-metric {
+            background: var(--background-alt);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .quality-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .quality-value.good {
+            color: var(--accent1);
+        }
+
+        .quality-value.warning {
+            color: var(--accent2);
+        }
+
+        .quality-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Decade Table */
+        .decade-table-container {
+            overflow-x: auto;
+        }
+
+        .decade-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .decade-table th,
+        .decade-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .decade-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .decade-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .decade-table tbody tr:hover {
+            background: var(--background-alt);
+        }
+
+        .decade-table tbody tr.selected {
+            background: rgba(59, 130, 196, 0.1);
+        }
+
+        .decade-cell {
+            font-weight: 600;
+        }
+
+        .mini-bar {
+            display: flex;
+            height: 20px;
+            background: var(--background-alt);
+            border-radius: 4px;
+            overflow: hidden;
+            min-width: 100px;
+        }
+
+        .mini-bar-male {
+            background: var(--male);
+        }
+
+        .mini-bar-female {
+            background: var(--female);
+        }
+
+        /* Decade Detail Panel */
+        .decade-detail {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--background-alt);
+            border-radius: 12px;
+        }
+
+        .decade-detail.active {
+            display: block;
+        }
+
+        .decade-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .decade-detail-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .decade-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .decade-detail-stat {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .decade-detail-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .decade-detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Trends Sparkline */
+        .trends-chart {
+            margin-top: 20px;
+        }
+
+        .trends-chart svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .btn, .header-controls {
+                display: none;
+            }
+
+            .hero {
+                background: #3B82C4 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .decade-table tbody tr:hover {
+                background: none;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-stat-value {
+                font-size: 1.75rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quality-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .decade-table {
+                font-size: 0.75rem;
+            }
+
+            .decade-table th,
+            .decade-table td {
+                padding: 8px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hansard Dataset Statistics</h1>
+            <div class="header-controls">
+                <button class="btn" id="themeToggle" onclick="toggleTheme()">Dark Mode</button>
+                <button class="btn" onclick="window.print()">Print</button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h2>UK Parliamentary Debates Archive</h2>
+            <p class="hero-subtitle">Comprehensive analysis of Hansard records</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="totalSpeeches">--</div>
+                    <div class="hero-stat-label">Total Speeches</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="totalDebates">--</div>
+                    <div class="hero-stat-label">Debates</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="totalWords">--</div>
+                    <div class="hero-stat-label">Total Words</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="uniqueMPs">--</div>
+                    <div class="hero-stat-label">Unique MPs</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chamber Cards -->
+        <div class="grid">
+            <div class="card chamber-card">
+                <div class="chamber-header">
+                    <div class="chamber-icon commons">HC</div>
+                    <div class="chamber-info">
+                        <h3>House of Commons</h3>
+                        <span class="card-subtitle">Lower House</span>
+                    </div>
+                </div>
+                <div class="chamber-stats">
+                    <div class="chamber-stat">
+                        <div class="chamber-stat-value" id="commonsSpeeches">--</div>
+                        <div class="chamber-stat-label">Total Speeches</div>
+                    </div>
+                    <div class="chamber-stat">
+                        <div class="chamber-stat-value" id="commonsMatched">--</div>
+                        <div class="chamber-stat-label">MP Matched</div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Match Rate</span>
+                        <span id="commonsMatchRate">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill commons" id="commonsProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chamber-card">
+                <div class="chamber-header">
+                    <div class="chamber-icon lords">HL</div>
+                    <div class="chamber-info">
+                        <h3>House of Lords</h3>
+                        <span class="card-subtitle">Upper House</span>
+                    </div>
+                </div>
+                <div class="chamber-stats">
+                    <div class="chamber-stat">
+                        <div class="chamber-stat-value" id="lordsSpeeches">--</div>
+                        <div class="chamber-stat-label">Total Speeches</div>
+                    </div>
+                    <div class="chamber-stat">
+                        <div class="chamber-stat-value" id="lordsMatched">--</div>
+                        <div class="chamber-stat-label">MP Matched</div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Match Rate</span>
+                        <span id="lordsMatchRate">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill lords" id="lordsProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gender Breakdown and Year Range -->
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Gender Breakdown</span>
+                    <span class="card-subtitle">MPs in Dataset</span>
+                </div>
+                <div class="gender-breakdown">
+                    <div class="gender-bar-container">
+                        <div class="gender-bar" id="genderBar">
+                            <div class="gender-segment male" id="maleSegment" style="width: 0%"></div>
+                            <div class="gender-segment female" id="femaleSegment" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="gender-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot male"></div>
+                            <span class="legend-text">Male: <span class="legend-count" id="maleMPs">--</span></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot female"></div>
+                            <span class="legend-text">Female: <span class="legend-count" id="femaleMPs">--</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Coverage Period</span>
+                    <span class="card-subtitle">Year Range</span>
+                </div>
+                <div class="year-range">
+                    <div class="year-range-bar">
+                        <div class="year-range-fill" id="yearRangeFill" style="width: 100%">
+                            <span id="yearSpan">-- years</span>
+                        </div>
+                    </div>
+                    <div class="year-range-labels">
+                        <div class="year-label">
+                            <div class="year-label-year" id="startYear">--</div>
+                            <div class="year-label-desc">First Record</div>
+                        </div>
+                        <div class="year-label">
+                            <div class="year-label-year" id="endYear">--</div>
+                            <div class="year-label-desc">Last Record</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Quality and Trends -->
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Data Quality Metrics</span>
+                    <span class="card-subtitle">Overall Statistics</span>
+                </div>
+                <div class="quality-metrics">
+                    <div class="quality-metric">
+                        <div class="quality-value good" id="overallMatchRate">--%</div>
+                        <div class="quality-label">Overall Match Rate</div>
+                    </div>
+                    <div class="quality-metric">
+                        <div class="quality-value" id="avgWordsPerSpeech">--</div>
+                        <div class="quality-label">Avg Words/Speech</div>
+                    </div>
+                    <div class="quality-metric">
+                        <div class="quality-value" id="avgSpeechesPerDebate">--</div>
+                        <div class="quality-label">Avg Speeches/Debate</div>
+                    </div>
+                    <div class="quality-metric">
+                        <div class="quality-value" id="genderMatchRate">--%</div>
+                        <div class="quality-label">Gender ID Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Speech Volume Trends</span>
+                    <span class="card-subtitle">By Decade</span>
+                </div>
+                <div class="sparkline-container">
+                    <svg class="sparkline" id="trendSparkline"></svg>
+                    <div class="sparkline-labels">
+                        <span id="sparklineStart">1800s</span>
+                        <span id="sparklineEnd">2000s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decade Breakdown Table -->
+        <div class="card grid-full">
+            <div class="card-header">
+                <span class="card-title">Decade-by-Decade Breakdown</span>
+                <span class="card-subtitle">Click a row for details</span>
+            </div>
+            <div class="decade-table-container">
+                <table class="decade-table">
+                    <thead>
+                        <tr>
+                            <th>Decade</th>
+                            <th>Total Speeches</th>
+                            <th>Female</th>
+                            <th>Male</th>
+                            <th>Female %</th>
+                            <th>Gender Distribution</th>
+                        </tr>
+                    </thead>
+                    <tbody id="decadeTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="decade-detail" id="decadeDetail">
+                <div class="decade-detail-header">
+                    <span class="decade-detail-title" id="decadeDetailTitle">1990s</span>
+                    <button class="close-btn" onclick="closeDecadeDetail()">&times;</button>
+                </div>
+                <div class="decade-detail-grid" id="decadeDetailGrid">
+                </div>
+            </div>
+        </div>
+
+        <!-- Female Representation Trend -->
+        <div class="card grid-full">
+            <div class="card-header">
+                <span class="card-title">Female Representation Over Time</span>
+                <span class="card-subtitle">Percentage of gendered speeches by women</span>
+            </div>
+            <div class="trends-chart">
+                <svg id="femaleRepChart"></svg>
+            </div>
+        </div>
+
+        <footer>
+            <p>Data source: UK Parliamentary Hansard Archives (1803-2005)</p>
+            <p>Dashboard generated from dataset_stats.json</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data will be loaded here
+        let data = null;
+        let selectedDecade = null;
+
+        // Format numbers with commas
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + 'B';
+            }
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toLocaleString();
+        }
+
+        function formatNumberFull(num) {
+            return num.toLocaleString();
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? 'Light Mode' : 'Dark Mode';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+
+            // Redraw charts with new colors
+            if (data) {
+                drawTrendSparkline();
+                drawFemaleRepChart();
+            }
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = 'Light Mode';
+        }
+
+        // Load data and render
+        async function loadData() {
+            try {
+                const response = await fetch('data/dataset_stats.json');
+                data = await response.json();
+                renderDashboard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Use embedded data as fallback
+                data = {
+                    "overview": {
+                        "total_speeches": 6783015,
+                        "total_debates": 1197828,
+                        "total_words": 1457286990,
+                        "year_range": [1803, 2005],
+                        "unique_mps": 8815,
+                        "female_mps": 242,
+                        "male_mps": 8574
+                    },
+                    "by_chamber": {
+                        "Commons": {"speeches": 5575783, "matched": 4980711},
+                        "Lords": {"speeches": 1207232, "matched": 14098}
+                    },
+                    "by_decade": {
+                        "1800": {"speeches": 13734, "female": 0, "male": 6201},
+                        "1810": {"speeches": 17467, "female": 0, "male": 10344},
+                        "1820": {"speeches": 24316, "female": 0, "male": 14580},
+                        "1830": {"speeches": 72256, "female": 0, "male": 49330},
+                        "1840": {"speeches": 55361, "female": 0, "male": 38758},
+                        "1850": {"speeches": 79175, "female": 0, "male": 57450},
+                        "1860": {"speeches": 90327, "female": 0, "male": 64214},
+                        "1870": {"speeches": 113268, "female": 0, "male": 82595},
+                        "1880": {"speeches": 237649, "female": 0, "male": 194205},
+                        "1890": {"speeches": 233591, "female": 0, "male": 185605},
+                        "1900": {"speeches": 303219, "female": 0, "male": 243573},
+                        "1910": {"speeches": 407942, "female": 0, "male": 348163},
+                        "1920": {"speeches": 368953, "female": 2333, "male": 295255},
+                        "1930": {"speeches": 481046, "female": 6552, "male": 396042},
+                        "1940": {"speeches": 512407, "female": 11092, "male": 414348},
+                        "1950": {"speeches": 576496, "female": 13285, "male": 452217},
+                        "1960": {"speeches": 673583, "female": 16946, "male": 483402},
+                        "1970": {"speeches": 688040, "female": 16521, "male": 466839},
+                        "1980": {"speeches": 768053, "female": 28419, "male": 467020},
+                        "1990": {"speeches": 716808, "female": 35096, "male": 406466},
+                        "2000": {"speeches": 349324, "female": 22282, "male": 165676}
+                    },
+                    "by_year": []
+                };
+                renderDashboard();
+            }
+        }
+
+        function renderDashboard() {
+            // Hero stats
+            document.getElementById('totalSpeeches').textContent = formatNumber(data.overview.total_speeches);
+            document.getElementById('totalDebates').textContent = formatNumber(data.overview.total_debates);
+            document.getElementById('totalWords').textContent = formatNumber(data.overview.total_words);
+            document.getElementById('uniqueMPs').textContent = formatNumber(data.overview.unique_mps);
+
+            // Chamber stats
+            const commons = data.by_chamber.Commons;
+            const lords = data.by_chamber.Lords;
+
+            document.getElementById('commonsSpeeches').textContent = formatNumber(commons.speeches);
+            document.getElementById('commonsMatched').textContent = formatNumber(commons.matched);
+            const commonsRate = ((commons.matched / commons.speeches) * 100).toFixed(1);
+            document.getElementById('commonsMatchRate').textContent = commonsRate + '%';
+            document.getElementById('commonsProgressBar').style.width = commonsRate + '%';
+
+            document.getElementById('lordsSpeeches').textContent = formatNumber(lords.speeches);
+            document.getElementById('lordsMatched').textContent = formatNumber(lords.matched);
+            const lordsRate = ((lords.matched / lords.speeches) * 100).toFixed(1);
+            document.getElementById('lordsMatchRate').textContent = lordsRate + '%';
+            document.getElementById('lordsProgressBar').style.width = lordsRate + '%';
+
+            // Gender breakdown
+            const totalMPs = data.overview.unique_mps;
+            const malePct = (data.overview.male_mps / totalMPs * 100).toFixed(1);
+            const femalePct = (data.overview.female_mps / totalMPs * 100).toFixed(1);
+
+            document.getElementById('maleSegment').style.width = malePct + '%';
+            document.getElementById('maleSegment').textContent = malePct + '%';
+            document.getElementById('femaleSegment').style.width = femalePct + '%';
+            document.getElementById('femaleSegment').textContent = femalePct + '%';
+            document.getElementById('maleMPs').textContent = formatNumberFull(data.overview.male_mps);
+            document.getElementById('femaleMPs').textContent = formatNumberFull(data.overview.female_mps);
+
+            // Year range
+            const startYear = data.overview.year_range[0];
+            const endYear = data.overview.year_range[1];
+            document.getElementById('startYear').textContent = startYear;
+            document.getElementById('endYear').textContent = endYear;
+            document.getElementById('yearSpan').textContent = (endYear - startYear + 1) + ' years';
+
+            // Data quality metrics
+            const totalMatched = commons.matched + lords.matched;
+            const totalChamberSpeeches = commons.speeches + lords.speeches;
+            const overallMatchRate = ((totalMatched / totalChamberSpeeches) * 100).toFixed(1);
+            document.getElementById('overallMatchRate').textContent = overallMatchRate + '%';
+
+            const avgWords = Math.round(data.overview.total_words / data.overview.total_speeches);
+            document.getElementById('avgWordsPerSpeech').textContent = avgWords;
+
+            const avgSpeeches = (data.overview.total_speeches / data.overview.total_debates).toFixed(1);
+            document.getElementById('avgSpeechesPerDebate').textContent = avgSpeeches;
+
+            // Gender identification rate (speeches with gender identified)
+            let totalFemale = 0, totalMale = 0;
+            Object.values(data.by_decade).forEach(d => {
+                totalFemale += d.female;
+                totalMale += d.male;
+            });
+            const genderIdRate = (((totalFemale + totalMale) / data.overview.total_speeches) * 100).toFixed(1);
+            document.getElementById('genderMatchRate').textContent = genderIdRate + '%';
+
+            // Render decade table
+            renderDecadeTable();
+
+            // Draw charts
+            drawTrendSparkline();
+            drawFemaleRepChart();
+        }
+
+        function renderDecadeTable() {
+            const tbody = document.getElementById('decadeTableBody');
+            tbody.innerHTML = '';
+
+            const decades = Object.entries(data.by_decade).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+            const maxSpeeches = Math.max(...decades.map(([_, d]) => d.speeches));
+
+            decades.forEach(([decade, stats]) => {
+                const tr = document.createElement('tr');
+                tr.dataset.decade = decade;
+                tr.onclick = () => showDecadeDetail(decade);
+
+                const gendered = stats.female + stats.male;
+                const femalePercent = gendered > 0 ? ((stats.female / gendered) * 100).toFixed(1) : '0.0';
+                const malePercent = gendered > 0 ? ((stats.male / gendered) * 100).toFixed(1) : '0.0';
+
+                tr.innerHTML = `
+                    <td class="decade-cell">${decade}s</td>
+                    <td>${formatNumberFull(stats.speeches)}</td>
+                    <td>${formatNumberFull(stats.female)}</td>
+                    <td>${formatNumberFull(stats.male)}</td>
+                    <td>${femalePercent}%</td>
+                    <td>
+                        <div class="mini-bar">
+                            <div class="mini-bar-male" style="width: ${malePercent}%"></div>
+                            <div class="mini-bar-female" style="width: ${femalePercent}%"></div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function showDecadeDetail(decade) {
+            selectedDecade = decade;
+            const stats = data.by_decade[decade];
+            const detail = document.getElementById('decadeDetail');
+
+            // Highlight selected row
+            document.querySelectorAll('.decade-table tbody tr').forEach(tr => {
+                tr.classList.toggle('selected', tr.dataset.decade === decade);
+            });
+
+            document.getElementById('decadeDetailTitle').textContent = decade + 's Breakdown';
+
+            const gendered = stats.female + stats.male;
+            const femalePercent = gendered > 0 ? ((stats.female / gendered) * 100).toFixed(1) : '0.0';
+            const unmatchedSpeeches = stats.speeches - gendered;
+            const matchRate = ((gendered / stats.speeches) * 100).toFixed(1);
+
+            const grid = document.getElementById('decadeDetailGrid');
+            grid.innerHTML = `
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value">${formatNumberFull(stats.speeches)}</div>
+                    <div class="decade-detail-label">Total Speeches</div>
+                </div>
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value" style="color: var(--female)">${formatNumberFull(stats.female)}</div>
+                    <div class="decade-detail-label">Female Speeches</div>
+                </div>
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value" style="color: var(--male)">${formatNumberFull(stats.male)}</div>
+                    <div class="decade-detail-label">Male Speeches</div>
+                </div>
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value">${formatNumberFull(unmatchedSpeeches)}</div>
+                    <div class="decade-detail-label">Unmatched</div>
+                </div>
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value">${femalePercent}%</div>
+                    <div class="decade-detail-label">Female Share</div>
+                </div>
+                <div class="decade-detail-stat">
+                    <div class="decade-detail-value">${matchRate}%</div>
+                    <div class="decade-detail-label">Match Rate</div>
+                </div>
+            `;
+
+            detail.classList.add('active');
+        }
+
+        function closeDecadeDetail() {
+            document.getElementById('decadeDetail').classList.remove('active');
+            document.querySelectorAll('.decade-table tbody tr').forEach(tr => {
+                tr.classList.remove('selected');
+            });
+            selectedDecade = null;
+        }
+
+        function drawTrendSparkline() {
+            const svg = document.getElementById('trendSparkline');
+            const decades = Object.entries(data.by_decade).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+
+            const width = svg.clientWidth || 300;
+            const height = 60;
+            const padding = 5;
+
+            const speeches = decades.map(([_, d]) => d.speeches);
+            const maxSpeeches = Math.max(...speeches);
+            const minSpeeches = Math.min(...speeches);
+
+            const points = decades.map(([_, d], i) => {
+                const x = padding + (i / (decades.length - 1)) * (width - 2 * padding);
+                const y = height - padding - ((d.speeches - minSpeeches) / (maxSpeeches - minSpeeches)) * (height - 2 * padding);
+                return `${x},${y}`;
+            });
+
+            const isDark = document.body.classList.contains('dark');
+            const lineColor = isDark ? '#60A5FA' : '#3B82C4';
+            const fillColor = isDark ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 196, 0.2)';
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:${lineColor};stop-opacity:0.3"/>
+                        <stop offset="100%" style="stop-color:${lineColor};stop-opacity:0"/>
+                    </linearGradient>
+                </defs>
+                <polygon points="${padding},${height - padding} ${points.join(' ')} ${width - padding},${height - padding}"
+                         fill="url(#sparklineGradient)"/>
+                <polyline points="${points.join(' ')}"
+                          fill="none"
+                          stroke="${lineColor}"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"/>
+            `;
+
+            document.getElementById('sparklineStart').textContent = decades[0][0] + 's';
+            document.getElementById('sparklineEnd').textContent = decades[decades.length - 1][0] + 's';
+        }
+
+        function drawFemaleRepChart() {
+            const svg = document.getElementById('femaleRepChart');
+            const decades = Object.entries(data.by_decade)
+                .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                .filter(([_, d]) => d.female + d.male > 0); // Only decades with gendered data
+
+            const width = svg.clientWidth || 800;
+            const height = 120;
+            const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+
+            if (decades.length === 0) {
+                svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="var(--text-muted)">No gender data available</text>';
+                return;
+            }
+
+            const percentages = decades.map(([_, d]) => {
+                const total = d.female + d.male;
+                return total > 0 ? (d.female / total) * 100 : 0;
+            });
+            const maxPct = Math.max(...percentages, 10); // At least 10% scale
+
+            const isDark = document.body.classList.contains('dark');
+            const textColor = isDark ? '#9CA3AF' : '#6B7280';
+            const gridColor = isDark ? '#374151' : '#E5E7EB';
+            const femaleColor = '#EC4899';
+
+            let svgContent = `
+                <defs>
+                    <linearGradient id="femaleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:${femaleColor};stop-opacity:0.4"/>
+                        <stop offset="100%" style="stop-color:${femaleColor};stop-opacity:0.05"/>
+                    </linearGradient>
+                </defs>
+            `;
+
+            // Grid lines
+            for (let i = 0; i <= 4; i++) {
+                const y = padding.top + (i / 4) * chartHeight;
+                const pct = maxPct - (i / 4) * maxPct;
+                svgContent += `
+                    <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}"
+                          stroke="${gridColor}" stroke-dasharray="2,2"/>
+                    <text x="${padding.left - 8}" y="${y + 4}" text-anchor="end"
+                          fill="${textColor}" font-size="10">${pct.toFixed(0)}%</text>
+                `;
+            }
+
+            // Generate points
+            const points = decades.map(([decade, _], i) => {
+                const x = padding.left + (i / (decades.length - 1)) * chartWidth;
+                const y = padding.top + chartHeight - (percentages[i] / maxPct) * chartHeight;
+                return { x, y, decade, pct: percentages[i] };
+            });
+
+            // Area fill
+            const areaPoints = points.map(p => `${p.x},${p.y}`).join(' ');
+            svgContent += `
+                <polygon points="${padding.left},${padding.top + chartHeight} ${areaPoints} ${points[points.length-1].x},${padding.top + chartHeight}"
+                         fill="url(#femaleGradient)"/>
+            `;
+
+            // Line
+            const linePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+            svgContent += `
+                <polyline points="${linePoints}"
+                          fill="none"
+                          stroke="${femaleColor}"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"/>
+            `;
+
+            // Data points and labels
+            points.forEach((p, i) => {
+                svgContent += `
+                    <circle cx="${p.x}" cy="${p.y}" r="4" fill="${femaleColor}"/>
+                `;
+                // Add decade labels
+                if (i % 2 === 0 || i === points.length - 1) {
+                    svgContent += `
+                        <text x="${p.x}" y="${height - 8}" text-anchor="middle"
+                              fill="${textColor}" font-size="10">${p.decade}s</text>
+                    `;
+                }
+            });
+
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            svg.innerHTML = svgContent;
+        }
+
+        // Handle window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (data) {
+                    drawTrendSparkline();
+                    drawFemaleRepChart();
+                }
+            }, 250);
+        });
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>

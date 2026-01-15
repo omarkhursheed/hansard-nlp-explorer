@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Toolkit - Hansard Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a26;
+      --bg-card: #16161f;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --border-focus: rgba(139, 92, 246, 0.6);
+      --text-primary: #f0f0f5;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      --accent-blue: #3B82C4;
+      --accent-pink: #EC4899;
+      --accent-gold: #F59E0B;
+      --accent-emerald: #10B981;
+      --accent-purple: #8B5CF6;
+      --accent-red: #EF4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 360px 1fr 320px;
+      min-height: 100vh;
+    }
+
+    /* Left Panel */
+    .left-panel {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-subtle);
+      padding: 20px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .panel-header {
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .panel-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .section-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    /* Research Questions */
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .question-card:hover {
+      border-color: var(--accent-purple);
+    }
+
+    .question-card.active {
+      border-color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .question-category {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-purple);
+      margin-bottom: 5px;
+    }
+
+    .question-text {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .question-hypothesis {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .search-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .search-tag {
+      font-size: 10px;
+      padding: 4px 8px;
+      background: var(--bg-tertiary);
+      border-radius: 5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .search-tag:hover {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    /* Keyboard Guide */
+    .keyboard-guide {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 11px;
+    }
+
+    .shortcut-key {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-tertiary);
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .shortcut-desc {
+      color: var(--text-muted);
+    }
+
+    /* Center Panel */
+    .center-panel {
+      padding: 20px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .search-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-blue);
+    }
+
+    .btn-primary:disabled {
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .filter-select, .filter-input {
+      padding: 6px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 11px;
+    }
+
+    .filter-input { width: 70px; }
+
+    /* Count Preview */
+    .count-preview {
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .count-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .count-text strong {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .progress-indicator {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--bg-primary);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-purple);
+      transition: width 0.3s;
+    }
+
+    /* Evidence List */
+    .evidence-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .evidence-card {
+      background: var(--bg-card);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+
+    .evidence-card.focused {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .evidence-card.marked-positive {
+      border-left: 4px solid var(--accent-emerald);
+    }
+
+    .evidence-card.marked-negative {
+      border-left: 4px solid var(--accent-red);
+    }
+
+    .evidence-card.marked-unclear {
+      border-left: 4px solid var(--accent-gold);
+    }
+
+    .evidence-header {
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .speaker-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .speaker-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      color: white;
+    }
+
+    .speaker-avatar.male { background: var(--accent-blue); }
+    .speaker-avatar.female { background: var(--accent-pink); }
+    .speaker-avatar.unknown { background: var(--text-muted); }
+
+    .speaker-name {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .speaker-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .evidence-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .action-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .action-btn.active-positive {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      color: white;
+    }
+
+    .action-btn.active-negative {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: white;
+    }
+
+    .action-btn.active-unclear {
+      background: var(--accent-gold);
+      border-color: var(--accent-gold);
+      color: white;
+    }
+
+    .evidence-body {
+      padding: 14px;
+    }
+
+    .evidence-excerpt {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .evidence-excerpt mark {
+      background: rgba(139, 92, 246, 0.3);
+      color: var(--text-primary);
+      padding: 1px 3px;
+      border-radius: 2px;
+    }
+
+    .evidence-full-text {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .evidence-card.expanded .evidence-full-text {
+      display: block;
+    }
+
+    .full-text-content {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .expand-btn {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--accent-purple);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .expand-btn:hover {
+      text-decoration: underline;
+    }
+
+    .evidence-footer {
+      padding: 10px 14px;
+      background: var(--bg-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .evidence-tags {
+      display: flex;
+      gap: 5px;
+    }
+
+    .tag {
+      font-size: 9px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-positive { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .tag-negative { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+    .tag-unclear { background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); }
+
+    .evidence-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .view-debate-link {
+      font-size: 10px;
+      color: var(--accent-purple);
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    .view-debate-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-subtle);
+      padding: 20px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Effect Size */
+    .analysis-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .analysis-title {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: var(--text-primary);
+    }
+
+    .effect-display {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .effect-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
+    }
+
+    .effect-value.positive { color: var(--accent-emerald); }
+    .effect-value.negative { color: var(--accent-red); }
+    .effect-value.neutral { color: var(--text-muted); }
+
+    .effect-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .effect-interpretation {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+    }
+
+    /* Gender Comparison */
+    .gender-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .gender-label {
+      width: 55px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .gender-label.female { color: var(--accent-pink); }
+    .gender-label.male { color: var(--accent-blue); }
+
+    .gender-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .gender-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .gender-bar.female { background: var(--accent-pink); }
+    .gender-bar.male { background: var(--accent-blue); }
+
+    .gender-value {
+      width: 45px;
+      text-align: right;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .sample-details {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Export */
+    .export-section {
+      margin-top: 16px;
+    }
+
+    .export-btn {
+      width: 100%;
+      padding: 12px;
+      border: 1px dashed var(--border-medium);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .export-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: white;
+    }
+
+    .toast-icon.positive { background: var(--accent-emerald); }
+    .toast-icon.negative { background: var(--accent-red); }
+    .toast-icon.unclear { background: var(--accent-gold); }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 16px;
+    }
+
+    .loading-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent-purple);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Left Panel -->
+    <div class="left-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Research Toolkit</h1>
+        <p class="panel-subtitle">Find and annotate evidence</p>
+      </div>
+
+      <div class="section-label">Research Questions</div>
+
+      <div class="question-card active" data-question="0">
+        <div class="question-category">Gender Dynamics</div>
+        <div class="question-text">Do female MPs face more interruptions?</div>
+        <div class="question-hypothesis">H1: Female MPs show higher rates of being interrupted mid-speech.</div>
+        <div class="search-tags">
+          <span class="search-tag" data-search="give way">give way</span>
+          <span class="search-tag" data-search="interrupt">interrupt</span>
+          <span class="search-tag" data-search="let me finish">let me finish</span>
+        </div>
+      </div>
+
+      <div class="question-card" data-question="1">
+        <div class="question-category">Rhetorical Style</div>
+        <div class="question-text">Do female MPs use more personal narrative?</div>
+        <div class="question-hypothesis">H1: Female MPs cite personal experiences more frequently.</div>
+        <div class="search-tags">
+          <span class="search-tag" data-search="my constituent">my constituent</span>
+          <span class="search-tag" data-search="I have seen">I have seen</span>
+          <span class="search-tag" data-search="in my experience">in my experience</span>
+        </div>
+      </div>
+
+      <div class="question-card" data-question="2">
+        <div class="question-category">Topic Specialization</div>
+        <div class="question-text">Are female MPs overrepresented in social policy?</div>
+        <div class="question-hypothesis">H1: Female MPs speak more on healthcare, education, childcare.</div>
+        <div class="search-tags">
+          <span class="search-tag" data-search="NHS">NHS</span>
+          <span class="search-tag" data-search="schools">schools</span>
+          <span class="search-tag" data-search="childcare">childcare</span>
+        </div>
+      </div>
+
+      <div class="question-card" data-question="3">
+        <div class="question-category">Institutional Response</div>
+        <div class="question-text">How do male MPs respond to female MPs?</div>
+        <div class="question-hypothesis">H1: Different response patterns to female vs male colleagues.</div>
+        <div class="search-tags">
+          <span class="search-tag" data-search="honourable lady">honourable lady</span>
+          <span class="search-tag" data-search="the lady">the lady</span>
+          <span class="search-tag" data-search="she said">she said</span>
+        </div>
+      </div>
+
+      <div class="keyboard-guide">
+        <div class="section-label">Keyboard Shortcuts</div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">j / k</span>
+          <span class="shortcut-desc">Next / Previous</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">1</span>
+          <span class="shortcut-desc">Mark positive (+)</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">2</span>
+          <span class="shortcut-desc">Mark negative (-)</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">3</span>
+          <span class="shortcut-desc">Mark unclear (?)</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">e</span>
+          <span class="shortcut-desc">Expand full text</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-key">u</span>
+          <span class="shortcut-desc">Undo last mark</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel -->
+    <div class="center-panel">
+      <div class="search-section">
+        <div class="search-row">
+          <input type="text" class="search-input" id="searchQuery" placeholder="Search speech content...">
+          <button class="btn btn-primary" id="searchBtn" onclick="performSearch()">Search</button>
+        </div>
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">Gender:</span>
+            <select class="filter-select" id="genderFilter">
+              <option value="">All</option>
+              <option value="F">Female</option>
+              <option value="M">Male</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Chamber:</span>
+            <select class="filter-select" id="chamberFilter">
+              <option value="">All</option>
+              <option value="Commons">Commons</option>
+              <option value="Lords">Lords</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Years:</span>
+            <input type="number" class="filter-input" id="yearFrom" placeholder="1803" min="1803" max="2005">
+            <span class="filter-label">-</span>
+            <input type="number" class="filter-input" id="yearTo" placeholder="2005" min="1803" max="2005">
+          </div>
+        </div>
+      </div>
+
+      <div class="count-preview" id="countPreview" style="display: none;">
+        <span class="count-text">
+          Found <strong id="totalCount">0</strong> speeches matching "<span id="searchTermDisplay"></span>"
+        </span>
+        <span class="progress-indicator">
+          Reviewed: <span id="reviewedCount">0</span> / <span id="displayedCount">0</span>
+        </span>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="evidence-list" id="evidenceList">
+        <div class="empty-state">
+          <p>Select a research question and click a search term to begin,<br>or enter your own search query above.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Analysis</h2>
+        <p class="panel-subtitle">Live statistics</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Displayed</div>
+          <div class="stat-value" id="statDisplayed">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Annotated</div>
+          <div class="stat-value" id="statAnnotated">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Positive</div>
+          <div class="stat-value" style="color: var(--accent-emerald);" id="statPositive">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Negative</div>
+          <div class="stat-value" style="color: var(--accent-red);" id="statNegative">0</div>
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="analysis-title">Effect Size (Cohen's d)</div>
+        <div class="effect-display">
+          <div class="effect-value neutral" id="effectValue">--</div>
+          <div class="effect-label">Gender difference in positive rate</div>
+        </div>
+        <div class="effect-interpretation" id="effectInterpretation">
+          Annotate at least 10 speeches from each gender to calculate effect size.
+        </div>
+      </div>
+
+      <div class="analysis-section">
+        <div class="analysis-title">Gender Breakdown</div>
+        <div class="gender-row">
+          <span class="gender-label female">Female</span>
+          <div class="gender-bar-bg">
+            <div class="gender-bar female" id="femaleBar" style="width: 0%;"></div>
+          </div>
+          <span class="gender-value" id="femaleRate">0%</span>
+        </div>
+        <div class="gender-row">
+          <span class="gender-label male">Male</span>
+          <div class="gender-bar-bg">
+            <div class="gender-bar male" id="maleBar" style="width: 0%;"></div>
+          </div>
+          <span class="gender-value" id="maleRate">0%</span>
+        </div>
+        <div class="sample-details">
+          <div>Female: <span id="femalePosN">0</span> / <span id="femaleTotalN">0</span> positive</div>
+          <div>Male: <span id="malePosN">0</span> / <span id="maleTotalN">0</span> positive</div>
+        </div>
+      </div>
+
+      <div class="export-section">
+        <button class="export-btn" onclick="exportAnnotations('json')">Export Annotations (JSON)</button>
+        <button class="export-btn" onclick="exportAnnotations('csv')">Export for Analysis (CSV)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="toastIcon">+</div>
+    <span id="toastMessage">Marked as positive</span>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8766';
+
+    // State
+    let searchResults = [];
+    let annotations = JSON.parse(localStorage.getItem('hansard_annotations_v3') || '{}');
+    let focusedIndex = -1;
+    let currentQuestion = 0;
+    let currentQuery = '';
+    let lastAction = null; // For undo
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      setupEventListeners();
+      updateStats();
+    });
+
+    function setupEventListeners() {
+      // Question cards
+      document.querySelectorAll('.question-card').forEach((card, i) => {
+        card.addEventListener('click', (e) => {
+          if (e.target.classList.contains('search-tag')) return;
+          selectQuestion(i);
+        });
+      });
+
+      // Search tags
+      document.querySelectorAll('.search-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+          const query = tag.dataset.search;
+          document.getElementById('searchQuery').value = query;
+          performSearch();
+        });
+      });
+
+      // Enter key for search
+      document.getElementById('searchQuery').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performSearch();
+      });
+
+      // Global keyboard shortcuts
+      document.addEventListener('keydown', handleKeyboard);
+    }
+
+    function selectQuestion(index) {
+      document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.question-card')[index].classList.add('active');
+      currentQuestion = index;
+      updateStats();
+    }
+
+    function handleKeyboard(e) {
+      // Ignore if typing in input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+      switch(e.key.toLowerCase()) {
+        case 'j':
+          e.preventDefault();
+          navigateFocus(1);
+          break;
+        case 'k':
+          e.preventDefault();
+          navigateFocus(-1);
+          break;
+        case '1':
+          e.preventDefault();
+          if (focusedIndex >= 0) markEvidence(focusedIndex, 'positive');
+          break;
+        case '2':
+          e.preventDefault();
+          if (focusedIndex >= 0) markEvidence(focusedIndex, 'negative');
+          break;
+        case '3':
+          e.preventDefault();
+          if (focusedIndex >= 0) markEvidence(focusedIndex, 'unclear');
+          break;
+        case 'e':
+          e.preventDefault();
+          if (focusedIndex >= 0) toggleExpand(focusedIndex);
+          break;
+        case 'u':
+          e.preventDefault();
+          undoLastAction();
+          break;
+      }
+    }
+
+    function navigateFocus(delta) {
+      const newIndex = Math.max(0, Math.min(searchResults.length - 1, focusedIndex + delta));
+      setFocus(newIndex);
+    }
+
+    function setFocus(index) {
+      document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('focused'));
+      focusedIndex = index;
+      if (index >= 0 && index < searchResults.length) {
+        const card = document.querySelector(`.evidence-card[data-index="${index}"]`);
+        if (card) {
+          card.classList.add('focused');
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
+    async function performSearch() {
+      const query = document.getElementById('searchQuery').value.trim();
+      if (!query) return;
+
+      currentQuery = query;
+      const gender = document.getElementById('genderFilter').value;
+      const chamber = document.getElementById('chamberFilter').value;
+      const yearFrom = document.getElementById('yearFrom').value;
+      const yearTo = document.getElementById('yearTo').value;
+
+      // Show loading
+      document.getElementById('evidenceList').innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Searching ${(yearTo || 2005) - (yearFrom || 1803) + 1} years of debates...</div>
+        </div>
+      `;
+      document.getElementById('countPreview').style.display = 'none';
+
+      try {
+        // Build params
+        const params = new URLSearchParams({
+          q: query,
+          search_content: 'true',
+          limit: '500'
+        });
+        if (gender) params.append('gender', gender);
+        if (chamber) params.append('chamber', chamber);
+        if (yearFrom) params.append('year_from', yearFrom);
+        if (yearTo) params.append('year_to', yearTo);
+
+        const response = await fetch(`${API_BASE}/api/search?${params}`);
+        const debates = await response.json();
+
+        // Flatten to speeches
+        searchResults = [];
+        for (const debate of debates) {
+          if (debate.matching_speeches) {
+            for (const match of debate.matching_speeches) {
+              searchResults.push({
+                id: `${debate.debate_id}_seq${match.sequence}`,
+                debate_id: debate.debate_id,
+                debate_title: debate.title,
+                year: debate.year,
+                date: debate.date,
+                chamber: debate.chamber,
+                speaker: match.speaker,
+                gender: match.gender,
+                excerpt: match.excerpt,
+                sequence: match.sequence,
+                file_path: debate.file_path
+              });
+            }
+          }
+        }
+
+        // Show count preview
+        document.getElementById('countPreview').style.display = 'block';
+        document.getElementById('totalCount').textContent = searchResults.length.toLocaleString();
+        document.getElementById('searchTermDisplay').textContent = query;
+        document.getElementById('displayedCount').textContent = searchResults.length;
+
+        renderEvidence();
+        focusedIndex = searchResults.length > 0 ? 0 : -1;
+        setFocus(focusedIndex);
+        updateStats();
+
+      } catch (error) {
+        console.error('Search error:', error);
+        document.getElementById('evidenceList').innerHTML = `
+          <div class="empty-state">
+            <p>Search failed. Make sure API server is running:<br><code>python api_server.py</code></p>
+          </div>
+        `;
+      }
+    }
+
+    function renderEvidence() {
+      const container = document.getElementById('evidenceList');
+
+      if (searchResults.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No results found for this query.</p></div>';
+        return;
+      }
+
+      container.innerHTML = searchResults.map((item, i) => {
+        const ann = annotations[item.id];
+        const markedClass = ann ?
+          (ann.label === 'positive' ? 'marked-positive' :
+           ann.label === 'negative' ? 'marked-negative' : 'marked-unclear') : '';
+        const focusedClass = i === focusedIndex ? 'focused' : '';
+
+        return `
+          <div class="evidence-card ${markedClass} ${focusedClass}" data-index="${i}" onclick="setFocus(${i})">
+            <div class="evidence-header">
+              <div class="speaker-info">
+                <div class="speaker-avatar ${item.gender === 'F' ? 'female' : item.gender === 'M' ? 'male' : 'unknown'}">
+                  ${getInitials(item.speaker)}
+                </div>
+                <div>
+                  <div class="speaker-name">${escapeHtml(item.speaker || 'Unknown Speaker')}</div>
+                  <div class="speaker-meta">
+                    ${item.gender === 'F' ? 'Female' : item.gender === 'M' ? 'Male' : 'Unknown'}
+                    ${item.chamber ? ' - ' + item.chamber : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="evidence-actions">
+                <button class="action-btn ${ann?.label === 'positive' ? 'active-positive' : ''}"
+                        onclick="event.stopPropagation(); markEvidence(${i}, 'positive')" title="Positive (1)">+</button>
+                <button class="action-btn ${ann?.label === 'negative' ? 'active-negative' : ''}"
+                        onclick="event.stopPropagation(); markEvidence(${i}, 'negative')" title="Negative (2)">-</button>
+                <button class="action-btn ${ann?.label === 'unclear' ? 'active-unclear' : ''}"
+                        onclick="event.stopPropagation(); markEvidence(${i}, 'unclear')" title="Unclear (3)">?</button>
+              </div>
+            </div>
+            <div class="evidence-body">
+              <div class="evidence-excerpt">${highlightQuery(escapeHtml(item.excerpt || ''), currentQuery)}</div>
+              <span class="expand-btn" onclick="event.stopPropagation(); toggleExpand(${i})">
+                View full speech...
+              </span>
+              <div class="evidence-full-text">
+                <div class="full-text-content" id="fullText_${i}">Loading...</div>
+              </div>
+            </div>
+            <div class="evidence-footer">
+              <div class="evidence-tags">
+                ${ann?.label === 'positive' ? '<span class="tag tag-positive">Positive</span>' : ''}
+                ${ann?.label === 'negative' ? '<span class="tag tag-negative">Negative</span>' : ''}
+                ${ann?.label === 'unclear' ? '<span class="tag tag-unclear">Unclear</span>' : ''}
+              </div>
+              <div>
+                <span class="evidence-meta">${item.year} - ${escapeHtml((item.debate_title || '').slice(0, 35))}...</span>
+                <a class="view-debate-link" href="../debate-viewer/?id=${item.debate_id}&year=${item.year}" target="_blank">View debate</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function toggleExpand(index) {
+      const card = document.querySelector(`.evidence-card[data-index="${index}"]`);
+      if (!card) return;
+
+      card.classList.toggle('expanded');
+
+      if (card.classList.contains('expanded')) {
+        const item = searchResults[index];
+        const fullTextEl = document.getElementById(`fullText_${index}`);
+
+        // Fetch full speech
+        try {
+          const speechId = `${item.debate_id}_speech_${item.sequence}`;
+          const response = await fetch(`${API_BASE}/api/speech?id=${speechId}`);
+          const speech = await response.json();
+
+          if (speech.text) {
+            fullTextEl.innerHTML = highlightQuery(escapeHtml(speech.text), currentQuery);
+          } else {
+            fullTextEl.innerHTML = '<em>Could not load full text</em>';
+          }
+        } catch (e) {
+          fullTextEl.innerHTML = '<em>Error loading speech</em>';
+        }
+      }
+    }
+
+    function markEvidence(index, label) {
+      const item = searchResults[index];
+      const prevAnnotation = annotations[item.id];
+
+      // Save for undo
+      lastAction = {
+        type: 'mark',
+        itemId: item.id,
+        prevAnnotation: prevAnnotation ? { ...prevAnnotation } : null
+      };
+
+      // Toggle off if clicking same label
+      if (prevAnnotation?.label === label) {
+        delete annotations[item.id];
+        showToast('Annotation removed', null);
+      } else {
+        annotations[item.id] = {
+          label: label,
+          question: currentQuestion,
+          query: currentQuery,
+          speaker: item.speaker,
+          gender: item.gender,
+          year: item.year,
+          chamber: item.chamber,
+          excerpt: item.excerpt,
+          debate_id: item.debate_id,
+          timestamp: new Date().toISOString()
+        };
+        showToast(`Marked as ${label}`, label);
+      }
+
+      localStorage.setItem('hansard_annotations_v3', JSON.stringify(annotations));
+      renderEvidence();
+      updateStats();
+
+      // Auto-advance to next unmarked if we just marked something
+      if (annotations[item.id]) {
+        const nextUnmarked = searchResults.findIndex((r, i) => i > index && !annotations[r.id]);
+        if (nextUnmarked >= 0) {
+          setFocus(nextUnmarked);
+        }
+      }
+    }
+
+    function undoLastAction() {
+      if (!lastAction) return;
+
+      if (lastAction.type === 'mark') {
+        if (lastAction.prevAnnotation) {
+          annotations[lastAction.itemId] = lastAction.prevAnnotation;
+        } else {
+          delete annotations[lastAction.itemId];
+        }
+        localStorage.setItem('hansard_annotations_v3', JSON.stringify(annotations));
+        renderEvidence();
+        updateStats();
+        showToast('Undo successful', null);
+      }
+
+      lastAction = null;
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const msg = document.getElementById('toastMessage');
+
+      msg.textContent = message;
+      icon.className = 'toast-icon' + (type ? ' ' + type : '');
+      icon.textContent = type === 'positive' ? '+' : type === 'negative' ? '-' : type === 'unclear' ? '?' : '';
+
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    function updateStats() {
+      // Current question annotations only
+      const qAnnotations = Object.values(annotations).filter(a => a.question === currentQuestion);
+      const positive = qAnnotations.filter(a => a.label === 'positive');
+      const negative = qAnnotations.filter(a => a.label === 'negative');
+
+      document.getElementById('statDisplayed').textContent = searchResults.length;
+      document.getElementById('statAnnotated').textContent = qAnnotations.length;
+      document.getElementById('statPositive').textContent = positive.length;
+      document.getElementById('statNegative').textContent = negative.length;
+
+      // Progress
+      const reviewed = searchResults.filter(r => annotations[r.id]).length;
+      document.getElementById('reviewedCount').textContent = reviewed;
+      const progressPct = searchResults.length > 0 ? (reviewed / searchResults.length * 100) : 0;
+      document.getElementById('progressFill').style.width = progressPct + '%';
+
+      // Gender breakdown from current results
+      const femaleResults = searchResults.filter(r => r.gender === 'F');
+      const maleResults = searchResults.filter(r => r.gender === 'M');
+
+      const femalePos = positive.filter(a => a.gender === 'F').length;
+      const malePos = positive.filter(a => a.gender === 'M').length;
+
+      const femaleAnnotated = femaleResults.filter(r => annotations[r.id]).length;
+      const maleAnnotated = maleResults.filter(r => annotations[r.id]).length;
+
+      document.getElementById('femaleTotalN').textContent = femaleAnnotated;
+      document.getElementById('maleTotalN').textContent = maleAnnotated;
+      document.getElementById('femalePosN').textContent = femalePos;
+      document.getElementById('malePosN').textContent = malePos;
+
+      // Rates
+      const femaleRate = femaleAnnotated > 0 ? femalePos / femaleAnnotated : 0;
+      const maleRate = maleAnnotated > 0 ? malePos / maleAnnotated : 0;
+
+      document.getElementById('femaleRate').textContent = (femaleRate * 100).toFixed(0) + '%';
+      document.getElementById('maleRate').textContent = (maleRate * 100).toFixed(0) + '%';
+
+      const maxRate = Math.max(femaleRate, maleRate, 0.01);
+      document.getElementById('femaleBar').style.width = (femaleRate / maxRate * 100) + '%';
+      document.getElementById('maleBar').style.width = (maleRate / maxRate * 100) + '%';
+
+      // Effect size
+      const effectEl = document.getElementById('effectValue');
+      const interpEl = document.getElementById('effectInterpretation');
+
+      if (femaleAnnotated >= 5 && maleAnnotated >= 5) {
+        const pooledP = (femalePos + malePos) / (femaleAnnotated + maleAnnotated);
+        const pooledSD = Math.sqrt(pooledP * (1 - pooledP));
+
+        if (pooledSD > 0) {
+          const d = (femaleRate - maleRate) / pooledSD;
+          const absD = Math.abs(d);
+
+          effectEl.textContent = 'd = ' + d.toFixed(2);
+          effectEl.className = 'effect-value ' + (d > 0.1 ? 'positive' : d < -0.1 ? 'negative' : 'neutral');
+
+          let size = absD < 0.2 ? 'negligible' : absD < 0.5 ? 'small' : absD < 0.8 ? 'medium' : 'large';
+          let direction = d > 0 ? 'Female MPs show higher positive rate' : d < 0 ? 'Male MPs show higher positive rate' : 'No difference';
+
+          interpEl.innerHTML = `<strong>${size.charAt(0).toUpperCase() + size.slice(1)} effect</strong>: ${direction}.
+            <br><br>Female: ${(femaleRate * 100).toFixed(1)}% (n=${femaleAnnotated})
+            <br>Male: ${(maleRate * 100).toFixed(1)}% (n=${maleAnnotated})`;
+        } else {
+          effectEl.textContent = '--';
+          effectEl.className = 'effect-value neutral';
+          interpEl.textContent = 'Cannot calculate effect size (no variance).';
+        }
+      } else {
+        effectEl.textContent = '--';
+        effectEl.className = 'effect-value neutral';
+        interpEl.textContent = `Need at least 5 annotations per gender. Current: Female (${femaleAnnotated}), Male (${maleAnnotated}).`;
+      }
+    }
+
+    function exportAnnotations(format) {
+      const data = Object.entries(annotations)
+        .filter(([id, a]) => a.question === currentQuestion)
+        .map(([id, a]) => ({ id, ...a }));
+
+      if (data.length === 0) {
+        showToast('No annotations to export', null);
+        return;
+      }
+
+      if (format === 'json') {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        downloadBlob(blob, `annotations_q${currentQuestion}_${currentQuery.replace(/\s+/g, '_')}.json`);
+      } else {
+        const headers = ['id', 'label', 'speaker', 'gender', 'year', 'chamber', 'query', 'excerpt'];
+        const rows = data.map(a => [
+          a.id,
+          a.label,
+          `"${(a.speaker || '').replace(/"/g, '""')}"`,
+          a.gender,
+          a.year,
+          a.chamber,
+          `"${(a.query || '').replace(/"/g, '""')}"`,
+          `"${(a.excerpt || '').replace(/"/g, '""')}"`
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        downloadBlob(blob, `annotations_q${currentQuestion}_${currentQuery.replace(/\s+/g, '_')}.csv`);
+      }
+
+      showToast(`Exported ${data.length} annotations`, null);
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function highlightQuery(text, query) {
+      if (!query) return text;
+      try {
+        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+      } catch (e) {
+        return text;
+      }
+    }
+  </script>
+</body>
+</html>

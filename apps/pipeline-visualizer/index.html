@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hansard Pipeline Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a26;
+      --bg-card: #16161f;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --text-primary: #f0f0f5;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      --accent-blue: #3B82C4;
+      --accent-pink: #EC4899;
+      --accent-gold: #F59E0B;
+      --accent-emerald: #10B981;
+      --glow-blue: rgba(59, 130, 196, 0.3);
+      --glow-pink: rgba(236, 72, 153, 0.3);
+      --stage-1: #6366F1;
+      --stage-2: #8B5CF6;
+      --stage-3: #EC4899;
+      --stage-4: #10B981;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #fafafa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f5f5f5;
+      --bg-card: #ffffff;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --border-medium: rgba(0, 0, 0, 0.1);
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a5a;
+      --text-muted: #8a8a9a;
+      --glow-blue: rgba(59, 130, 196, 0.15);
+      --glow-pink: rgba(236, 72, 153, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--stage-1), var(--stage-4));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    /* Main layout */
+    .main-container {
+      display: flex;
+      margin-top: 64px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      min-width: 320px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-subtle);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+      position: sticky;
+      top: 64px;
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Pipeline flow */
+    .pipeline-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .pipeline-stage {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .pipeline-stage:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .pipeline-stage.active {
+      background: var(--bg-tertiary);
+    }
+
+    .stage-indicator {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s;
+    }
+
+    .pipeline-stage:nth-child(1) .stage-indicator { background: var(--stage-1); }
+    .pipeline-stage:nth-child(2) .stage-indicator { background: var(--stage-2); }
+    .pipeline-stage:nth-child(3) .stage-indicator { background: var(--stage-3); }
+    .pipeline-stage:nth-child(4) .stage-indicator { background: var(--stage-4); }
+
+    .pipeline-stage.active .stage-indicator {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px currentColor;
+    }
+
+    .stage-connector {
+      position: absolute;
+      left: 37px;
+      top: 60px;
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--border-medium), transparent);
+    }
+
+    .pipeline-stage:last-child .stage-connector {
+      display: none;
+    }
+
+    .stage-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .stage-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .stage-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .stage-stats {
+      margin-top: 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .stage-stat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stage-stat strong {
+      color: var(--text-secondary);
+    }
+
+    /* Search box */
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--stage-1);
+      box-shadow: 0 0 0 3px var(--glow-blue);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filter-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--stage-1);
+    }
+
+    .search-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--stage-1);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-btn:hover {
+      background: var(--stage-2);
+    }
+
+    .search-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .search-results-info {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .api-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      margin-bottom: 12px;
+    }
+
+    .api-status.connected {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+    }
+
+    .api-status.disconnected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+    }
+
+    .api-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-tertiary);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-tab.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .mode-tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    /* Example selector */
+    .example-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .example-item {
+      padding: 12px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg-card);
+    }
+
+    .example-item:hover {
+      border-color: var(--border-medium);
+      background: var(--bg-tertiary);
+    }
+
+    .example-item.active {
+      border-color: var(--stage-1);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .example-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .example-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .example-speakers {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .gender-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .gender-badge.female {
+      background: rgba(236, 72, 153, 0.2);
+      color: var(--accent-pink);
+    }
+
+    .gender-badge.male {
+      background: rgba(59, 130, 196, 0.2);
+      color: var(--accent-blue);
+    }
+
+    /* Provenance panel */
+    .provenance-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+
+    .provenance-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: var(--accent-emerald);
+    }
+
+    .provenance-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .provenance-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .provenance-label {
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+
+    .provenance-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: var(--bg-tertiary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      word-break: break-all;
+    }
+
+    .provenance-stages {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .provenance-stage {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .provenance-stage.complete {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+    }
+
+    .provenance-stage.missing {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+    }
+
+    .stage-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      background: currentColor;
+      color: var(--bg-primary);
+    }
+
+    .provenance-stage.complete .stage-check {
+      background: var(--accent-emerald);
+      color: white;
+    }
+
+    .provenance-stage.missing .stage-check {
+      background: #EF4444;
+      color: white;
+    }
+
+    .provenance-arrow {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+
+    /* Main content */
+    .content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .content-header {
+      margin-bottom: 32px;
+    }
+
+    .content-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .content-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .meta-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.6;
+    }
+
+    /* Stage panels */
+    .stage-panels {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .stage-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .stage-panel.collapsed .panel-content {
+      display: none;
+    }
+
+    .stage-panel.active {
+      border-color: var(--stage-1);
+      box-shadow: 0 0 40px var(--glow-blue);
+    }
+
+    .stage-panel:nth-child(2).active { border-color: var(--stage-2); }
+    .stage-panel:nth-child(3).active { border-color: var(--stage-3); }
+    .stage-panel:nth-child(4).active { border-color: var(--stage-4); }
+
+    .panel-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .panel-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .panel-title-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .panel-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .stage-panel:nth-child(1) .panel-number { background: var(--stage-1); }
+    .stage-panel:nth-child(2) .panel-number { background: var(--stage-2); }
+    .stage-panel:nth-child(3) .panel-number { background: var(--stage-3); }
+    .stage-panel:nth-child(4) .panel-number { background: var(--stage-4); }
+
+    .panel-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .panel-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .panel-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .panel-toggle:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .panel-content {
+      padding: 0 24px 24px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Code block */
+    .code-block {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-filename {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .code-language {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .code-content {
+      padding: 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .code-content pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Syntax highlighting */
+    .hl-tag { color: #EC4899; }
+    .hl-attr { color: #F59E0B; }
+    .hl-string { color: #10B981; }
+    .hl-key { color: #8B5CF6; }
+    .hl-value { color: #3B82C4; }
+    .hl-comment { color: var(--text-muted); font-style: italic; }
+
+    /* Data table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+      background: var(--bg-tertiary);
+    }
+
+    /* Speech card */
+    .speech-card {
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--accent-blue);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .speech-card.female {
+      border-left-color: var(--accent-pink);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .speech-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .speech-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      background: var(--accent-blue);
+    }
+
+    .speech-card.female .speech-avatar {
+      background: var(--accent-pink);
+    }
+
+    .speech-speaker {
+      flex: 1;
+    }
+
+    .speech-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .speech-name:hover {
+      color: var(--accent-blue);
+      text-decoration: underline;
+    }
+
+    .speech-card.female .speech-name:hover {
+      color: var(--accent-pink);
+    }
+
+    /* Speaker Modal */
+    .speaker-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 450px;
+      max-width: 100%;
+      height: 100vh;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-subtle);
+      z-index: 200;
+      overflow-y: auto;
+    }
+
+    .speaker-modal.open {
+      display: block;
+    }
+
+    .speaker-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      background: var(--bg-secondary);
+    }
+
+    .speaker-modal-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .speaker-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 8px;
+    }
+
+    .speaker-modal-content {
+      padding: 20px;
+    }
+
+    .speaker-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .speaker-stat {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .speaker-stat-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .speaker-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 199;
+    }
+
+    .modal-overlay.open {
+      display: block;
+    }
+
+    .speech-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .speech-seq {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 4px 8px;
+      background: var(--bg-card);
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+
+    .speech-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* Column grid */
+    .columns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+
+    .column-chip {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .column-new {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+    }
+
+    .column-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Diff indicator */
+    .diff-indicator {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .diff-arrow {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: 10px;
+      color: var(--accent-emerald);
+    }
+
+    .diff-text {
+      flex: 1;
+    }
+
+    .diff-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .diff-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 40px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      opacity: 0.3;
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .empty-desc {
+      font-size: 14px;
+    }
+
+    /* Mobile */
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .content-title {
+        font-size: 22px;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-medium);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--stage-1);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">H</div>
+      <div>
+        <div class="logo-text">Pipeline Visualizer</div>
+        <div class="logo-subtitle">Hansard Data Flow</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Pipeline Stages</div>
+        <div class="pipeline-flow" id="pipelineFlow">
+          <div class="pipeline-stage active" data-stage="raw_html" onclick="selectStage('raw_html')">
+            <div class="stage-indicator">1</div>
+            <div class="stage-content">
+              <div class="stage-name">Raw HTML</div>
+              <div class="stage-desc">Original files from Parliament API</div>
+              <div class="stage-stats">
+                <span class="stage-stat"><strong id="stat-raw-files">1.2M</strong> files</span>
+              </div>
+            </div>
+            <div class="stage-connector"></div>
+          </div>
+          <div class="pipeline-stage" data-stage="processed" onclick="selectStage('processed')">
+            <div class="stage-indicator">2</div>
+            <div class="stage-content">
+              <div class="stage-name">Processed</div>
+              <div class="stage-desc">Extracted text and metadata</div>
+              <div class="stage-stats">
+                <span class="stage-stat"><strong id="stat-processed">5.1M</strong> debates</span>
+              </div>
+            </div>
+            <div class="stage-connector"></div>
+          </div>
+          <div class="pipeline-stage" data-stage="gender_enhanced" onclick="selectStage('gender_enhanced')">
+            <div class="stage-indicator">3</div>
+            <div class="stage-content">
+              <div class="stage-name">Gender Enhanced</div>
+              <div class="stage-desc">MP matching and attribution</div>
+              <div class="stage-stats">
+                <span class="stage-stat"><strong id="stat-gender">652K</strong> debates</span>
+              </div>
+            </div>
+            <div class="stage-connector"></div>
+          </div>
+          <div class="pipeline-stage" data-stage="unified" onclick="selectStage('unified')">
+            <div class="stage-indicator">4</div>
+            <div class="stage-content">
+              <div class="stage-name">Unified Dataset</div>
+              <div class="stage-desc">Final speech-level data</div>
+              <div class="stage-stats">
+                <span class="stage-stat"><strong id="stat-unified">6.8M</strong> speeches</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Find Debates</div>
+
+        <div class="api-status disconnected" id="apiStatus">
+          <div class="api-status-dot"></div>
+          <span id="apiStatusText">API Disconnected - Start server with: python api_server.py</span>
+        </div>
+
+        <div class="mode-tabs">
+          <button class="mode-tab active" onclick="setMode('search')">Live Search</button>
+          <button class="mode-tab" onclick="setMode('examples')">Examples</button>
+        </div>
+
+        <div id="searchMode">
+          <div class="search-box">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" class="search-input" id="searchQuery" placeholder="Search debates by title, speaker..." onkeydown="if(event.key==='Enter')performSearch()">
+          </div>
+          <div class="search-filters">
+            <input type="number" class="filter-input" id="yearFrom" placeholder="From year" min="1803" max="2005">
+            <input type="number" class="filter-input" id="yearTo" placeholder="To year" min="1803" max="2005">
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); cursor: pointer;">
+              <input type="checkbox" id="hasFemale" style="accent-color: var(--accent-pink);">
+              Female speakers
+            </label>
+            <button class="search-btn" onclick="performSearch()" id="searchBtn">Search</button>
+          </div>
+        </div>
+
+        <div id="examplesMode" style="display: none;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Pre-loaded examples (no server needed)</div>
+        </div>
+
+        <div class="search-results-info" id="resultsInfo"></div>
+        <div class="example-list" id="exampleList">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content" id="mainContent">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Speaker Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeSpeakerModal()"></div>
+  <div class="speaker-modal" id="speakerModal">
+    <div class="speaker-modal-header">
+      <span class="speaker-modal-title" id="speakerModalTitle">Speaker Profile</span>
+      <button class="speaker-modal-close" onclick="closeSpeakerModal()">&times;</button>
+    </div>
+    <div class="speaker-modal-content" id="speakerModalContent">
+      <!-- Dynamic content -->
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8766';
+
+    let pipelineStats = null;
+    let pipelineExamples = [];
+    let searchResults = [];
+    let currentExample = null;
+    let currentStage = 'raw_html';
+    let collapsedPanels = new Set();
+    let currentMode = 'search';
+    let apiConnected = false;
+    let isLoading = false;
+
+    // Speaker modal functions
+    async function showSpeakerProfile(speakerName) {
+      if (!apiConnected) {
+        alert('API not connected. Start the server with: python api_server.py');
+        return;
+      }
+
+      document.getElementById('speakerModalTitle').textContent = speakerName;
+      document.getElementById('speakerModalContent').innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+      document.getElementById('speakerModal').classList.add('open');
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/speaker?name=${encodeURIComponent(speakerName)}&limit=20`);
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        const stats = data.stats || {};
+        const speeches = data.speeches || [];
+
+        document.getElementById('speakerModalContent').innerHTML = `
+          <div class="speaker-stat-grid">
+            <div class="speaker-stat">
+              <div class="speaker-stat-value">${(stats.total || 0).toLocaleString()}</div>
+              <div class="speaker-stat-label">Total Speeches</div>
+            </div>
+            <div class="speaker-stat">
+              <div class="speaker-stat-value">${(stats.total_words || 0).toLocaleString()}</div>
+              <div class="speaker-stat-label">Total Words</div>
+            </div>
+            <div class="speaker-stat">
+              <div class="speaker-stat-value">${stats.first_year || '-'}</div>
+              <div class="speaker-stat-label">First Year</div>
+            </div>
+            <div class="speaker-stat">
+              <div class="speaker-stat-value">${stats.last_year || '-'}</div>
+              <div class="speaker-stat-label">Last Year</div>
+            </div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            Recent Speeches (${Math.min(speeches.length, 20)} shown)
+          </div>
+
+          ${speeches.slice(0, 20).map(s => `
+            <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;"
+                 onclick="closeSpeakerModal(); traceDebate('${s.debate_id}', ${s.year}, -1)">
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">
+                ${s.date || s.year} - ${escapeHtml(s.title || 'Untitled')}
+              </div>
+              <div style="font-size: 13px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${escapeHtml((s.excerpt || s.text || '').substring(0, 100))}...
+              </div>
+            </div>
+          `).join('')}
+        `;
+      } catch (e) {
+        document.getElementById('speakerModalContent').innerHTML = `
+          <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+            Error loading speaker profile: ${e.message}
+          </div>
+        `;
+      }
+    }
+
+    function closeSpeakerModal() {
+      document.getElementById('speakerModal').classList.remove('open');
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Check API connection
+    async function checkApiConnection() {
+      try {
+        const response = await fetch(`${API_BASE}/api/stats`, { method: 'GET' });
+        if (response.ok) {
+          apiConnected = true;
+          document.getElementById('apiStatus').className = 'api-status connected';
+          document.getElementById('apiStatusText').textContent = 'API Connected - Ready to search';
+          document.getElementById('searchBtn').disabled = false;
+          return true;
+        }
+      } catch (error) {
+        // API not available
+      }
+      apiConnected = false;
+      document.getElementById('apiStatus').className = 'api-status disconnected';
+      document.getElementById('apiStatusText').textContent = 'API Disconnected - Start: python api_server.py';
+      document.getElementById('searchBtn').disabled = true;
+      return false;
+    }
+
+    // Set mode (search vs examples)
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', (mode === 'search' && i === 0) || (mode === 'examples' && i === 1));
+      });
+      document.getElementById('searchMode').style.display = mode === 'search' ? 'block' : 'none';
+      document.getElementById('examplesMode').style.display = mode === 'examples' ? 'block' : 'none';
+
+      if (mode === 'examples') {
+        renderExamples();
+      } else {
+        renderSearchResults();
+      }
+    }
+
+    // Perform search via API
+    async function performSearch() {
+      if (!apiConnected || isLoading) return;
+
+      const query = document.getElementById('searchQuery').value.trim();
+      const yearFrom = document.getElementById('yearFrom').value;
+      const yearTo = document.getElementById('yearTo').value;
+      const hasFemale = document.getElementById('hasFemale').checked;
+
+      if (!query && !yearFrom && !yearTo && !hasFemale) {
+        document.getElementById('resultsInfo').textContent = 'Enter a search query or filter';
+        return;
+      }
+
+      isLoading = true;
+      document.getElementById('searchBtn').disabled = true;
+      document.getElementById('exampleList').innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+
+      try {
+        const params = new URLSearchParams();
+        if (query) params.append('q', query);
+        if (yearFrom) params.append('year_from', yearFrom);
+        if (yearTo) params.append('year_to', yearTo);
+        if (hasFemale) params.append('has_female', 'true');
+        params.append('limit', '50');
+
+        const response = await fetch(`${API_BASE}/api/search?${params}`);
+        searchResults = await response.json();
+
+        document.getElementById('resultsInfo').textContent = `Found ${searchResults.length} debate${searchResults.length !== 1 ? 's' : ''}`;
+        renderSearchResults();
+
+        if (searchResults.length > 0) {
+          traceDebate(searchResults[0].debate_id, searchResults[0].year, 0);
+        }
+      } catch (error) {
+        console.error('Search failed:', error);
+        document.getElementById('resultsInfo').textContent = 'Search failed - check API connection';
+        document.getElementById('exampleList').innerHTML = `
+          <div class="empty-state" style="padding: 20px;">
+            <div class="empty-title">Search failed</div>
+            <div class="empty-desc">Make sure the API server is running</div>
+          </div>
+        `;
+      } finally {
+        isLoading = false;
+        document.getElementById('searchBtn').disabled = !apiConnected;
+      }
+    }
+
+    // Trace a debate through the pipeline
+    async function traceDebate(debateId, year, index) {
+      document.getElementById('mainContent').innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+
+      // Update active state in list
+      document.querySelectorAll('.example-item').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+
+      try {
+        const params = new URLSearchParams({ id: debateId });
+        if (year) params.append('year', year);
+
+        const response = await fetch(`${API_BASE}/api/trace?${params}`);
+        const traceData = await response.json();
+
+        currentExample = {
+          debate_id: traceData.debate_id,
+          title: traceData.title || traceData.stages?.final_speeches?.[0]?.title || 'Untitled',
+          year: traceData.year,
+          date: traceData.stages?.final_speeches?.[0]?.date,
+          file_path: traceData.file_path,
+          stages: traceData.stages
+        };
+
+        renderContent();
+      } catch (error) {
+        console.error('Trace failed:', error);
+        document.getElementById('mainContent').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-title">Failed to trace debate</div>
+            <div class="empty-desc">Error: ${error.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    // Render search results
+    function renderSearchResults() {
+      const container = document.getElementById('exampleList');
+
+      if (searchResults.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 20px;">
+            <div class="empty-desc">Search to find debates and trace their provenance</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = searchResults.map((result, i) => `
+        <div class="example-item ${i === 0 ? 'active' : ''}" onclick="traceDebate('${result.debate_id}', ${result.year}, ${i})">
+          <div class="example-title">${escapeHtml(result.title || 'Untitled')}</div>
+          <div class="example-meta">
+            ${result.year} &middot; ${result.speech_count} speeches
+            ${result.has_female ? '<span class="gender-badge female">F</span>' : ''}
+          </div>
+          ${result.speakers?.length > 0 ? `<div class="example-speakers">${result.speakers.slice(0, 3).join(', ')}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Load data
+    async function loadData() {
+      try {
+        const [statsRes, examplesRes] = await Promise.all([
+          fetch('data/pipeline_stats.json'),
+          fetch('data/pipeline_examples.json')
+        ]);
+
+        pipelineStats = await statsRes.json();
+        pipelineExamples = await examplesRes.json();
+
+        updateStats();
+
+        // Check API connection
+        const connected = await checkApiConnection();
+
+        if (connected) {
+          // Start in search mode
+          setMode('search');
+          document.getElementById('resultsInfo').textContent = 'Enter a search query to find debates';
+          document.getElementById('exampleList').innerHTML = `
+            <div class="empty-state" style="padding: 20px;">
+              <div class="empty-desc">Search for any debate by title, speaker, or year range</div>
+            </div>
+          `;
+        } else {
+          // Fall back to examples mode
+          setMode('examples');
+          renderExamples();
+          if (pipelineExamples.length > 0) {
+            selectExample(0);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        document.getElementById('mainContent').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-title">Failed to load data</div>
+            <div class="empty-desc">Make sure the JSON files are in the data/ folder</div>
+          </div>
+        `;
+      }
+    }
+
+    function updateStats() {
+      if (!pipelineStats) return;
+
+      const formatNum = (n) => {
+        if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+        if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+        return n.toString();
+      };
+
+      document.getElementById('stat-raw-files').textContent = formatNum(pipelineStats.raw_html?.total_files || 1200000);
+      document.getElementById('stat-processed').textContent = formatNum(pipelineStats.processed?.total_debates || 5100000);
+      document.getElementById('stat-gender').textContent = formatNum(pipelineStats.gender_enhanced?.total_debates || 652000);
+      document.getElementById('stat-unified').textContent = formatNum(pipelineStats.unified?.total_speeches || 6800000);
+    }
+
+    function renderExamples() {
+      const container = document.getElementById('exampleList');
+      container.innerHTML = pipelineExamples.map((ex, i) => `
+        <div class="example-item ${i === 0 ? 'active' : ''}" onclick="selectExample(${i})">
+          <div class="example-title">${escapeHtml(ex.title || 'Untitled Debate')}</div>
+          <div class="example-meta">${ex.year} &middot; ${ex.stages.final_speeches?.length || 0} speeches</div>
+        </div>
+      `).join('');
+    }
+
+    function selectExample(index) {
+      currentExample = pipelineExamples[index];
+
+      // Update active state
+      document.querySelectorAll('.example-item').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+
+      renderContent();
+    }
+
+    function selectStage(stage) {
+      currentStage = stage;
+
+      document.querySelectorAll('.pipeline-stage').forEach(el => {
+        el.classList.toggle('active', el.dataset.stage === stage);
+      });
+
+      // Expand the selected panel
+      collapsedPanels.delete(stage);
+      renderContent();
+
+      // Scroll to panel
+      setTimeout(() => {
+        const panel = document.querySelector(`.stage-panel[data-stage="${stage}"]`);
+        if (panel) {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+
+    function togglePanel(stage) {
+      if (collapsedPanels.has(stage)) {
+        collapsedPanels.delete(stage);
+      } else {
+        collapsedPanels.add(stage);
+      }
+      renderContent();
+    }
+
+    function renderContent() {
+      if (!currentExample) {
+        document.getElementById('mainContent').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-title">Select an example</div>
+            <div class="empty-desc">Choose a debate from the sidebar to see its transformation</div>
+          </div>
+        `;
+        return;
+      }
+
+      const speechCount = currentExample.stages.final_speeches?.length || 0;
+      const hasRawHtml = !!currentExample.stages.raw_html;
+      const hasProcessed = !!currentExample.stages.processed;
+      const hasGender = !!currentExample.stages.gender_enhanced;
+
+      const html = `
+        <div class="content-header">
+          <h1 class="content-title">${escapeHtml(currentExample.title || 'Untitled Debate')}</h1>
+          <div class="content-meta">
+            <div class="meta-item">
+              <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <path d="M16 2v4M8 2v4M3 10h18"/>
+              </svg>
+              ${currentExample.date || currentExample.year}
+            </div>
+            <div class="meta-item">
+              <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              ${speechCount} speeches
+            </div>
+            <div class="meta-item">
+              <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              debate_${currentExample.debate_id?.slice(0, 8)}
+            </div>
+          </div>
+        </div>
+
+        <div class="provenance-panel">
+          <div class="provenance-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <span>Provenance Trail</span>
+          </div>
+          <div class="provenance-content">
+            <div class="provenance-item">
+              <span class="provenance-label">Debate ID:</span>
+              <code class="provenance-value">${currentExample.debate_id || 'Unknown'}</code>
+            </div>
+            <div class="provenance-item">
+              <span class="provenance-label">Source File:</span>
+              <code class="provenance-value">${currentExample.file_path || 'Unknown'}</code>
+            </div>
+            <div class="provenance-stages">
+              <div class="provenance-stage ${hasRawHtml ? 'complete' : 'missing'}">
+                <span class="stage-check">${hasRawHtml ? 'Y' : 'N'}</span>
+                <span>Raw HTML</span>
+              </div>
+              <span class="provenance-arrow">-></span>
+              <div class="provenance-stage ${hasProcessed ? 'complete' : 'missing'}">
+                <span class="stage-check">${hasProcessed ? 'Y' : 'N'}</span>
+                <span>Processed</span>
+              </div>
+              <span class="provenance-arrow">-></span>
+              <div class="provenance-stage ${hasGender ? 'complete' : 'missing'}">
+                <span class="stage-check">${hasGender ? 'Y' : 'N'}</span>
+                <span>Gender</span>
+              </div>
+              <span class="provenance-arrow">-></span>
+              <div class="provenance-stage ${speechCount > 0 ? 'complete' : 'missing'}">
+                <span class="stage-check">${speechCount > 0 ? 'Y' : 'N'}</span>
+                <span>Unified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-panels">
+          ${renderStagePanel('raw_html', '1', 'Raw HTML', 'Original Parliament API response')}
+          ${renderStagePanel('processed', '2', 'Processed', 'Text extraction and metadata parsing')}
+          ${renderStagePanel('gender_enhanced', '3', 'Gender Enhanced', 'MP matching and gender attribution')}
+          ${renderStagePanel('unified', '4', 'Unified Dataset', 'Final speech-level records')}
+        </div>
+      `;
+
+      document.getElementById('mainContent').innerHTML = html;
+    }
+
+    function renderStagePanel(stage, num, title, subtitle) {
+      const isCollapsed = collapsedPanels.has(stage);
+      const isActive = currentStage === stage;
+      const data = currentExample?.stages?.[stage === 'unified' ? 'final_speeches' : stage];
+
+      return `
+        <div class="stage-panel ${isCollapsed ? 'collapsed' : ''} ${isActive ? 'active' : ''}" data-stage="${stage}">
+          <div class="panel-header" onclick="togglePanel('${stage}')">
+            <div class="panel-title-area">
+              <div class="panel-number">${num}</div>
+              <div>
+                <div class="panel-title">${title}</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span class="panel-badge">${getDataBadge(stage, data)}</span>
+              <button class="panel-toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="${isCollapsed ? 'M6 9l6 6 6-6' : 'M18 15l-6-6-6 6'}"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          ${!isCollapsed ? `<div class="panel-content">${renderStageContent(stage, data)}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function getDataBadge(stage, data) {
+      if (stage === 'raw_html') {
+        return data ? `${(data.size_bytes / 1024).toFixed(1)} KB` : 'No data';
+      }
+      if (stage === 'processed') {
+        return data ? `${Object.keys(data).length} fields` : 'No data';
+      }
+      if (stage === 'gender_enhanced') {
+        return data ? `${Object.keys(data).length} fields` : 'No data';
+      }
+      if (stage === 'unified') {
+        return Array.isArray(data) ? `${data.length} speeches` : 'No data';
+      }
+      return 'No data';
+    }
+
+    function renderStageContent(stage, data) {
+      if (!data) {
+        return `
+          <div class="empty-state">
+            <div class="empty-title">Data not available</div>
+            <div class="empty-desc">This stage data was not captured for this example</div>
+          </div>
+        `;
+      }
+
+      if (stage === 'raw_html') {
+        return renderRawHtmlStage(data);
+      }
+      if (stage === 'processed') {
+        return renderProcessedStage(data);
+      }
+      if (stage === 'gender_enhanced') {
+        return renderGenderStage(data);
+      }
+      if (stage === 'unified') {
+        return renderUnifiedStage(data);
+      }
+
+      return '<div>Unknown stage</div>';
+    }
+
+    function renderRawHtmlStage(data) {
+      const highlighted = highlightHtml(data.preview || '');
+
+      return `
+        <div class="diff-indicator">
+          <div class="diff-arrow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+          </div>
+          <div class="diff-text">
+            <div class="diff-title">Source Document</div>
+            <div class="diff-desc">Raw HTML with embedded debate structure, speaker tags, and contribution IDs</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-filename">${currentExample.debate_id?.slice(0, 12)}.html</span>
+            <span class="code-language">HTML</span>
+          </div>
+          <div class="code-content">
+            <pre>${highlighted}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProcessedStage(data) {
+      const columns = pipelineStats?.processed?.columns || [];
+
+      return `
+        <div class="diff-indicator">
+          <div class="diff-arrow" style="color: var(--stage-2);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div class="diff-text">
+            <div class="diff-title">Text Extraction</div>
+            <div class="diff-desc">HTML parsed, text extracted, basic metadata captured</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Extracted Fields</div>
+          <div class="columns-grid">
+            ${columns.map(col => `
+              <div class="column-chip">
+                <span class="column-dot"></span>
+                ${col}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-filename">metadata.parquet</span>
+            <span class="code-language">JSON Preview</span>
+          </div>
+          <div class="code-content">
+            <pre>${highlightJson(data)}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGenderStage(data) {
+      const newColumns = ['gender', 'matched_mp', 'party', 'constituency', 'person_id', 'canonical_name', 'female_mps', 'male_mps', 'gender_ratio'];
+
+      return `
+        <div class="diff-indicator">
+          <div class="diff-arrow" style="color: var(--stage-3);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="diff-text">
+            <div class="diff-title">MP Matching & Gender Attribution</div>
+            <div class="diff-desc">Speakers matched to MP database, gender and party information added</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em;">New Fields Added</div>
+          <div class="columns-grid">
+            ${newColumns.map(col => `
+              <div class="column-chip column-new">
+                <span class="column-dot"></span>
+                ${col}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-filename">gender_enhanced.parquet</span>
+            <span class="code-language">JSON Preview</span>
+          </div>
+          <div class="code-content">
+            <pre>${highlightJson(data)}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderUnifiedStage(speeches) {
+      if (!Array.isArray(speeches) || speeches.length === 0) {
+        return `
+          <div class="empty-state">
+            <div class="empty-title">No speeches found</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="diff-indicator">
+          <div class="diff-arrow" style="color: var(--stage-4);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="diff-text">
+            <div class="diff-title">Speech-Level Records</div>
+            <div class="diff-desc">Each contribution split into individual speeches with full metadata</div>
+          </div>
+        </div>
+
+        ${speeches.map((speech, i) => `
+          <div class="speech-card ${speech.gender === 'F' ? 'female' : ''}" style="animation-delay: ${i * 0.05}s;">
+            <div class="speech-header">
+              <div class="speech-avatar">${getInitials(speech.canonical_name || speech.speaker)}</div>
+              <div class="speech-speaker">
+                <div class="speech-name" onclick="event.stopPropagation(); showSpeakerProfile('${escapeHtml(speech.canonical_name || speech.speaker || 'Unknown')}')" title="Click to view speaker profile">${escapeHtml(speech.canonical_name || speech.speaker || 'Unknown')}</div>
+                <div class="speech-meta">
+                  ${speech.gender === 'F' ? '<span style="color: var(--accent-pink);">Female</span>' : speech.gender === 'M' ? '<span style="color: var(--accent-blue);">Male</span>' : 'Unknown'}
+                  ${speech.party ? ' &middot; ' + escapeHtml(speech.party) : ''}
+                  ${speech.word_count ? ' &middot; ' + speech.word_count + ' words' : ''}
+                </div>
+              </div>
+              <div class="speech-seq">#${speech.sequence_number}</div>
+            </div>
+            <div class="speech-text">${escapeHtml(truncate(speech.text, 400))}</div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    // Utility functions
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function truncate(text, length) {
+      if (!text) return '';
+      if (text.length <= length) return text;
+      return text.slice(0, length) + '...';
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function highlightHtml(html) {
+      if (!html) return '';
+      return escapeHtml(html)
+        .replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9-]*)/g, '<span class="hl-tag">$1</span>')
+        .replace(/(\s[a-zA-Z-]+)(=)/g, '<span class="hl-attr">$1</span>$2')
+        .replace(/(=)(&quot;[^&]*&quot;)/g, '$1<span class="hl-string">$2</span>');
+    }
+
+    function highlightJson(obj) {
+      if (!obj) return '';
+      const json = JSON.stringify(obj, null, 2);
+      return escapeHtml(json)
+        .replace(/("[\w-]+")(:\s)/g, '<span class="hl-key">$1</span>$2')
+        .replace(/(:\s)(".*?")/g, '$1<span class="hl-string">$2</span>')
+        .replace(/(:\s)(\d+\.?\d*)/g, '$1<span class="hl-value">$2</span>')
+        .replace(/(:\s)(true|false|null)/g, '$1<span class="hl-value">$2</span>');
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const body = document.body;
+      const isLight = body.getAttribute('data-theme') === 'light';
+      body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      localStorage.setItem('theme', isLight ? 'dark' : 'light');
+    }
+
+    // Initialize
+    function init() {
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.setAttribute('data-theme', savedTheme);
+
+      // Load data
+      loadData();
+    }
+
+    init();
+  </script>
+</body>
+</html>

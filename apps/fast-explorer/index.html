@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hansard Explorer - Fast Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg-card: #18181f;
+      --bg-elevated: #1e1e27;
+      --bg-hover: #252530;
+      --border: rgba(255,255,255,0.08);
+      --text: #f5f5f7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #8b5cf6;
+      --accent-hover: #a78bfa;
+      --pink: #ec4899;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --gold: #eab308;
+      --red: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .search-container {
+      flex: 1;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { background: var(--bg-hover); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    .filter-btn.female.active { background: var(--pink); border-color: var(--pink); }
+    .filter-btn.male.active { background: var(--blue); border-color: var(--blue); }
+
+    select.filter-select {
+      padding: 6px 28px 6px 10px;
+      background: var(--bg) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 6px center;
+      background-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    select.filter-select:focus { outline: none; border-color: var(--accent); }
+
+    /* Main Content */
+    main {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      padding: 24px 0;
+    }
+
+    @media (max-width: 1000px) {
+      main { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* Results */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .results-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .results-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sort-select {
+      padding: 4px 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Speech Card */
+    .speech-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .speech-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .speech-card.female { border-left: 3px solid var(--pink); }
+    .speech-card.male { border-left: 3px solid var(--blue); }
+
+    .speech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .speaker-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .speaker-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      color: white;
+    }
+
+    .speaker-avatar.female { background: var(--pink); }
+    .speaker-avatar.male { background: var(--blue); }
+    .speaker-avatar.unknown { background: var(--text-muted); }
+
+    .speaker-details h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .speaker-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .speech-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .speech-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .speech-excerpt {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .speech-excerpt mark {
+      background: rgba(139, 92, 246, 0.3);
+      color: var(--text);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .share-btn {
+      padding: 4px 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .share-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* Stats */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-item {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .stat-value.pink { color: var(--pink); }
+    .stat-value.blue { color: var(--blue); }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Timeline */
+    .timeline-bar {
+      display: flex;
+      height: 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .timeline-segment {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .timeline-segment:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .decade-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar {
+      width: 200px;
+      height: 4px;
+      background: var(--bg);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .page-btn {
+      padding: 8px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .page-btn:hover { border-color: var(--accent); color: var(--text); }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Share Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+    }
+
+    .modal-overlay.visible { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .modal-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .modal-btn.primary {
+      background: var(--accent);
+      border: none;
+      color: white;
+    }
+
+    .modal-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 300;
+    }
+
+    .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    kbd {
+      background: var(--bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">Hansard <span>Explorer</span></div>
+        <div class="search-container">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search speeches... (e.g., suffrage, NHS, education)">
+        </div>
+        <div class="filters">
+          <button class="filter-btn female" id="filterFemale" data-gender="F">Female</button>
+          <button class="filter-btn male" id="filterMale" data-gender="M">Male</button>
+          <select class="filter-select" id="filterDecade">
+            <option value="">All decades</option>
+            <option value="1800">1800s</option>
+            <option value="1810">1810s</option>
+            <option value="1820">1820s</option>
+            <option value="1830">1830s</option>
+            <option value="1840">1840s</option>
+            <option value="1850">1850s</option>
+            <option value="1860">1860s</option>
+            <option value="1870">1870s</option>
+            <option value="1880">1880s</option>
+            <option value="1890">1890s</option>
+            <option value="1900">1900s</option>
+            <option value="1910">1910s</option>
+            <option value="1920">1920s</option>
+            <option value="1930">1930s</option>
+            <option value="1940">1940s</option>
+            <option value="1950">1950s</option>
+            <option value="1960">1960s</option>
+            <option value="1970">1970s</option>
+            <option value="1980">1980s</option>
+            <option value="1990">1990s</option>
+            <option value="2000">2000s</option>
+          </select>
+          <select class="filter-select" id="filterChamber">
+            <option value="">All chambers</option>
+            <option value="Commons">Commons</option>
+            <option value="Lords">Lords</option>
+          </select>
+        </div>
+        <div class="header-stats" id="headerStats">Loading...</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main>
+      <div class="results-area">
+        <div class="results-header">
+          <span class="results-title" id="resultsTitle">Speeches</span>
+          <span class="results-count" id="resultsCount"></span>
+        </div>
+        <div class="results-list" id="resultsList">
+          <div class="loading" id="loadingState">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Loading index...</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+          </div>
+        </div>
+        <div class="pagination" id="pagination" style="display: none;">
+          <button class="page-btn" id="prevBtn" onclick="prevPage()">Previous</button>
+          <span class="page-info" id="pageInfo"></span>
+          <button class="page-btn" id="nextBtn" onclick="nextPage()">Next</button>
+        </div>
+        <div class="keyboard-hint">
+          <kbd>/</kbd> Focus search &nbsp; <kbd>j</kbd><kbd>k</kbd> Navigate &nbsp; <kbd>Enter</kbd> Open &nbsp; <kbd>s</kbd> Share
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">Dataset Overview</div>
+          <div class="stat-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="statTotal">-</div>
+              <div class="stat-label">Speeches Indexed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="statMPs">-</div>
+              <div class="stat-label">Unique MPs</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value pink" id="statFemale">-</div>
+              <div class="stat-label">Female MPs</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value blue" id="statDecades">-</div>
+              <div class="stat-label">Decades</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-title">Timeline</div>
+          <div class="timeline-bar" id="timelineBar"></div>
+          <div class="decade-labels">
+            <span>1800</span>
+            <span>1900</span>
+            <span>2000</span>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-title">Current Search</div>
+          <div class="stat-grid">
+            <div class="stat-item">
+              <div class="stat-value pink" id="searchFemale">-</div>
+              <div class="stat-label">Female</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value blue" id="searchMale">-</div>
+              <div class="stat-label">Male</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal">
+      <h2>Share This Search</h2>
+      <input type="text" id="shareUrl" readonly>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeShareModal()">Close</button>
+        <button class="modal-btn primary" onclick="copyShareUrl()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // State
+    let allData = [];
+    let fuse = null;
+    let searchResults = [];
+    let currentPage = 0;
+    let stats = null;
+    const PAGE_SIZE = 25;
+    let selectedIndex = -1;
+
+    // Filters
+    let genderFilter = '';
+    let decadeFilter = '';
+    let chamberFilter = '';
+
+    // Initialize from URL
+    function initFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('q')) document.getElementById('searchInput').value = params.get('q');
+      if (params.get('gender')) {
+        genderFilter = params.get('gender');
+        document.getElementById(genderFilter === 'F' ? 'filterFemale' : 'filterMale').classList.add('active');
+      }
+      if (params.get('decade')) {
+        decadeFilter = params.get('decade');
+        document.getElementById('filterDecade').value = decadeFilter;
+      }
+      if (params.get('chamber')) {
+        chamberFilter = params.get('chamber');
+        document.getElementById('filterChamber').value = chamberFilter;
+      }
+    }
+
+    // Update URL
+    function updateUrl() {
+      const params = new URLSearchParams();
+      const query = document.getElementById('searchInput').value.trim();
+      if (query) params.set('q', query);
+      if (genderFilter) params.set('gender', genderFilter);
+      if (decadeFilter) params.set('decade', decadeFilter);
+      if (chamberFilter) params.set('chamber', chamberFilter);
+
+      const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    // Load data
+    async function loadData() {
+      try {
+        // Load manifest first
+        const manifestRes = await fetch('../static-data/search-index/manifest.json');
+        const manifest = await manifestRes.json();
+
+        document.getElementById('headerStats').textContent = `Loading ${manifest.total.toLocaleString()} speeches...`;
+
+        // Load stats
+        const statsRes = await fetch('../static-data/stats.json');
+        stats = await statsRes.json();
+        updateStatsDisplay();
+
+        // Load decades in parallel
+        const decadePromises = manifest.decades.map(async (d, i) => {
+          const res = await fetch(`../static-data/search-index/${d.file}`);
+          const data = await res.json();
+          const progress = Math.round((i + 1) / manifest.decades.length * 100);
+          document.getElementById('progressFill').style.width = `${progress}%`;
+          document.getElementById('loadingText').textContent = `Loading ${d.decade}s...`;
+          return data;
+        });
+
+        const decadeData = await Promise.all(decadePromises);
+        allData = decadeData.flat();
+
+        // Initialize Fuse.js for fuzzy search
+        fuse = new Fuse(allData, {
+          keys: [
+            { name: 'x', weight: 0.6 },  // Text
+            { name: 'sp', weight: 0.3 }, // Speaker
+            { name: 't', weight: 0.1 },  // Title
+          ],
+          threshold: 0.3,
+          ignoreLocation: true,
+          includeMatches: true,
+        });
+
+        document.getElementById('headerStats').textContent = `${allData.length.toLocaleString()} speeches loaded`;
+        document.getElementById('loadingState').style.display = 'none';
+
+        // Check for initial search from URL
+        initFromUrl();
+        performSearch();
+
+      } catch (error) {
+        console.error('Load error:', error);
+        document.getElementById('loadingText').textContent = 'Failed to load data. Check console.';
+      }
+    }
+
+    function updateStatsDisplay() {
+      if (!stats) return;
+      document.getElementById('statTotal').textContent = formatNumber(stats.overview.total_speeches);
+      document.getElementById('statMPs').textContent = formatNumber(stats.overview.unique_mps);
+      document.getElementById('statFemale').textContent = formatNumber(stats.overview.female_mps);
+      document.getElementById('statDecades').textContent = Object.keys(stats.by_decade).length;
+
+      // Build timeline
+      const decades = Object.entries(stats.by_decade).sort((a, b) => a[0] - b[0]);
+      const maxSpeeches = Math.max(...decades.map(([_, d]) => d.speeches));
+      const timeline = document.getElementById('timelineBar');
+      timeline.innerHTML = decades.map(([decade, data]) => {
+        const width = 100 / decades.length;
+        const height = (data.speeches / maxSpeeches * 100);
+        const femaleRatio = data.female / (data.female + data.male) || 0;
+        return `<div class="timeline-segment" style="width:${width}%;height:100%;background:linear-gradient(to top, var(--pink) ${femaleRatio*100}%, var(--blue) ${femaleRatio*100}%);opacity:${0.3 + height/100*0.7}" data-tooltip="${decade}s: ${formatNumber(data.speeches)} speeches" onclick="filterByDecade('${decade}')"></div>`;
+      }).join('');
+    }
+
+    function filterByDecade(decade) {
+      document.getElementById('filterDecade').value = decade;
+      decadeFilter = decade;
+      updateUrl();
+      performSearch();
+    }
+
+    // Search
+    function performSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      currentPage = 0;
+      selectedIndex = -1;
+
+      let results = allData;
+
+      // Apply filters first
+      if (genderFilter) {
+        results = results.filter(r => r.g === genderFilter);
+      }
+      if (decadeFilter) {
+        const decade = parseInt(decadeFilter);
+        results = results.filter(r => Math.floor(r.y / 10) * 10 === decade);
+      }
+      if (chamberFilter) {
+        results = results.filter(r => r.c === chamberFilter);
+      }
+
+      // Then search
+      if (query && fuse) {
+        // Create temp fuse with filtered data
+        const tempFuse = new Fuse(results, {
+          keys: ['x', 'sp', 't'],
+          threshold: 0.3,
+          ignoreLocation: true,
+          includeMatches: true,
+        });
+        const fuseResults = tempFuse.search(query);
+        searchResults = fuseResults.map(r => ({ ...r.item, matches: r.matches }));
+      } else {
+        searchResults = results;
+      }
+
+      updateUrl();
+      renderResults();
+      updateSearchStats();
+    }
+
+    function renderResults() {
+      const container = document.getElementById('resultsList');
+      const start = currentPage * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const pageResults = searchResults.slice(start, end);
+
+      if (pageResults.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No results found</h3>
+            <p>Try different search terms or adjust your filters.</p>
+          </div>
+        `;
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      const query = document.getElementById('searchInput').value.trim();
+
+      container.innerHTML = pageResults.map((r, i) => {
+        const genderClass = r.g === 'F' ? 'female' : r.g === 'M' ? 'male' : '';
+        const avatarClass = r.g === 'F' ? 'female' : r.g === 'M' ? 'male' : 'unknown';
+        const initials = getInitials(r.sp);
+        const excerpt = highlightText(r.x || '', query);
+        const isSelected = (start + i) === selectedIndex;
+
+        return `
+          <div class="speech-card ${genderClass} ${isSelected ? 'selected' : ''}" data-index="${start + i}" onclick="selectCard(${start + i})">
+            <div class="speech-header">
+              <div class="speaker-info">
+                <div class="speaker-avatar ${avatarClass}">${initials}</div>
+                <div class="speaker-details">
+                  <h3>${escapeHtml(r.sp || 'Unknown')}</h3>
+                  <div class="speaker-meta">${r.g === 'F' ? 'Female' : r.g === 'M' ? 'Male' : ''} - ${r.c || ''}</div>
+                </div>
+              </div>
+              <div class="speech-date">${r.dt}<br>${r.y}</div>
+            </div>
+            <div class="speech-title">${escapeHtml(r.t || '')}</div>
+            <div class="speech-excerpt">${excerpt}</div>
+            <button class="share-btn" onclick="event.stopPropagation(); shareSpeech('${r.id}')">Share</button>
+          </div>
+        `;
+      }).join('');
+
+      // Update pagination
+      const totalPages = Math.ceil(searchResults.length / PAGE_SIZE);
+      document.getElementById('pagination').style.display = totalPages > 1 ? 'flex' : 'none';
+      document.getElementById('pageInfo').textContent = `Page ${currentPage + 1} of ${totalPages}`;
+      document.getElementById('prevBtn').disabled = currentPage === 0;
+      document.getElementById('nextBtn').disabled = currentPage >= totalPages - 1;
+
+      // Results count
+      document.getElementById('resultsCount').textContent = `${searchResults.length.toLocaleString()} results`;
+      document.getElementById('resultsTitle').textContent = query ? `Results for "${query}"` : 'All Speeches';
+    }
+
+    function updateSearchStats() {
+      const female = searchResults.filter(r => r.g === 'F').length;
+      const male = searchResults.filter(r => r.g === 'M').length;
+      document.getElementById('searchFemale').textContent = formatNumber(female);
+      document.getElementById('searchMale').textContent = formatNumber(male);
+    }
+
+    function selectCard(index) {
+      selectedIndex = index;
+      document.querySelectorAll('.speech-card').forEach(c => c.classList.remove('selected'));
+      const card = document.querySelector(`[data-index="${index}"]`);
+      if (card) {
+        card.classList.add('selected');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // Pagination
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        renderResults();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(searchResults.length / PAGE_SIZE);
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        renderResults();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Share
+    function shareSpeech(speechId) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('speech', speechId);
+      const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      document.getElementById('shareUrl').value = url;
+      document.getElementById('shareModal').classList.add('visible');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('visible');
+    }
+
+    function copyShareUrl() {
+      const url = document.getElementById('shareUrl').value;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Link copied to clipboard!');
+        closeShareModal();
+      });
+    }
+
+    // Filter handlers
+    document.getElementById('filterFemale').addEventListener('click', function() {
+      this.classList.toggle('active');
+      document.getElementById('filterMale').classList.remove('active');
+      genderFilter = this.classList.contains('active') ? 'F' : '';
+      updateUrl();
+      performSearch();
+    });
+
+    document.getElementById('filterMale').addEventListener('click', function() {
+      this.classList.toggle('active');
+      document.getElementById('filterFemale').classList.remove('active');
+      genderFilter = this.classList.contains('active') ? 'M' : '';
+      updateUrl();
+      performSearch();
+    });
+
+    document.getElementById('filterDecade').addEventListener('change', function() {
+      decadeFilter = this.value;
+      updateUrl();
+      performSearch();
+    });
+
+    document.getElementById('filterChamber').addEventListener('change', function() {
+      chamberFilter = this.value;
+      updateUrl();
+      performSearch();
+    });
+
+    // Search handler with debounce
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(performSearch, 200);
+    });
+
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        clearTimeout(searchTimeout);
+        performSearch();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT') {
+        if (e.key === 'Escape') {
+          e.target.blur();
+        }
+        return;
+      }
+
+      switch(e.key) {
+        case '/':
+          e.preventDefault();
+          document.getElementById('searchInput').focus();
+          break;
+        case 'j':
+          e.preventDefault();
+          if (selectedIndex < searchResults.length - 1) {
+            selectCard(selectedIndex + 1);
+          }
+          break;
+        case 'k':
+          e.preventDefault();
+          if (selectedIndex > 0) {
+            selectCard(selectedIndex - 1);
+          }
+          break;
+        case 's':
+          e.preventDefault();
+          if (selectedIndex >= 0 && searchResults[selectedIndex]) {
+            shareSpeech(searchResults[selectedIndex].id);
+          }
+          break;
+        case 'Escape':
+          closeShareModal();
+          break;
+      }
+    });
+
+    // Utilities
+    function formatNumber(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return n?.toString() || '0';
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function highlightText(text, query) {
+      if (!query || !text) return escapeHtml(text);
+      const escaped = escapeHtml(text);
+      const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+      let result = escaped;
+      words.forEach(word => {
+        const regex = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        result = result.replace(regex, '<mark>$1</mark>');
+      });
+      return result;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('shareModal').addEventListener('click', function(e) {
+      if (e.target === this) closeShareModal();
+    });
+
+    // Start loading
+    loadData();
+  </script>
+</body>
+</html>

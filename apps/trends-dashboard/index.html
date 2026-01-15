@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parliamentary Trends Dashboard - 200 Years of Hansard</title>
+    <style>
+        :root {
+            --color-male: #3B82C4;
+            --color-female: #EC4899;
+            --color-highlight: #F59E0B;
+            --color-accent: #10B981;
+            --color-background: #FFFFFF;
+            --color-surface: #F9FAFB;
+            --color-border: #E5E7EB;
+            --color-text: #1F2937;
+            --color-text-muted: #6B7280;
+            --color-grid: #E5E7EB;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --color-background: #111827;
+            --color-surface: #1F2937;
+            --color-border: #374151;
+            --color-text: #F9FAFB;
+            --color-text-muted: #9CA3AF;
+            --color-grid: #374151;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-lg: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button:hover {
+            background: var(--color-border);
+        }
+
+        .btn-primary {
+            background: var(--color-male);
+            color: white;
+            border-color: var(--color-male);
+        }
+
+        .btn-primary:hover {
+            background: #2563EB;
+        }
+
+        /* Year Range Selector */
+        .range-selector {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .range-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .range-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .range-values {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .range-value {
+            background: var(--color-background);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .slider-container {
+            position: relative;
+            height: 40px;
+        }
+
+        .slider-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--color-border);
+            border-radius: 3px;
+            transform: translateY(-50%);
+        }
+
+        .slider-range {
+            position: absolute;
+            top: 50%;
+            height: 6px;
+            background: var(--color-male);
+            border-radius: 3px;
+            transform: translateY(-50%);
+        }
+
+        .slider-input {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-male);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--color-male);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Summary Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .stat-change.positive {
+            color: var(--color-accent);
+        }
+
+        .stat-change.negative {
+            color: var(--color-female);
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 10px 14px;
+            box-shadow: var(--shadow-lg);
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            max-width: 250px;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+            color: var(--color-text);
+        }
+
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.8125rem;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-label {
+            color: var(--color-text-muted);
+        }
+
+        .tooltip-value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .tooltip-event {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-border);
+            font-size: 0.75rem;
+            color: var(--color-highlight);
+        }
+
+        /* Historical Events Legend */
+        .events-legend {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .events-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+        }
+
+        .events-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            padding: 6px 12px;
+            background: var(--color-background);
+            border-radius: 4px;
+        }
+
+        .event-marker {
+            width: 12px;
+            height: 12px;
+            background: var(--color-highlight);
+            border-radius: 2px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+            border-top: 1px solid var(--color-border);
+            margin-top: 24px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .events-list {
+                flex-direction: column;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Parliamentary Trends Dashboard</h1>
+                <p class="header-subtitle">200 Years of UK Parliamentary Debates (1803-2005)</p>
+            </div>
+            <div class="header-controls">
+                <button id="theme-toggle" title="Toggle dark/light mode">
+                    <span id="theme-icon">Dark</span>
+                </button>
+                <button id="export-btn" class="btn-primary" title="Export charts as PNG">
+                    Export PNG
+                </button>
+            </div>
+        </header>
+
+        <!-- Year Range Selector -->
+        <div class="range-selector">
+            <div class="range-header">
+                <span class="range-title">Select Year Range</span>
+                <div class="range-values">
+                    <span class="range-value" id="start-year-display">1803</span>
+                    <span>to</span>
+                    <span class="range-value" id="end-year-display">2005</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-track"></div>
+                <div class="slider-range" id="slider-range"></div>
+                <input type="range" class="slider-input" id="start-slider" min="1803" max="2005" value="1803">
+                <input type="range" class="slider-input" id="end-slider" min="1803" max="2005" value="2005">
+            </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Speeches</div>
+                <div class="stat-value" id="stat-speeches">-</div>
+                <div class="stat-change" id="stat-speeches-change"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average Female Participation</div>
+                <div class="stat-value" id="stat-female-pct">-</div>
+                <div class="stat-change" id="stat-female-change"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Words Spoken</div>
+                <div class="stat-value" id="stat-words">-</div>
+                <div class="stat-change" id="stat-words-change"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average Speech Length</div>
+                <div class="stat-value" id="stat-length">-</div>
+                <div class="stat-change" id="stat-length-change"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Unique MPs</div>
+                <div class="stat-value" id="stat-mps">-</div>
+                <div class="stat-change" id="stat-mps-change"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Peak Female MPs (Year)</div>
+                <div class="stat-value" id="stat-peak-female">-</div>
+                <div class="stat-change" id="stat-peak-year"></div>
+            </div>
+        </div>
+
+        <!-- Historical Events Legend -->
+        <div class="events-legend">
+            <div class="events-title">Key Historical Events</div>
+            <div class="events-list" id="events-list">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Total Speeches Over Time</div>
+                        <div class="chart-subtitle">Annual parliamentary speech count</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-speeches" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Female Participation Rate</div>
+                        <div class="chart-subtitle">Percentage of speeches by women</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-female" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Average Speech Length</div>
+                        <div class="chart-subtitle">Words per speech</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-length" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Unique MPs Over Time</div>
+                        <div class="chart-subtitle">Number of distinct MPs speaking each year</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-mps" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Data source: UK Parliamentary Hansard (1803-2005). Gender analysis based on matched speakers.
+        </footer>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div id="tooltip-content"></div>
+        <div class="tooltip-event" id="tooltip-event"></div>
+    </div>
+
+    <script>
+        // Historical events to highlight
+        const HISTORICAL_EVENTS = [
+            { year: 1832, label: "Great Reform Act" },
+            { year: 1867, label: "Second Reform Act" },
+            { year: 1884, label: "Third Reform Act" },
+            { year: 1918, label: "Women can stand for Parliament" },
+            { year: 1928, label: "Equal franchise (all women can vote)" },
+            { year: 1958, label: "Life Peerages Act" },
+            { year: 1979, label: "Margaret Thatcher PM" },
+            { year: 1997, label: "Record female MPs elected (101)" }
+        ];
+
+        // Colors
+        const COLORS = {
+            male: '#3B82C4',
+            female: '#EC4899',
+            highlight: '#F59E0B',
+            accent: '#10B981',
+            grid: null, // Set dynamically based on theme
+            text: null,
+            textMuted: null
+        };
+
+        // State
+        let data = [];
+        let filteredData = [];
+        let startYear = 1803;
+        let endYear = 2005;
+        let isDarkMode = false;
+        let activeTooltip = null;
+
+        // DOM elements
+        const startSlider = document.getElementById('start-slider');
+        const endSlider = document.getElementById('end-slider');
+        const startYearDisplay = document.getElementById('start-year-display');
+        const endYearDisplay = document.getElementById('end-year-display');
+        const sliderRange = document.getElementById('slider-range');
+        const tooltip = document.getElementById('tooltip');
+        const tooltipTitle = document.getElementById('tooltip-title');
+        const tooltipContent = document.getElementById('tooltip-content');
+        const tooltipEvent = document.getElementById('tooltip-event');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const exportBtn = document.getElementById('export-btn');
+
+        // Chart canvases
+        const chartConfigs = {
+            speeches: {
+                canvas: document.getElementById('chart-speeches'),
+                field: 'total_speeches',
+                color: COLORS.male,
+                label: 'Total Speeches',
+                format: (v) => v.toLocaleString()
+            },
+            female: {
+                canvas: document.getElementById('chart-female'),
+                field: 'female_pct',
+                color: COLORS.female,
+                label: 'Female %',
+                format: (v) => v.toFixed(2) + '%',
+                suffix: '%'
+            },
+            length: {
+                canvas: document.getElementById('chart-length'),
+                field: 'avg_speech_length',
+                color: COLORS.accent,
+                label: 'Avg Words',
+                format: (v) => Math.round(v).toLocaleString()
+            },
+            mps: {
+                canvas: document.getElementById('chart-mps'),
+                field: 'unique_mps',
+                color: COLORS.highlight,
+                label: 'Unique MPs',
+                format: (v) => v.toLocaleString()
+            }
+        };
+
+        // Initialize
+        async function init() {
+            await loadData();
+            setupEventListeners();
+            populateEventsLegend();
+            updateThemeColors();
+            updateAll();
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('data/yearly_trends.json');
+                data = await response.json();
+                filteredData = [...data];
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            startSlider.addEventListener('input', handleSliderChange);
+            endSlider.addEventListener('input', handleSliderChange);
+            themeToggle.addEventListener('click', toggleTheme);
+            exportBtn.addEventListener('click', exportCharts);
+
+            // Setup canvas event listeners for tooltips
+            Object.keys(chartConfigs).forEach(key => {
+                const canvas = chartConfigs[key].canvas;
+                canvas.addEventListener('mousemove', (e) => handleCanvasHover(e, key));
+                canvas.addEventListener('mouseleave', hideTooltip);
+            });
+
+            // Hide tooltip on scroll
+            window.addEventListener('scroll', hideTooltip);
+        }
+
+        // Populate events legend
+        function populateEventsLegend() {
+            const eventsList = document.getElementById('events-list');
+            eventsList.innerHTML = HISTORICAL_EVENTS.map(event =>
+                `<div class="event-item">
+                    <div class="event-marker"></div>
+                    <span>${event.year}: ${event.label}</span>
+                </div>`
+            ).join('');
+        }
+
+        // Handle slider change
+        function handleSliderChange() {
+            let start = parseInt(startSlider.value);
+            let end = parseInt(endSlider.value);
+
+            // Ensure start <= end
+            if (start > end) {
+                if (this === startSlider) {
+                    start = end;
+                    startSlider.value = start;
+                } else {
+                    end = start;
+                    endSlider.value = end;
+                }
+            }
+
+            startYear = start;
+            endYear = end;
+
+            updateSliderRange();
+            updateAll();
+        }
+
+        // Update slider range visual
+        function updateSliderRange() {
+            const min = 1803;
+            const max = 2005;
+            const range = max - min;
+            const leftPercent = ((startYear - min) / range) * 100;
+            const rightPercent = ((endYear - min) / range) * 100;
+
+            sliderRange.style.left = leftPercent + '%';
+            sliderRange.style.width = (rightPercent - leftPercent) + '%';
+
+            startYearDisplay.textContent = startYear;
+            endYearDisplay.textContent = endYear;
+        }
+
+        // Update all components
+        function updateAll() {
+            filterData();
+            updateStats();
+            drawAllCharts();
+        }
+
+        // Filter data by year range
+        function filterData() {
+            filteredData = data.filter(d => d.year >= startYear && d.year <= endYear);
+        }
+
+        // Update statistics
+        function updateStats() {
+            if (filteredData.length === 0) return;
+
+            const totalSpeeches = filteredData.reduce((sum, d) => sum + d.total_speeches, 0);
+            const totalWords = filteredData.reduce((sum, d) => sum + d.total_words, 0);
+            const avgFemalePct = filteredData.reduce((sum, d) => sum + d.female_pct, 0) / filteredData.length;
+            const avgLength = filteredData.reduce((sum, d) => sum + d.avg_speech_length, 0) / filteredData.length;
+            const maxMps = Math.max(...filteredData.map(d => d.unique_mps));
+
+            // Find peak female MPs
+            let peakFemale = 0;
+            let peakYear = startYear;
+            filteredData.forEach(d => {
+                if (d.female_mps > peakFemale) {
+                    peakFemale = d.female_mps;
+                    peakYear = d.year;
+                }
+            });
+
+            // Update displays
+            document.getElementById('stat-speeches').textContent = totalSpeeches.toLocaleString();
+            document.getElementById('stat-female-pct').textContent = avgFemalePct.toFixed(2) + '%';
+            document.getElementById('stat-words').textContent = formatLargeNumber(totalWords);
+            document.getElementById('stat-length').textContent = Math.round(avgLength) + ' words';
+            document.getElementById('stat-mps').textContent = maxMps.toLocaleString();
+            document.getElementById('stat-peak-female').textContent = peakFemale + ' MPs';
+            document.getElementById('stat-peak-year').textContent = 'Year: ' + peakYear;
+
+            // Calculate changes (first vs last decade in range)
+            const firstDecade = filteredData.slice(0, Math.min(10, filteredData.length));
+            const lastDecade = filteredData.slice(-Math.min(10, filteredData.length));
+
+            if (firstDecade.length > 0 && lastDecade.length > 0) {
+                const firstAvgFemale = firstDecade.reduce((s, d) => s + d.female_pct, 0) / firstDecade.length;
+                const lastAvgFemale = lastDecade.reduce((s, d) => s + d.female_pct, 0) / lastDecade.length;
+                const femaleChange = lastAvgFemale - firstAvgFemale;
+
+                document.getElementById('stat-female-change').textContent =
+                    (femaleChange >= 0 ? '+' : '') + femaleChange.toFixed(2) + '% over period';
+                document.getElementById('stat-female-change').className =
+                    'stat-change ' + (femaleChange >= 0 ? 'positive' : 'negative');
+            }
+        }
+
+        // Format large numbers
+        function formatLargeNumber(num) {
+            if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        // Update theme colors
+        function updateThemeColors() {
+            const computedStyle = getComputedStyle(document.documentElement);
+            COLORS.grid = computedStyle.getPropertyValue('--color-grid').trim();
+            COLORS.text = computedStyle.getPropertyValue('--color-text').trim();
+            COLORS.textMuted = computedStyle.getPropertyValue('--color-text-muted').trim();
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            themeIcon.textContent = isDarkMode ? 'Light' : 'Dark';
+            updateThemeColors();
+            drawAllCharts();
+        }
+
+        // Draw all charts
+        function drawAllCharts() {
+            Object.keys(chartConfigs).forEach(key => {
+                drawChart(key);
+            });
+        }
+
+        // Draw a single chart
+        function drawChart(chartKey) {
+            const config = chartConfigs[chartKey];
+            const canvas = config.canvas;
+            const ctx = canvas.getContext('2d');
+
+            // Handle high DPI displays
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width;
+            const height = rect.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            if (filteredData.length === 0) return;
+
+            // Padding
+            const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+
+            // Get data values
+            const values = filteredData.map(d => d[config.field]);
+            const years = filteredData.map(d => d.year);
+
+            // Calculate scales
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const valRange = maxVal - minVal || 1;
+            const yearRange = endYear - startYear || 1;
+
+            // Nice axis values
+            const yAxisMin = Math.max(0, Math.floor(minVal * 0.9));
+            const yAxisMax = Math.ceil(maxVal * 1.1);
+            const yRange = yAxisMax - yAxisMin || 1;
+
+            // Draw grid lines
+            ctx.strokeStyle = COLORS.grid;
+            ctx.lineWidth = 1;
+
+            // Y-axis grid
+            const yTicks = 5;
+            for (let i = 0; i <= yTicks; i++) {
+                const y = padding.top + (chartHeight * i / yTicks);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(width - padding.right, y);
+                ctx.stroke();
+            }
+
+            // Draw historical event markers
+            ctx.strokeStyle = COLORS.highlight;
+            ctx.setLineDash([5, 5]);
+            HISTORICAL_EVENTS.forEach(event => {
+                if (event.year >= startYear && event.year <= endYear) {
+                    const x = padding.left + ((event.year - startYear) / yearRange) * chartWidth;
+                    ctx.beginPath();
+                    ctx.moveTo(x, padding.top);
+                    ctx.lineTo(x, height - padding.bottom);
+                    ctx.stroke();
+                }
+            });
+            ctx.setLineDash([]);
+
+            // Draw the line
+            ctx.strokeStyle = config.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            filteredData.forEach((d, i) => {
+                const x = padding.left + ((d.year - startYear) / yearRange) * chartWidth;
+                const y = padding.top + chartHeight - ((d[config.field] - yAxisMin) / yRange) * chartHeight;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw area fill
+            ctx.fillStyle = config.color + '20';
+            ctx.beginPath();
+            filteredData.forEach((d, i) => {
+                const x = padding.left + ((d.year - startYear) / yearRange) * chartWidth;
+                const y = padding.top + chartHeight - ((d[config.field] - yAxisMin) / yRange) * chartHeight;
+
+                if (i === 0) {
+                    ctx.moveTo(x, height - padding.bottom);
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.lineTo(padding.left + chartWidth, height - padding.bottom);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw axes
+            ctx.strokeStyle = COLORS.text;
+            ctx.lineWidth = 1;
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(padding.left, padding.top);
+            ctx.lineTo(padding.left, height - padding.bottom);
+            ctx.stroke();
+
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(padding.left, height - padding.bottom);
+            ctx.lineTo(width - padding.right, height - padding.bottom);
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = COLORS.textMuted;
+            ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            // Y-axis labels
+            for (let i = 0; i <= yTicks; i++) {
+                const val = yAxisMax - (yRange * i / yTicks);
+                const y = padding.top + (chartHeight * i / yTicks);
+                const label = config.suffix ? val.toFixed(1) + config.suffix : formatAxisNumber(val);
+                ctx.fillText(label, padding.left - 8, y);
+            }
+
+            // X-axis labels
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            const xTicks = Math.min(10, Math.floor(chartWidth / 60));
+            for (let i = 0; i <= xTicks; i++) {
+                const year = Math.round(startYear + (yearRange * i / xTicks));
+                const x = padding.left + (chartWidth * i / xTicks);
+                ctx.fillText(year.toString(), x, height - padding.bottom + 8);
+            }
+
+            // Store chart metadata for hover
+            config.chartArea = {
+                left: padding.left,
+                right: width - padding.right,
+                top: padding.top,
+                bottom: height - padding.bottom,
+                yAxisMin,
+                yRange,
+                yearRange
+            };
+        }
+
+        // Format axis numbers
+        function formatAxisNumber(num) {
+            if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(0) + 'K';
+            return Math.round(num).toString();
+        }
+
+        // Handle canvas hover
+        function handleCanvasHover(e, chartKey) {
+            const config = chartConfigs[chartKey];
+            const canvas = config.canvas;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (!config.chartArea) return;
+
+            const { left, right, top, bottom, yearRange } = config.chartArea;
+            const chartWidth = right - left;
+
+            // Check if within chart area
+            if (x < left || x > right || y < top || y > bottom) {
+                hideTooltip();
+                return;
+            }
+
+            // Find nearest data point
+            const relX = (x - left) / chartWidth;
+            const hoveredYear = Math.round(startYear + relX * yearRange);
+            const dataPoint = filteredData.find(d => d.year === hoveredYear);
+
+            if (!dataPoint) {
+                hideTooltip();
+                return;
+            }
+
+            showTooltip(e.clientX, e.clientY, dataPoint, config);
+        }
+
+        // Show tooltip
+        function showTooltip(mouseX, mouseY, dataPoint, config) {
+            tooltipTitle.textContent = 'Year ' + dataPoint.year;
+
+            tooltipContent.innerHTML = `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">${config.label}:</span>
+                    <span class="tooltip-value">${config.format(dataPoint[config.field])}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Total Speeches:</span>
+                    <span class="tooltip-value">${dataPoint.total_speeches.toLocaleString()}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Female MPs:</span>
+                    <span class="tooltip-value">${dataPoint.female_mps}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Male MPs:</span>
+                    <span class="tooltip-value">${dataPoint.male_mps}</span>
+                </div>
+            `;
+
+            // Check for historical event
+            const event = HISTORICAL_EVENTS.find(e => e.year === dataPoint.year);
+            if (event) {
+                tooltipEvent.textContent = event.label;
+                tooltipEvent.style.display = 'block';
+            } else {
+                tooltipEvent.style.display = 'none';
+            }
+
+            // Position tooltip
+            const tooltipRect = tooltip.getBoundingClientRect();
+            let tooltipX = mouseX + 15;
+            let tooltipY = mouseY + 15;
+
+            // Keep tooltip on screen
+            if (tooltipX + 250 > window.innerWidth) {
+                tooltipX = mouseX - 260;
+            }
+            if (tooltipY + 200 > window.innerHeight) {
+                tooltipY = mouseY - 150;
+            }
+
+            tooltip.style.left = tooltipX + 'px';
+            tooltip.style.top = tooltipY + 'px';
+            tooltip.style.display = 'block';
+        }
+
+        // Hide tooltip
+        function hideTooltip() {
+            tooltip.style.display = 'none';
+        }
+
+        // Export charts as PNG
+        function exportCharts() {
+            // Create a temporary canvas to combine all charts
+            const exportCanvas = document.createElement('canvas');
+            const dpr = window.devicePixelRatio || 1;
+            const chartWidth = 800;
+            const chartHeight = 400;
+            const padding = 40;
+            const cols = 2;
+            const rows = 2;
+
+            exportCanvas.width = (chartWidth * cols + padding * 3) * dpr;
+            exportCanvas.height = (chartHeight * rows + padding * 4 + 100) * dpr;
+            const ctx = exportCanvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            // Fill background
+            ctx.fillStyle = isDarkMode ? '#111827' : '#FFFFFF';
+            ctx.fillRect(0, 0, exportCanvas.width / dpr, exportCanvas.height / dpr);
+
+            // Draw title
+            ctx.fillStyle = isDarkMode ? '#F9FAFB' : '#1F2937';
+            ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(
+                `Parliamentary Trends (${startYear}-${endYear})`,
+                (chartWidth * cols + padding * 3) / 2,
+                padding + 10
+            );
+
+            // Draw each chart
+            const chartKeys = Object.keys(chartConfigs);
+            chartKeys.forEach((key, i) => {
+                const config = chartConfigs[key];
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = padding + col * (chartWidth + padding);
+                const y = padding * 2 + 40 + row * (chartHeight + padding);
+
+                // Draw chart title
+                ctx.fillStyle = isDarkMode ? '#F9FAFB' : '#1F2937';
+                ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(config.label, x, y - 10);
+
+                // Draw chart canvas
+                ctx.drawImage(config.canvas, x, y, chartWidth, chartHeight - 40);
+            });
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `parliamentary-trends-${startYear}-${endYear}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Handle window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                drawAllCharts();
+            }, 250);
+        });
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>

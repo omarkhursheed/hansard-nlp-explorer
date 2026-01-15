@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hansard Research - Unified App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a26;
+      --bg-card: #16161f;
+      --bg-hover: #1e1e2a;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --border-focus: rgba(139, 92, 246, 0.6);
+      --text-primary: #f0f0f5;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      --accent-blue: #3B82C4;
+      --accent-pink: #EC4899;
+      --accent-gold: #F59E0B;
+      --accent-emerald: #10B981;
+      --accent-purple: #8B5CF6;
+      --accent-red: #EF4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Main Layout */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 600px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-blue);
+    }
+
+    .header-filters {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 11px;
+    }
+
+    .filter-input {
+      width: 70px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 11px;
+    }
+
+    .header-stats {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Main Content */
+    .main {
+      display: grid;
+      grid-template-columns: 320px 1fr 300px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Left Panel - Results List */
+    .results-panel {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .results-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .results-title {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .results-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .results-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .result-item {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .result-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .result-item.active {
+      background: rgba(139, 92, 246, 0.1);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .result-item.marked-positive {
+      border-left: 3px solid var(--accent-emerald);
+    }
+
+    .result-item.marked-negative {
+      border-left: 3px solid var(--accent-red);
+    }
+
+    .result-speaker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .speaker-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .speaker-dot.female { background: var(--accent-pink); }
+    .speaker-dot.male { background: var(--accent-blue); }
+    .speaker-dot.unknown { background: var(--text-muted); }
+
+    .speaker-name {
+      font-size: 12px;
+      font-weight: 600;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .result-excerpt {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .result-excerpt mark {
+      background: rgba(139, 92, 246, 0.3);
+      color: var(--text-primary);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* Center Panel - Content View */
+    .content-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .content-header {
+      padding: 14px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .content-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .content-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .content-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .action-btn.active-positive {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      color: white;
+    }
+
+    .action-btn.active-negative {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: white;
+    }
+
+    .action-btn.active-unclear {
+      background: var(--accent-gold);
+      border-color: var(--accent-gold);
+      color: white;
+    }
+
+    .content-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .speech-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .speech-card.highlighted {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .speech-header {
+      padding: 14px 16px;
+      background: var(--bg-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .speech-speaker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .speaker-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 11px;
+      color: white;
+    }
+
+    .speaker-avatar.male { background: var(--accent-blue); }
+    .speaker-avatar.female { background: var(--accent-pink); }
+    .speaker-avatar.unknown { background: var(--text-muted); }
+
+    .speaker-details {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .speaker-gender {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .speech-seq {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .speech-body {
+      padding: 16px;
+    }
+
+    .speech-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .speech-text mark {
+      background: rgba(139, 92, 246, 0.3);
+      color: var(--text-primary);
+      padding: 1px 3px;
+      border-radius: 2px;
+    }
+
+    /* Right Panel - Analysis */
+    .analysis-panel {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-subtle);
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .analysis-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .effect-display {
+      text-align: center;
+      padding: 14px 0;
+    }
+
+    .effect-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .effect-value.positive { color: var(--accent-emerald); }
+    .effect-value.negative { color: var(--accent-red); }
+    .effect-value.neutral { color: var(--text-muted); }
+
+    .effect-label {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .effect-interpretation {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    .gender-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .gender-label {
+      width: 50px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .gender-label.female { color: var(--accent-pink); }
+    .gender-label.male { color: var(--accent-blue); }
+
+    .gender-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .gender-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .gender-bar.female { background: var(--accent-pink); }
+    .gender-bar.male { background: var(--accent-blue); }
+
+    .gender-value {
+      width: 40px;
+      text-align: right;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    /* Keyboard Shortcuts */
+    .shortcuts-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 10px;
+    }
+
+    .shortcut-key {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--text-secondary);
+    }
+
+    .shortcut-desc {
+      color: var(--text-muted);
+    }
+
+    /* Export */
+    .export-btn {
+      width: 100%;
+      padding: 10px;
+      border: 1px dashed var(--border-medium);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 8px;
+    }
+
+    .export-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 1000;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Loading & Empty States */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      gap: 12px;
+    }
+
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border-subtle);
+      border-top-color: var(--accent-purple);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Hansard Research</div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchQuery" placeholder="Search speech content... (e.g., 'give way', 'my constituent')">
+        <button class="btn btn-primary" onclick="performSearch()">Search</button>
+      </div>
+      <div class="header-filters">
+        <select class="filter-select" id="genderFilter">
+          <option value="">All genders</option>
+          <option value="F">Female</option>
+          <option value="M">Male</option>
+        </select>
+        <select class="filter-select" id="chamberFilter">
+          <option value="">All chambers</option>
+          <option value="Commons">Commons</option>
+          <option value="Lords">Lords</option>
+        </select>
+        <input type="number" class="filter-input" id="yearFrom" placeholder="From" min="1803" max="2005">
+        <span style="color: var(--text-muted);">-</span>
+        <input type="number" class="filter-input" id="yearTo" placeholder="To" min="1803" max="2005">
+      </div>
+      <div class="header-stats" id="headerStats">Ready</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Left: Results List -->
+      <div class="results-panel">
+        <div class="results-header">
+          <span class="results-title">Results</span>
+          <span class="results-count" id="resultsCount">0</span>
+        </div>
+        <div class="results-list" id="resultsList">
+          <div class="empty-state">
+            Enter a search term to find speeches.<br><br>
+            Try: "give way", "my constituent",<br>"honourable lady", "NHS"
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Content View -->
+      <div class="content-panel">
+        <div class="content-header" id="contentHeader" style="display: none;">
+          <div>
+            <div class="content-title" id="debateTitle">Select a result</div>
+            <div class="content-subtitle" id="debateSubtitle"></div>
+          </div>
+          <div class="content-actions" id="contentActions" style="display: none;">
+            <button class="action-btn" id="btnPositive" onclick="markCurrent('positive')" title="Mark positive (1)">+</button>
+            <button class="action-btn" id="btnNegative" onclick="markCurrent('negative')" title="Mark negative (2)">-</button>
+            <button class="action-btn" id="btnUnclear" onclick="markCurrent('unclear')" title="Mark unclear (3)">?</button>
+          </div>
+        </div>
+        <div class="content-body" id="contentBody">
+          <div class="empty-state">
+            <p>Search for speeches and select a result to view the full debate context.</p>
+            <br>
+            <p>Use keyboard shortcuts:<br>
+            <strong>j/k</strong> - navigate results<br>
+            <strong>1/2/3</strong> - mark positive/negative/unclear<br>
+            <strong>u</strong> - undo last mark</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Analysis -->
+      <div class="analysis-panel">
+        <div class="section-title">Session Stats</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Results</div>
+            <div class="stat-value" id="statResults">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Marked</div>
+            <div class="stat-value" id="statMarked">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Positive</div>
+            <div class="stat-value" style="color: var(--accent-emerald);" id="statPositive">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Negative</div>
+            <div class="stat-value" style="color: var(--accent-red);" id="statNegative">0</div>
+          </div>
+        </div>
+
+        <div class="section-title">Effect Size</div>
+        <div class="analysis-card">
+          <div class="effect-display">
+            <div class="effect-value neutral" id="effectValue">--</div>
+            <div class="effect-label">Cohen's d (gender difference)</div>
+          </div>
+          <div class="effect-interpretation" id="effectInterpretation">
+            Mark at least 5 speeches per gender to calculate effect size.
+          </div>
+        </div>
+
+        <div class="section-title">Gender Breakdown</div>
+        <div class="analysis-card">
+          <div class="gender-row">
+            <span class="gender-label female">Female</span>
+            <div class="gender-bar-bg">
+              <div class="gender-bar female" id="femaleBar" style="width: 0%;"></div>
+            </div>
+            <span class="gender-value" id="femaleRate">0%</span>
+          </div>
+          <div class="gender-row">
+            <span class="gender-label male">Male</span>
+            <div class="gender-bar-bg">
+              <div class="gender-bar male" id="maleBar" style="width: 0%;"></div>
+            </div>
+            <span class="gender-value" id="maleRate">0%</span>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 10px;">
+            F: <span id="femalePosN">0</span>/<span id="femaleTotalN">0</span> positive |
+            M: <span id="malePosN">0</span>/<span id="maleTotalN">0</span> positive
+          </div>
+        </div>
+
+        <div class="section-title">Shortcuts</div>
+        <div class="shortcuts-card">
+          <div class="shortcut-row">
+            <span class="shortcut-key">j / k</span>
+            <span class="shortcut-desc">Next / Prev result</span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-key">1 2 3</span>
+            <span class="shortcut-desc">+ / - / ?</span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-key">space</span>
+            <span class="shortcut-desc">Skip to next</span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-key">n / p</span>
+            <span class="shortcut-desc">Next / Prev match</span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-key">u</span>
+            <span class="shortcut-desc">Undo</span>
+          </div>
+        </div>
+
+        <button class="export-btn" onclick="exportAnnotations('json')">Export JSON</button>
+        <button class="export-btn" onclick="exportAnnotations('csv')">Export CSV</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = 'http://localhost:8766';
+
+    // State
+    let searchResults = [];
+    let annotations = JSON.parse(localStorage.getItem('hansard_unified_v1') || '{}');
+    let selectedIndex = -1;
+    let currentQuery = '';
+    let lastAction = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('searchQuery').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performSearch();
+      });
+      document.addEventListener('keydown', handleKeyboard);
+      updateStats();
+    });
+
+    let currentHighlightIndex = 0;
+
+    function handleKeyboard(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+      switch(e.key.toLowerCase()) {
+        case 'j':
+          e.preventDefault();
+          if (searchResults.length === 0) {
+            showToast('Search first');
+            return;
+          }
+          selectResult(Math.min(selectedIndex + 1, searchResults.length - 1));
+          break;
+        case 'k':
+          e.preventDefault();
+          if (searchResults.length === 0) {
+            showToast('Search first');
+            return;
+          }
+          selectResult(Math.max(selectedIndex - 1, 0));
+          break;
+        case '1':
+          e.preventDefault();
+          if (selectedIndex < 0) {
+            showToast('Select a result first (j/k)');
+            return;
+          }
+          markCurrent('positive');
+          break;
+        case '2':
+          e.preventDefault();
+          if (selectedIndex < 0) {
+            showToast('Select a result first (j/k)');
+            return;
+          }
+          markCurrent('negative');
+          break;
+        case '3':
+          e.preventDefault();
+          if (selectedIndex < 0) {
+            showToast('Select a result first (j/k)');
+            return;
+          }
+          markCurrent('unclear');
+          break;
+        case ' ':
+          e.preventDefault();
+          // Space to skip to next unmarked
+          if (selectedIndex >= 0) {
+            const next = searchResults.findIndex((r, i) => i > selectedIndex && !annotations[r.id]);
+            if (next >= 0) selectResult(next);
+            else showToast('No more unmarked results');
+          }
+          break;
+        case 'n':
+          e.preventDefault();
+          jumpToHighlight(1);
+          break;
+        case 'p':
+          e.preventDefault();
+          jumpToHighlight(-1);
+          break;
+        case 'u':
+          e.preventDefault();
+          undoLast();
+          break;
+      }
+    }
+
+    function jumpToHighlight(direction) {
+      const marks = document.querySelectorAll('.speech-text mark');
+      if (marks.length === 0) {
+        showToast('No highlights in view');
+        return;
+      }
+      currentHighlightIndex = (currentHighlightIndex + direction + marks.length) % marks.length;
+      marks[currentHighlightIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Flash the highlight
+      marks[currentHighlightIndex].style.background = 'rgba(236, 72, 153, 0.5)';
+      setTimeout(() => {
+        marks[currentHighlightIndex].style.background = '';
+      }, 500);
+    }
+
+    async function performSearch() {
+      const query = document.getElementById('searchQuery').value.trim();
+      if (!query) return;
+
+      currentQuery = query;
+      const gender = document.getElementById('genderFilter').value;
+      const chamber = document.getElementById('chamberFilter').value;
+      const yearFrom = document.getElementById('yearFrom').value;
+      const yearTo = document.getElementById('yearTo').value;
+
+      document.getElementById('resultsList').innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Searching...</div>
+        </div>
+      `;
+      document.getElementById('headerStats').textContent = 'Searching...';
+
+      try {
+        const params = new URLSearchParams({
+          q: query,
+          search_content: 'true',
+          limit: '500'
+        });
+        if (gender) params.append('gender', gender);
+        if (chamber) params.append('chamber', chamber);
+        if (yearFrom) params.append('year_from', yearFrom);
+        if (yearTo) params.append('year_to', yearTo);
+
+        const response = await fetch(`${API_BASE}/api/search?${params}`);
+        const debates = await response.json();
+
+        // Flatten
+        searchResults = [];
+        for (const d of debates) {
+          if (d.matching_speeches) {
+            for (const m of d.matching_speeches) {
+              searchResults.push({
+                id: `${d.debate_id}_seq${m.sequence}`,
+                debate_id: d.debate_id,
+                title: d.title,
+                year: d.year,
+                date: d.date,
+                chamber: d.chamber,
+                speaker: m.speaker,
+                gender: m.gender,
+                excerpt: m.excerpt,
+                sequence: m.sequence
+              });
+            }
+          }
+        }
+
+        document.getElementById('resultsCount').textContent = searchResults.length.toLocaleString();
+        document.getElementById('headerStats').textContent = `Found ${searchResults.length} speeches`;
+        renderResults();
+        updateStats();
+
+        if (searchResults.length > 0) {
+          selectResult(0);
+        }
+
+      } catch (error) {
+        console.error('Search error:', error);
+        document.getElementById('resultsList').innerHTML = `
+          <div class="empty-state">Search failed. Is the API server running?</div>
+        `;
+        document.getElementById('headerStats').textContent = 'Error';
+      }
+    }
+
+    function renderResults() {
+      const container = document.getElementById('resultsList');
+
+      if (searchResults.length === 0) {
+        container.innerHTML = '<div class="empty-state">No results found</div>';
+        return;
+      }
+
+      container.innerHTML = searchResults.map((item, i) => {
+        const ann = annotations[item.id];
+        const activeClass = i === selectedIndex ? 'active' : '';
+        const markedClass = ann ?
+          (ann.label === 'positive' ? 'marked-positive' :
+           ann.label === 'negative' ? 'marked-negative' : '') : '';
+
+        return `
+          <div class="result-item ${activeClass} ${markedClass}" onclick="selectResult(${i})" data-index="${i}">
+            <div class="result-speaker">
+              <div class="speaker-dot ${item.gender === 'F' ? 'female' : item.gender === 'M' ? 'male' : 'unknown'}"></div>
+              <span class="speaker-name">${escapeHtml(item.speaker || 'Unknown')}</span>
+            </div>
+            <div class="result-meta">${item.year} - ${item.chamber || ''}</div>
+            <div class="result-excerpt">${highlightQuery(escapeHtml(item.excerpt || ''), currentQuery)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function selectResult(index) {
+      if (index < 0 || index >= searchResults.length) return;
+
+      selectedIndex = index;
+      const item = searchResults[index];
+
+      // Update list selection
+      document.querySelectorAll('.result-item').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+
+      // Scroll into view
+      const selectedEl = document.querySelector(`.result-item[data-index="${index}"]`);
+      if (selectedEl) {
+        selectedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Show content header
+      document.getElementById('contentHeader').style.display = 'flex';
+      document.getElementById('contentActions').style.display = 'flex';
+      document.getElementById('debateTitle').textContent = item.title || 'Untitled Debate';
+      document.getElementById('debateSubtitle').textContent = `${item.date} - ${item.chamber}`;
+
+      // Update action buttons
+      const ann = annotations[item.id];
+      document.getElementById('btnPositive').className = 'action-btn' + (ann?.label === 'positive' ? ' active-positive' : '');
+      document.getElementById('btnNegative').className = 'action-btn' + (ann?.label === 'negative' ? ' active-negative' : '');
+      document.getElementById('btnUnclear').className = 'action-btn' + (ann?.label === 'unclear' ? ' active-unclear' : '');
+
+      // Load debate context
+      document.getElementById('contentBody').innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Loading debate...</div>
+        </div>
+      `;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/trace?id=${item.debate_id}&year=${item.year}`);
+        const data = await response.json();
+
+        if (data.stages && data.stages.final_speeches) {
+          renderDebate(data.stages.final_speeches, item.sequence);
+        } else {
+          document.getElementById('contentBody').innerHTML = `
+            <div class="empty-state">Could not load debate context</div>
+          `;
+        }
+      } catch (e) {
+        document.getElementById('contentBody').innerHTML = `
+          <div class="empty-state">Error loading debate</div>
+        `;
+      }
+    }
+
+    function renderDebate(speeches, highlightSeq) {
+      const container = document.getElementById('contentBody');
+
+      container.innerHTML = speeches.map(speech => {
+        const isHighlighted = speech.sequence_number === highlightSeq;
+        const highlightClass = isHighlighted ? 'highlighted' : '';
+        const gender = speech.gender || '';
+        const avatarClass = gender === 'F' ? 'female' : gender === 'M' ? 'male' : 'unknown';
+
+        return `
+          <div class="speech-card ${highlightClass}" ${isHighlighted ? 'id="highlighted-speech"' : ''}>
+            <div class="speech-header">
+              <div class="speech-speaker">
+                <div class="speaker-avatar ${avatarClass}">${getInitials(speech.canonical_name || speech.speaker)}</div>
+                <div>
+                  <div class="speaker-details">${escapeHtml(speech.canonical_name || speech.speaker || 'Unknown')}</div>
+                  <div class="speaker-gender">${gender === 'F' ? 'Female' : gender === 'M' ? 'Male' : 'Unknown'}</div>
+                </div>
+              </div>
+              <div class="speech-seq">#${speech.sequence_number}</div>
+            </div>
+            <div class="speech-body">
+              <div class="speech-text">${highlightQuery(escapeHtml(speech.text || ''), currentQuery)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Scroll to first search term match
+      setTimeout(() => {
+        const mark = document.querySelector('.speech-text mark');
+        if (mark) {
+          mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          const el = document.getElementById('highlighted-speech');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+
+    function markCurrent(label) {
+      if (selectedIndex < 0) return;
+
+      const item = searchResults[selectedIndex];
+      const prev = annotations[item.id];
+
+      lastAction = { itemId: item.id, prev: prev ? { ...prev } : null };
+
+      if (prev?.label === label) {
+        delete annotations[item.id];
+        showToast('Annotation removed');
+      } else {
+        annotations[item.id] = {
+          label: label,
+          query: currentQuery,
+          speaker: item.speaker,
+          gender: item.gender,
+          year: item.year,
+          chamber: item.chamber,
+          excerpt: item.excerpt,
+          debate_id: item.debate_id,
+          timestamp: new Date().toISOString()
+        };
+        showToast(`Marked as ${label}`);
+      }
+
+      localStorage.setItem('hansard_unified_v1', JSON.stringify(annotations));
+
+      // Update UI
+      const ann = annotations[item.id];
+      document.getElementById('btnPositive').className = 'action-btn' + (ann?.label === 'positive' ? ' active-positive' : '');
+      document.getElementById('btnNegative').className = 'action-btn' + (ann?.label === 'negative' ? ' active-negative' : '');
+      document.getElementById('btnUnclear').className = 'action-btn' + (ann?.label === 'unclear' ? ' active-unclear' : '');
+
+      renderResults();
+      updateStats();
+
+      // Auto-advance
+      if (annotations[item.id]) {
+        const next = searchResults.findIndex((r, i) => i > selectedIndex && !annotations[r.id]);
+        if (next >= 0) selectResult(next);
+      }
+    }
+
+    function undoLast() {
+      if (!lastAction) return;
+
+      if (lastAction.prev) {
+        annotations[lastAction.itemId] = lastAction.prev;
+      } else {
+        delete annotations[lastAction.itemId];
+      }
+
+      localStorage.setItem('hansard_unified_v1', JSON.stringify(annotations));
+      renderResults();
+      updateStats();
+      showToast('Undone');
+      lastAction = null;
+
+      // Refresh buttons if current item was undone
+      if (selectedIndex >= 0 && searchResults[selectedIndex].id === lastAction?.itemId) {
+        const ann = annotations[searchResults[selectedIndex].id];
+        document.getElementById('btnPositive').className = 'action-btn' + (ann?.label === 'positive' ? ' active-positive' : '');
+        document.getElementById('btnNegative').className = 'action-btn' + (ann?.label === 'negative' ? ' active-negative' : '');
+        document.getElementById('btnUnclear').className = 'action-btn' + (ann?.label === 'unclear' ? ' active-unclear' : '');
+      }
+    }
+
+    function updateStats() {
+      const all = Object.values(annotations);
+      const positive = all.filter(a => a.label === 'positive');
+      const negative = all.filter(a => a.label === 'negative');
+
+      document.getElementById('statResults').textContent = searchResults.length;
+      document.getElementById('statMarked').textContent = all.length;
+      document.getElementById('statPositive').textContent = positive.length;
+      document.getElementById('statNegative').textContent = negative.length;
+
+      // Update header with progress
+      if (searchResults.length > 0) {
+        const reviewed = searchResults.filter(r => annotations[r.id]).length;
+        const pct = Math.round(reviewed / searchResults.length * 100);
+        document.getElementById('headerStats').textContent = `${reviewed}/${searchResults.length} reviewed (${pct}%)`;
+      }
+
+      // Gender breakdown from annotations
+      const femaleAnn = all.filter(a => a.gender === 'F');
+      const maleAnn = all.filter(a => a.gender === 'M');
+      const femalePos = positive.filter(a => a.gender === 'F').length;
+      const malePos = positive.filter(a => a.gender === 'M').length;
+
+      const femaleTotal = femaleAnn.length;
+      const maleTotal = maleAnn.length;
+
+      document.getElementById('femaleTotalN').textContent = femaleTotal;
+      document.getElementById('maleTotalN').textContent = maleTotal;
+      document.getElementById('femalePosN').textContent = femalePos;
+      document.getElementById('malePosN').textContent = malePos;
+
+      const femaleRate = femaleTotal > 0 ? femalePos / femaleTotal : 0;
+      const maleRate = maleTotal > 0 ? malePos / maleTotal : 0;
+
+      document.getElementById('femaleRate').textContent = (femaleRate * 100).toFixed(0) + '%';
+      document.getElementById('maleRate').textContent = (maleRate * 100).toFixed(0) + '%';
+
+      const maxRate = Math.max(femaleRate, maleRate, 0.01);
+      document.getElementById('femaleBar').style.width = (femaleRate / maxRate * 100) + '%';
+      document.getElementById('maleBar').style.width = (maleRate / maxRate * 100) + '%';
+
+      // Effect size
+      const effectEl = document.getElementById('effectValue');
+      const interpEl = document.getElementById('effectInterpretation');
+
+      if (femaleTotal >= 5 && maleTotal >= 5) {
+        const pooledP = (femalePos + malePos) / (femaleTotal + maleTotal);
+        const pooledSD = Math.sqrt(pooledP * (1 - pooledP));
+
+        if (pooledSD > 0) {
+          const d = (femaleRate - maleRate) / pooledSD;
+          effectEl.textContent = 'd = ' + d.toFixed(2);
+          effectEl.className = 'effect-value ' + (d > 0.1 ? 'positive' : d < -0.1 ? 'negative' : 'neutral');
+
+          const absD = Math.abs(d);
+          const size = absD < 0.2 ? 'negligible' : absD < 0.5 ? 'small' : absD < 0.8 ? 'medium' : 'large';
+          const dir = d > 0 ? 'Female higher' : d < 0 ? 'Male higher' : 'Equal';
+
+          interpEl.innerHTML = `<strong>${size.charAt(0).toUpperCase() + size.slice(1)} effect</strong> (${dir})
+            <br>F: ${(femaleRate*100).toFixed(1)}% (n=${femaleTotal})
+            <br>M: ${(maleRate*100).toFixed(1)}% (n=${maleTotal})`;
+        } else {
+          effectEl.textContent = '--';
+          effectEl.className = 'effect-value neutral';
+          interpEl.textContent = 'Cannot calculate (no variance)';
+        }
+      } else {
+        effectEl.textContent = '--';
+        effectEl.className = 'effect-value neutral';
+        interpEl.textContent = `Need 5+ per gender. Current: F(${femaleTotal}), M(${maleTotal})`;
+      }
+    }
+
+    function exportAnnotations(format) {
+      const data = Object.entries(annotations).map(([id, a]) => ({ id, ...a }));
+
+      if (data.length === 0) {
+        showToast('Nothing to export');
+        return;
+      }
+
+      if (format === 'json') {
+        downloadBlob(new Blob([JSON.stringify(data, null, 2)]), 'hansard_annotations.json');
+      } else {
+        const headers = ['id', 'label', 'speaker', 'gender', 'year', 'chamber', 'query', 'excerpt'];
+        const rows = data.map(a => [
+          a.id, a.label, `"${(a.speaker||'').replace(/"/g,'""')}"`, a.gender, a.year,
+          a.chamber, `"${(a.query||'').replace(/"/g,'""')}"`, `"${(a.excerpt||'').replace(/"/g,'""')}"`
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        downloadBlob(new Blob([csv]), 'hansard_annotations.csv');
+      }
+
+      showToast(`Exported ${data.length} annotations`);
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function highlightQuery(text, query) {
+      if (!query) return text;
+      try {
+        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+      } catch (e) {
+        return text;
+      }
+    }
+  </script>
+</body>
+</html>

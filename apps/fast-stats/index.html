@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hansard Statistics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg-card: #18181f;
+      --bg-elevated: #1e1e27;
+      --border: rgba(255,255,255,0.08);
+      --text: #f5f5f7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #8b5cf6;
+      --pink: #ec4899;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --gold: #eab308;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    @media (max-width: 1000px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    /* Big Stats */
+    .stat-card {
+      text-align: center;
+      padding: 32px 24px;
+    }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stat-value.pink { color: var(--pink); }
+    .stat-value.blue { color: var(--blue); }
+    .stat-value.green { color: var(--green); }
+    .stat-value.gold { color: var(--gold); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stat-change {
+      font-size: 11px;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .stat-change.up { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+    .stat-change.down { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    /* Chart Container */
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    .chart-container.tall {
+      height: 400px;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table th {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .data-table td {
+      font-size: 13px;
+    }
+
+    .data-table tr:hover {
+      background: var(--bg-elevated);
+    }
+
+    .rank {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .mp-name {
+      font-weight: 600;
+    }
+
+    .mp-years {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .speech-count {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--pink);
+    }
+
+    /* Milestones */
+    .milestone-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .milestone {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+    }
+
+    .milestone-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .milestone-event {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Section Headers */
+    .section-header {
+      margin: 40px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-header .line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      Back to Apps
+    </a>
+
+    <header>
+      <h1>Hansard <span>Statistics</span></h1>
+      <p class="subtitle">Overview of 200+ years of UK Parliamentary debate data</p>
+    </header>
+
+    <div id="content">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading statistics...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res = await fetch('../static-data/stats.json');
+        const stats = await res.json();
+        renderDashboard(stats);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        document.getElementById('content').innerHTML = `
+          <div class="card">
+            <p>Failed to load statistics. Make sure to run <code>python3 apps/build_static_data.py</code> first.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderDashboard(stats) {
+      const o = stats.overview;
+      const content = document.getElementById('content');
+
+      content.innerHTML = `
+        <!-- Overview Stats -->
+        <div class="grid grid-4">
+          <div class="card stat-card">
+            <div class="stat-value">${formatBigNumber(o.total_speeches)}</div>
+            <div class="stat-label">Total Speeches</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value green">${formatBigNumber(o.unique_mps)}</div>
+            <div class="stat-label">Unique MPs</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value pink">${formatBigNumber(o.female_mps)}</div>
+            <div class="stat-label">Female MPs</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value blue">${o.year_max - o.year_min + 1}</div>
+            <div class="stat-label">Years of Data</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Female Representation Over Time</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title">Female Speech Percentage by Year</div>
+            <div class="chart-container tall">
+              <canvas id="timelineChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Speeches by Gender (Matched)</div>
+            <div class="chart-container tall">
+              <canvas id="genderChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>By Decade</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Speech Distribution</div>
+          <div class="chart-container">
+            <canvas id="decadeChart"></canvas>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Top Female MPs</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title">Most Active Female MPs</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Active</th>
+                  <th>Speeches</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stats.top_female_mps.slice(0, 15).map((mp, i) => `
+                  <tr>
+                    <td class="rank">${i + 1}</td>
+                    <td class="mp-name">${escapeHtml(mp.name)}</td>
+                    <td class="mp-years">${mp.years}</td>
+                    <td class="speech-count">${formatNumber(mp.speeches)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Key Milestones</div>
+            <div class="milestone-list">
+              ${stats.milestones.map(m => `
+                <div class="milestone">
+                  <div class="milestone-year">${m.year}</div>
+                  <div class="milestone-event">${escapeHtml(m.event)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Chamber Breakdown</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card stat-card">
+            <div class="stat-value">${formatBigNumber(stats.by_chamber.Commons)}</div>
+            <div class="stat-label">Commons Speeches</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value gold">${formatBigNumber(stats.by_chamber.Lords)}</div>
+            <div class="stat-label">Lords Speeches</div>
+          </div>
+        </div>
+      `;
+
+      // Draw charts
+      drawTimelineChart(stats.by_year);
+      drawGenderChart(o);
+      drawDecadeChart(stats.by_decade);
+    }
+
+    function drawTimelineChart(byYear) {
+      const ctx = document.getElementById('timelineChart').getContext('2d');
+
+      // Only show years with female speakers
+      const filtered = byYear.filter(y => y.female > 0);
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: filtered.map(y => y.year),
+          datasets: [{
+            label: 'Female %',
+            data: filtered.map(y => y.female_pct),
+            borderColor: '#ec4899',
+            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y.toFixed(1)}% female speeches`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#71717a', maxTicksLimit: 10 }
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: {
+                color: '#71717a',
+                callback: v => v + '%'
+              },
+              beginAtZero: true,
+              max: Math.max(...filtered.map(y => y.female_pct)) * 1.2
+            }
+          }
+        }
+      });
+    }
+
+    function drawGenderChart(overview) {
+      const ctx = document.getElementById('genderChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Female', 'Male'],
+          datasets: [{
+            data: [overview.female_speeches, overview.male_speeches],
+            backgroundColor: ['#ec4899', '#3b82f6'],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#a1a1aa', padding: 20 }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const total = overview.female_speeches + overview.male_speeches;
+                  const pct = (ctx.parsed / total * 100).toFixed(1);
+                  return `${ctx.label}: ${formatNumber(ctx.parsed)} (${pct}%)`;
+                }
+              }
+            }
+          },
+          cutout: '60%'
+        }
+      });
+    }
+
+    function drawDecadeChart(byDecade) {
+      const ctx = document.getElementById('decadeChart').getContext('2d');
+      const decades = Object.keys(byDecade).sort();
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: decades.map(d => d + 's'),
+          datasets: [
+            {
+              label: 'Female',
+              data: decades.map(d => byDecade[d].female),
+              backgroundColor: '#ec4899',
+            },
+            {
+              label: 'Male',
+              data: decades.map(d => byDecade[d].male),
+              backgroundColor: '#3b82f6',
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { color: '#a1a1aa' }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false },
+              ticks: { color: '#71717a' }
+            },
+            y: {
+              stacked: true,
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: {
+                color: '#71717a',
+                callback: v => formatBigNumber(v)
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function formatNumber(n) {
+      return n?.toLocaleString() || '0';
+    }
+
+    function formatBigNumber(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return n?.toString() || '0';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>
