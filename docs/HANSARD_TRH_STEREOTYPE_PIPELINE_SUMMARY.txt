@@ -1,0 +1,209 @@
+Title: Comparing Stereotypes about Women in Hansard and TRH (Plain-Language Summary)
+
+1. Overall goal
+----------------
+
+The aim of this pipeline is to find out:
+
+- What kinds of stereotypes about women appear in UK parliamentary debates (Hansard) and in a separate TRH dataset.
+- Whether the same stereotypes are recycled across both datasets, or whether some stereotypes are specific to one dataset.
+- How these stereotypes can be grouped into broader themes (e.g. equality, competence, emotion/morality) and compared over time or across corpora.
+
+The pipeline uses large language models (LLMs) to extract and normalize stereotypes into a structured format, then uses sentence embeddings and clustering to discover recurring patterns. Finally, we label and visualize those patterns so they can be interpreted by a human researcher.
+
+
+2. Datasets and task
+---------------------
+
+Datasets:
+
+- **TRH dataset**: A text collection containing toxic or biased statements about different groups. We focus on statements about women (and related terms such as “women”, “girls”, “females”, “ladies”, etc.).
+
+- **Hansard dataset**: UK parliamentary debates where previous work has already identified argument “reasons” about women (e.g. from suffrage debates or rights-based debates). For each speech, we have short rationales and quotes that mention women.
+
+Task (conceptually):
+
+1. Identify sentences that express stereotypes or generalizations about women.
+2. Turn each stereotype into a short, canonical sentence (e.g. “women are too emotional”, “women lack political competence”).
+3. Assign each stereotype:
+   - a **dimension** (what the stereotype is about), and
+   - a **polarity** (positive, negative, ambivalent, neutral).
+4. Then compare the resulting sets of stereotypes between Hansard and TRH:
+   - Which stereotype themes appear in both?
+   - Which ones are only in Hansard or only in TRH?
+   - How often do they appear in each?
+
+
+3. Dimensions and labels
+------------------------
+
+We use a shared set of dimension labels for both TRH and Hansard stereotypes. Each extracted stereotype is assigned to exactly one of these:
+
+- **equality** – equal rights, justice, fairness (e.g. women deserve equal rights; women are denied justice).
+- **competence_capacity** – abilities, intellect, education of women/men (e.g. women are intellectually inferior; women are capable and educated).
+- **emotion_morality** – emotionality, virtue, moral fitness (e.g. women are too emotional; women are morally superior).
+- **social_order_stability** – order, stability, foreign relations (e.g. women’s participation will destabilize society; enfranchising women will preserve social order).
+- **tradition_precedent** – custom, precedent, history (e.g. women have never had the vote; tradition dictates that women stay at home).
+- **instrumental_effects** – pragmatic costs/benefits, governance efficiency (e.g. women voters will harm efficient government; including women will improve policy outcomes).
+- **religion_family** – religious or family-role arguments (e.g. religion forbids women’s political rights; women belong in the family sphere).
+- **social_experiment** – trials, experiments, pilots to learn effects (e.g. giving women the vote is a dangerous experiment).
+- **other** – use only when none of the categories above fit.
+
+Polarity:
+
+- **positive** – praising or idealizing women.
+- **negative** – insulting, demeaning, or problematizing women.
+- **ambivalent** – mixed positive and negative claims.
+- **neutral** – factual or descriptive statements without a clear value judgment.
+
+
+4. Methods and models
+----------------------
+
+4.1. TRH stereotype extraction
+
+Script: `scripts/analysis/compare_hansard_trh/extract_bias_trh.py`
+
+Method:
+
+1. Start from a large TRH text file containing many statements about different groups.
+2. Filter to statements where women (or synonyms) are the subject (e.g. sentences starting with “Women…”, “Girls…”, “Females…”).
+3. Chunk the filtered text into manageable pieces.
+4. For each chunk:
+   - Send it to an LLM (Google Gemini 2.5 Flash via OpenRouter) with a carefully designed prompt.
+   - Ask the model to list all stereotypes about women in that chunk.
+   - For each stereotype, the model outputs a JSON object with:
+     - `stereotype_text` (canonical sentence),
+     - `dimension` (from the list above),
+     - `polarity`,
+     - `confidence` (0–1).
+5. The script parses the JSON, enforces that `dimension` and `polarity` are valid, deduplicates repeated stereotypes, and writes a Parquet file with one row per stereotype instance.
+
+Key points:
+
+- The TRH script uses **Gemini 2.5 Flash** via **OpenRouter**.
+- It uses the **concurry** library to run many LLM calls in parallel and caches results so repeated runs are fast.
+
+
+4.2. Hansard stereotype extraction
+
+Script: `scripts/analysis/compare_hansard_trh/extract_bias_hansard.py`
+
+Method:
+
+1. Start from an argument‑mining Parquet for Hansard debates (each row has a `reasons` column with structured rationales and quotes).
+2. For each speech row:
+   - Parse the `reasons` array (which may be stored as numpy‑style text).
+   - Build a short “evidence block” combining:
+     - a textual rationale, and
+     - short quotes that mention women.
+3. For each evidence block:
+   - Send it to the same LLM family (Gemini 2.5 Flash via OpenRouter), with a Hansard-specific extraction prompt.
+   - Ask the model to output stereotypes in the same JSON format as for TRH (stereotype_text, dimension, polarity, confidence).
+4. Parse the JSON, enforce valid `dimension` and `polarity`, and assemble:
+   - a row-level file: one row per stereotype instance with `stereotype_text`, `dimension`, `polarity`, `confidence`, plus metadata (speech_id, year, speaker, gender, etc.), and
+   - a canonical file: deduplicated stereotypes with an aggregated `count` for how often each appears across speeches.
+
+Key points:
+
+- Hansard uses the same **dimension** labels as TRH, so the outputs are directly comparable.
+- The script also uses `concurry` and a cache (shelve store) to avoid re-running the LLM on identical evidence.
+
+
+4.3. Embedding and clustering
+
+Script: `scripts/analysis/compare_hansard_trh/compare_stereotypes.py`
+
+Method:
+
+1. Load Hansard canonical stereotypes and TRH stereotypes.
+2. Combine them into one table with a `dataset` flag (`hansard` or `trh`) and a `count` field.
+3. Use a **SentenceTransformer** model (for example, `sentence-transformers/all-mpnet-base-v2`) to compute an embedding for each unique `stereotype_text`.
+4. Run **k-means clustering** on the embeddings to group similar stereotypes. Each cluster aims to represent a coherent stereotype theme (e.g. “women are too emotional to be trusted with power”).
+5. Attach the resulting `cluster_id` back to every stereotype instance (both Hansard and TRH) and save:
+   - a flat file with all stereotypes and their `cluster_id`, and
+   - a cluster-level summary, including:
+     - `cluster_id`,
+     - a few example `sample_stereotypes`,
+     - counts per dataset (e.g. `count_hansard`, `count_trh`).
+
+This step gives us a data-driven way to group similar stereotypes without manually listing all possible variants.
+
+
+4.4. Labelling clusters with an LLM
+
+Script: `scripts/analysis/compare_hansard_trh/summarize_stereotype_clusters.py`
+
+Method:
+
+1. For each `cluster_id`, take:
+   - a handful of representative stereotype texts (`sample_stereotypes`), and
+   - the counts from each dataset (`count_hansard`, `count_trh`, etc.).
+2. Send this information to the LLM (again Gemini 2.5 Flash via OpenRouter) with a few-shot prompt that shows examples of how to name clusters.
+3. The model returns, for each cluster:
+   - a short **label** (e.g. “emotional/irrational”, “physically weak”, “politically immature”), and
+   - a 1–2 sentence **summary** explaining the stereotype.
+4. The script also infers a simple **cluster type**:
+   - `both` — cluster contains stereotypes from both Hansard and TRH,
+   - `only_hansard` — only Hansard stereotypes in this cluster,
+   - `only_trh` — only TRH stereotypes in this cluster.
+
+The output is a labelled set of clusters that can be interpreted as higher‑level stereotype categories.
+
+
+5. Results and interpretation (high-level)
+-----------------------------------------
+
+With the pipeline running end‑to‑end, we obtain:
+
+- A list of **canonical stereotypes** about women, with:
+  - their dimension (what the stereotype is about),
+  - their polarity (positive/negative/ambivalent/neutral),
+  - how often they appear in Hansard and in TRH.
+
+- A set of **clusters** of semantically similar stereotypes, each with:
+  - a human‑readable label (e.g. “moral virtue”, “politically immature”, “physically weak”),
+  - a short summary explaining the stereotype,
+  - counts of how many times it appears in each dataset,
+  - a cluster type (`both`, `only_hansard`, `only_trh`).
+
+This allows us to answer questions like:
+
+- Which stereotypes about women are **shared** between Hansard and TRH?  
+  e.g. “women are too emotional”, “women lack political experience”.
+
+- Which stereotypes are **specific** to one corpus?  
+  e.g. Hansard‑specific arguments about constitutional precedent, or TRH‑specific stereotypes tied to contemporary toxic discourse.
+
+- How are stereotypes distributed across dimensions?  
+  For example:
+  - Hansard might have more `tradition_precedent` and `social_order_stability` stereotypes (concerned with constitutional history and stability),
+  - TRH might have more `emotion_morality` or `instrumental_effects` stereotypes (concerned with personal traits or pragmatic costs).
+
+- Are stereotypes mostly **negative**, or are there also **positive** or **ambivalent** ones?  
+  The polarity and confidence scores help map out whether women are mostly being framed as a “problem”, as “idealized” figures, or as both, depending on context.
+
+The exact numerical results will depend on the final LLM runs and clustering parameters (e.g. number of clusters), but the structure of the output makes these kinds of comparisons straightforward.
+
+
+6. Notebook-based exploration
+-----------------------------
+
+Notebook: `notebooks/stereotype_comparison_analysis.ipynb`
+
+This notebook is the main way to explore the results interactively:
+
+- It joins the per‑stereotype file (with `cluster_id`) and the cluster labels (with `label`, `summary`, `cluster_type`).
+- It builds tables showing:
+  - frequency of each label by dataset,
+  - which labels are shared vs dataset‑specific,
+  - counts of stereotypes by dimension and polarity.
+- It provides plots such as:
+  - top shared stereotypes in Hansard vs TRH,
+  - distribution of stereotype dimensions by dataset,
+  - polarity distribution, and
+  - confidence distributions by dataset.
+- It also allows you to pick a label and see example stereotypes from Hansard and TRH side‑by‑side.
+
+This interactive layer is where the substantive interpretation happens: reading the stereotype summaries and examples to understand how women are framed, and how that framing differs between historical parliamentary discourse and the TRH dataset.
+

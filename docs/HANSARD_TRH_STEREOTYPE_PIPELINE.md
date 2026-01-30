@@ -20,7 +20,7 @@ The code lives under `scripts/analysis/compare_hansard_trh/` and `notebooks/`.
     - `sentence-transformers`
     - `concurry`
     - `scikit-learn`
-    - `matplotlib`, `seaborn` (for the notebook)
+    - `matplotlib`, `seaborn`, `wordcloud`, `spacy` (for the notebook)
 
 - **OpenRouter API key**
   - Obtain an API key from OpenRouter and set it in your shell:
@@ -40,7 +40,7 @@ You should run all commands below from the project root.
 ## 1. Extract stereotypes from TRH
 
 Script:  
-`scripts/analysis/compare_hansard_trh/extract_bias_TRH_data.py`
+`scripts/analysis/compare_hansard_trh/extract_bias_trh.py`
 
 **Purpose**
 - Filter a large TRH text file to statements about women (and synonyms).
@@ -56,7 +56,7 @@ Script:
 ```bash
 conda activate hansard
 
-python scripts/analysis/compare_hansard_trh/extract_bias_TRH_data.py \
+python scripts/analysis/compare_hansard_trh/extract_bias_trh.py \
   --text-file src/hansard/data/toxicity_rabbit_hole_data/rabbit_hole_corpus.txt \
   --output outputs/trh/trh_stereotypes.parquet \
   --prompt-file prompts/trh_bias_women_filter_prompt.md \
@@ -69,6 +69,7 @@ python scripts/analysis/compare_hansard_trh/extract_bias_TRH_data.py \
   --max-tokens 1600 \
   --max-tokens-ceiling 2600 \
   --max-tokens-step 400
+  --test-chunk <chunk number>  # optional for testing
 ```
 
 **Output**
@@ -91,7 +92,7 @@ Each row is treated as one stereotype instance; any aggregate `count` is added l
 ## 2. Extract stereotypes from Hansard
 
 Script:  
-`scripts/analysis/compare_hansard_trh/extract_stereotypes_hansard.py`
+`scripts/analysis/compare_hansard_trh/extract_bias_hansard.py`
 
 **Purpose**
 - Take Hansard **argument‑mining results** (with a `reasons` column).
@@ -112,9 +113,9 @@ Script:
 ```bash
 conda activate hansard
 
-python scripts/analysis/compare_hansard_trh/extract_stereotypes_hansard.py \
+python scripts/analysis/compare_hansard_trh/extract_bias_hansard.py \
   --input src/hansard/data/analysis_data/arg_mining/arg_mining_results_full_claude.parquet \
-  --output outputs/trh/hansard_stereotypes.parquet \
+  --output outputs/trh/hansard_stereotypes_claude.parquet \
   --prompt-file prompts/hansard_stereotype_extraction_prompt.md \
   --cache outputs/trh/cache/hansard_cache.parquet \
   --model google/gemini-2.5-flash \
@@ -166,12 +167,15 @@ Script:
 conda activate hansard
 
 python scripts/analysis/compare_hansard_trh/compare_stereotypes.py \
-  --hansard outputs/trh/hansard_stereotypes_canonical.parquet \
+  --hansard outputs/trh/hansard_stereotypes.parquet \
   --trh outputs/trh/trh_stereotypes.parquet \
-  --output-flat outputs/trh/stereotypes_flattened.parquet \
-  --output-clusters outputs/trh/stereotype_clusters.parquet \
-  --model sentence-transformers/all-mpnet-base-v2 \
-  --n-clusters 50
+  --hansard-flat outputs/trh/hansard_stereotypes_flat.parquet \
+  --hansard-clusters outputs/trh/hansard_stereotype_clusters.parquet \
+  --trh-flat outputs/trh/trh_stereotypes_flat.parquet \
+  --trh-clusters outputs/trh/trh_stereotype_clusters.parquet \
+  --n-clusters-hansard 30 \
+  --n-clusters-trh 50 \
+  --model sentence-transformers/all-mpnet-base-v2
 ```
 
 **Outputs**
@@ -201,6 +205,7 @@ Script:
 
 **Expected input**
 - Cluster summary from step 3 (`--output-clusters`).
+- Flat membership file from step 3 (`--output-flat`) to select top stereotype samples by frequency.
 
 **Typical command**
 
@@ -208,10 +213,16 @@ Script:
 conda activate hansard
 
 python scripts/analysis/compare_hansard_trh/summarize_stereotype_clusters.py \
-  --clusters outputs/trh/stereotype_clusters.parquet \
-  --output outputs/trh/stereotype_clusters_labeled.parquet \
+  --datasets both \
+  --hansard-clusters outputs/trh/hansard_stereotype_clusters.parquet \
+  --hansard-flat outputs/trh/hansard_stereotypes_flat.parquet \
+  --hansard-output outputs/trh/hansard_stereotype_clusters_labeled.parquet \
+  --trh-clusters outputs/trh/trh_stereotype_clusters.parquet \
+  --trh-flat outputs/trh/trh_stereotypes_flat.parquet \
+  --trh-output outputs/trh/trh_stereotype_clusters_labeled.parquet \
+  --prompt-file prompts/summarize_stereotype_clusters_prompt.md \
   --model google/gemini-2.5-flash \
-  --max-clusters 100   # optional for a cheap first pass
+  --max-clusters 10   # optional for a cheap first pass
 ```
 
 **Output**
@@ -304,4 +315,3 @@ clusters_path = project_root / "outputs" / "trh/stereotype_clusters_labeled.parq
    `summarize_stereotype_clusters.py` → `stereotype_clusters_labeled.parquet`
 5. **Interactive analysis**  
    `stereotype_comparison_analysis.ipynb` → tables, plots, and qualitative inspection of shared vs differing stereotypes.
-

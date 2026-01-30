@@ -29,6 +29,7 @@ class Paths:
     # Root directories
     ROOT = PROJECT_ROOT
     SRC = PROJECT_ROOT / 'src' / 'hansard'
+    PROMPTS_DIR = PROJECT_ROOT / 'prompts'
 
     # Data directories - now at top level
     DATA_DIR = ROOT / 'data-hansard'
