@@ -2,15 +2,32 @@
 """
 Verification script to validate Hansard dataset statistics
 Performs direct parquet file analysis to confirm all counts
+
+Supports both v1 (legacy) and v2 (bug-fixed) datasets.
 """
 
+import argparse
 import pandas as pd
 from pathlib import Path
 import sys
 
-# Add project root to path
-project_root = Path(__file__).resolve().parents[2]
+
+def find_project_root():
+    """Find the project root by looking for marker files."""
+    current = Path(__file__).resolve().parent
+    for _ in range(10):
+        if (current / '.git').exists() or (current / 'CLAUDE.md').exists():
+            return current
+        if current.parent == current:
+            break
+        current = current.parent
+    return Path(__file__).resolve().parents[2]
+
+
+project_root = find_project_root()
 sys.path.insert(0, str(project_root / 'src'))
+
+from hansard.utils.path_config import Paths, DATASET_VERSION
 
 def print_section(title):
     """Print formatted section header"""
@@ -18,13 +35,35 @@ def print_section(title):
     print(title)
     print("=" * 70)
 
-def verify_derived_complete():
-    """Verify statistics from derived_complete dataset (PRIMARY)"""
-    print_section("DERIVED COMPLETE (PRIMARY DATASET)")
+def get_versioned_paths(version):
+    """Get paths for the specified dataset version."""
+    if version == "v2":
+        return {
+            'derived': Paths.DERIVED_DATA,
+            'gender': Paths.GENDER_ENHANCED_DATA,
+            'processed': Paths.PROCESSED_DATA,
+        }
+    else:  # v1 / legacy
+        return {
+            'derived': Paths.DERIVED_V1,
+            'gender': Paths.GENDER_V1,
+            'processed': Paths.PROCESSED_V1,
+        }
 
-    data_dir = project_root / "data-hansard" / "derived_complete"
+
+def verify_derived_complete(version):
+    """Verify statistics from derived dataset (PRIMARY)"""
+    print_section(f"DERIVED DATASET ({version.upper()}) - PRIMARY")
+
+    paths = get_versioned_paths(version)
+    data_dir = paths['derived']
     speeches_dir = data_dir / "speeches_complete"
     debates_dir = data_dir / "debates_complete"
+
+    if not data_dir.exists():
+        print(f"  WARNING: Directory not found: {data_dir}")
+        print(f"  Skipping derived dataset verification for {version}")
+        return None
 
     # Count speeches
     print("\nCounting speeches...")
@@ -102,11 +141,17 @@ def verify_derived_complete():
         'male_mps': len(male_person_ids)
     }
 
-def verify_gender_analysis():
-    """Verify statistics from gender_analysis_complete"""
-    print_section("GENDER ANALYSIS COMPLETE")
+def verify_gender_analysis(version):
+    """Verify statistics from gender_analysis dataset"""
+    print_section(f"GENDER ANALYSIS ({version.upper()})")
 
-    data_dir = project_root / "data-hansard" / "gender_analysis_complete"
+    paths = get_versioned_paths(version)
+    data_dir = paths['gender']
+
+    if not data_dir.exists():
+        print(f"  WARNING: Directory not found: {data_dir}")
+        print(f"  Skipping gender analysis verification for {version}")
+        return None
 
     # Check for master file
     master_file = data_dir / "ALL_debates_enhanced_metadata.parquet"
@@ -124,11 +169,17 @@ def verify_gender_analysis():
     print(f"\nYear files total: {total_debates:,} debates")
     return total_debates
 
-def verify_processed_complete():
-    """Verify statistics from processed_complete"""
-    print_section("PROCESSED COMPLETE")
+def verify_processed_complete(version):
+    """Verify statistics from processed dataset"""
+    print_section(f"PROCESSED ({version.upper()})")
 
-    data_dir = project_root / "data-hansard" / "processed_complete" / "metadata"
+    paths = get_versioned_paths(version)
+    data_dir = paths['processed'] / "metadata"
+
+    if not data_dir.exists():
+        print(f"  WARNING: Directory not found: {data_dir}")
+        print(f"  Skipping processed verification for {version}")
+        return None
 
     debate_files = sorted(data_dir.glob("debates_*.parquet"))
     total_debates = sum(len(pd.read_parquet(f)) for f in debate_files)
@@ -164,11 +215,17 @@ def verify_mp_database():
         'male_persons': gender_counts.get('M', 0)
     }
 
-def verify_chamber_breakdown():
-    """Detailed chamber and gender breakdown from derived_complete"""
-    print_section("CHAMBER & GENDER BREAKDOWN (DERIVED_COMPLETE)")
+def verify_chamber_breakdown(version):
+    """Detailed chamber and gender breakdown from derived dataset"""
+    print_section(f"CHAMBER & GENDER BREAKDOWN ({version.upper()})")
 
-    speeches_dir = project_root / "data-hansard" / "derived_complete" / "speeches_complete"
+    paths = get_versioned_paths(version)
+    speeches_dir = paths['derived'] / "speeches_complete"
+
+    if not speeches_dir.exists():
+        print(f"  WARNING: Directory not found: {speeches_dir}")
+        return
+
     speech_files = sorted(speeches_dir.glob("speeches_*.parquet"))
 
     print("\nAnalyzing by chamber...")
@@ -197,11 +254,8 @@ def verify_chamber_breakdown():
         if matched > 0:
             print(f"  Female % of matched: {100*female/(female+male):.2f}%")
 
-def compare_with_expected():
-    """Compare actual counts with expected values from documentation"""
-    print_section("VERIFICATION AGAINST EXPECTED VALUES")
-
-    expected = {
+EXPECTED_VALUES = {
+    'v1': {
         'total_speeches': 5_967_440,
         'total_debates': 1_197_828,
         'commons_speeches': 4_840_797,
@@ -211,7 +265,29 @@ def compare_with_expected():
         'female_mps': 240,
         'male_mps': 8_429,
         'gender_analysis_debates': 652_271
-    }
+    },
+    'v2': {
+        'total_speeches': 6_783_015,
+        'total_debates': 1_197_828,
+        'commons_speeches': 5_575_783,
+        'lords_speeches': 1_207_232,
+        'female_speeches': 152_526,
+        'male_speeches': 4_842_283,
+        'female_mps': 242,
+        'male_mps': 8_574,
+        'gender_analysis_debates': 652_168
+    },
+}
+
+
+def compare_with_expected(version):
+    """Compare actual counts with expected values from documentation"""
+    print_section(f"VERIFICATION AGAINST EXPECTED VALUES ({version.upper()})")
+
+    expected = EXPECTED_VALUES.get(version)
+    if expected is None:
+        print(f"  No expected values defined for version '{version}'")
+        return None
 
     print("\nExpected values from documentation:")
     for key, value in expected.items():
@@ -219,37 +295,84 @@ def compare_with_expected():
 
     return expected
 
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Verify Hansard dataset statistics",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python verify_dataset_statistics.py           # Verify current version (v2)
+  python verify_dataset_statistics.py --version v1  # Verify legacy data
+  python verify_dataset_statistics.py --version v2  # Verify bug-fixed data
+        """
+    )
+    parser.add_argument(
+        '--version', '-v',
+        choices=['v1', 'v2'],
+        default=DATASET_VERSION,
+        help=f"Dataset version to verify (default: {DATASET_VERSION})"
+    )
+    parser.add_argument(
+        '--skip-checks',
+        action='store_true',
+        help="Skip verification checks against expected values"
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+    version = args.version
+
     print("HANSARD DATASET STATISTICS VERIFICATION")
     print(f"Project root: {project_root}")
+    print(f"Dataset version: {version}")
     print(f"Time: {pd.Timestamp.now()}")
 
+    # Show paths being verified
+    paths = get_versioned_paths(version)
+    print(f"\nPaths:")
+    print(f"  Derived: {paths['derived']}")
+    print(f"  Gender: {paths['gender']}")
+    print(f"  Processed: {paths['processed']}")
+
     # Verify each dataset tier
-    derived_stats = verify_derived_complete()
-    gender_debates = verify_gender_analysis()
-    processed_debates = verify_processed_complete()
+    derived_stats = verify_derived_complete(version)
+    gender_debates = verify_gender_analysis(version)
+    processed_debates = verify_processed_complete(version)
     mp_stats = verify_mp_database()
 
     # Detailed breakdowns
-    verify_chamber_breakdown()
+    if derived_stats:
+        verify_chamber_breakdown(version)
 
     # Compare with expected
-    expected = compare_with_expected()
+    expected = compare_with_expected(version)
 
     # Final summary
     print_section("FINAL VERIFICATION SUMMARY")
 
-    print("\nKey Statistics (Derived Complete):")
-    print(f"  Total speeches: {derived_stats['total_speeches']:,}")
-    print(f"  Total debates: {derived_stats['total_debates']:,}")
-    print(f"  Female speeches: {derived_stats['female_speeches']:,}")
-    print(f"  Male speeches: {derived_stats['male_speeches']:,}")
-    print(f"  Unique female MPs: {derived_stats['female_mps']:,}")
-    print(f"  Unique male MPs: {derived_stats['male_mps']:,}")
+    if derived_stats:
+        print(f"\nKey Statistics (Derived {version.upper()}):")
+        print(f"  Total speeches: {derived_stats['total_speeches']:,}")
+        print(f"  Total debates: {derived_stats['total_debates']:,}")
+        print(f"  Female speeches: {derived_stats['female_speeches']:,}")
+        print(f"  Male speeches: {derived_stats['male_speeches']:,}")
+        print(f"  Unique female MPs: {derived_stats['female_mps']:,}")
+        print(f"  Unique male MPs: {derived_stats['male_mps']:,}")
+    else:
+        print(f"\n  No derived dataset found for {version}")
 
     print("\nOther Dataset Tiers:")
-    print(f"  Processed complete debates: {processed_debates:,}")
-    print(f"  Gender analysis debates: {gender_debates:,}")
+    if processed_debates is not None:
+        print(f"  Processed debates: {processed_debates:,}")
+    else:
+        print(f"  Processed: not found for {version}")
+    if gender_debates is not None:
+        print(f"  Gender analysis debates: {gender_debates:,}")
+    else:
+        print(f"  Gender analysis: not found for {version}")
 
     print("\nMP Database:")
     if mp_stats:
@@ -258,6 +381,15 @@ def main():
         print(f"  Male MPs in database: {mp_stats['male_persons']:,}")
 
     # Verification checks
+    if args.skip_checks or derived_stats is None or expected is None:
+        if derived_stats is None:
+            print("\n[Skipping verification checks - no derived data found]")
+        elif expected is None:
+            print(f"\n[Skipping verification checks - no expected values for {version}]")
+        else:
+            print("\n[Verification checks skipped by user]")
+        return 0
+
     print("\n" + "=" * 70)
     print("VERIFICATION CHECKS")
     print("=" * 70)
@@ -271,16 +403,16 @@ def main():
 
     all_pass = True
     for check_name, actual, expected_val in checks:
-        status = "✓ PASS" if actual == expected_val else "✗ FAIL"
+        status = "PASS" if actual == expected_val else "FAIL"
         print(f"{status}: {check_name} (actual: {actual:,}, expected: {expected_val:,})")
         if actual != expected_val:
             all_pass = False
 
     print("\n" + "=" * 70)
     if all_pass:
-        print("✓ ALL CHECKS PASSED - Statistics verified!")
+        print("ALL CHECKS PASSED - Statistics verified!")
     else:
-        print("✗ SOME CHECKS FAILED - Please investigate discrepancies")
+        print("SOME CHECKS FAILED - Please investigate discrepancies")
     print("=" * 70)
 
     return 0 if all_pass else 1

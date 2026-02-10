@@ -250,7 +250,11 @@ def get_raw_html_path(file_path: str, hansard_base: Path) -> Path:
     if not file_path:
         return hansard_base / 'nonexistent'
 
-    # Handle different file_path formats
+    # Handle absolute paths (e.g., from processed_v2 with full paths)
+    if file_path.startswith('/'):
+        return Path(file_path)
+
+    # Handle different relative file_path formats
     if file_path.startswith('hansard/'):
         return hansard_base / file_path.replace('hansard/', '', 1)
     elif file_path.startswith('data-hansard/hansard/'):
