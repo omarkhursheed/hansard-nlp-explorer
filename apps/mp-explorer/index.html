@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP Profile Explorer - UK Parliamentary Debates</title>
+    <style>
+        :root {
+            --male-color: #3B82C4;
+            --female-color: #EC4899;
+            --bg-primary: #0f0f13;
+            --bg-secondary: #18181f;
+            --bg-tertiary: #1e1e27;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: rgba(255,255,255,0.08);
+            --accent-green: #10B981;
+            --accent-orange: #F59E0B;
+            --accent: #8b5cf6;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F3F4F6;
+            --bg-tertiary: #E5E7EB;
+            --text-primary: #1F2937;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --border-color: #E5E7EB;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .panel {
+            background: var(--bg-primary);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Search */
+        .search-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--male-color);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Filters */
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .filter-btn.active {
+            background: var(--male-color);
+            border-color: var(--male-color);
+            color: white;
+        }
+
+        .filter-btn.active-female {
+            background: var(--female-color);
+            border-color: var(--female-color);
+        }
+
+        /* Sort Select */
+        .sort-select {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Statistics Panel */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-value.male {
+            color: var(--male-color);
+        }
+
+        .stat-value.female {
+            color: var(--female-color);
+        }
+
+        /* Gender Bar */
+        .gender-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .gender-bar-fill {
+            height: 100%;
+            display: flex;
+        }
+
+        .gender-bar-male {
+            background: var(--male-color);
+        }
+
+        .gender-bar-female {
+            background: var(--female-color);
+        }
+
+        /* Content Area */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .top-badge {
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* MP Grid */
+        .mp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        /* MP Card */
+        .mp-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .mp-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .mp-card.male {
+            border-left: 4px solid var(--male-color);
+        }
+
+        .mp-card.female {
+            border-left: 4px solid var(--female-color);
+        }
+
+        .mp-card.top-mp::before {
+            content: '';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+        }
+
+        .mp-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .mp-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .mp-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .mp-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mp-stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mp-stat-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        /* Profile Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .modal-close {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            background: var(--border-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Profile Stats Grid */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-stat {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .profile-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Timeline Chart */
+        .timeline-section {
+            margin-top: 1.5rem;
+        }
+
+        .timeline-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-chart {
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            height: 200px;
+            position: relative;
+        }
+
+        .chart-container {
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .chart-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chart-bar {
+            width: 12px;
+            min-width: 8px;
+            border-radius: 2px 2px 0 0;
+            transition: opacity 0.2s;
+        }
+
+        .chart-bar.male {
+            background: var(--male-color);
+        }
+
+        .chart-bar.female {
+            background: var(--female-color);
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-label {
+            font-size: 0.5625rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            transform: rotate(-45deg);
+            transform-origin: top left;
+            white-space: nowrap;
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+
+        .chart-y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 20px;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            text-align: right;
+            padding-right: 8px;
+        }
+
+        .chart-inner {
+            margin-left: 40px;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-grid-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Career Info */
+        .career-info {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .career-span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .career-year {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .career-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, var(--male-color), var(--female-color));
+            border-radius: 1px;
+        }
+
+        .career-duration {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            padding: 0 1rem;
+        }
+
+        /* Top 10 List */
+        .top-list {
+            list-style: none;
+        }
+
+        .top-list-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8125rem;
+            cursor: pointer;
+        }
+
+        .top-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .top-list-item:hover {
+            background: var(--bg-secondary);
+            margin: 0 -1rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .top-rank {
+            font-weight: 600;
+            color: var(--accent-orange);
+            min-width: 20px;
+        }
+
+        .top-name {
+            flex: 1;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-count {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* Gender dot indicator */
+        .gender-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .gender-dot.male {
+            background: var(--male-color);
+        }
+
+        .gender-dot.female {
+            background: var(--female-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1>MP Profile Explorer</h1>
+                <p class="header-subtitle">UK Parliamentary Debates (Hansard)</p>
+            </div>
+            <button class="theme-toggle" id="themeToggle">Light Mode</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="panel">
+                <h2 class="panel-title">Search</h2>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name...">
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title">Filters</h2>
+                <div class="filter-group">
+                    <label class="filter-label">Gender</label>
+                    <div class="filter-buttons" id="genderFilter">
+                        <button class="filter-btn active" data-value="all">All</button>
+                        <button class="filter-btn" data-value="M">Male</button>
+                        <button class="filter-btn" data-value="F">Female</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title">Sort By</h2>
+                <select class="sort-select" id="sortSelect">
+                    <option value="speeches-desc">Most Speeches</option>
+                    <option value="speeches-asc">Least Speeches</option>
+                    <option value="words-desc">Most Words</option>
+                    <option value="words-asc">Least Words</option>
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="career-desc">Longest Career</option>
+                    <option value="career-asc">Shortest Career</option>
+                </select>
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title">Gender Breakdown</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Male MPs</span>
+                    <span class="stat-value male" id="maleCount">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Female MPs</span>
+                    <span class="stat-value female" id="femaleCount">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total MPs</span>
+                    <span class="stat-value" id="totalCount">-</span>
+                </div>
+                <div class="gender-bar">
+                    <div class="gender-bar-fill" id="genderBar"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title">Top 10 Most Active</h2>
+                <ul class="top-list" id="topList">
+                    <li class="loading">Loading...</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="results-header">
+                <span class="results-count" id="resultsCount">Loading...</span>
+                <span class="top-badge">Orange dot = Top 10</span>
+            </div>
+
+            <div class="mp-grid" id="mpGrid">
+                <div class="loading">Loading MP profiles...</div>
+            </div>
+
+            <div class="pagination" id="pagination">
+                <button class="pagination-btn" id="prevBtn" disabled>Previous</button>
+                <span class="pagination-info" id="pageInfo">Page 1</span>
+                <button class="pagination-btn" id="nextBtn">Next</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="modalTitle">MP Name</h2>
+                    <p class="modal-subtitle" id="modalSubtitle">Details</p>
+                </div>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-stats" id="profileStats"></div>
+
+                <div class="career-info" id="careerInfo">
+                    <div class="career-span">
+                        <span class="career-year" id="careerStart">-</span>
+                        <div class="career-line"></div>
+                        <span class="career-year" id="careerEnd">-</span>
+                    </div>
+                    <p class="career-duration" id="careerDuration">- years active</p>
+                </div>
+
+                <div class="timeline-section">
+                    <h3 class="timeline-title">Activity Timeline (Speeches per Year)</h3>
+                    <div class="timeline-chart" id="timelineChart">
+                        <div class="chart-y-axis" id="chartYAxis"></div>
+                        <div class="chart-inner">
+                            <div class="chart-container" id="chartContainer"></div>
+                        </div>
+                        <div class="chart-tooltip" id="chartTooltip"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let allMPs = [];
+        let filteredMPs = [];
+        let topMPs = [];
+        let currentPage = 1;
+        const itemsPerPage = 24;
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const genderFilter = document.getElementById('genderFilter');
+        const sortSelect = document.getElementById('sortSelect');
+        const mpGrid = document.getElementById('mpGrid');
+        const resultsCount = document.getElementById('resultsCount');
+        const pagination = document.getElementById('pagination');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modal = document.getElementById('modal');
+        const modalClose = document.getElementById('modalClose');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Utility Functions
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function calculateCareerLength(mp) {
+            if (!mp.years_active || mp.years_active.length === 0) return 0;
+            const firstYear = Math.min(...mp.years_active);
+            const lastYear = Math.max(...mp.years_active);
+            return lastYear - firstYear + 1;
+        }
+
+        function getCareerSpan(mp) {
+            if (!mp.years_active || mp.years_active.length === 0) {
+                return { start: null, end: null, duration: 0 };
+            }
+            const start = Math.min(...mp.years_active);
+            const end = Math.max(...mp.years_active);
+            return {
+                start,
+                end,
+                duration: end - start + 1,
+                yearsActive: mp.years_active.length
+            };
+        }
+
+        // Theme Toggle (default to dark)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('mp-explorer-theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.textContent = 'Dark Mode';
+            } else {
+                themeToggle.textContent = 'Light Mode';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'light') {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggle.textContent = 'Light Mode';
+                localStorage.setItem('mp-explorer-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.textContent = 'Dark Mode';
+                localStorage.setItem('mp-explorer-theme', 'light');
+            }
+        });
+
+        // Data Loading
+        async function loadData() {
+            try {
+                const response = await fetch('data/mp_profiles.json');
+                if (!response.ok) throw new Error('Failed to load data');
+                allMPs = await response.json();
+
+                // Sort by total speeches to get top 10
+                const sortedBySpeeches = [...allMPs].sort((a, b) => b.total_speeches - a.total_speeches);
+                topMPs = sortedBySpeeches.slice(0, 10).map(mp => mp.name);
+
+                // Initial filtering and rendering
+                applyFilters();
+                updateStatistics();
+                renderTopList();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                mpGrid.innerHTML = '<div class="empty-state">Failed to load MP profiles. Please try again.</div>';
+            }
+        }
+
+        // Statistics
+        function updateStatistics() {
+            const maleCount = allMPs.filter(mp => mp.gender === 'M').length;
+            const femaleCount = allMPs.filter(mp => mp.gender === 'F').length;
+            const total = allMPs.length;
+
+            document.getElementById('maleCount').textContent = formatNumber(maleCount);
+            document.getElementById('femaleCount').textContent = formatNumber(femaleCount);
+            document.getElementById('totalCount').textContent = formatNumber(total);
+
+            // Update gender bar
+            const malePercent = (maleCount / total * 100).toFixed(1);
+            const femalePercent = (femaleCount / total * 100).toFixed(1);
+            document.getElementById('genderBar').innerHTML = `
+                <div class="gender-bar-male" style="width: ${malePercent}%"></div>
+                <div class="gender-bar-female" style="width: ${femalePercent}%"></div>
+            `;
+        }
+
+        // Top 10 List
+        function renderTopList() {
+            const sortedMPs = [...allMPs].sort((a, b) => b.total_speeches - a.total_speeches);
+            const top10 = sortedMPs.slice(0, 10);
+
+            const topList = document.getElementById('topList');
+            topList.innerHTML = top10.map((mp, index) => `
+                <li class="top-list-item" data-id="${mp.name}">
+                    <span class="top-rank">${index + 1}</span>
+                    <span class="gender-dot ${mp.gender === 'M' ? 'male' : 'female'}"></span>
+                    <span class="top-name">${mp.name}</span>
+                    <span class="top-count">${formatNumber(mp.total_speeches)}</span>
+                </li>
+            `).join('');
+
+            // Add click handlers
+            topList.querySelectorAll('.top-list-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const mp = allMPs.find(m => m.name === item.dataset.id);
+                    if (mp) showProfile(mp);
+                });
+            });
+        }
+
+        // Filtering
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const genderValue = genderFilter.querySelector('.active').dataset.value;
+            const sortValue = sortSelect.value;
+
+            // Filter
+            filteredMPs = allMPs.filter(mp => {
+                // Search filter
+                if (searchTerm && !mp.name.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                // Gender filter
+                if (genderValue !== 'all' && mp.gender !== genderValue) {
+                    return false;
+                }
+                return true;
+            });
+
+            // Sort
+            filteredMPs.sort((a, b) => {
+                switch (sortValue) {
+                    case 'speeches-desc':
+                        return b.total_speeches - a.total_speeches;
+                    case 'speeches-asc':
+                        return a.total_speeches - b.total_speeches;
+                    case 'words-desc':
+                        return b.total_words - a.total_words;
+                    case 'words-asc':
+                        return a.total_words - b.total_words;
+                    case 'name-asc':
+                        return a.name.localeCompare(b.name);
+                    case 'name-desc':
+                        return b.name.localeCompare(a.name);
+                    case 'career-desc':
+                        return calculateCareerLength(b) - calculateCareerLength(a);
+                    case 'career-asc':
+                        return calculateCareerLength(a) - calculateCareerLength(b);
+                    default:
+                        return 0;
+                }
+            });
+
+            // Reset to page 1
+            currentPage = 1;
+            renderMPs();
+            updatePagination();
+        }
+
+        // Rendering MP Cards
+        function renderMPs() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageMPs = filteredMPs.slice(startIndex, endIndex);
+
+            if (pageMPs.length === 0) {
+                mpGrid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">?</div>No MPs found matching your criteria.</div>';
+                resultsCount.textContent = '0 MPs found';
+                return;
+            }
+
+            resultsCount.textContent = `${formatNumber(filteredMPs.length)} MPs found`;
+
+            mpGrid.innerHTML = pageMPs.map(mp => {
+                const isTop = topMPs.includes(mp.name);
+                const careerSpan = getCareerSpan(mp);
+
+                return `
+                    <div class="mp-card ${mp.gender === 'M' ? 'male' : 'female'} ${isTop ? 'top-mp' : ''}" data-id="${mp.name}">
+                        <h3 class="mp-name">${mp.name}</h3>
+                        <p class="mp-meta">${mp.gender === 'M' ? 'Male' : 'Female'}${mp.party ? ' - ' + mp.party : ''}${mp.constituency ? ' - ' + mp.constituency : ''}</p>
+                        <div class="mp-stats">
+                            <div class="mp-stat">
+                                <span class="mp-stat-value">${formatNumber(mp.total_speeches)}</span>
+                                <span class="mp-stat-label">Speeches</span>
+                            </div>
+                            <div class="mp-stat">
+                                <span class="mp-stat-value">${formatNumber(mp.total_words)}</span>
+                                <span class="mp-stat-label">Words</span>
+                            </div>
+                            <div class="mp-stat">
+                                <span class="mp-stat-value">${careerSpan.yearsActive || 0}</span>
+                                <span class="mp-stat-label">Years</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers
+            mpGrid.querySelectorAll('.mp-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const mp = allMPs.find(m => m.name === card.dataset.id);
+                    if (mp) showProfile(mp);
+                });
+            });
+        }
+
+        // Pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredMPs.length / itemsPerPage);
+
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+
+            pagination.style.display = filteredMPs.length > itemsPerPage ? 'flex' : 'none';
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderMPs();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredMPs.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderMPs();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        // Profile Modal
+        function showProfile(mp) {
+            const careerSpan = getCareerSpan(mp);
+
+            // Update header
+            document.getElementById('modalTitle').textContent = mp.name;
+            document.getElementById('modalSubtitle').textContent =
+                `${mp.gender === 'M' ? 'Male' : 'Female'}${mp.party ? ' - ' + mp.party : ''}${mp.constituency ? ' - ' + mp.constituency : ''}`;
+
+            // Update stats
+            const avgWordsPerSpeech = mp.total_speeches > 0
+                ? Math.round(mp.total_words / mp.total_speeches)
+                : 0;
+
+            document.getElementById('profileStats').innerHTML = `
+                <div class="profile-stat">
+                    <div class="profile-stat-value">${formatNumber(mp.total_speeches)}</div>
+                    <div class="profile-stat-label">Total Speeches</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">${formatNumber(mp.total_words)}</div>
+                    <div class="profile-stat-label">Total Words</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">${formatNumber(avgWordsPerSpeech)}</div>
+                    <div class="profile-stat-label">Avg Words/Speech</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">${careerSpan.yearsActive || 0}</div>
+                    <div class="profile-stat-label">Years Active</div>
+                </div>
+            `;
+
+            // Update career span
+            document.getElementById('careerStart').textContent = careerSpan.start || '-';
+            document.getElementById('careerEnd').textContent = careerSpan.end || '-';
+            document.getElementById('careerDuration').textContent = careerSpan.start && careerSpan.end
+                ? `${careerSpan.duration} year career span (${careerSpan.yearsActive} years with recorded activity)`
+                : 'No activity recorded';
+
+            // Render timeline chart
+            renderTimelineChart(mp);
+
+            // Show modal
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function renderTimelineChart(mp) {
+            const chartContainer = document.getElementById('chartContainer');
+            const chartYAxis = document.getElementById('chartYAxis');
+            const tooltip = document.getElementById('chartTooltip');
+
+            if (!mp.speeches_by_year || Object.keys(mp.speeches_by_year).length === 0) {
+                chartContainer.innerHTML = '<div class="empty-state">No speech data available</div>';
+                chartYAxis.innerHTML = '';
+                return;
+            }
+
+            // Get all years and find max speeches
+            const years = Object.keys(mp.speeches_by_year).sort((a, b) => parseInt(a) - parseInt(b));
+            const values = Object.values(mp.speeches_by_year);
+            const maxSpeeches = Math.max(...values);
+
+            // Calculate nice y-axis max (round up to nearest 100 or 500 depending on scale)
+            let yMax;
+            if (maxSpeeches <= 100) {
+                yMax = Math.ceil(maxSpeeches / 10) * 10;
+            } else if (maxSpeeches <= 500) {
+                yMax = Math.ceil(maxSpeeches / 50) * 50;
+            } else if (maxSpeeches <= 1000) {
+                yMax = Math.ceil(maxSpeeches / 100) * 100;
+            } else {
+                yMax = Math.ceil(maxSpeeches / 500) * 500;
+            }
+
+            // Render Y-axis
+            chartYAxis.innerHTML = `
+                <span>${formatNumber(yMax)}</span>
+                <span>${formatNumber(Math.round(yMax * 0.75))}</span>
+                <span>${formatNumber(Math.round(yMax * 0.5))}</span>
+                <span>${formatNumber(Math.round(yMax * 0.25))}</span>
+                <span>0</span>
+            `;
+
+            // Calculate bar width based on number of years
+            const barWidth = Math.max(8, Math.min(20, 400 / years.length));
+            const chartHeight = 140; // Account for labels
+
+            // Render bars
+            chartContainer.innerHTML = years.map(year => {
+                const speeches = mp.speeches_by_year[year];
+                const height = (speeches / yMax) * chartHeight;
+                const barClass = mp.gender === 'M' ? 'male' : 'female';
+
+                return `
+                    <div class="chart-bar-wrapper" data-year="${year}" data-speeches="${speeches}">
+                        <div class="chart-bar ${barClass}" style="height: ${height}px; width: ${barWidth}px;"></div>
+                        <span class="chart-label">${year}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Add hover handlers for tooltip
+            chartContainer.querySelectorAll('.chart-bar-wrapper').forEach(wrapper => {
+                wrapper.addEventListener('mouseenter', (e) => {
+                    const year = wrapper.dataset.year;
+                    const speeches = wrapper.dataset.speeches;
+                    tooltip.textContent = `${year}: ${formatNumber(parseInt(speeches))} speeches`;
+                    tooltip.style.display = 'block';
+
+                    const rect = wrapper.getBoundingClientRect();
+                    const chartRect = document.getElementById('timelineChart').getBoundingClientRect();
+                    tooltip.style.left = `${rect.left - chartRect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+                    tooltip.style.top = `${rect.top - chartRect.top - tooltip.offsetHeight - 5}px`;
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Event Listeners
+        searchInput.addEventListener('input', debounce(applyFilters, 300));
+
+        genderFilter.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                genderFilter.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active', 'active-female');
+                });
+                e.target.classList.add('active');
+                if (e.target.dataset.value === 'F') {
+                    e.target.classList.add('active-female');
+                }
+                applyFilters();
+            }
+        });
+
+        sortSelect.addEventListener('change', applyFilters);
+
+        // Debounce utility
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialize
+        initTheme();
+        loadData();
+    </script>
+</body>
+</html>

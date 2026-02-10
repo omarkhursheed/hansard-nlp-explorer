@@ -2,10 +2,17 @@
 """
 Centralized path configuration for the Hansard NLP project.
 Handles paths correctly regardless of where scripts are run from.
+
+Version History:
+  v1 (2025): Original pipeline with bugs (gender case, non-determinism)
+  v2 (2026-01): Bug-fixed pipeline after deep code review
 """
 
 import os
 from pathlib import Path
+
+# Dataset version - increment when re-running pipeline with changes
+DATASET_VERSION = "v2"
 
 def get_project_root():
     """Find the project root by looking for key files."""
@@ -30,12 +37,19 @@ class Paths:
     ROOT = PROJECT_ROOT
     SRC = PROJECT_ROOT / 'src' / 'hansard'
 
-    # Data directories - now at top level
+    # Data directories - versioned
     DATA_DIR = ROOT / 'data-hansard'
-    GENDER_ENHANCED_DATA = DATA_DIR / 'gender_analysis_complete'  # Updated from gender_analysis_enhanced
     GENDER_WORDLISTS = DATA_DIR / 'gender_wordlists'
-    PROCESSED_DATA = DATA_DIR / 'processed_complete'  # Updated from processed_fixed
-    DERIVED_DATA = DATA_DIR / 'derived_complete'  # Unified speeches/debates
+
+    # Versioned output directories (current version)
+    PROCESSED_DATA = DATA_DIR / f'processed_{DATASET_VERSION}'
+    GENDER_ENHANCED_DATA = DATA_DIR / f'gender_analysis_{DATASET_VERSION}'
+    DERIVED_DATA = DATA_DIR / f'derived_{DATASET_VERSION}'
+
+    # Legacy paths (v1 / original) - for reading old data
+    PROCESSED_V1 = DATA_DIR / 'processed_complete'
+    GENDER_V1 = DATA_DIR / 'gender_analysis_complete'
+    DERIVED_V1 = DATA_DIR / 'derived_complete'
 
     # Legacy names for backward compatibility
     PROCESSED_FIXED = PROCESSED_DATA  # Alias

@@ -350,9 +350,10 @@ def process_year(args):
                         speakers_list = list(speakers) if hasattr(speakers, '__iter__') else []
                     
                     # Filter: remove empty strings, None values, whitespace-only, and deduplicate
+                    # Use sorted() for deterministic ordering
                     if speakers_list:
-                        valid_speakers = list(set([
-                            s.strip() for s in speakers_list 
+                        valid_speakers = sorted(set([
+                            s.strip() for s in speakers_list
                             if s is not None and str(s).strip()
                         ]))
                 
@@ -360,14 +361,16 @@ def process_year(args):
                 all_speakers = list(speakers_from_segments) if speakers_from_segments else valid_speakers
 
                 # Create normalized speaker list for unique speaker tracking
-                normalized_speakers = list(set([
+                # Use sorted() for deterministic ordering
+                normalized_speakers = sorted(set([
                     normalize_speaker_name(speaker)
                     for speaker in all_speakers
                     if normalize_speaker_name(speaker)
                 ]))
 
                 # Create list of unique person_ids for matched MPs
-                unique_person_ids = list(set([
+                # Use sorted() for deterministic ordering
+                unique_person_ids = sorted(set([
                     speaker_person_id_map.get(speaker)
                     for speaker in all_speakers
                     if speaker_person_id_map.get(speaker) is not None
@@ -669,8 +672,8 @@ def main():
                        help='Input processed_complete directory')
     parser.add_argument('--gender-dir', required=True,
                        help='Input gender_complete directory')
-    parser.add_argument('--output-dir', default='data-hansard/derived_complete',
-                       help='Output directory')
+    parser.add_argument('--output-dir', default=str(Paths.DERIVED_DATA),
+                       help='Output directory (default: versioned derived_v2)')
     parser.add_argument('--start-year', type=int, default=1803,
                        help='Start year')
     parser.add_argument('--end-year', type=int, default=2005,

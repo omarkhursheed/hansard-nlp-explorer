@@ -1,0 +1,1339 @@
+{
+  "overview": {
+    "total_speeches": 6783015,
+    "total_debates": 1197828,
+    "total_words": 1457286990,
+    "year_range": [
+      1803,
+      2005
+    ],
+    "unique_mps": 8815,
+    "female_mps": 242,
+    "male_mps": 8574
+  },
+  "by_chamber": {
+    "Commons": {
+      "speeches": 5575783,
+      "matched": 4980711
+    },
+    "Lords": {
+      "speeches": 1207232,
+      "matched": 14098
+    }
+  },
+  "by_decade": {
+    "1800": {
+      "speeches": 13734,
+      "female": 0,
+      "male": 6201
+    },
+    "1810": {
+      "speeches": 17467,
+      "female": 0,
+      "male": 10344
+    },
+    "1820": {
+      "speeches": 24316,
+      "female": 0,
+      "male": 14580
+    },
+    "1830": {
+      "speeches": 72256,
+      "female": 0,
+      "male": 49330
+    },
+    "1840": {
+      "speeches": 55361,
+      "female": 0,
+      "male": 38758
+    },
+    "1850": {
+      "speeches": 79175,
+      "female": 0,
+      "male": 57450
+    },
+    "1860": {
+      "speeches": 90327,
+      "female": 0,
+      "male": 64214
+    },
+    "1870": {
+      "speeches": 113268,
+      "female": 0,
+      "male": 82595
+    },
+    "1880": {
+      "speeches": 237649,
+      "female": 0,
+      "male": 194205
+    },
+    "1890": {
+      "speeches": 233591,
+      "female": 0,
+      "male": 185605
+    },
+    "1900": {
+      "speeches": 303219,
+      "female": 0,
+      "male": 243573
+    },
+    "1910": {
+      "speeches": 407942,
+      "female": 0,
+      "male": 348163
+    },
+    "1920": {
+      "speeches": 368953,
+      "female": 2333,
+      "male": 295255
+    },
+    "1930": {
+      "speeches": 481046,
+      "female": 6552,
+      "male": 396042
+    },
+    "1940": {
+      "speeches": 512407,
+      "female": 11092,
+      "male": 414348
+    },
+    "1950": {
+      "speeches": 576496,
+      "female": 13285,
+      "male": 452217
+    },
+    "1960": {
+      "speeches": 673583,
+      "female": 16946,
+      "male": 483402
+    },
+    "1970": {
+      "speeches": 688040,
+      "female": 16521,
+      "male": 466839
+    },
+    "1980": {
+      "speeches": 768053,
+      "female": 28419,
+      "male": 467020
+    },
+    "1990": {
+      "speeches": 716808,
+      "female": 35096,
+      "male": 406466
+    },
+    "2000": {
+      "speeches": 349324,
+      "female": 22282,
+      "male": 165676
+    }
+  },
+  "by_year": [
+    {
+      "year": 1803,
+      "speeches": 308,
+      "female": 0,
+      "male": 9
+    },
+    {
+      "year": 1804,
+      "speeches": 1395,
+      "female": 0,
+      "male": 56
+    },
+    {
+      "year": 1805,
+      "speeches": 1827,
+      "female": 0,
+      "male": 93
+    },
+    {
+      "year": 1806,
+      "speeches": 3027,
+      "female": 0,
+      "male": 1966
+    },
+    {
+      "year": 1807,
+      "speeches": 2279,
+      "female": 0,
+      "male": 1240
+    },
+    {
+      "year": 1808,
+      "speeches": 2329,
+      "female": 0,
+      "male": 1307
+    },
+    {
+      "year": 1809,
+      "speeches": 2569,
+      "female": 0,
+      "male": 1530
+    },
+    {
+      "year": 1810,
+      "speeches": 667,
+      "female": 0,
+      "male": 365
+    },
+    {
+      "year": 1811,
+      "speeches": 2043,
+      "female": 0,
+      "male": 1141
+    },
+    {
+      "year": 1812,
+      "speeches": 2318,
+      "female": 0,
+      "male": 1334
+    },
+    {
+      "year": 1813,
+      "speeches": 845,
+      "female": 0,
+      "male": 485
+    },
+    {
+      "year": 1814,
+      "speeches": 1129,
+      "female": 0,
+      "male": 773
+    },
+    {
+      "year": 1815,
+      "speeches": 2808,
+      "female": 0,
+      "male": 1674
+    },
+    {
+      "year": 1817,
+      "speeches": 2537,
+      "female": 0,
+      "male": 1463
+    },
+    {
+      "year": 1818,
+      "speeches": 1197,
+      "female": 0,
+      "male": 722
+    },
+    {
+      "year": 1819,
+      "speeches": 3923,
+      "female": 0,
+      "male": 2387
+    },
+    {
+      "year": 1820,
+      "speeches": 4178,
+      "female": 0,
+      "male": 1184
+    },
+    {
+      "year": 1821,
+      "speeches": 2846,
+      "female": 0,
+      "male": 1921
+    },
+    {
+      "year": 1822,
+      "speeches": 2207,
+      "female": 0,
+      "male": 1460
+    },
+    {
+      "year": 1823,
+      "speeches": 2491,
+      "female": 0,
+      "male": 1706
+    },
+    {
+      "year": 1824,
+      "speeches": 2765,
+      "female": 0,
+      "male": 1863
+    },
+    {
+      "year": 1825,
+      "speeches": 2556,
+      "female": 0,
+      "male": 1700
+    },
+    {
+      "year": 1826,
+      "speeches": 2511,
+      "female": 0,
+      "male": 1743
+    },
+    {
+      "year": 1827,
+      "speeches": 2166,
+      "female": 0,
+      "male": 1327
+    },
+    {
+      "year": 1828,
+      "speeches": 2596,
+      "female": 0,
+      "male": 1676
+    },
+    {
+      "year": 1830,
+      "speeches": 6376,
+      "female": 0,
+      "male": 4272
+    },
+    {
+      "year": 1831,
+      "speeches": 13802,
+      "female": 0,
+      "male": 8733
+    },
+    {
+      "year": 1832,
+      "speeches": 9643,
+      "female": 0,
+      "male": 7101
+    },
+    {
+      "year": 1833,
+      "speeches": 7734,
+      "female": 0,
+      "male": 5719
+    },
+    {
+      "year": 1834,
+      "speeches": 6055,
+      "female": 0,
+      "male": 4378
+    },
+    {
+      "year": 1835,
+      "speeches": 7735,
+      "female": 0,
+      "male": 5289
+    },
+    {
+      "year": 1836,
+      "speeches": 6662,
+      "female": 0,
+      "male": 4517
+    },
+    {
+      "year": 1837,
+      "speeches": 4538,
+      "female": 0,
+      "male": 3232
+    },
+    {
+      "year": 1838,
+      "speeches": 4166,
+      "female": 0,
+      "male": 2731
+    },
+    {
+      "year": 1839,
+      "speeches": 5545,
+      "female": 0,
+      "male": 3358
+    },
+    {
+      "year": 1840,
+      "speeches": 5732,
+      "female": 0,
+      "male": 3877
+    },
+    {
+      "year": 1841,
+      "speeches": 4799,
+      "female": 0,
+      "male": 3405
+    },
+    {
+      "year": 1842,
+      "speeches": 7461,
+      "female": 0,
+      "male": 5619
+    },
+    {
+      "year": 1843,
+      "speeches": 5231,
+      "female": 0,
+      "male": 3684
+    },
+    {
+      "year": 1844,
+      "speeches": 4309,
+      "female": 0,
+      "male": 2730
+    },
+    {
+      "year": 1845,
+      "speeches": 6357,
+      "female": 0,
+      "male": 4407
+    },
+    {
+      "year": 1846,
+      "speeches": 5361,
+      "female": 0,
+      "male": 3582
+    },
+    {
+      "year": 1847,
+      "speeches": 6947,
+      "female": 0,
+      "male": 4982
+    },
+    {
+      "year": 1848,
+      "speeches": 3532,
+      "female": 0,
+      "male": 2436
+    },
+    {
+      "year": 1849,
+      "speeches": 5632,
+      "female": 0,
+      "male": 4036
+    },
+    {
+      "year": 1850,
+      "speeches": 7126,
+      "female": 0,
+      "male": 5380
+    },
+    {
+      "year": 1851,
+      "speeches": 7128,
+      "female": 0,
+      "male": 5363
+    },
+    {
+      "year": 1852,
+      "speeches": 6583,
+      "female": 0,
+      "male": 4603
+    },
+    {
+      "year": 1853,
+      "speeches": 8512,
+      "female": 0,
+      "male": 5968
+    },
+    {
+      "year": 1854,
+      "speeches": 8888,
+      "female": 0,
+      "male": 6452
+    },
+    {
+      "year": 1855,
+      "speeches": 7415,
+      "female": 0,
+      "male": 5531
+    },
+    {
+      "year": 1856,
+      "speeches": 7955,
+      "female": 0,
+      "male": 5956
+    },
+    {
+      "year": 1857,
+      "speeches": 10352,
+      "female": 0,
+      "male": 7382
+    },
+    {
+      "year": 1858,
+      "speeches": 8764,
+      "female": 0,
+      "male": 6152
+    },
+    {
+      "year": 1859,
+      "speeches": 6452,
+      "female": 0,
+      "male": 4663
+    },
+    {
+      "year": 1860,
+      "speeches": 11746,
+      "female": 0,
+      "male": 8298
+    },
+    {
+      "year": 1861,
+      "speeches": 9274,
+      "female": 0,
+      "male": 6601
+    },
+    {
+      "year": 1862,
+      "speeches": 8349,
+      "female": 0,
+      "male": 6089
+    },
+    {
+      "year": 1863,
+      "speeches": 8692,
+      "female": 0,
+      "male": 6370
+    },
+    {
+      "year": 1864,
+      "speeches": 8533,
+      "female": 0,
+      "male": 6219
+    },
+    {
+      "year": 1865,
+      "speeches": 6515,
+      "female": 0,
+      "male": 4680
+    },
+    {
+      "year": 1866,
+      "speeches": 7794,
+      "female": 0,
+      "male": 5371
+    },
+    {
+      "year": 1867,
+      "speeches": 11496,
+      "female": 0,
+      "male": 7919
+    },
+    {
+      "year": 1868,
+      "speeches": 8695,
+      "female": 0,
+      "male": 6203
+    },
+    {
+      "year": 1869,
+      "speeches": 9233,
+      "female": 0,
+      "male": 6464
+    },
+    {
+      "year": 1870,
+      "speeches": 10750,
+      "female": 0,
+      "male": 7925
+    },
+    {
+      "year": 1871,
+      "speeches": 10524,
+      "female": 0,
+      "male": 7655
+    },
+    {
+      "year": 1872,
+      "speeches": 11780,
+      "female": 0,
+      "male": 8372
+    },
+    {
+      "year": 1873,
+      "speeches": 8623,
+      "female": 0,
+      "male": 6282
+    },
+    {
+      "year": 1874,
+      "speeches": 7634,
+      "female": 0,
+      "male": 5336
+    },
+    {
+      "year": 1875,
+      "speeches": 10832,
+      "female": 0,
+      "male": 7724
+    },
+    {
+      "year": 1876,
+      "speeches": 9985,
+      "female": 0,
+      "male": 7246
+    },
+    {
+      "year": 1877,
+      "speeches": 11340,
+      "female": 0,
+      "male": 8592
+    },
+    {
+      "year": 1878,
+      "speeches": 15483,
+      "female": 0,
+      "male": 11046
+    },
+    {
+      "year": 1879,
+      "speeches": 16317,
+      "female": 0,
+      "male": 12417
+    },
+    {
+      "year": 1880,
+      "speeches": 10068,
+      "female": 0,
+      "male": 7635
+    },
+    {
+      "year": 1881,
+      "speeches": 24655,
+      "female": 0,
+      "male": 20057
+    },
+    {
+      "year": 1882,
+      "speeches": 29244,
+      "female": 0,
+      "male": 24574
+    },
+    {
+      "year": 1883,
+      "speeches": 25372,
+      "female": 0,
+      "male": 20673
+    },
+    {
+      "year": 1884,
+      "speeches": 23859,
+      "female": 0,
+      "male": 19674
+    },
+    {
+      "year": 1885,
+      "speeches": 20472,
+      "female": 0,
+      "male": 16343
+    },
+    {
+      "year": 1886,
+      "speeches": 17040,
+      "female": 0,
+      "male": 13445
+    },
+    {
+      "year": 1887,
+      "speeches": 31455,
+      "female": 0,
+      "male": 25687
+    },
+    {
+      "year": 1888,
+      "speeches": 32238,
+      "female": 0,
+      "male": 27149
+    },
+    {
+      "year": 1889,
+      "speeches": 23246,
+      "female": 0,
+      "male": 18968
+    },
+    {
+      "year": 1890,
+      "speeches": 26271,
+      "female": 0,
+      "male": 21628
+    },
+    {
+      "year": 1891,
+      "speeches": 20453,
+      "female": 0,
+      "male": 17025
+    },
+    {
+      "year": 1892,
+      "speeches": 15001,
+      "female": 0,
+      "male": 12548
+    },
+    {
+      "year": 1893,
+      "speeches": 41047,
+      "female": 0,
+      "male": 33486
+    },
+    {
+      "year": 1894,
+      "speeches": 21434,
+      "female": 0,
+      "male": 16376
+    },
+    {
+      "year": 1895,
+      "speeches": 18279,
+      "female": 0,
+      "male": 14985
+    },
+    {
+      "year": 1896,
+      "speeches": 23177,
+      "female": 0,
+      "male": 17339
+    },
+    {
+      "year": 1897,
+      "speeches": 22127,
+      "female": 0,
+      "male": 17141
+    },
+    {
+      "year": 1898,
+      "speeches": 24243,
+      "female": 0,
+      "male": 18370
+    },
+    {
+      "year": 1899,
+      "speeches": 21559,
+      "female": 0,
+      "male": 16707
+    },
+    {
+      "year": 1900,
+      "speeches": 23623,
+      "female": 0,
+      "male": 18666
+    },
+    {
+      "year": 1901,
+      "speeches": 22826,
+      "female": 0,
+      "male": 19254
+    },
+    {
+      "year": 1902,
+      "speeches": 35084,
+      "female": 0,
+      "male": 27205
+    },
+    {
+      "year": 1903,
+      "speeches": 19385,
+      "female": 0,
+      "male": 16070
+    },
+    {
+      "year": 1904,
+      "speeches": 23827,
+      "female": 0,
+      "male": 19016
+    },
+    {
+      "year": 1905,
+      "speeches": 25444,
+      "female": 0,
+      "male": 20604
+    },
+    {
+      "year": 1906,
+      "speeches": 36725,
+      "female": 0,
+      "male": 27996
+    },
+    {
+      "year": 1907,
+      "speeches": 31509,
+      "female": 0,
+      "male": 24797
+    },
+    {
+      "year": 1908,
+      "speeches": 44470,
+      "female": 0,
+      "male": 38039
+    },
+    {
+      "year": 1909,
+      "speeches": 40326,
+      "female": 0,
+      "male": 31926
+    },
+    {
+      "year": 1910,
+      "speeches": 22679,
+      "female": 0,
+      "male": 18716
+    },
+    {
+      "year": 1911,
+      "speeches": 55140,
+      "female": 0,
+      "male": 46908
+    },
+    {
+      "year": 1912,
+      "speeches": 44498,
+      "female": 0,
+      "male": 38294
+    },
+    {
+      "year": 1913,
+      "speeches": 45053,
+      "female": 0,
+      "male": 38244
+    },
+    {
+      "year": 1914,
+      "speeches": 33026,
+      "female": 0,
+      "male": 28023
+    },
+    {
+      "year": 1915,
+      "speeches": 30265,
+      "female": 0,
+      "male": 26137
+    },
+    {
+      "year": 1916,
+      "speeches": 43832,
+      "female": 0,
+      "male": 38664
+    },
+    {
+      "year": 1917,
+      "speeches": 31730,
+      "female": 0,
+      "male": 28432
+    },
+    {
+      "year": 1918,
+      "speeches": 47950,
+      "female": 0,
+      "male": 40643
+    },
+    {
+      "year": 1919,
+      "speeches": 53769,
+      "female": 0,
+      "male": 44102
+    },
+    {
+      "year": 1920,
+      "speeches": 45850,
+      "female": 59,
+      "male": 36765
+    },
+    {
+      "year": 1921,
+      "speeches": 21876,
+      "female": 48,
+      "male": 17316
+    },
+    {
+      "year": 1922,
+      "speeches": 43265,
+      "female": 49,
+      "male": 35372
+    },
+    {
+      "year": 1923,
+      "speeches": 22472,
+      "female": 13,
+      "male": 18630
+    },
+    {
+      "year": 1924,
+      "speeches": 35004,
+      "female": 233,
+      "male": 27967
+    },
+    {
+      "year": 1925,
+      "speeches": 37537,
+      "female": 197,
+      "male": 29913
+    },
+    {
+      "year": 1926,
+      "speeches": 42321,
+      "female": 256,
+      "male": 33169
+    },
+    {
+      "year": 1927,
+      "speeches": 47353,
+      "female": 418,
+      "male": 37757
+    },
+    {
+      "year": 1928,
+      "speeches": 38893,
+      "female": 364,
+      "male": 31641
+    },
+    {
+      "year": 1929,
+      "speeches": 34382,
+      "female": 696,
+      "male": 26725
+    },
+    {
+      "year": 1930,
+      "speeches": 54761,
+      "female": 1504,
+      "male": 43063
+    },
+    {
+      "year": 1931,
+      "speeches": 52429,
+      "female": 1282,
+      "male": 42023
+    },
+    {
+      "year": 1932,
+      "speeches": 42160,
+      "female": 282,
+      "male": 34714
+    },
+    {
+      "year": 1933,
+      "speeches": 36867,
+      "female": 285,
+      "male": 31293
+    },
+    {
+      "year": 1934,
+      "speeches": 45383,
+      "female": 430,
+      "male": 36996
+    },
+    {
+      "year": 1935,
+      "speeches": 36663,
+      "female": 556,
+      "male": 29459
+    },
+    {
+      "year": 1936,
+      "speeches": 44919,
+      "female": 469,
+      "male": 37695
+    },
+    {
+      "year": 1937,
+      "speeches": 53743,
+      "female": 511,
+      "male": 45990
+    },
+    {
+      "year": 1938,
+      "speeches": 53325,
+      "female": 494,
+      "male": 43740
+    },
+    {
+      "year": 1939,
+      "speeches": 60796,
+      "female": 739,
+      "male": 51069
+    },
+    {
+      "year": 1940,
+      "speeches": 39964,
+      "female": 670,
+      "male": 33955
+    },
+    {
+      "year": 1941,
+      "speeches": 37361,
+      "female": 1766,
+      "male": 31375
+    },
+    {
+      "year": 1942,
+      "speeches": 34763,
+      "female": 1096,
+      "male": 29127
+    },
+    {
+      "year": 1943,
+      "speeches": 43233,
+      "female": 1012,
+      "male": 36092
+    },
+    {
+      "year": 1944,
+      "speeches": 54717,
+      "female": 978,
+      "male": 45665
+    },
+    {
+      "year": 1945,
+      "speeches": 39971,
+      "female": 869,
+      "male": 33028
+    },
+    {
+      "year": 1946,
+      "speeches": 54271,
+      "female": 1073,
+      "male": 42295
+    },
+    {
+      "year": 1947,
+      "speeches": 77834,
+      "female": 1122,
+      "male": 60107
+    },
+    {
+      "year": 1948,
+      "speeches": 59477,
+      "female": 1220,
+      "male": 46963
+    },
+    {
+      "year": 1949,
+      "speeches": 70816,
+      "female": 1286,
+      "male": 55741
+    },
+    {
+      "year": 1950,
+      "speeches": 50073,
+      "female": 940,
+      "male": 42181
+    },
+    {
+      "year": 1951,
+      "speeches": 57296,
+      "female": 1240,
+      "male": 46456
+    },
+    {
+      "year": 1952,
+      "speeches": 67912,
+      "female": 1774,
+      "male": 54861
+    },
+    {
+      "year": 1953,
+      "speeches": 59083,
+      "female": 1508,
+      "male": 46581
+    },
+    {
+      "year": 1954,
+      "speeches": 61365,
+      "female": 1366,
+      "male": 46892
+    },
+    {
+      "year": 1955,
+      "speeches": 52331,
+      "female": 1024,
+      "male": 40876
+    },
+    {
+      "year": 1956,
+      "speeches": 62092,
+      "female": 1600,
+      "male": 47719
+    },
+    {
+      "year": 1957,
+      "speeches": 56334,
+      "female": 1187,
+      "male": 43660
+    },
+    {
+      "year": 1958,
+      "speeches": 55215,
+      "female": 1235,
+      "male": 42056
+    },
+    {
+      "year": 1959,
+      "speeches": 54795,
+      "female": 1411,
+      "male": 40935
+    },
+    {
+      "year": 1960,
+      "speeches": 58955,
+      "female": 1625,
+      "male": 42316
+    },
+    {
+      "year": 1961,
+      "speeches": 69364,
+      "female": 1591,
+      "male": 50698
+    },
+    {
+      "year": 1962,
+      "speeches": 59406,
+      "female": 1637,
+      "male": 43360
+    },
+    {
+      "year": 1963,
+      "speeches": 57745,
+      "female": 1300,
+      "male": 40964
+    },
+    {
+      "year": 1964,
+      "speeches": 61474,
+      "female": 1582,
+      "male": 44412
+    },
+    {
+      "year": 1965,
+      "speeches": 70608,
+      "female": 1557,
+      "male": 51657
+    },
+    {
+      "year": 1966,
+      "speeches": 63863,
+      "female": 2186,
+      "male": 45916
+    },
+    {
+      "year": 1967,
+      "speeches": 79610,
+      "female": 2185,
+      "male": 55670
+    },
+    {
+      "year": 1968,
+      "speeches": 80282,
+      "female": 1785,
+      "male": 55673
+    },
+    {
+      "year": 1969,
+      "speeches": 72276,
+      "female": 1498,
+      "male": 52736
+    },
+    {
+      "year": 1970,
+      "speeches": 55451,
+      "female": 1240,
+      "male": 39924
+    },
+    {
+      "year": 1971,
+      "speeches": 82032,
+      "female": 2086,
+      "male": 55185
+    },
+    {
+      "year": 1972,
+      "speeches": 79801,
+      "female": 1644,
+      "male": 55412
+    },
+    {
+      "year": 1973,
+      "speeches": 68279,
+      "female": 1837,
+      "male": 45722
+    },
+    {
+      "year": 1974,
+      "speeches": 52380,
+      "female": 1365,
+      "male": 34634
+    },
+    {
+      "year": 1975,
+      "speeches": 78260,
+      "female": 2199,
+      "male": 49667
+    },
+    {
+      "year": 1976,
+      "speeches": 82341,
+      "female": 1614,
+      "male": 54030
+    },
+    {
+      "year": 1977,
+      "speeches": 65386,
+      "female": 1373,
+      "male": 46461
+    },
+    {
+      "year": 1978,
+      "speeches": 69561,
+      "female": 1329,
+      "male": 47536
+    },
+    {
+      "year": 1979,
+      "speeches": 54549,
+      "female": 1834,
+      "male": 38268
+    },
+    {
+      "year": 1980,
+      "speeches": 80110,
+      "female": 2292,
+      "male": 50726
+    },
+    {
+      "year": 1981,
+      "speeches": 71019,
+      "female": 2087,
+      "male": 44077
+    },
+    {
+      "year": 1982,
+      "speeches": 75156,
+      "female": 2555,
+      "male": 47334
+    },
+    {
+      "year": 1983,
+      "speeches": 59028,
+      "female": 2073,
+      "male": 39307
+    },
+    {
+      "year": 1984,
+      "speeches": 81082,
+      "female": 2383,
+      "male": 48619
+    },
+    {
+      "year": 1985,
+      "speeches": 79702,
+      "female": 3203,
+      "male": 48487
+    },
+    {
+      "year": 1986,
+      "speeches": 83923,
+      "female": 3295,
+      "male": 49136
+    },
+    {
+      "year": 1987,
+      "speeches": 65870,
+      "female": 2623,
+      "male": 39745
+    },
+    {
+      "year": 1988,
+      "speeches": 86878,
+      "female": 4073,
+      "male": 49799
+    },
+    {
+      "year": 1989,
+      "speeches": 85285,
+      "female": 3835,
+      "male": 49790
+    },
+    {
+      "year": 1990,
+      "speeches": 85463,
+      "female": 4105,
+      "male": 48463
+    },
+    {
+      "year": 1991,
+      "speeches": 76505,
+      "female": 2562,
+      "male": 47253
+    },
+    {
+      "year": 1992,
+      "speeches": 58371,
+      "female": 2010,
+      "male": 34725
+    },
+    {
+      "year": 1993,
+      "speeches": 75101,
+      "female": 2597,
+      "male": 44600
+    },
+    {
+      "year": 1994,
+      "speeches": 70117,
+      "female": 2958,
+      "male": 40779
+    },
+    {
+      "year": 1995,
+      "speeches": 68450,
+      "female": 3308,
+      "male": 39536
+    },
+    {
+      "year": 1996,
+      "speeches": 70996,
+      "female": 3651,
+      "male": 41100
+    },
+    {
+      "year": 1997,
+      "speeches": 55652,
+      "female": 3458,
+      "male": 30851
+    },
+    {
+      "year": 1998,
+      "speeches": 81419,
+      "female": 5222,
+      "male": 42831
+    },
+    {
+      "year": 1999,
+      "speeches": 74734,
+      "female": 5225,
+      "male": 36328
+    },
+    {
+      "year": 2000,
+      "speeches": 82061,
+      "female": 4806,
+      "male": 39127
+    },
+    {
+      "year": 2001,
+      "speeches": 60029,
+      "female": 4527,
+      "male": 30918
+    },
+    {
+      "year": 2002,
+      "speeches": 68440,
+      "female": 4938,
+      "male": 32648
+    },
+    {
+      "year": 2003,
+      "speeches": 73227,
+      "female": 4695,
+      "male": 35721
+    },
+    {
+      "year": 2004,
+      "speeches": 58802,
+      "female": 3312,
+      "male": 27069
+    },
+    {
+      "year": 2005,
+      "speeches": 6765,
+      "female": 4,
+      "male": 193
+    }
+  ]
+}

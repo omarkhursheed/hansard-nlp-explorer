@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suffrage Classification Explorer</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --stance-for: #10b981;
+            --stance-for-bg: #d1fae5;
+            --stance-against: #ef4444;
+            --stance-against-bg: #fee2e2;
+            --stance-both: #f59e0b;
+            --stance-both-bg: #fef3c7;
+            --stance-neutral: #6b7280;
+            --stance-neutral-bg: #e5e7eb;
+            --stance-irrelevant: #9ca3af;
+            --stance-irrelevant-bg: #f3f4f6;
+            --accent: #3b82f6;
+            --accent-bg: #dbeafe;
+        }
+
+        .dark {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --stance-for-bg: #064e3b;
+            --stance-against-bg: #7f1d1d;
+            --stance-both-bg: #78350f;
+            --stance-neutral-bg: #374151;
+            --stance-irrelevant-bg: #1f2937;
+            --accent-bg: #1e3a8a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0 0.75rem;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            width: 200px;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .panel-content {
+            padding: 1rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .checkbox-item input {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stance-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .stance-dot.for { background: var(--stance-for); }
+        .stance-dot.against { background: var(--stance-against); }
+        .stance-dot.both { background: var(--stance-both); }
+        .stance-dot.neutral { background: var(--stance-neutral); }
+        .stance-dot.irrelevant { background: var(--stance-irrelevant); }
+
+        .range-inputs {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .range-inputs input {
+            width: 70px;
+            padding: 0.375rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .range-inputs span {
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 0.375rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-primary);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chart-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            transition: width 0.3s ease;
+        }
+
+        .bar-fill.for { background: var(--stance-for); }
+        .bar-fill.against { background: var(--stance-against); }
+        .bar-fill.both { background: var(--stance-both); }
+        .bar-fill.neutral { background: var(--stance-neutral); }
+        .bar-fill.irrelevant { background: var(--stance-irrelevant); }
+
+        .timeline-chart {
+            height: 300px;
+            position: relative;
+        }
+
+        .timeline-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sort-controls label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .sort-controls select {
+            width: auto;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .speech-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .speech-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border-color);
+            gap: 0.5rem;
+        }
+
+        .speaker-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .speaker-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .speaker-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stance-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .stance-badge.for {
+            background: var(--stance-for-bg);
+            color: var(--stance-for);
+        }
+
+        .stance-badge.against {
+            background: var(--stance-against-bg);
+            color: var(--stance-against);
+        }
+
+        .stance-badge.both {
+            background: var(--stance-both-bg);
+            color: var(--stance-both);
+        }
+
+        .stance-badge.neutral {
+            background: var(--stance-neutral-bg);
+            color: var(--stance-neutral);
+        }
+
+        .stance-badge.irrelevant {
+            background: var(--stance-irrelevant-bg);
+            color: var(--stance-irrelevant);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .quote::before {
+            content: '"';
+        }
+
+        .quote::after {
+            content: '"';
+        }
+
+        .reasons {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-footer {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .confidence-bar {
+            width: 50px;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .confidence-fill.high { background: var(--stance-for); }
+        .confidence-fill.medium { background: var(--stance-both); }
+        .confidence-fill.low { background: var(--stance-against); }
+
+        .speaker-view {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .speaker-select-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .speaker-select-container select {
+            max-width: 400px;
+        }
+
+        .speaker-summary {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 0.5rem;
+        }
+
+        .speaker-stat {
+            text-align: center;
+        }
+
+        .speaker-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .speaker-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding: 0 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .reset-btn:hover {
+            background: var(--border-color);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Suffrage Classification Explorer</h1>
+                <div class="header-controls">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search speeches...">
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">Dark Mode</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="panel">
+                    <div class="panel-header">Filters</div>
+                    <div class="panel-content">
+                        <div class="filter-group">
+                            <span class="filter-label">Stance</span>
+                            <div class="checkbox-group" id="stanceFilters">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="stance-for" checked>
+                                    <label for="stance-for"><span class="stance-dot for"></span> For</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="stance-against" checked>
+                                    <label for="stance-against"><span class="stance-dot against"></span> Against</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="stance-both" checked>
+                                    <label for="stance-both"><span class="stance-dot both"></span> Both</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="stance-neutral" checked>
+                                    <label for="stance-neutral"><span class="stance-dot neutral"></span> Neutral</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="stance-irrelevant">
+                                    <label for="stance-irrelevant"><span class="stance-dot irrelevant"></span> Irrelevant</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <span class="filter-label">Gender</span>
+                            <select id="genderFilter">
+                                <option value="all">All</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="">Unknown</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <span class="filter-label">Year Range</span>
+                            <div class="range-inputs">
+                                <input type="number" id="yearMin" min="1900" max="1935" value="1900">
+                                <span>to</span>
+                                <input type="number" id="yearMax" min="1900" max="1935" value="1935">
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <span class="filter-label">Confidence</span>
+                            <select id="confidenceFilter">
+                                <option value="all">All Levels</option>
+                                <option value="HIGH">High Only</option>
+                                <option value="MEDIUM">Medium & Above</option>
+                            </select>
+                        </div>
+
+                        <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">Summary Statistics</div>
+                    <div class="panel-content">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSpeeches">-</div>
+                                <div class="stat-label">Total Speeches</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="filteredCount">-</div>
+                                <div class="stat-label">Filtered</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="forCount">-</div>
+                                <div class="stat-label">For</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="againstCount">-</div>
+                                <div class="stat-label">Against</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="main-content">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="speeches">Speeches</button>
+                    <button class="tab-btn" data-tab="charts">Charts</button>
+                    <button class="tab-btn" data-tab="speakers">By Speaker</button>
+                </div>
+
+                <div id="speeches-tab" class="tab-content active">
+                    <div class="results-header">
+                        <span class="results-count" id="resultsCount">Loading...</span>
+                        <div class="sort-controls">
+                            <label>Sort by:</label>
+                            <select id="sortBy">
+                                <option value="year-desc">Year (newest)</option>
+                                <option value="year-asc">Year (oldest)</option>
+                                <option value="confidence-desc">Confidence (high)</option>
+                                <option value="confidence-asc">Confidence (low)</option>
+                                <option value="speaker">Speaker (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="results-grid" id="resultsGrid">
+                        <div class="loading">Loading speeches...</div>
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+
+                <div id="charts-tab" class="tab-content">
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <div class="chart-title">Stance Breakdown</div>
+                            <div class="bar-chart" id="stanceChart"></div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Timeline of Stances by Year</div>
+                            <div class="timeline-chart" id="timelineChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="speakers-tab" class="tab-content">
+                    <div class="speaker-view">
+                        <div class="speaker-select-container">
+                            <label class="filter-label">Select Speaker</label>
+                            <select id="speakerSelect">
+                                <option value="">-- Select a speaker --</option>
+                            </select>
+                        </div>
+                        <div id="speakerContent">
+                            <div class="empty-state">Select a speaker to view their stance history</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // State
+        let allSpeeches = [];
+        let summaryData = null;
+        let filteredSpeeches = [];
+        let currentPage = 1;
+        const pageSize = 20;
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const themeToggle = document.getElementById('themeToggle');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const pagination = document.getElementById('pagination');
+        const genderFilter = document.getElementById('genderFilter');
+        const yearMin = document.getElementById('yearMin');
+        const yearMax = document.getElementById('yearMax');
+        const confidenceFilter = document.getElementById('confidenceFilter');
+        const sortBy = document.getElementById('sortBy');
+        const speakerSelect = document.getElementById('speakerSelect');
+
+        // Initialize
+        async function init() {
+            try {
+                const [resultsRes, summaryRes] = await Promise.all([
+                    fetch('data/suffrage_results.json'),
+                    fetch('data/suffrage_summary.json')
+                ]);
+
+                allSpeeches = await resultsRes.json();
+                summaryData = await summaryRes.json();
+
+                updateSummaryStats();
+                populateSpeakerSelect();
+                applyFilters();
+                renderStanceChart();
+                renderTimelineChart();
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                resultsGrid.innerHTML = '<div class="empty-state">Failed to load data. Make sure the data files are available.</div>';
+            }
+        }
+
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            themeToggle.textContent = document.body.classList.contains('dark') ? 'Light Mode' : 'Dark Mode';
+            renderTimelineChart(); // Re-render chart for theme colors
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Filters
+        function getSelectedStances() {
+            const stances = [];
+            ['for', 'against', 'both', 'neutral', 'irrelevant'].forEach(stance => {
+                if (document.getElementById(`stance-${stance}`).checked) {
+                    stances.push(stance);
+                }
+            });
+            return stances;
+        }
+
+        function applyFilters() {
+            const stances = getSelectedStances();
+            const gender = genderFilter.value;
+            const minYear = parseInt(yearMin.value) || 1900;
+            const maxYear = parseInt(yearMax.value) || 1935;
+            const confidence = confidenceFilter.value;
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            filteredSpeeches = allSpeeches.filter(speech => {
+                // Stance filter
+                if (!stances.includes(speech.stance)) return false;
+
+                // Gender filter
+                if (gender !== 'all' && speech.gender !== gender) return false;
+
+                // Year filter
+                const year = speech.year;
+                if (year < minYear || year > maxYear) return false;
+
+                // Confidence filter
+                if (confidence !== 'all') {
+                    if (confidence === 'HIGH' && speech.confidence_level !== 'HIGH') return false;
+                    if (confidence === 'MEDIUM' && speech.confidence_level === 'LOW') return false;
+                }
+
+                // Search filter
+                if (searchTerm) {
+                    const searchable = [
+                        speech.speaker,
+                        speech.canonical_name,
+                        speech.top_quote?.text || '',
+                        speech.reasons || ''
+                    ].join(' ').toLowerCase();
+                    if (!searchable.includes(searchTerm)) return false;
+                }
+
+                return true;
+            });
+
+            sortSpeeches();
+            currentPage = 1;
+            renderResults();
+            updateFilteredStats();
+        }
+
+        function sortSpeeches() {
+            const sortValue = sortBy.value;
+            filteredSpeeches.sort((a, b) => {
+                switch (sortValue) {
+                    case 'year-desc':
+                        return b.year - a.year;
+                    case 'year-asc':
+                        return a.year - b.year;
+                    case 'confidence-desc':
+                        return b.confidence - a.confidence;
+                    case 'confidence-asc':
+                        return a.confidence - b.confidence;
+                    case 'speaker':
+                        return (a.canonical_name || a.speaker).localeCompare(b.canonical_name || b.speaker);
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        // Event listeners for filters
+        document.querySelectorAll('#stanceFilters input').forEach(cb => {
+            cb.addEventListener('change', applyFilters);
+        });
+        genderFilter.addEventListener('change', applyFilters);
+        yearMin.addEventListener('change', applyFilters);
+        yearMax.addEventListener('change', applyFilters);
+        confidenceFilter.addEventListener('change', applyFilters);
+        sortBy.addEventListener('change', () => {
+            sortSpeeches();
+            renderResults();
+        });
+        searchInput.addEventListener('input', debounce(applyFilters, 300));
+        document.getElementById('resetFilters').addEventListener('click', resetFilters);
+
+        function resetFilters() {
+            document.querySelectorAll('#stanceFilters input').forEach(cb => {
+                cb.checked = cb.id !== 'stance-irrelevant';
+            });
+            genderFilter.value = 'all';
+            yearMin.value = '1900';
+            yearMax.value = '1935';
+            confidenceFilter.value = 'all';
+            searchInput.value = '';
+            applyFilters();
+        }
+
+        // Render results
+        function renderResults() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageSpeeches = filteredSpeeches.slice(start, end);
+
+            if (pageSpeeches.length === 0) {
+                resultsGrid.innerHTML = '<div class="empty-state">No speeches match the current filters</div>';
+                pagination.innerHTML = '';
+                return;
+            }
+
+            resultsGrid.innerHTML = pageSpeeches.map(speech => createSpeechCard(speech)).join('');
+            renderPagination();
+            document.getElementById('resultsCount').textContent =
+                `Showing ${start + 1}-${Math.min(end, filteredSpeeches.length)} of ${filteredSpeeches.length} speeches`;
+        }
+
+        function createSpeechCard(speech) {
+            const quote = speech.top_quote?.text || 'No quote available';
+            const truncatedQuote = quote.length > 200 ? quote.substring(0, 200) + '...' : quote;
+
+            // Parse reasons to extract a summary
+            let reasonsSummary = '';
+            if (speech.reasons && speech.reasons !== '[]') {
+                try {
+                    // Extract rationale text from the reasons string
+                    const rationaleMatch = speech.reasons.match(/'rationale':\s*'([^']+)'/);
+                    if (rationaleMatch) {
+                        reasonsSummary = rationaleMatch[1];
+                        if (reasonsSummary.length > 150) {
+                            reasonsSummary = reasonsSummary.substring(0, 150) + '...';
+                        }
+                    }
+                } catch (e) {
+                    // Ignore parsing errors
+                }
+            }
+
+            const confidenceClass = speech.confidence >= 0.7 ? 'high' : speech.confidence >= 0.4 ? 'medium' : 'low';
+            const confidencePercent = Math.round(speech.confidence * 100);
+
+            return `
+                <div class="speech-card">
+                    <div class="card-header">
+                        <div class="speaker-info">
+                            <div class="speaker-name">${escapeHtml(speech.canonical_name || speech.speaker)}</div>
+                            <div class="speaker-meta">
+                                <span>${speech.date}</span>
+                                <span>${speech.chamber}</span>
+                                ${speech.gender ? `<span>${speech.gender === 'M' ? 'Male' : 'Female'}</span>` : ''}
+                            </div>
+                        </div>
+                        <span class="stance-badge ${speech.stance}">${speech.stance}</span>
+                    </div>
+                    <div class="card-body">
+                        ${quote ? `<div class="quote">${escapeHtml(truncatedQuote)}</div>` : ''}
+                        ${reasonsSummary ? `<div class="reasons">${escapeHtml(reasonsSummary)}</div>` : ''}
+                    </div>
+                    <div class="card-footer">
+                        <span>${speech.word_count ? Math.round(speech.word_count) + ' words' : ''}</span>
+                        <div class="confidence-indicator">
+                            <span>Confidence: ${confidencePercent}%</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill ${confidenceClass}" style="width: ${confidencePercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredSpeeches.length / pageSize);
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            pagination.innerHTML = `
+                <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Previous</button>
+                <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
+                <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Next</button>
+            `;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderResults();
+            document.getElementById('speeches-tab').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Statistics
+        function updateSummaryStats() {
+            if (!summaryData) return;
+            document.getElementById('totalSpeeches').textContent = summaryData.total_classified.toLocaleString();
+            document.getElementById('forCount').textContent = summaryData.stance_counts.for.toLocaleString();
+            document.getElementById('againstCount').textContent = summaryData.stance_counts.against.toLocaleString();
+        }
+
+        function updateFilteredStats() {
+            document.getElementById('filteredCount').textContent = filteredSpeeches.length.toLocaleString();
+        }
+
+        // Charts
+        function renderStanceChart() {
+            if (!summaryData) return;
+            const container = document.getElementById('stanceChart');
+            const counts = summaryData.stance_counts;
+            const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+            const stanceOrder = ['for', 'against', 'both', 'neutral', 'irrelevant'];
+
+            container.innerHTML = stanceOrder.map(stance => {
+                const count = counts[stance] || 0;
+                const percent = ((count / total) * 100).toFixed(1);
+                const width = (count / Math.max(...Object.values(counts))) * 100;
+
+                return `
+                    <div class="bar-row">
+                        <span class="bar-label">${stance}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill ${stance}" style="width: ${width}%">
+                                ${count.toLocaleString()} (${percent}%)
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTimelineChart() {
+            if (!summaryData) return;
+            const container = document.getElementById('timelineChart');
+            const byYear = summaryData.by_year_stance;
+
+            // Get all years
+            const years = [];
+            for (let y = 1900; y <= 1935; y++) {
+                years.push(y);
+            }
+
+            // Prepare data
+            const stances = ['for', 'against', 'both', 'neutral'];
+            const stanceColors = {
+                for: getComputedStyle(document.documentElement).getPropertyValue('--stance-for').trim() || '#10b981',
+                against: getComputedStyle(document.documentElement).getPropertyValue('--stance-against').trim() || '#ef4444',
+                both: getComputedStyle(document.documentElement).getPropertyValue('--stance-both').trim() || '#f59e0b',
+                neutral: getComputedStyle(document.documentElement).getPropertyValue('--stance-neutral').trim() || '#6b7280'
+            };
+
+            // Find max value for scaling
+            let maxVal = 0;
+            years.forEach(y => {
+                stances.forEach(s => {
+                    const val = byYear[s]?.[`${y}.0`] || 0;
+                    if (val > maxVal) maxVal = val;
+                });
+            });
+
+            const padding = { top: 20, right: 20, bottom: 40, left: 50 };
+            const width = container.clientWidth || 600;
+            const height = 300;
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+
+            const xScale = (i) => padding.left + (i / (years.length - 1)) * chartWidth;
+            const yScale = (v) => height - padding.bottom - (v / maxVal) * chartHeight;
+
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() || '#6b7280';
+            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim() || '#e5e7eb';
+
+            // Generate paths
+            const paths = stances.map(stance => {
+                const points = years.map((y, i) => {
+                    const val = byYear[stance]?.[`${y}.0`] || 0;
+                    return `${xScale(i)},${yScale(val)}`;
+                }).join(' L ');
+                return `<path d="M ${points}" stroke="${stanceColors[stance]}" fill="none" stroke-width="2"/>`;
+            }).join('');
+
+            // Y-axis grid lines
+            const yTicks = 5;
+            const yGridLines = Array.from({ length: yTicks + 1 }, (_, i) => {
+                const val = Math.round((maxVal / yTicks) * i);
+                const y = yScale(val);
+                return `
+                    <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="${gridColor}" stroke-dasharray="2,2"/>
+                    <text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" fill="${textColor}" font-size="10">${val}</text>
+                `;
+            }).join('');
+
+            // X-axis labels (every 5 years)
+            const xLabels = years.filter((_, i) => i % 5 === 0 || i === years.length - 1).map(y => {
+                const i = years.indexOf(y);
+                return `<text x="${xScale(i)}" y="${height - 10}" text-anchor="middle" fill="${textColor}" font-size="10">${y}</text>`;
+            }).join('');
+
+            // Legend
+            const legendY = 10;
+            const legend = stances.map((s, i) => {
+                const x = padding.left + i * 80;
+                return `
+                    <rect x="${x}" y="${legendY}" width="12" height="12" fill="${stanceColors[s]}"/>
+                    <text x="${x + 16}" y="${legendY + 10}" fill="${textColor}" font-size="11">${s}</text>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <svg class="timeline-svg" viewBox="0 0 ${width} ${height}">
+                    ${yGridLines}
+                    ${paths}
+                    ${xLabels}
+                    ${legend}
+                </svg>
+            `;
+        }
+
+        // Speaker view
+        function populateSpeakerSelect() {
+            const speakers = new Map();
+            allSpeeches.forEach(s => {
+                const name = s.canonical_name || s.speaker;
+                if (!speakers.has(name)) {
+                    speakers.set(name, 0);
+                }
+                speakers.set(name, speakers.get(name) + 1);
+            });
+
+            // Sort by speech count
+            const sorted = Array.from(speakers.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 200); // Top 200 speakers
+
+            speakerSelect.innerHTML = '<option value="">-- Select a speaker --</option>' +
+                sorted.map(([name, count]) =>
+                    `<option value="${escapeHtml(name)}">${escapeHtml(name)} (${count} speeches)</option>`
+                ).join('');
+        }
+
+        speakerSelect.addEventListener('change', () => {
+            const speaker = speakerSelect.value;
+            if (!speaker) {
+                document.getElementById('speakerContent').innerHTML =
+                    '<div class="empty-state">Select a speaker to view their stance history</div>';
+                return;
+            }
+
+            const speeches = allSpeeches.filter(s =>
+                (s.canonical_name || s.speaker) === speaker
+            ).sort((a, b) => a.year - b.year);
+
+            // Calculate stats
+            const stanceCounts = { for: 0, against: 0, both: 0, neutral: 0, irrelevant: 0 };
+            speeches.forEach(s => stanceCounts[s.stance]++);
+
+            const content = document.getElementById('speakerContent');
+            content.innerHTML = `
+                <div class="speaker-summary">
+                    <div class="speaker-stat">
+                        <div class="speaker-stat-value">${speeches.length}</div>
+                        <div class="speaker-stat-label">Total Speeches</div>
+                    </div>
+                    <div class="speaker-stat">
+                        <div class="speaker-stat-value" style="color: var(--stance-for)">${stanceCounts.for}</div>
+                        <div class="speaker-stat-label">For</div>
+                    </div>
+                    <div class="speaker-stat">
+                        <div class="speaker-stat-value" style="color: var(--stance-against)">${stanceCounts.against}</div>
+                        <div class="speaker-stat-label">Against</div>
+                    </div>
+                    <div class="speaker-stat">
+                        <div class="speaker-stat-value" style="color: var(--stance-both)">${stanceCounts.both}</div>
+                        <div class="speaker-stat-label">Both</div>
+                    </div>
+                    <div class="speaker-stat">
+                        <div class="speaker-stat-value" style="color: var(--stance-neutral)">${stanceCounts.neutral}</div>
+                        <div class="speaker-stat-label">Neutral</div>
+                    </div>
+                </div>
+                <div class="results-grid">
+                    ${speeches.map(s => createSpeechCard(s)).join('')}
+                </div>
+            `;
+        });
+
+        // Utility functions
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function debounce(fn, delay) {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => fn(...args), delay);
+            };
+        }
+
+        // Handle window resize for chart
+        window.addEventListener('resize', debounce(() => {
+            if (document.getElementById('charts-tab').classList.contains('active')) {
+                renderTimelineChart();
+            }
+        }, 200));
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>

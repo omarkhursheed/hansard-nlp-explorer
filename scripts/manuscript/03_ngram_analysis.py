@@ -45,9 +45,12 @@ import numpy as np
 from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Add parent directory to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
-from analysis.analysis_utils import preprocess_text, get_stop_words
+# Add project root to path for imports
+project_root = Path(__file__).resolve().parent
+while project_root.name != 'hansard-nlp-explorer' and project_root.parent != project_root:
+    project_root = project_root.parent
+sys.path.insert(0, str(project_root / 'src'))
+from hansard.analysis.analysis_utils import preprocess_text, get_stop_words
 
 from data_loader import load_speeches
 from utils import setup_plot_style, COLORS, save_figure
@@ -122,8 +125,8 @@ def analyze_gender_split(speeches_df, filtering='moderate', top_n=20):
     # Filter to speeches with known gender
     gendered = speeches_df[speeches_df['gender'].notna()].copy()
 
-    male_speeches = gendered[gendered['gender'] == 'm']
-    female_speeches = gendered[gendered['gender'] == 'f']
+    male_speeches = gendered[gendered['gender'] == 'M']
+    female_speeches = gendered[gendered['gender'] == 'F']
 
     print(f"  Male speeches: {len(male_speeches):,}")
     print(f"  Female speeches: {len(female_speeches):,}")

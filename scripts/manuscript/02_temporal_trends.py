@@ -37,7 +37,7 @@ def compute_annual_speaking_proportions(speeches_df):
     # Group by year
     annual = gendered.groupby('year').agg({
         'speech_id': 'count',
-        'gender': lambda x: (x == 'f').sum(),  # Count female
+        'gender': lambda x: (x == 'F').sum(),  # Count female (uppercase)
     }).rename(columns={
         'speech_id': 'total_speeches',
         'gender': 'female_speeches'
@@ -45,7 +45,7 @@ def compute_annual_speaking_proportions(speeches_df):
 
     # Add male speeches
     annual['male_speeches'] = gendered.groupby('year')['gender'].apply(
-        lambda x: (x == 'm').sum()
+        lambda x: (x == 'M').sum()  # uppercase
     )
 
     # Calculate proportion

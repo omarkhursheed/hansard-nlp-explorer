@@ -13,11 +13,23 @@ import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import argparse
 
-# Add src to path for imports (script is now at src/hansard/scripts/processing/)
-project_root = Path(__file__).resolve().parents[4]  # Up to hansard-nlp-explorer
+# Add src to path for imports
+def find_project_root():
+    """Find project root by looking for marker files (.git, CLAUDE.md)."""
+    current = Path(__file__).resolve().parent
+    for _ in range(10):
+        if (current / '.git').exists() or (current / 'CLAUDE.md').exists():
+            return current
+        if current.parent == current:
+            break
+        current = current.parent
+    return Path(__file__).resolve().parents[2]
+
+project_root = find_project_root()
 sys.path.insert(0, str(project_root / 'src'))
 
 from hansard.parsers.data_pipeline import HansardDataPipeline
+from hansard.utils.path_config import Paths
 
 def process_files_chunk(args):
     """Process a chunk of files in parallel."""
@@ -149,10 +161,10 @@ def main():
     parser.add_argument('--end-year', type=int, default=2005, help='End year')
     parser.add_argument('--workers', type=int, default=None,
                        help='Number of worker processes per year (default: 75%% of CPU cores)')
-    parser.add_argument('--raw-data', type=str, default='data-hansard/hansard',
+    parser.add_argument('--raw-data', type=str, default=str(Paths.DATA_DIR / 'hansard'),
                        help='Raw data path')
-    parser.add_argument('--output', type=str, default='data-hansard/processed_fixed',
-                       help='Output path')
+    parser.add_argument('--output', type=str, default=str(Paths.PROCESSED_DATA),
+                       help='Output path (default: versioned processed_v2)')
 
     args = parser.parse_args()
 
