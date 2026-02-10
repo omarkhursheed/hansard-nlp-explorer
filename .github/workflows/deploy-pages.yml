@@ -2,7 +2,7 @@ name: Deploy Apps to GitHub Pages
 
 on:
   push:
-    branches: ["fresh-experiments", "main"]
+    branches: ["main"]
     paths:
       - 'apps/**'
       - '.github/workflows/deploy-pages.yml'
