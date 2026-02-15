@@ -111,6 +111,9 @@ cython_debug/
 !apps/**/data/*.json
 !apps/**/*.json
 
+# Allow validation sample for annotation workflow
+!outputs/validation/validation_sample.parquet
+
 # Compressed data files
 *.gz
 *.bz2

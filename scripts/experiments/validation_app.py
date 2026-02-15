@@ -69,13 +69,15 @@ def load_annotations(annotator: str) -> dict:
 
 
 def save_annotation(annotator: str, record: dict):
-    """Append-or-update annotation for this annotator."""
+    """Append-or-update annotation for this annotator (atomic write)."""
     existing = load_annotations(annotator)
     existing[record["speech_id"]] = record
     path = ANNOTATIONS_DIR / f"{annotator}.jsonl"
-    with open(path, "w") as f:
+    tmp = path.with_suffix(".jsonl.tmp")
+    with open(tmp, "w") as f:
         for rec in existing.values():
             f.write(json.dumps(rec, default=str) + "\n")
+    tmp.replace(path)
 
 
 def get_all_annotators() -> dict[str, dict]:
@@ -101,10 +103,11 @@ def extract_reasons(row) -> list[dict]:
 # UI: speech reading pane
 # ---------------------------------------------------------------------------
 
-def render_speech(row, speech_idx: int, total: int, already_done: bool):
+def render_speech(row, speech_idx: int, total: int, already_done: bool,
+                  n_done: int = 0):
     """Left column -- the speech text and surrounding context."""
-    tag = " -- already annotated" if already_done else ""
-    st.subheader(f"Speech {speech_idx + 1} / {total}{tag}")
+    status = " (done)" if already_done else ""
+    st.subheader(f"Speech {speech_idx + 1} / {total}{status} -- {n_done} annotated")
 
     # Metadata
     year = row.get("year")
@@ -344,14 +347,51 @@ def render_sidebar(data: pd.DataFrame):
         st.sidebar.warning("No speeches match this filter.")
         return annotator, annotations, display, 0
 
-    # Navigation
-    idx = st.sidebar.number_input(
-        "Speech #",
-        min_value=1,
-        max_value=len(display),
-        value=1,
-        step=1,
-    ) - 1
+    # Initialize session state for navigation
+    if "speech_idx" not in st.session_state:
+        st.session_state.speech_idx = 0
+
+    # Clamp to valid range
+    max_idx = len(display) - 1
+    st.session_state.speech_idx = min(st.session_state.speech_idx, max_idx)
+
+    # Prev / Next buttons
+    st.sidebar.markdown("---")
+    col_prev, col_num, col_next = st.sidebar.columns([1, 2, 1])
+
+    with col_prev:
+        if st.button("Prev", use_container_width=True,
+                      disabled=st.session_state.speech_idx == 0):
+            st.session_state.speech_idx -= 1
+            st.rerun()
+
+    with col_next:
+        if st.button("Next", use_container_width=True,
+                      disabled=st.session_state.speech_idx >= max_idx):
+            st.session_state.speech_idx += 1
+            st.rerun()
+
+    with col_num:
+        new_idx = st.number_input(
+            "Go to",
+            min_value=1,
+            max_value=len(display),
+            value=st.session_state.speech_idx + 1,
+            step=1,
+            label_visibility="collapsed",
+        ) - 1
+        if new_idx != st.session_state.speech_idx:
+            st.session_state.speech_idx = new_idx
+            st.rerun()
+
+    idx = st.session_state.speech_idx
+
+    # Show annotation status for current speech
+    current_sid = display.iloc[idx]["speech_id"]
+    if current_sid in annotated_ids:
+        st.sidebar.success(f"#{idx + 1} already annotated")
+    else:
+        st.sidebar.caption(f"#{idx + 1} not yet annotated")
 
     return annotator, annotations, display, idx
 
@@ -532,8 +572,10 @@ def main():
 
     col_read, col_form = st.columns([3, 2])
 
+    n_done = len([s for s in display["speech_id"] if s in annotations])
+
     with col_read:
-        render_speech(row, idx, len(display), already_done)
+        render_speech(row, idx, len(display), already_done, n_done)
 
     with col_form:
         result = render_form(row, defaults)
@@ -542,6 +584,9 @@ def main():
             save_annotation(annotator, result)
             label = "Skipped" if result["skipped"] else "Saved"
             st.toast(f"{label}! ({speech_id[:12]}...)")
+            # Auto-advance to next speech
+            if st.session_state.speech_idx < len(display) - 1:
+                st.session_state.speech_idx += 1
             st.rerun()
 
     # LLM reveal -- hidden by default, clickable after annotating
