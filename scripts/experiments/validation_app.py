@@ -221,7 +221,39 @@ def render_form(row, defaults: dict | None) -> dict | None:
         if st.checkbox(desc, value=checked, key=f"norm_{key}"):
             selected_norm.append(key)
 
-    # --- 5. Confidence + Notes ---
+    # --- 5. LLM bucket verification (shown AFTER blind annotation above) ---
+    llm_reasons = extract_reasons(row)
+    llm_buckets = [r.get("bucket_key") for r in llm_reasons if r.get("bucket_key")]
+    bucket_verdicts = {}
+
+    if llm_buckets:
+        st.markdown("---")
+        st.markdown("**5. Verify LLM's argument buckets**")
+        st.caption("The LLM assigned these categories. Are they correct?")
+
+        prev_verdicts = _get_defaults(defaults, "bucket_verdicts", {})
+
+        for reason in llm_reasons:
+            bk = reason.get("bucket_key", "unknown")
+            rationale = reason.get("rationale", "")
+            stance_label = reason.get("stance_label", "?")
+            label = bk.replace("_", " ").title()
+
+            with st.expander(f"{label} ({stance_label})", expanded=True):
+                st.caption(rationale)
+                prev_v = prev_verdicts.get(bk, "correct")
+                verdict = st.radio(
+                    f"Is '{label}' correct?",
+                    ["correct", "partially_correct", "wrong"],
+                    index=["correct", "partially_correct", "wrong"].index(prev_v)
+                    if prev_v in ["correct", "partially_correct", "wrong"] else 0,
+                    horizontal=True,
+                    key=f"bv_{bk}",
+                    label_visibility="collapsed",
+                )
+                bucket_verdicts[bk] = verdict
+
+    # --- 6. Confidence + Notes ---
     default_conf = int(_get_defaults(defaults, "confidence", 3))
     confidence = st.slider(
         "How confident? (1 = guessing, 5 = certain)",
@@ -241,22 +273,21 @@ def render_form(row, defaults: dict | None) -> dict | None:
         skipped = st.button("Skip", use_container_width=True)
 
     if saved or skipped:
-        # LLM data for post-hoc comparison (hidden from annotator)
         llm_stance = row.get("stance", "irrelevant")
-        llm_reasons = extract_reasons(row)
-        llm_buckets = [r.get("bucket_key") for r in llm_reasons if r.get("bucket_key")]
 
         return {
             "speech_id": row["speech_id"],
             "skipped": skipped,
-            # Human annotations
+            # Human annotations (blind)
             "human_stance": human_stance if not skipped else None,
             "ast_labels": selected_ast if not skipped else [],
             "scm_labels": selected_scm if not skipped else [],
             "norm_labels": selected_norm if not skipped else [],
+            # LLM bucket verification
+            "bucket_verdicts": bucket_verdicts if not skipped else {},
             "confidence": confidence,
             "notes": notes,
-            # LLM data (hidden, for post-hoc)
+            # LLM data (for post-hoc)
             "llm_stance": llm_stance,
             "llm_buckets": llm_buckets,
             "llm_confidence": float(row.get("confidence", 0)),
