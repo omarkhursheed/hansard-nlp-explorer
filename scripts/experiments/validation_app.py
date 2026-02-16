@@ -2,8 +2,9 @@
 Blind annotation app for Hansard suffrage speech classification.
 
 Annotators read the original speech and surrounding debate context, then
-independently classify stance and argument themes WITHOUT seeing the LLM's
-output. Agreement with the LLM is computed post-hoc.
+independently classify stance and gender bias dimensions using a validated
+3-axis taxonomy (Ambivalent Sexism Theory, Stereotype Content Model,
+Gender Norm Type). LLM output is hidden; agreement computed post-hoc.
 
 Usage:
     streamlit run scripts/experiments/validation_app.py
@@ -25,24 +26,41 @@ VALIDATION_DATA = "outputs/validation/validation_sample.parquet"
 ANNOTATIONS_DIR = Path("outputs/validation/annotations")
 ANNOTATIONS_DIR.mkdir(parents=True, exist_ok=True)
 
-# The 9 argument buckets used by the LLM classifier.
-# Annotators select which themes they observe independently.
-BUCKET_OPTIONS = {
-    "equality": "Equality -- arguments about equal rights, fairness, representation",
-    "competence_capacity": "Competence / Capacity -- arguments about ability, fitness, intelligence",
-    "emotion_morality": "Emotion / Morality -- appeals to compassion, morality, sentiment",
-    "instrumental_effects": "Instrumental Effects -- practical consequences of policy",
-    "religion_family": "Religion / Family -- religious duty, family roles, domesticity",
-    "social_order_stability": "Social Order / Stability -- maintaining order, risk of disruption",
-    "social_experiment": "Social Experiment -- untested change, slippery slope",
-    "tradition_precedent": "Tradition / Precedent -- historical practice, constitutional precedent",
-    "other": "Other -- does not fit the categories above",
-}
-
 STANCE_OPTIONS = ["for", "against", "both", "neutral", "irrelevant"]
 
 # First N speeches annotated by ALL annotators for inter-annotator agreement
 IAA_OVERLAP_COUNT = 30
+
+# ---- 3-Axis Sexism Taxonomy (Glick & Fiske 1996, Fiske et al 2002,
+#      Prentice & Carranza 2002) ----
+
+# Axis A: Ambivalent Sexism Theory
+AST_OPTIONS = {
+    "hs_dominative": "Hostile: Dominative Paternalism -- controlling, women need male authority",
+    "hs_competitive": "Hostile: Competitive Gender Diff -- women lack competence vs men",
+    "hs_heterosexual": "Hostile: Heterosexual Hostility -- women as manipulative/deceptive",
+    "bs_protective": "Benevolent: Protective Paternalism -- women need protection/shielding",
+    "bs_complementary": "Benevolent: Complementary Gender Diff -- women have purity/moral virtue",
+    "bs_intimacy": "Benevolent: Heterosexual Intimacy -- women complete men, romantic idealization",
+    "none_ast": "No sexism detected on this axis",
+}
+
+# Axis B: Stereotype Content Model
+SCM_OPTIONS = {
+    "competence_low": "Low Competence -- irrational, unfit, incapable, emotional",
+    "competence_high": "High Competence -- capable, intelligent, skilled, assertive",
+    "warmth_low": "Low Warmth -- cold, aggressive, unfeminine, hostile",
+    "warmth_high": "High Warmth -- nurturing, moral, pure, kind, sincere",
+    "none_scm": "No competence/warmth claims detected",
+}
+
+# Axis C: Gender Norm Type
+NORM_OPTIONS = {
+    "descriptive": "Descriptive -- what women ARE like (\"women are emotional\")",
+    "prescriptive": "Prescriptive -- what women SHOULD be/do (\"women should stay home\")",
+    "proscriptive": "Proscriptive -- what women should NOT be/do (\"women should not vote\")",
+    "none_norm": "No gender norm claims detected",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -130,7 +148,7 @@ def render_speech(row, speech_idx: int, total: int, already_done: bool,
     st.markdown(target)
     st.markdown("---")
 
-    # Surrounding context -- render as markdown, not a nested text_area
+    # Surrounding context
     context = row.get("context_text", "")
     if context and not pd.isna(context):
         with st.expander("Show surrounding debate context"):
@@ -141,17 +159,23 @@ def render_speech(row, speech_idx: int, total: int, already_done: bool,
 
 
 # ---------------------------------------------------------------------------
-# UI: annotation form
+# UI: annotation form (3-axis taxonomy)
 # ---------------------------------------------------------------------------
 
+def _get_defaults(defaults: dict | None, key: str, fallback):
+    """Safely get a default value from previous annotation."""
+    if defaults and key in defaults:
+        return defaults[key]
+    return fallback
+
+
 def render_form(row, defaults: dict | None) -> dict | None:
-    """Right column -- blind annotation form. Returns record or None."""
+    """Right column -- blind annotation form with 3-axis sexism taxonomy."""
     st.subheader("Your Classification")
 
     # --- 1. Stance ---
-    st.markdown("**What is this speech's stance on women's suffrage / representation?**")
+    st.markdown("**1. Stance on women's suffrage / representation?**")
 
-    # Do NOT pre-fill from LLM -- start at first option unless re-editing
     default_idx = 0
     if defaults and defaults.get("human_stance") in STANCE_OPTIONS:
         default_idx = STANCE_OPTIONS.index(defaults["human_stance"])
@@ -164,34 +188,50 @@ def render_form(row, defaults: dict | None) -> dict | None:
         label_visibility="collapsed",
     )
 
-    # --- 2. Argument themes (multi-select) ---
-    st.markdown("**Which argument themes appear in this speech?** (select all that apply)")
+    # --- 2. Axis A: Ambivalent Sexism Theory ---
+    st.markdown("**2. Ambivalent Sexism** (Glick & Fiske 1996)")
+    st.caption("How does the speech position women? Select all that apply.")
 
-    prev_buckets = set()
-    if defaults and "human_buckets" in defaults:
-        prev_buckets = set(defaults["human_buckets"])
+    prev_ast = set(_get_defaults(defaults, "ast_labels", []))
+    selected_ast = []
+    for key, desc in AST_OPTIONS.items():
+        checked = key in prev_ast
+        if st.checkbox(desc, value=checked, key=f"ast_{key}"):
+            selected_ast.append(key)
 
-    selected_buckets = []
-    for key, description in BUCKET_OPTIONS.items():
-        checked = key in prev_buckets
-        if st.checkbox(description, value=checked, key=f"chk_{key}"):
-            selected_buckets.append(key)
+    # --- 3. Axis B: Stereotype Content Model ---
+    st.markdown("**3. Stereotype Content** (Fiske et al 2002)")
+    st.caption("What trait claims are made about women? Select all that apply.")
 
-    # --- 3. Confidence ---
-    st.markdown("**How confident are you in your classification?**")
-    default_conf = int(defaults.get("confidence", 3)) if defaults else 3
+    prev_scm = set(_get_defaults(defaults, "scm_labels", []))
+    selected_scm = []
+    for key, desc in SCM_OPTIONS.items():
+        checked = key in prev_scm
+        if st.checkbox(desc, value=checked, key=f"scm_{key}"):
+            selected_scm.append(key)
+
+    # --- 4. Axis C: Gender Norm Type ---
+    st.markdown("**4. Norm Type** (Prentice & Carranza 2002)")
+    st.caption("Is, should, or should-not? Select all that apply.")
+
+    prev_norm = set(_get_defaults(defaults, "norm_labels", []))
+    selected_norm = []
+    for key, desc in NORM_OPTIONS.items():
+        checked = key in prev_norm
+        if st.checkbox(desc, value=checked, key=f"norm_{key}"):
+            selected_norm.append(key)
+
+    # --- 5. Confidence + Notes ---
+    default_conf = int(_get_defaults(defaults, "confidence", 3))
     confidence = st.slider(
-        "Confidence",
+        "How confident? (1 = guessing, 5 = certain)",
         1, 5, default_conf,
-        help="1 = guessing, 5 = certain",
-        label_visibility="collapsed",
     )
 
-    # --- 4. Notes ---
-    default_notes = defaults.get("notes", "") if defaults else ""
-    notes = st.text_area("Notes (optional)", value=default_notes, height=80)
+    default_notes = _get_defaults(defaults, "notes", "")
+    notes = st.text_area("Notes (optional)", value=default_notes, height=60)
 
-    # --- Save ---
+    # --- Save / Skip ---
     col_save, col_skip = st.columns(2)
     saved = False
     skipped = False
@@ -201,7 +241,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
         skipped = st.button("Skip", use_container_width=True)
 
     if saved or skipped:
-        # Compute agreement with LLM (stored but not shown)
+        # LLM data for post-hoc comparison (hidden from annotator)
         llm_stance = row.get("stance", "irrelevant")
         llm_reasons = extract_reasons(row)
         llm_buckets = [r.get("bucket_key") for r in llm_reasons if r.get("bucket_key")]
@@ -209,16 +249,18 @@ def render_form(row, defaults: dict | None) -> dict | None:
         return {
             "speech_id": row["speech_id"],
             "skipped": skipped,
+            # Human annotations
             "human_stance": human_stance if not skipped else None,
-            "human_buckets": selected_buckets if not skipped else [],
+            "ast_labels": selected_ast if not skipped else [],
+            "scm_labels": selected_scm if not skipped else [],
+            "norm_labels": selected_norm if not skipped else [],
             "confidence": confidence,
             "notes": notes,
-            # LLM data for post-hoc comparison (hidden from annotator)
+            # LLM data (hidden, for post-hoc)
             "llm_stance": llm_stance,
             "llm_buckets": llm_buckets,
             "llm_confidence": float(row.get("confidence", 0)),
             "stance_agrees": (human_stance == llm_stance) if not skipped else None,
-            "bucket_overlap": len(set(selected_buckets) & set(llm_buckets)) if not skipped else None,
             # Metadata
             "speaker": row.get("speaker"),
             "gender": row.get("gender"),
@@ -257,12 +299,11 @@ def render_llm_reveal(row):
         if reasons:
             for reason in reasons:
                 bucket = reason.get("bucket_key", "unknown")
-                label = BUCKET_OPTIONS.get(bucket, bucket).split(" -- ")[0]
                 stance_label = reason.get("stance_label", "?")
                 rationale = reason.get("rationale", "")
                 open_label = reason.get("bucket_open", "")
 
-                header = f"{label}"
+                header = bucket.replace("_", " ").title()
                 if open_label:
                     header += f" ({open_label})"
                 header += f" -- {stance_label}"
@@ -455,6 +496,40 @@ def render_stats_page():
                     f"  LLM={stance}: {d['agree']}/{d['total']} agree ({pct:.0%})"
                 )
 
+    # 3-axis distribution
+    st.subheader("Taxonomy Distribution")
+    for name, recs in all_annotators.items():
+        real = {k: v for k, v in recs.items() if not v.get("skipped")}
+        if not real:
+            continue
+        st.markdown(f"**{name}** ({len(real)} annotations)")
+
+        # AST counts
+        ast_counts = {}
+        scm_counts = {}
+        norm_counts = {}
+        for r in real.values():
+            for label in r.get("ast_labels", []):
+                ast_counts[label] = ast_counts.get(label, 0) + 1
+            for label in r.get("scm_labels", []):
+                scm_counts[label] = scm_counts.get(label, 0) + 1
+            for label in r.get("norm_labels", []):
+                norm_counts[label] = norm_counts.get(label, 0) + 1
+
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            st.caption("Axis A: Ambivalent Sexism")
+            for k, v in sorted(ast_counts.items(), key=lambda x: -x[1]):
+                st.caption(f"  {k}: {v}")
+        with col_b:
+            st.caption("Axis B: Stereotype Content")
+            for k, v in sorted(scm_counts.items(), key=lambda x: -x[1]):
+                st.caption(f"  {k}: {v}")
+        with col_c:
+            st.caption("Axis C: Norm Type")
+            for k, v in sorted(norm_counts.items(), key=lambda x: -x[1]):
+                st.caption(f"  {k}: {v}")
+
     # IAA: pairwise human-human agreement
     overlap_annotators = {
         name: {k: v for k, v in recs.items() if not v.get("skipped")}
@@ -486,7 +561,7 @@ def render_stats_page():
         else:
             st.caption("Need >= 5 shared annotations for IAA.")
 
-    # Export: downloadable CSV comparing human vs LLM
+    # Export: downloadable CSV
     st.subheader("Export Comparison")
     export_rows = []
     for name, recs in all_annotators.items():
@@ -499,9 +574,10 @@ def render_stats_page():
                 "human_stance": r.get("human_stance"),
                 "llm_stance": r.get("llm_stance"),
                 "stance_agrees": r.get("stance_agrees"),
-                "human_buckets": ", ".join(r.get("human_buckets", [])),
+                "ast_labels": ", ".join(r.get("ast_labels", [])),
+                "scm_labels": ", ".join(r.get("scm_labels", [])),
+                "norm_labels": ", ".join(r.get("norm_labels", [])),
                 "llm_buckets": ", ".join(r.get("llm_buckets", [])),
-                "bucket_overlap": r.get("bucket_overlap"),
                 "confidence": r.get("confidence"),
                 "llm_confidence": r.get("llm_confidence"),
                 "speaker": r.get("speaker"),
@@ -548,16 +624,21 @@ def main():
         st.title("Hansard Suffrage Classification")
         st.markdown(
             "Read each parliamentary speech and independently classify:\n\n"
-            "1. **Stance** on women's suffrage/representation "
-            "(for / against / both / neutral / irrelevant)\n"
-            "2. **Argument themes** present in the speech\n\n"
+            "1. **Stance** on women's suffrage/representation\n"
+            "2. **Gender bias dimensions** using a 3-axis taxonomy\n\n"
             "You will **not** see the LLM's classification. "
             "Agreement is computed after annotation."
         )
         st.markdown("---")
-        st.markdown("**Argument theme reference:**")
-        for key, desc in BUCKET_OPTIONS.items():
-            st.markdown(f"- {desc}")
+        st.markdown("**Axis A -- Ambivalent Sexism Theory** (Glick & Fiske 1996)")
+        st.markdown("Hostile Sexism: degrading, controlling, denigrating women's competence")
+        st.markdown("Benevolent Sexism: idealizing but restricting women (purity, protection)")
+        st.markdown("")
+        st.markdown("**Axis B -- Stereotype Content Model** (Fiske et al 2002)")
+        st.markdown("Competence claims (high/low) and Warmth claims (high/low)")
+        st.markdown("")
+        st.markdown("**Axis C -- Gender Norm Type** (Prentice & Carranza 2002)")
+        st.markdown("Descriptive (women ARE), Prescriptive (women SHOULD), Proscriptive (women SHOULD NOT)")
         return
 
     if display is None or len(display) == 0:
