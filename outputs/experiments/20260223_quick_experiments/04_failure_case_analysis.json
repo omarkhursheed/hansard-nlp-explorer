@@ -1,0 +1,1052 @@
+{
+  "n_total": 6475,
+  "n_agree": 5120,
+  "n_disagree": 1355,
+  "agreement_rate": 0.7907,
+  "confusion_pairs": {
+    "for_vs_irrelevant": 790,
+    "against_vs_irrelevant": 325,
+    "against_vs_for": 118,
+    "both_vs_irrelevant": 44,
+    "both_vs_for": 36,
+    "against_vs_both": 34,
+    "irrelevant_vs_neutral": 6,
+    "against_vs_neutral": 1,
+    "both_vs_neutral": 1
+  },
+  "disagreement_categories": {
+    "claude_irrelevant_gpt_relevant": 1078,
+    "polar_disagreement": 118,
+    "gpt_irrelevant_claude_relevant": 87,
+    "mixed_vs_onesided": 71,
+    "neutral_involved": 1
+  },
+  "confidence_analysis": {
+    "disagree_claude_mean": 0.85,
+    "agree_claude_mean": 0.925,
+    "disagree_gpt_mean": 0.792,
+    "agree_gpt_mean": 0.924
+  },
+  "disagreement_by_word_count": {
+    "0-50": {
+      "n": 18,
+      "disagreement_rate": 0.2778
+    },
+    "50-100": {
+      "n": 516,
+      "disagreement_rate": 0.1686
+    },
+    "100-200": {
+      "n": 588,
+      "disagreement_rate": 0.1956
+    },
+    "200-500": {
+      "n": 1154,
+      "disagreement_rate": 0.208
+    },
+    "500+": {
+      "n": 4155,
+      "disagreement_rate": 0.2154
+    }
+  },
+  "disagreement_by_decade": [
+    {
+      "decade": 1810,
+      "n": 10,
+      "disagreement_rate": 0.4
+    },
+    {
+      "decade": 1810,
+      "n": 10,
+      "disagreement_rate": 0.4
+    },
+    {
+      "decade": 1810,
+      "n": 10,
+      "disagreement_rate": 0.4
+    },
+    {
+      "decade": 1810,
+      "n": 10,
+      "disagreement_rate": 0.4
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1830,
+      "n": 36,
+      "disagreement_rate": 0.3056
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1840,
+      "n": 53,
+      "disagreement_rate": 0.2453
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1850,
+      "n": 54,
+      "disagreement_rate": 0.2407
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1860,
+      "n": 89,
+      "disagreement_rate": 0.2921
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1870,
+      "n": 241,
+      "disagreement_rate": 0.2365
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1880,
+      "n": 227,
+      "disagreement_rate": 0.2775
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1890,
+      "n": 300,
+      "disagreement_rate": 0.23
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1900,
+      "n": 407,
+      "disagreement_rate": 0.1695
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1910,
+      "n": 1382,
+      "disagreement_rate": 0.2388
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1920,
+      "n": 571,
+      "disagreement_rate": 0.2347
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1930,
+      "n": 560,
+      "disagreement_rate": 0.2161
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1940,
+      "n": 346,
+      "disagreement_rate": 0.185
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1950,
+      "n": 249,
+      "disagreement_rate": 0.0924
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1960,
+      "n": 295,
+      "disagreement_rate": 0.1051
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1970,
+      "n": 311,
+      "disagreement_rate": 0.1318
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1980,
+      "n": 412,
+      "disagreement_rate": 0.1845
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 1990,
+      "n": 663,
+      "disagreement_rate": 0.2247
+    },
+    {
+      "decade": 2000,
+      "n": 260,
+      "disagreement_rate": 0.2231
+    },
+    {
+      "decade": 2000,
+      "n": 260,
+      "disagreement_rate": 0.2231
+    },
+    {
+      "decade": 2000,
+      "n": 260,
+      "disagreement_rate": 0.2231
+    },
+    {
+      "decade": 2000,
+      "n": 260,
+      "disagreement_rate": 0.2231
+    },
+    {
+      "decade": 2000,
+      "n": 260,
+      "disagreement_rate": 0.2231
+    }
+  ],
+  "representative_examples": {
+    "claude_irrelevant_gpt_relevant": [
+      {
+        "speech_id": "fcf5c2e230ee9ea2_speech_7",
+        "claude_stance": "irrelevant",
+        "gpt_stance": "against",
+        "claude_confidence": 0.95,
+        "year": 1818
+      },
+      {
+        "speech_id": "6c0459dda66c54fc_speech_1",
+        "claude_stance": "irrelevant",
+        "gpt_stance": "for",
+        "claude_confidence": 0.55,
+        "year": 1819
+      },
+      {
+        "speech_id": "a73585e93ecdc86f_speech_2",
+        "claude_stance": "irrelevant",
+        "gpt_stance": "for",
+        "claude_confidence": 0.95,
+        "year": 1819
+      }
+    ],
+    "polar_disagreement": [
+      {
+        "speech_id": "965260c22c2009e1_speech_6",
+        "claude_stance": "for",
+        "gpt_stance": "against",
+        "claude_confidence": 0.85,
+        "year": 1821
+      },
+      {
+        "speech_id": "7bdc1a08243f30b3_speech_58",
+        "claude_stance": "for",
+        "gpt_stance": "against",
+        "claude_confidence": 0.85,
+        "year": 1844
+      },
+      {
+        "speech_id": "22bde7abf2c0e9c9_speech_3",
+        "claude_stance": "for",
+        "gpt_stance": "against",
+        "claude_confidence": 0.95,
+        "year": 1849
+      }
+    ],
+    "gpt_irrelevant_claude_relevant": [
+      {
+        "speech_id": "f723726096c9cd99_speech_3",
+        "claude_stance": "against",
+        "gpt_stance": "irrelevant",
+        "claude_confidence": 0.95,
+        "year": 1836
+      },
+      {
+        "speech_id": "e486278660833947_speech_7",
+        "claude_stance": "against",
+        "gpt_stance": "irrelevant",
+        "claude_confidence": 0.85,
+        "year": 1836
+      },
+      {
+        "speech_id": "198c266e37f11c9a_speech_18",
+        "claude_stance": "for",
+        "gpt_stance": "irrelevant",
+        "claude_confidence": 0.85,
+        "year": 1872
+      }
+    ],
+    "mixed_vs_onesided": [
+      {
+        "speech_id": "18eba78910dcb432_speech_6",
+        "claude_stance": "for",
+        "gpt_stance": "both",
+        "claude_confidence": 0.95,
+        "year": 1865
+      },
+      {
+        "speech_id": "353df044233b97c5_speech_13",
+        "claude_stance": "for",
+        "gpt_stance": "both",
+        "claude_confidence": 0.85,
+        "year": 1867
+      },
+      {
+        "speech_id": "ac3767ba7f8b8158_speech_7",
+        "claude_stance": "for",
+        "gpt_stance": "both",
+        "claude_confidence": 0.95,
+        "year": 1870
+      }
+    ],
+    "neutral_involved": [
+      {
+        "speech_id": "276d116d3d82b7ab_speech_7",
+        "claude_stance": "neutral",
+        "gpt_stance": "against",
+        "claude_confidence": 0.75,
+        "year": 1879
+      }
+    ]
+  }
+}

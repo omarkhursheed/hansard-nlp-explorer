@@ -1,0 +1,53 @@
+{
+  "n_speeches": 40,
+  "pairwise_agreement": {
+    "original_vs_reordered": {
+      "agreement": 0.975,
+      "kappa": 0.9034
+    },
+    "original_vs_minimal": {
+      "agreement": 0.95,
+      "kappa": 0.8276
+    },
+    "reordered_vs_minimal": {
+      "agreement": 0.925,
+      "kappa": 0.7458
+    }
+  },
+  "all_three_agreement": 0.925,
+  "vs_original_pipeline": {
+    "original": {
+      "agreement": 0.25,
+      "kappa": 0.04,
+      "n": 40
+    },
+    "reordered": {
+      "agreement": 0.225,
+      "kappa": 0.0182,
+      "n": 40
+    },
+    "minimal": {
+      "agreement": 0.275,
+      "kappa": 0.0645,
+      "n": 40
+    }
+  },
+  "per_stance_stability": {
+    "for": {
+      "n": 6,
+      "other_prompt_agreement": {
+        "reordered": 0.8333,
+        "minimal": 1.0
+      }
+    },
+    "irrelevant": {
+      "n": 34,
+      "other_prompt_agreement": {
+        "reordered": 1.0,
+        "minimal": 0.9412
+      }
+    }
+  },
+  "total_tokens": 163912,
+  "estimated_cost_usd": 1.2293
+}

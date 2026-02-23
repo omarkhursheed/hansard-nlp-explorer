@@ -1,0 +1,61 @@
+{
+  "confidence_distribution": {
+    "claude": {
+      "mean": 0.909,
+      "median": 0.95,
+      "std": 0.08,
+      "pct_above_0.75": 0.987
+    },
+    "gpt": {
+      "mean": 0.896,
+      "median": 0.9,
+      "std": 0.102,
+      "pct_above_0.75": 0.945
+    }
+  },
+  "agreement_by_claude_confidence": {
+    "all": {
+      "n": 5893,
+      "agreement_rate": 0.7709,
+      "kappa": 0.5721
+    },
+    "low (0.0-0.5)": {
+      "n": 26,
+      "agreement_rate": 0.4231,
+      "kappa": 0.1684
+    },
+    "medium (0.5-0.7)": {
+      "n": 59,
+      "agreement_rate": 0.2712,
+      "kappa": 0.0144
+    },
+    "high (0.7-0.85)": {
+      "n": 303,
+      "agreement_rate": 0.4356,
+      "kappa": 0.1648
+    },
+    "very_high (0.85-1.0)": {
+      "n": 6087,
+      "agreement_rate": 0.815,
+      "kappa": 0.6457
+    }
+  },
+  "agreement_by_joint_confidence": {
+    "both_high_confidence": {
+      "n": 6048,
+      "agreement_rate": 0.8224,
+      "kappa": 0.6467
+    },
+    "middle": {
+      "n": 398,
+      "agreement_rate": 0.3317,
+      "kappa": 0.1876
+    },
+    "either_low_confidence": {
+      "n": 29,
+      "agreement_rate": 0.4828,
+      "kappa": 0.2539
+    }
+  },
+  "n_merged": 6475
+}

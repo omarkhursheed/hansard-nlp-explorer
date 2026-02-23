@@ -1,0 +1,193 @@
+{
+  "n_speeches": 250,
+  "n_errors": 0,
+  "accuracy": 0.86,
+  "adjacent_accuracy": 0.996,
+  "mean_era_distance": 0.144,
+  "kappa": 0.825,
+  "confusion_matrix": {
+    "labels": [
+      "pre-1870",
+      "1870-1900",
+      "1900-1920",
+      "1920-1950",
+      "post-1950"
+    ],
+    "matrix": [
+      [
+        43,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        45,
+        4,
+        1,
+        0
+      ],
+      [
+        0,
+        8,
+        37,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        6,
+        43,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        47
+      ]
+    ]
+  },
+  "per_era": {
+    "pre-1870": {
+      "n": 50,
+      "accuracy": 0.86,
+      "adjacent_accuracy": 1.0
+    },
+    "1870-1900": {
+      "n": 50,
+      "accuracy": 0.9,
+      "adjacent_accuracy": 0.98
+    },
+    "1900-1920": {
+      "n": 50,
+      "accuracy": 0.74,
+      "adjacent_accuracy": 1.0
+    },
+    "1920-1950": {
+      "n": 50,
+      "accuracy": 0.86,
+      "adjacent_accuracy": 1.0
+    },
+    "post-1950": {
+      "n": 50,
+      "accuracy": 0.94,
+      "adjacent_accuracy": 1.0
+    }
+  },
+  "classification_report": {
+    "pre-1870": {
+      "precision": 1.0,
+      "recall": 0.86,
+      "f1-score": 0.9247311827956989,
+      "support": 50.0
+    },
+    "1870-1900": {
+      "precision": 0.75,
+      "recall": 0.9,
+      "f1-score": 0.8181818181818182,
+      "support": 50.0
+    },
+    "1900-1920": {
+      "precision": 0.7872340425531915,
+      "recall": 0.74,
+      "f1-score": 0.7628865979381443,
+      "support": 50.0
+    },
+    "1920-1950": {
+      "precision": 0.8269230769230769,
+      "recall": 0.86,
+      "f1-score": 0.8431372549019608,
+      "support": 50.0
+    },
+    "post-1950": {
+      "precision": 0.9791666666666666,
+      "recall": 0.94,
+      "f1-score": 0.9591836734693877,
+      "support": 50.0
+    },
+    "macro avg": {
+      "precision": 0.868664757228587,
+      "recall": 0.86,
+      "f1-score": 0.8616241054574021,
+      "support": 250.0
+    },
+    "weighted avg": {
+      "precision": 0.8686647572285869,
+      "recall": 0.86,
+      "f1-score": 0.8616241054574021,
+      "support": 250.0
+    }
+  },
+  "token_usage": {
+    "input_tokens": 148235,
+    "output_tokens": 23807,
+    "estimated_cost_usd": 0.8018
+  },
+  "model": "claude-sonnet-4-20250514",
+  "sample_predictions": [
+    {
+      "year": 1866,
+      "true_era": "pre-1870",
+      "predicted_era": "1870-1900",
+      "rationale": "The formal, elaborate sentence structure with extensive subordinate clauses, the use of 'hon. Baronet' and 'hon. Members' as standard forms of address, and references to traditional parliamentary procedures like 'Supply nights' and 'Motions for the adjournment' are characteristic of late Victorian parliamentary discourse. The highly deferential and ceremonial language reflects the formal parliamentary rhetoric of this period."
+    },
+    {
+      "year": 1828,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The speech exhibits characteristic early 19th century parliamentary language with formal, elaborate sentence structures and references to Edmund Burke's 1782 act and William Huskisson. The discussion of civil list pensions, the archaic spelling 'burthened,' and the reference to events in 1820 all point to a speech delivered in the early-to-mid 19th century, well before 1870."
+    },
+    {
+      "year": 1809,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate sentence structure with lengthy subordinate clauses, archaic phrasing like 'his right hon. friend's inclination,' and discussion of West India colonies and Martinique's capitulation strongly indicate late 18th or early 19th century parliamentary discourse. The colonial context and mercantilistic concerns about trade terms were characteristic of pre-1870 imperial parliamentary debates."
+    },
+    {
+      "year": 1841,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate Victorian prose style with extremely long, complex sentences, archaic parliamentary terminology ('hon. Baronet', 'right hon. Friend'), and references to slavery compensation and West India proprietors clearly indicate this speech predates 1870. The rhetorical style and vocabulary are characteristic of mid-19th century parliamentary debate."
+    },
+    {
+      "year": 1839,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate Victorian parliamentary rhetoric with lengthy, complex sentences, references to 'noble Lords,' discussions of colonial governance including Lower Canada and suspended Habeas Corpus, and the mention of dates around 1842 clearly indicate this speech is from the early-to-mid 19th century, well before 1870."
+    },
+    {
+      "year": 1836,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The speech exhibits classic early 19th century parliamentary rhetoric with formal, elaborate sentence structures, extensive use of semicolons, and archaic spellings like 'connexion.' The emphasis on isolationism, commerce-based foreign policy, and references to 'the balance of power' as an established concept, combined with the comparison to America's distance from European politics, strongly suggests this is from the pre-1870 era, likely from debates around the 1840s-1860s period."
+    },
+    {
+      "year": 1831,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate Victorian parliamentary language ('Gentlemen opposite', 'souls' for people, 'principal seat of our iron manufactory') and discussion of constituency boundaries and representation reform strongly suggests this is from the era of the Great Reform Act debates of the 1830s-1860s. The archaic phrasing and references to unrepresented populations around industrial centers are characteristic of pre-1870 parliamentary reform discussions."
+    },
+    {
+      "year": 1826,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate Victorian prose style with complex sentence structures, the reference to 'Mr. Peel's bill' (likely the Bank Charter Act of 1844), and the archaic parliamentary language patterns ('his hon. friend, the member for Taunton') clearly indicate this speech is from the mid-19th century or earlier. The discussion of Bank of England operations and government securities in this rhetorical style is characteristic of pre-1870 parliamentary debate."
+    },
+    {
+      "year": 1868,
+      "true_era": "pre-1870",
+      "predicted_era": "1870-1900",
+      "rationale": "The speech explicitly references 'the Reform Act of last year' and discusses the newly enfranchised 'lodgers' as voters, which directly corresponds to the Second Reform Act of 1867 and subsequent registration legislation of the 1870s. The formal Victorian parliamentary language, references to specific legal procedures for voter registration, and the context of expanding franchise to working-class lodgers clearly places this in the immediate post-1867 Reform Act period."
+    },
+    {
+      "year": 1860,
+      "true_era": "pre-1870",
+      "predicted_era": "pre-1870",
+      "rationale": "The formal, elaborate Victorian parliamentary language, archaic legal terminology like 'moiety' and 'under penalty of forfeiture', and the specific reference to implementation 'after the 1st January, 1861' clearly indicate this speech is from the pre-1870 era. The ornate sentence structure and deferential tone ('he had to ask their Lordships') are characteristic of mid-19th century parliamentary discourse."
+    }
+  ]
+}
