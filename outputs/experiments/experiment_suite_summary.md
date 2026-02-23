@@ -132,10 +132,49 @@ Where do Claude and GPT-4o-mini disagree? (n=6,475 speeches)
 - Dominant failure mode: disagreement about whether a speech is *about suffrage at all*, not about which side the speaker takes
 - Confidence is lower in disagreements (0.850) than agreements (0.925)
 
-**Representative examples:**
-- *Relevance boundary:* An 1836 speech comparing female property to that of "minors and lunatics" -- Claude reads it as opposing women's franchise, GPT sees it as a technical discussion about property trusts
-- *Polar disagreement:* An 1844 speech preserving proxy voting for female ratepayers -- supportive (preserving their ability to vote) or restrictive (they should only vote by proxy)?
-- *Mixed vs one-sided:* An 1870 speech supporting the franchise bill but calling women "the masters" of men -- Claude reads the vote intention as "for"; GPT catches the mixed signals
+### 8a. Relevance Boundary (86% of disagreements)
+
+The core issue: does a speech about women's rights broadly count as suffrage specifically?
+
+**Claude=irrelevant, GPT=relevant (1,078 cases)** -- GPT is more aggressive at finding suffrage relevance.
+
+- *2004, Jacqui Smith (Deputy Minister for Women):* Praises women "breaking down barriers at work, forming the backbone of voluntary organisations." Claude: general women's empowerment, not voting. GPT: the Minister for Women celebrating progress is pro-suffrage. Both defensible -- depends on how broadly you define suffrage.
+
+- *2004, Tony Blair:* "Women now play a part in the political process" in Afghanistan and Iraq. Claude: foreign policy. GPT: women's right to vote, just in other countries. A genuine scope question.
+
+- *2002, Joan Ryan (Labour):* "Before 1997 more Members were named John than were female...the only effective mechanisms to address that are quotas and women's representation legislation." Claude: pro-suffrage (arguing for women's political representation). GPT: irrelevant (candidate quotas, not the franchise itself).
+
+**GPT=irrelevant, Claude=relevant (87 cases)** -- rarer, Claude catches things GPT misses.
+
+- *2001, Julie Morgan (Labour):* Discussing costs of standing as a candidate, Scandinavian representation models. Claude: "for" (supporting women in parliament). GPT: "irrelevant" (practical barriers, not franchise).
+
+Post-1928 speeches are inherently ambiguous because the vote was already won. Is advocating for more women MPs "suffrage" or something else? That is a legitimate annotation disagreement, not a classifier failure.
+
+### 8b. Polar Disagreement (8.7% of disagreements)
+
+One model says "for," the other says "against." These are the most concerning but almost always involve speeches that *reference* suffrage rhetorically rather than *argue about* it directly.
+
+- *1997, Paddy Ashdown (Lib Dem):* Quotes someone saying "Constitutional change would endanger the very fabric of Britain" then asks: "Were those words said by a die-hard Tory opposing votes for women? No, this time it was the Prime Minister." Claude reads the irony correctly -- Ashdown is mocking the PM by comparing him to anti-suffragists (pro-reform). GPT reads the quoted content at face value (anti-suffrage).
+
+- *1989, David Winnick (Labour):* "Women went to prison and on hunger strike for the elementary right to vote." Claude: honoring the suffrage movement (pro). GPT: reads the broader framing around compulsory voting as restrictive. The speech invokes suffragettes to argue people should value their franchise.
+
+- *1941, Pethick-Lawrence:* "When we were fighting the battle to give women the vote more than 20 years ago, it was often said that giving the vote to women would create a sex war." Claude correctly identifies this as pro-suffrage -- Pethick-Lawrence was a famous suffrage campaigner. GPT may have keyed on "create a sex war" as opposition language. Historical knowledge of the speaker would resolve this instantly, but the model only sees text.
+
+- *1836 (early example):* Speech comparing female property to that of "minors and lunatics" -- Claude reads it as opposing women's franchise, GPT sees it as a technical discussion about property trusts.
+
+Pattern: polar disagreements almost always involve speeches *using* suffrage as a rhetorical device, not debating it.
+
+### 8c. Mixed vs One-Sided (5.2% of disagreements)
+
+One model sees a clear stance, the other sees arguments on both sides. Mostly cases of parliamentary hedging.
+
+- *2001, Mark Hoban (Conservative):* "There is widespread support for the Bill's principles, and its attempt to improve women's representation. It is important that we get it right, however." Then discusses legal challenges. Claude: "both" (supports the goal but raises objections). GPT: "against" (focusing on the legal pushback). Classic parliamentary move -- expressing support in principle while effectively opposing in practice.
+
+- *1928, Mr. Dixey:* "I believe that equal franchise should be given to men and women, but..." then spends the speech discussing plural voting and how he cannot see "inequality in the present system." Claude: "both" because of the explicit "but." GPT: "for" because of the opening declaration. The question is whether you weight the stated position or the hedging.
+
+- *1870 (early example):* Speaker votes for the franchise bill but says "men were the slaves, and women the masters." Claude reads the vote as "for." GPT catches the condescension and calls it "both."
+
+Pattern: mixed vs one-sided cases are mostly speakers who say "I support X, but..." or express support through backhanded framing.
 
 ---
 
