@@ -197,6 +197,9 @@ Pattern: mixed vs one-sided cases are mostly speakers who say "I support X, but.
 
 ## Pending
 
-- **Human annotation** (311 speeches, Omar + Mandira) -- in progress
+- **Human annotation** (100 speeches, Omar + Mandira, full overlap for IAA) -- in progress
+  - Stratified sample: 25 for, 25 against, 20 both, 30 irrelevant
+  - Margin of error: +/-9.8% at 95% CI (standard for NLP validation)
+  - Both annotators label all 100 speeches for full Cohen's kappa computation
 - **Recompute baselines against gold labels** -- blocked on annotation
 - **Paper restructuring** -- EMNLP format, explicit RQs, drop D_TRH comparison

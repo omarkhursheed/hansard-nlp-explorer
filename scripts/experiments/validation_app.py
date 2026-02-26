@@ -28,8 +28,8 @@ ANNOTATIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 STANCE_OPTIONS = ["for", "against", "both", "neutral", "irrelevant"]
 
-# First N speeches annotated by ALL annotators for inter-annotator agreement
-IAA_OVERLAP_COUNT = 30
+# All 100 speeches annotated by BOTH annotators for full inter-annotator agreement
+IAA_OVERLAP_COUNT = 100
 
 # ---- 3-Axis Sexism Taxonomy (Glick & Fiske 1996, Fiske et al 2002,
 #      Prentice & Carranza 2002) ----
