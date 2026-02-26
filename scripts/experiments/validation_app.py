@@ -45,13 +45,15 @@ AST_OPTIONS = {
     "none_ast": "No sexism detected on this axis",
 }
 
-# Axis B: Stereotype Content Model
+# Axis B: Stereotype Content Model (Fiske et al 2002)
+# Classifies stereotypes along two dimensions (warmth x competence)
+# producing four quadrants of prejudice
 SCM_OPTIONS = {
-    "competence_low": "Low Competence -- irrational, unfit, incapable, emotional",
-    "competence_high": "High Competence -- capable, intelligent, skilled, assertive",
-    "warmth_low": "Low Warmth -- cold, aggressive, unfeminine, hostile",
-    "warmth_high": "High Warmth -- nurturing, moral, pure, kind, sincere",
-    "none_scm": "No competence/warmth claims detected",
+    "hw_lc": "High Warmth, Low Competence -- paternalistic prejudice; pity, sympathy (low status, not competitive)",
+    "hw_hc": "High Warmth, High Competence -- admiration; pride, admiration (high status, not competitive)",
+    "lw_lc": "Low Warmth, Low Competence -- contemptuous prejudice; contempt, disgust, anger (low status, competitive)",
+    "lw_hc": "Low Warmth, High Competence -- envious prejudice; envy, jealousy (high status, competitive)",
+    "none_scm": "No warmth/competence claims detected",
 }
 
 # Axis C: Gender Norm Type
