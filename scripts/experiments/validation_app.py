@@ -49,10 +49,10 @@ AST_OPTIONS = {
 # Classifies stereotypes along two dimensions (warmth x competence)
 # producing four quadrants of prejudice
 SCM_OPTIONS = {
-    "hw_lc": "High Warmth, Low Competence -- paternalistic prejudice; pity, sympathy (low status, not competitive)",
-    "hw_hc": "High Warmth, High Competence -- admiration; pride, admiration (high status, not competitive)",
-    "lw_lc": "Low Warmth, Low Competence -- contemptuous prejudice; contempt, disgust, anger (low status, competitive)",
-    "lw_hc": "Low Warmth, High Competence -- envious prejudice; envy, jealousy (high status, competitive)",
+    "hw_lc": "High Warmth, Low Competence -- \"women are kind but helpless\"; pity, protection",
+    "hw_hc": "High Warmth, High Competence -- \"women are capable and good\"; admiration, respect",
+    "lw_lc": "Low Warmth, Low Competence -- \"women are incompetent and a burden\"; contempt, disgust",
+    "lw_hc": "Low Warmth, High Competence -- \"women are capable but threatening\"; envy, resentment",
     "none_scm": "No warmth/competence claims detected",
 }
 
@@ -175,6 +175,9 @@ def render_form(row, defaults: dict | None) -> dict | None:
     """Right column -- blind annotation form with 3-axis sexism taxonomy."""
     st.subheader("Your Classification")
 
+    # Use speech_id as key prefix so widgets reset between speeches
+    sid = row["speech_id"]
+
     # --- 1. Stance ---
     st.markdown("**1. Stance on women's suffrage / representation?**")
 
@@ -188,6 +191,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
         index=default_idx,
         horizontal=True,
         label_visibility="collapsed",
+        key=f"stance_{sid}",
     )
 
     # --- 2. Axis A: Ambivalent Sexism Theory ---
@@ -198,7 +202,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
     selected_ast = []
     for key, desc in AST_OPTIONS.items():
         checked = key in prev_ast
-        if st.checkbox(desc, value=checked, key=f"ast_{key}"):
+        if st.checkbox(desc, value=checked, key=f"ast_{sid}_{key}"):
             selected_ast.append(key)
 
     # --- 3. Axis B: Stereotype Content Model ---
@@ -209,7 +213,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
     selected_scm = []
     for key, desc in SCM_OPTIONS.items():
         checked = key in prev_scm
-        if st.checkbox(desc, value=checked, key=f"scm_{key}"):
+        if st.checkbox(desc, value=checked, key=f"scm_{sid}_{key}"):
             selected_scm.append(key)
 
     # --- 4. Axis C: Gender Norm Type ---
@@ -220,7 +224,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
     selected_norm = []
     for key, desc in NORM_OPTIONS.items():
         checked = key in prev_norm
-        if st.checkbox(desc, value=checked, key=f"norm_{key}"):
+        if st.checkbox(desc, value=checked, key=f"norm_{sid}_{key}"):
             selected_norm.append(key)
 
     # --- 5. LLM bucket verification (shown AFTER blind annotation above) ---
@@ -235,7 +239,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
 
         prev_verdicts = _get_defaults(defaults, "bucket_verdicts", {})
 
-        for reason in llm_reasons:
+        for ri, reason in enumerate(llm_reasons):
             bk = reason.get("bucket_key", "unknown")
             rationale = reason.get("rationale", "")
             stance_label = reason.get("stance_label", "?")
@@ -250,7 +254,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
                     index=["correct", "partially_correct", "wrong"].index(prev_v)
                     if prev_v in ["correct", "partially_correct", "wrong"] else 0,
                     horizontal=True,
-                    key=f"bv_{bk}",
+                    key=f"bv_{sid}_{ri}_{bk}",
                     label_visibility="collapsed",
                 )
                 bucket_verdicts[bk] = verdict
@@ -260,10 +264,12 @@ def render_form(row, defaults: dict | None) -> dict | None:
     confidence = st.slider(
         "How confident? (1 = guessing, 5 = certain)",
         1, 5, default_conf,
+        key=f"conf_{sid}",
     )
 
     default_notes = _get_defaults(defaults, "notes", "")
-    notes = st.text_area("Notes (optional)", value=default_notes, height=60)
+    notes = st.text_area("Notes (optional)", value=default_notes, height=60,
+                         key=f"notes_{sid}")
 
     # --- Save / Skip ---
     col_save, col_skip = st.columns(2)
