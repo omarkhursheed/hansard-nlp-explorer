@@ -27,41 +27,93 @@ ANNOTATIONS_DIR = Path("outputs/validation/annotations")
 ANNOTATIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 STANCE_OPTIONS = ["for", "against", "both", "neutral", "irrelevant"]
+BINARY_OPTIONS = ["sexist", "not_sexist"]
 
 # All 100 speeches annotated by BOTH annotators for full inter-annotator agreement
 IAA_OVERLAP_COUNT = 100
 
-# ---- 3-Axis Sexism Taxonomy (Glick & Fiske 1996, Fiske et al 2002,
-#      Prentice & Carranza 2002) ----
+# ---- 3-Axis Sexism Taxonomy (aligned with prompts/sexism_classification_prompt.md) ----
 
 # Axis A: Ambivalent Sexism Theory
-AST_OPTIONS = {
-    "hs_dominative": "Hostile: Dominative Paternalism -- controlling, women need male authority",
-    "hs_competitive": "Hostile: Competitive Gender Diff -- women lack competence vs men",
-    "hs_heterosexual": "Hostile: Heterosexual Hostility -- women as manipulative/deceptive",
-    "bs_protective": "Benevolent: Protective Paternalism -- women need protection/shielding",
-    "bs_complementary": "Benevolent: Complementary Gender Diff -- women have purity/moral virtue",
-    "bs_intimacy": "Benevolent: Heterosexual Intimacy -- women complete men, romantic idealization",
-    "none_ast": "No sexism detected on this axis",
+AXIS_A_LABELS = ["hostile", "benevolent", "none"]
+AXIS_A_LABEL_DESCRIPTIONS = {
+    "hostile": "Hostile -- degrading, blaming, controlling women",
+    "benevolent": "Benevolent -- idealizing women but restricting roles",
+    "none": "No ambivalent sexism detected",
+}
+AXIS_A_SUBCATEGORIES = {
+    "hostile": [
+        "dominative_paternalism",
+        "competitive_gender_differentiation",
+        "heterosexual_hostility",
+        "none",
+    ],
+    "benevolent": [
+        "protective_paternalism",
+        "complementary_gender_differentiation",
+        "heterosexual_intimacy",
+        "none",
+    ],
+    "none": ["none"],
+}
+AXIS_A_SUBCATEGORY_DESCRIPTIONS = {
+    "dominative_paternalism": "Justifies male authority",
+    "competitive_gender_differentiation": "Justifies male dominance by competence",
+    "heterosexual_hostility": "Frames women's sexuality as threatening",
+    "protective_paternalism": "Justifies male authority through care",
+    "complementary_gender_differentiation": "Praise that confines women to complementary roles",
+    "heterosexual_intimacy": "Women as essential to men's happiness via intimacy",
+    "none": "No subcategory",
 }
 
-# Axis B: Stereotype Content Model (Fiske et al 2002)
-# Classifies stereotypes along two dimensions (warmth x competence)
-# producing four quadrants of prejudice
-SCM_OPTIONS = {
-    "hw_lc": "High Warmth, Low Competence -- \"women are kind but helpless\"; pity, protection",
-    "hw_hc": "High Warmth, High Competence -- \"women are capable and good\"; admiration, respect",
-    "lw_lc": "Low Warmth, Low Competence -- \"women are incompetent and a burden\"; contempt, disgust",
-    "lw_hc": "Low Warmth, High Competence -- \"women are capable but threatening\"; envy, resentment",
-    "none_scm": "No warmth/competence claims detected",
+# Axis B: Stereotype Content Model
+AXIS_B_LABELS = [
+    "paternalistic_prejudice",
+    "admiration",
+    "contemptuous_prejudice",
+    "envious_prejudice",
+    "none",
+]
+AXIS_B_LABEL_DESCRIPTIONS = {
+    "paternalistic_prejudice": "Warm, incompetent; pity/protection",
+    "admiration": "Warm, competent; admiration/pride",
+    "contemptuous_prejudice": "Cold, incompetent; contempt/disgust",
+    "envious_prejudice": "Cold, competent; envy/resentment",
+    "none": "No stereotype content detected",
 }
 
 # Axis C: Gender Norm Type
-NORM_OPTIONS = {
-    "descriptive": "Descriptive -- what women ARE like (\"women are emotional\")",
-    "prescriptive": "Prescriptive -- what women SHOULD be/do (\"women should stay home\")",
-    "proscriptive": "Proscriptive -- what women should NOT be/do (\"women should not vote\")",
-    "none_norm": "No gender norm claims detected",
+AXIS_C_LABELS = ["descriptive", "prescriptive", "proscriptive", "none"]
+AXIS_C_LABEL_DESCRIPTIONS = {
+    "descriptive": "What women are like",
+    "prescriptive": "What women should do/be",
+    "proscriptive": "What women should not do/be",
+    "none": "No gender norm claims detected",
+}
+
+AXIS_A_SUBCATEGORY_SET = set().union(*AXIS_A_SUBCATEGORIES.values())
+
+OLD_AST_TO_AXIS_A = {
+    "hs_dominative": ("hostile", "dominative_paternalism"),
+    "hs_competitive": ("hostile", "competitive_gender_differentiation"),
+    "hs_heterosexual": ("hostile", "heterosexual_hostility"),
+    "bs_protective": ("benevolent", "protective_paternalism"),
+    "bs_complementary": ("benevolent", "complementary_gender_differentiation"),
+    "bs_intimacy": ("benevolent", "heterosexual_intimacy"),
+    "none_ast": ("none", "none"),
+}
+OLD_SCM_TO_AXIS_B = {
+    "hw_lc": "paternalistic_prejudice",
+    "hw_hc": "admiration",
+    "lw_lc": "contemptuous_prejudice",
+    "lw_hc": "envious_prejudice",
+    "none_scm": "none",
+}
+OLD_NORM_TO_AXIS_C = {
+    "descriptive": "descriptive",
+    "prescriptive": "prescriptive",
+    "proscriptive": "proscriptive",
+    "none_norm": "none",
 }
 
 
@@ -171,12 +223,129 @@ def _get_defaults(defaults: dict | None, key: str, fallback):
     return fallback
 
 
+def _format_axis_a_label(label: str) -> str:
+    desc = AXIS_A_LABEL_DESCRIPTIONS.get(label, "")
+    return f"{label} - {desc}" if desc else label
+
+
+def _format_axis_a_subcategory(label: str) -> str:
+    desc = AXIS_A_SUBCATEGORY_DESCRIPTIONS.get(label, "")
+    if label == "none":
+        return "none - No subcategory"
+    title = label.replace("_", " ").title()
+    return f"{title} - {desc}" if desc else title
+
+
+def _format_axis_b_label(label: str) -> str:
+    desc = AXIS_B_LABEL_DESCRIPTIONS.get(label, "")
+    return f"{label} - {desc}" if desc else label
+
+
+def _format_axis_c_label(label: str) -> str:
+    desc = AXIS_C_LABEL_DESCRIPTIONS.get(label, "")
+    return f"{label} - {desc}" if desc else label
+
+
+def _coerce_list(value) -> list:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, str):
+        return [value]
+    return []
+
+
+def _infer_axis_a_from_old(labels: list[str]) -> tuple[str, str]:
+    for label in labels:
+        mapped = OLD_AST_TO_AXIS_A.get(label)
+        if mapped and mapped[0] != "none":
+            return mapped
+    for label in labels:
+        mapped = OLD_AST_TO_AXIS_A.get(label)
+        if mapped:
+            return mapped
+    return "none", "none"
+
+
+def _infer_axis_b_from_old(labels: list[str]) -> str:
+    for label in labels:
+        mapped = OLD_SCM_TO_AXIS_B.get(label)
+        if mapped and mapped != "none":
+            return mapped
+    for label in labels:
+        mapped = OLD_SCM_TO_AXIS_B.get(label)
+        if mapped:
+            return mapped
+    return "none"
+
+
+def _infer_axis_c_from_old(labels: list[str]) -> str:
+    for label in labels:
+        mapped = OLD_NORM_TO_AXIS_C.get(label)
+        if mapped and mapped != "none":
+            return mapped
+    for label in labels:
+        mapped = OLD_NORM_TO_AXIS_C.get(label)
+        if mapped:
+            return mapped
+    return "none"
+
+
+def normalize_axes(defaults: dict | None) -> dict:
+    """Normalize axis selections for new/legacy annotation formats."""
+    axis_a_label = _get_defaults(defaults, "axis_a_label", None)
+    axis_a_subcategory = _get_defaults(defaults, "axis_a_subcategory", None)
+    axis_b_label = _get_defaults(defaults, "axis_b_label", None)
+    axis_c_label = _get_defaults(defaults, "axis_c_label", None)
+
+    if axis_a_label not in AXIS_A_LABELS or axis_a_subcategory not in AXIS_A_SUBCATEGORY_SET:
+        old_ast = _coerce_list(_get_defaults(defaults, "ast_labels", []))
+        axis_a_label, axis_a_subcategory = _infer_axis_a_from_old(old_ast)
+
+    if axis_b_label not in AXIS_B_LABELS:
+        old_scm = _coerce_list(_get_defaults(defaults, "scm_labels", []))
+        axis_b_label = _infer_axis_b_from_old(old_scm)
+
+    if axis_c_label not in AXIS_C_LABELS:
+        old_norm = _coerce_list(_get_defaults(defaults, "norm_labels", []))
+        axis_c_label = _infer_axis_c_from_old(old_norm)
+
+    if axis_a_label not in AXIS_A_LABELS:
+        axis_a_label = "none"
+    if axis_a_subcategory not in AXIS_A_SUBCATEGORY_SET:
+        if axis_a_label in ("hostile", "benevolent"):
+            axis_a_subcategory = AXIS_A_SUBCATEGORIES[axis_a_label][0]
+        else:
+            axis_a_subcategory = "none"
+    if axis_a_label == "none":
+        axis_a_subcategory = "none"
+
+    if axis_b_label not in AXIS_B_LABELS:
+        axis_b_label = "none"
+    if axis_c_label not in AXIS_C_LABELS:
+        axis_c_label = "none"
+
+    binary = _get_defaults(defaults, "binary", None)
+    if binary not in BINARY_OPTIONS:
+        binary = "sexist" if any(
+            label != "none" for label in (axis_a_label, axis_b_label, axis_c_label)
+        ) else "not_sexist"
+
+    return {
+        "binary": binary,
+        "axis_a_label": axis_a_label,
+        "axis_a_subcategory": axis_a_subcategory,
+        "axis_b_label": axis_b_label,
+        "axis_c_label": axis_c_label,
+    }
+
+
 def render_form(row, defaults: dict | None) -> dict | None:
     """Right column -- blind annotation form with 3-axis sexism taxonomy."""
     st.subheader("Your Classification")
 
     # Use speech_id as key prefix so widgets reset between speeches
     sid = row["speech_id"]
+    defaults_norm = normalize_axes(defaults)
 
     # --- 1. Stance ---
     st.markdown("**1. Stance on women's suffrage / representation?**")
@@ -194,47 +363,80 @@ def render_form(row, defaults: dict | None) -> dict | None:
         key=f"stance_{sid}",
     )
 
-    # --- 2. Axis A: Ambivalent Sexism Theory ---
-    st.markdown("**2. Ambivalent Sexism** (Glick & Fiske 1996)")
-    st.caption("How does the speech position women? Select all that apply.")
+    # --- 2. Binary label ---
+    st.markdown("**2. Sexism (binary)**")
+    binary = st.radio(
+        "Binary label",
+        BINARY_OPTIONS,
+        index=BINARY_OPTIONS.index(defaults_norm["binary"]),
+        horizontal=True,
+        key=f"binary_{sid}",
+        label_visibility="collapsed",
+    )
 
-    prev_ast = set(_get_defaults(defaults, "ast_labels", []))
-    selected_ast = []
-    for key, desc in AST_OPTIONS.items():
-        checked = key in prev_ast
-        if st.checkbox(desc, value=checked, key=f"ast_{sid}_{key}"):
-            selected_ast.append(key)
+    # --- 3. Axis A: Ambivalent Sexism Theory ---
+    st.markdown("**3. Axis A - Ambivalent Sexism**")
+    axis_a_label = st.radio(
+        "Axis A label",
+        AXIS_A_LABELS,
+        index=AXIS_A_LABELS.index(defaults_norm["axis_a_label"]),
+        horizontal=True,
+        key=f"axis_a_label_{sid}",
+        format_func=_format_axis_a_label,
+        label_visibility="collapsed",
+    )
 
-    # --- 3. Axis B: Stereotype Content Model ---
-    st.markdown("**3. Stereotype Content** (Fiske et al 2002)")
-    st.caption("What trait claims are made about women? Select all that apply.")
+    axis_a_subcategory = "none"
+    if axis_a_label != "none":
+        st.markdown("Axis A subcategory")
+        subcategories = AXIS_A_SUBCATEGORIES[axis_a_label]
+        if defaults_norm["axis_a_label"] == axis_a_label and defaults_norm["axis_a_subcategory"] in subcategories:
+            sub_default = defaults_norm["axis_a_subcategory"]
+        else:
+            sub_default = subcategories[0]
+        axis_a_subcategory = st.radio(
+            "Axis A subcategory",
+            subcategories,
+            index=subcategories.index(sub_default),
+            key=f"axis_a_sub_{sid}_{axis_a_label}",
+            format_func=_format_axis_a_subcategory,
+            label_visibility="collapsed",
+        )
+    else:
+        st.caption("Axis A subcategory is not applicable when label is none.")
 
-    prev_scm = set(_get_defaults(defaults, "scm_labels", []))
-    selected_scm = []
-    for key, desc in SCM_OPTIONS.items():
-        checked = key in prev_scm
-        if st.checkbox(desc, value=checked, key=f"scm_{sid}_{key}"):
-            selected_scm.append(key)
+    # --- 4. Axis B: Stereotype Content Model ---
+    st.markdown("**4. Axis B - Stereotype Content**")
+    axis_b_label = st.radio(
+        "Axis B label",
+        AXIS_B_LABELS,
+        index=AXIS_B_LABELS.index(defaults_norm["axis_b_label"]),
+        horizontal=True,
+        key=f"axis_b_label_{sid}",
+        format_func=_format_axis_b_label,
+        label_visibility="collapsed",
+    )
 
-    # --- 4. Axis C: Gender Norm Type ---
-    st.markdown("**4. Norm Type** (Prentice & Carranza 2002)")
-    st.caption("Is, should, or should-not? Select all that apply.")
+    # --- 5. Axis C: Gender Norm Type ---
+    st.markdown("**5. Axis C - Norm Type**")
+    axis_c_label = st.radio(
+        "Axis C label",
+        AXIS_C_LABELS,
+        index=AXIS_C_LABELS.index(defaults_norm["axis_c_label"]),
+        horizontal=True,
+        key=f"axis_c_label_{sid}",
+        format_func=_format_axis_c_label,
+        label_visibility="collapsed",
+    )
 
-    prev_norm = set(_get_defaults(defaults, "norm_labels", []))
-    selected_norm = []
-    for key, desc in NORM_OPTIONS.items():
-        checked = key in prev_norm
-        if st.checkbox(desc, value=checked, key=f"norm_{sid}_{key}"):
-            selected_norm.append(key)
-
-    # --- 5. LLM bucket verification (shown AFTER blind annotation above) ---
+    # --- 6. LLM bucket verification (shown AFTER blind annotation above) ---
     llm_reasons = extract_reasons(row)
     llm_buckets = [r.get("bucket_key") for r in llm_reasons if r.get("bucket_key")]
     bucket_verdicts = {}
 
     if llm_buckets:
         st.markdown("---")
-        st.markdown("**5. Verify LLM's argument buckets**")
+        st.markdown("**6. Verify LLM's argument buckets**")
         st.caption("The LLM assigned these categories. Are they correct?")
 
         prev_verdicts = _get_defaults(defaults, "bucket_verdicts", {})
@@ -259,7 +461,7 @@ def render_form(row, defaults: dict | None) -> dict | None:
                 )
                 bucket_verdicts[bk] = verdict
 
-    # --- 6. Confidence + Notes ---
+    # --- 7. Confidence + Notes ---
     default_conf = int(_get_defaults(defaults, "confidence", 3))
     confidence = st.slider(
         "How confident? (1 = guessing, 5 = certain)",
@@ -282,15 +484,24 @@ def render_form(row, defaults: dict | None) -> dict | None:
 
     if saved or skipped:
         llm_stance = row.get("stance", "irrelevant")
+        if binary == "not_sexist":
+            axis_a_label = "none"
+            axis_a_subcategory = "none"
+            axis_b_label = "none"
+            axis_c_label = "none"
+        elif axis_a_label == "none":
+            axis_a_subcategory = "none"
 
         return {
             "speech_id": row["speech_id"],
             "skipped": skipped,
             # Human annotations (blind)
             "human_stance": human_stance if not skipped else None,
-            "ast_labels": selected_ast if not skipped else [],
-            "scm_labels": selected_scm if not skipped else [],
-            "norm_labels": selected_norm if not skipped else [],
+            "binary": binary if not skipped else None,
+            "axis_a_label": axis_a_label if not skipped else None,
+            "axis_a_subcategory": axis_a_subcategory if not skipped else None,
+            "axis_b_label": axis_b_label if not skipped else None,
+            "axis_c_label": axis_c_label if not skipped else None,
             # LLM bucket verification
             "bucket_verdicts": bucket_verdicts if not skipped else {},
             "confidence": confidence,
@@ -543,30 +754,44 @@ def render_stats_page():
             continue
         st.markdown(f"**{name}** ({len(real)} annotations)")
 
-        # AST counts
-        ast_counts = {}
-        scm_counts = {}
-        norm_counts = {}
+        binary_counts = {}
+        axis_a_counts = {}
+        axis_a_sub_counts = {}
+        axis_b_counts = {}
+        axis_c_counts = {}
         for r in real.values():
-            for label in r.get("ast_labels", []):
-                ast_counts[label] = ast_counts.get(label, 0) + 1
-            for label in r.get("scm_labels", []):
-                scm_counts[label] = scm_counts.get(label, 0) + 1
-            for label in r.get("norm_labels", []):
-                norm_counts[label] = norm_counts.get(label, 0) + 1
+            axes = normalize_axes(r)
+            binary = axes["binary"]
+            axis_a_label = axes["axis_a_label"]
+            axis_a_sub = axes["axis_a_subcategory"]
+            axis_b_label = axes["axis_b_label"]
+            axis_c_label = axes["axis_c_label"]
+
+            binary_counts[binary] = binary_counts.get(binary, 0) + 1
+            axis_a_counts[axis_a_label] = axis_a_counts.get(axis_a_label, 0) + 1
+            axis_a_sub_counts[axis_a_sub] = axis_a_sub_counts.get(axis_a_sub, 0) + 1
+            axis_b_counts[axis_b_label] = axis_b_counts.get(axis_b_label, 0) + 1
+            axis_c_counts[axis_c_label] = axis_c_counts.get(axis_c_label, 0) + 1
+
+        st.caption("Binary label")
+        for k, v in sorted(binary_counts.items(), key=lambda x: -x[1]):
+            st.caption(f"  {k}: {v}")
 
         col_a, col_b, col_c = st.columns(3)
         with col_a:
-            st.caption("Axis A: Ambivalent Sexism")
-            for k, v in sorted(ast_counts.items(), key=lambda x: -x[1]):
+            st.caption("Axis A label")
+            for k, v in sorted(axis_a_counts.items(), key=lambda x: -x[1]):
+                st.caption(f"  {k}: {v}")
+            st.caption("Axis A subcategory")
+            for k, v in sorted(axis_a_sub_counts.items(), key=lambda x: -x[1]):
                 st.caption(f"  {k}: {v}")
         with col_b:
-            st.caption("Axis B: Stereotype Content")
-            for k, v in sorted(scm_counts.items(), key=lambda x: -x[1]):
+            st.caption("Axis B label")
+            for k, v in sorted(axis_b_counts.items(), key=lambda x: -x[1]):
                 st.caption(f"  {k}: {v}")
         with col_c:
-            st.caption("Axis C: Norm Type")
-            for k, v in sorted(norm_counts.items(), key=lambda x: -x[1]):
+            st.caption("Axis C label")
+            for k, v in sorted(axis_c_counts.items(), key=lambda x: -x[1]):
                 st.caption(f"  {k}: {v}")
 
     # IAA: pairwise human-human agreement
@@ -607,15 +832,18 @@ def render_stats_page():
         for sid, r in recs.items():
             if r.get("skipped"):
                 continue
+            axes = normalize_axes(r)
             export_rows.append({
                 "speech_id": sid,
                 "annotator": name,
                 "human_stance": r.get("human_stance"),
                 "llm_stance": r.get("llm_stance"),
                 "stance_agrees": r.get("stance_agrees"),
-                "ast_labels": ", ".join(r.get("ast_labels", [])),
-                "scm_labels": ", ".join(r.get("scm_labels", [])),
-                "norm_labels": ", ".join(r.get("norm_labels", [])),
+                "binary": axes["binary"],
+                "axis_a_label": axes["axis_a_label"],
+                "axis_a_subcategory": axes["axis_a_subcategory"],
+                "axis_b_label": axes["axis_b_label"],
+                "axis_c_label": axes["axis_c_label"],
                 "llm_buckets": ", ".join(r.get("llm_buckets", [])),
                 "confidence": r.get("confidence"),
                 "llm_confidence": r.get("llm_confidence"),
@@ -664,17 +892,18 @@ def main():
         st.markdown(
             "Read each parliamentary speech and independently classify:\n\n"
             "1. **Stance** on women's suffrage/representation\n"
-            "2. **Gender bias dimensions** using a 3-axis taxonomy\n\n"
+            "2. **Binary sexism** (sexist / not_sexist)\n"
+            "3. **Gender bias dimensions** using a 3-axis taxonomy\n\n"
             "You will **not** see the LLM's classification. "
             "Agreement is computed after annotation."
         )
         st.markdown("---")
         st.markdown("**Axis A -- Ambivalent Sexism Theory** (Glick & Fiske 1996)")
-        st.markdown("Hostile Sexism: degrading, controlling, denigrating women's competence")
-        st.markdown("Benevolent Sexism: idealizing but restricting women (purity, protection)")
+        st.markdown("Hostile: degrading, blaming, controlling women's competence or motives")
+        st.markdown("Benevolent: idealizing women while restricting roles")
         st.markdown("")
         st.markdown("**Axis B -- Stereotype Content Model** (Fiske et al 2002)")
-        st.markdown("Competence claims (high/low) and Warmth claims (high/low)")
+        st.markdown("Warmth/competence quadrants: paternalistic, admiration, contemptuous, envious")
         st.markdown("")
         st.markdown("**Axis C -- Gender Norm Type** (Prentice & Carranza 2002)")
         st.markdown("Descriptive (women ARE), Prescriptive (women SHOULD), Proscriptive (women SHOULD NOT)")
