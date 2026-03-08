@@ -186,6 +186,7 @@ def render_speech(row, speech_idx: int, total: int, already_done: bool,
     wc = row.get("word_count")
     meta_parts = [
         f"**{row.get('speaker', '?')}**",
+        f"ID: {row.get('speech_id', '?')}",
         f"{int(year) if pd.notna(year) else '?'}",
         row.get("chamber", "?"),
         f"{int(wc) if pd.notna(wc) else '?'} words",
