@@ -1,0 +1,148 @@
+{
+  "date": "2026-03-08",
+  "description": "Comparison of classification setups on 100 validation speeches",
+  "n_speeches": 96,
+  "human_baseline": {
+    "omar_vs_mandira": {
+      "agreement": 0.66,
+      "kappa": 0.463
+    }
+  },
+  "model_runs": {
+    "sonnet45_v6_original": {
+      "model": "anthropic/claude-sonnet-4.5",
+      "prompt": "v6",
+      "context": "original (74 missing)",
+      "vs_omar": {
+        "agreement": 0.44,
+        "kappa": 0.229
+      },
+      "vs_mandira": {
+        "agreement": 0.4,
+        "kappa": 0.179
+      },
+      "vs_gold": {
+        "agreement": 0.49,
+        "kappa": 0.284,
+        "n_gold": 63
+      },
+      "stance_only": {
+        "agreement": 0.55,
+        "kappa": 0.29
+      },
+      "distribution": {
+        "for": 24,
+        "against": 23,
+        "both": 20,
+        "irrelevant": 29
+      }
+    },
+    "sonnet46_v6_orig_ctx": {
+      "model": "claude-sonnet-4-6",
+      "prompt": "v6",
+      "context": "original (74 missing)",
+      "vs_omar": {
+        "agreement": 0.6,
+        "kappa": 0.322
+      },
+      "vs_mandira": {
+        "agreement": 0.44,
+        "kappa": 0.115
+      },
+      "vs_gold": {
+        "agreement": 0.56,
+        "kappa": 0.259,
+        "n_gold": 63
+      },
+      "distribution": {
+        "for": 28,
+        "against": 4,
+        "both": 2,
+        "irrelevant": 62
+      }
+    },
+    "sonnet46_v7_orig_ctx": {
+      "model": "claude-sonnet-4-6",
+      "prompt": "v7",
+      "context": "original (74 missing)",
+      "vs_omar": {
+        "agreement": 0.69,
+        "kappa": 0.489
+      },
+      "vs_mandira": {
+        "agreement": 0.57,
+        "kappa": 0.321
+      },
+      "vs_gold": {
+        "agreement": 0.73,
+        "kappa": 0.561,
+        "n_gold": 63
+      },
+      "stance_only": {
+        "agreement": 0.82,
+        "kappa": 0.587
+      },
+      "distribution": {
+        "for": 40,
+        "against": 6,
+        "both": 5,
+        "irrelevant": 45
+      }
+    },
+    "sonnet46_v7_full_ctx": {
+      "model": "claude-sonnet-4-6",
+      "prompt": "v7",
+      "context": "full (all backfilled)",
+      "vs_omar": {
+        "agreement": 0.67,
+        "kappa": 0.459
+      },
+      "vs_mandira": {
+        "agreement": 0.58,
+        "kappa": 0.34
+      },
+      "vs_gold": {
+        "agreement": 0.71,
+        "kappa": 0.538,
+        "n_gold": 63
+      },
+      "stance_only": {
+        "agreement": 0.78,
+        "kappa": 0.52
+      },
+      "distribution": {
+        "for": 41,
+        "against": 5,
+        "both": 7,
+        "irrelevant": 43
+      }
+    }
+  },
+  "context_ablation": {
+    "v7_orig_vs_full_agreement": 0.92,
+    "v7_orig_vs_full_kappa": 0.862,
+    "conclusion": "Context adds minimal value with V7 prompt (8/96 differences)"
+  },
+  "human_distributions": {
+    "omar": {
+      "for": 38,
+      "against": 7,
+      "both": 7,
+      "irrelevant": 44
+    },
+    "mandira": {
+      "for": 47,
+      "against": 12,
+      "both": 5,
+      "irrelevant": 32
+    }
+  },
+  "key_findings": [
+    "V7 prompt (broadened scope) is the main improvement, not model version or context",
+    "S4.6+V7 matches human-human agreement (kappa 0.489 vs 0.463)",
+    "Gold-label kappa improved from 0.284 (S4.5+V6) to 0.561 (S4.6+V7)",
+    "Stance-only kappa improved from 0.290 to 0.587 (substantial agreement)",
+    "Context backfill adds negligible value -- 92% agreement with/without",
+    "Recommended setup for full re-run: Sonnet 4.6 + V7 prompt, no context needed"
+  ]
+}

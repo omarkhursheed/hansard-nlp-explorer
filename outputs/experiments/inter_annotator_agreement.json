@@ -1,0 +1,30 @@
+{
+  "n_overlap": 96,
+  "n_skipped_excluded": 4,
+  "stance_agreement": {
+    "raw_agreement": 0.6354,
+    "kappa_5_labels": 0.4407,
+    "kappa_binary": 0.4114
+  },
+  "human_vs_llm": {
+    "omar_vs_llm_kappa": 0.2218,
+    "mandira_vs_llm_kappa": 0.1686,
+    "gold_vs_llm_kappa": 0.2634,
+    "gold_vs_llm_agreement": 0.4754,
+    "gold_n": 61
+  },
+  "omar_distribution": {
+    "irrelevant": 42,
+    "against": 7,
+    "for": 38,
+    "both": 7,
+    "neutral": 2
+  },
+  "mandira_distribution": {
+    "neutral": 1,
+    "for": 47,
+    "irrelevant": 31,
+    "against": 12,
+    "both": 5
+  }
+}

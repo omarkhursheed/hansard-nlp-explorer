@@ -1,0 +1,3903 @@
+[
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "This month, I shall have been in the House 30 years",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "37f28b70e1f4524c_speech_2",
+    "input_tokens": 3455,
+    "output_tokens": 85,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker uses comparative international examples (Turkey, India, Muslim women) to argue that Palestinian women should be granted political voting rights on equal terms as men.",
+        "quotes": [
+          {
+            "text": "whether I am correctly informed that all the Jewish councils, when questioned as to the proposed municipal ordinance, expressed their willingness to see women vote on the same terms as men",
+            "source": "TARGET"
+          },
+          {
+            "text": "in Turkey and in India Moslem women are permitted to enjoy political rights",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker invokes the precedent of Muslim women in Turkey and India having political rights to argue that the British government should extend similar rights in Palestine.",
+        "quotes": [
+          {
+            "text": "bring them at least up to the level of those in Oriental countries",
+            "source": "CONTEXT"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "expressed their willingness to see women vote on the same terms as men",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "b7f8a16dc04d895c_speech_2",
+    "input_tokens": 2219,
+    "output_tokens": 377,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "social_insurance_policy",
+        "stance_label": "for",
+        "rationale": "The speaker discusses women's sickness rates and insurance benefits in the context of social insurance policy, not women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "the implication which is being drawn by the general public that women in general, and married women in particular, are malingerers",
+            "source": "TARGET"
+          },
+          {
+            "text": "the sickness which follows on pregnancy and arises out of labour",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the implication which is being drawn by the general public that women in general, and married women in particular, are malingerers",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "08f9cc381de2a059_speech_31",
+    "input_tokens": 3579,
+    "output_tokens": 264,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "parliamentary procedure and legislative efficiency",
+        "stance_label": "against",
+        "rationale": "The TARGET speaker (Balfour) argues against the Bill primarily on grounds of parliamentary inefficiency and confusion caused by multiple overlapping electoral reform bills being sent to different committees simultaneously.",
+        "quotes": [
+          {
+            "text": "the discussion of the same subjects upstairs and downstairs at the same time is a great waste of Parliamentary energy",
+            "source": "TARGET"
+          },
+          {
+            "text": "tinkering with this subject, and then on the top of it all, not bringing them before the same Grand Committee",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the discussion of the same subjects upstairs and downstairs at the same time is a great waste of Parliamentary energy",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "107d49c84a5099fc_speech_48",
+    "input_tokens": 3554,
+    "output_tokens": 277,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker highlights that women in Yugoslavia voted for the first time in the country's history as evidence of democratic progress and expanded political rights.",
+        "quotes": [
+          {
+            "text": "for the first time in the history of Yugoslavia, the women exercised the right to vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "one woman over 100 years old, a peasant, said she had lived her life to see the day when she could exercise the right to vote",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker uses the expansion of the electorate from 3.8 million to 8 million as evidence that enfranchising women contributed to genuine democratic growth.",
+        "quotes": [
+          {
+            "text": "the number of the electorate was raised from 3,829,000 to 8,020,000",
+            "source": "TARGET"
+          },
+          {
+            "text": "Would one suggest, with figures of that description, that democracy was not being promoted?",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "for the first time in the history of Yugoslavia, the women exercised the right to vote",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": false,
+    "speech_id": "584a3277f0372fc1_speech_30",
+    "input_tokens": 3518,
+    "output_tokens": 427,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues explicitly for equal representation of women in the Scottish Parliament, citing the goal of 50:50 gender balance and the legacy of the suffrage movement.",
+        "quotes": [
+          {
+            "text": "we must do all we can to achieve equal representation in our 21st-century Scottish Parliament",
+            "source": "TARGET"
+          },
+          {
+            "text": "the principle that there should be an equal number of men and women as members of the first Scottish Parliament",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker invokes the historical legacy of the suffragette movement and the 1928 Equal Franchise Act as foundations and inspiration for continuing to advance women's political representation.",
+        "quotes": [
+          {
+            "text": "They made it possible for us women to be here today",
+            "source": "TARGET"
+          },
+          {
+            "text": "the 1928 Act was not the final word",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker criticises the Liberal Democrats' inaction as ensuring the Scottish Parliament will be male-dominated and fail to reflect its electorate, arguing positive party action is needed to deliver real representation.",
+        "quotes": [
+          {
+            "text": "the new Scottish Parliament will not reflect the people who vote for it. It will be a male-dominated body after all",
+            "source": "TARGET"
+          },
+          {
+            "text": "one female Member of Parliament in Scotland in 75 years of women being elected to Parliament",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "we must do all we can to achieve equal representation in our 21st-century Scottish Parliament",
+      "source": "TARGET"
+    },
+    "confidence": 0.98,
+    "context_helpful": true,
+    "speech_id": "ec0f7155be31f93b_speech_2",
+    "input_tokens": 2980,
+    "output_tokens": 584,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women's domestic contributions have economic value equivalent to men's taxable income, implying women deserve equal recognition and rights in family allowance legislation.",
+        "quotes": [
+          {
+            "text": "assess the services of the wife in the home in terms of money",
+            "source": "TARGET"
+          },
+          {
+            "text": "the mother should receive the allowance",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker critiques the Bill's original form as effectively an 'endowment of fatherhood' rather than supporting mothers, and praises the free vote as a pragmatic concession to women's interests.",
+        "quotes": [
+          {
+            "text": "it was really a Bill which would in fact be an endowment of fatherhood",
+            "source": "TARGET"
+          },
+          {
+            "text": "he would have become the most unpopular Minister in the country with the women",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "political_representation_weight",
+        "stance_label": "for",
+        "rationale": "The speaker highlights the democratic deficit in that 601 men in the House will determine women's entitlements, implicitly arguing for greater women's political representation.",
+        "quotes": [
+          {
+            "text": "601 men in the House will determine whether the mother should receive the allowance",
+            "source": "TARGET"
+          },
+          {
+            "text": "the women Member are very generous in welcoming a free vote",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "601 men in the House will determine whether the mother should receive the allowance",
+      "source": "TARGET"
+    },
+    "confidence": 0.62,
+    "context_helpful": true,
+    "speech_id": "9156012ac5d79058_speech_77",
+    "input_tokens": 2417,
+    "output_tokens": 564,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women are subjected to these Acts precisely because they lack the vote, making this a direct political rights argument about women's disenfranchisement enabling their legal oppression.",
+        "quotes": [
+          {
+            "text": "Women were obliged to submit because they had no votes.",
+            "source": "TARGET"
+          },
+          {
+            "text": "The law, as it stood, encouraged men to think that they might, for their own purposes, oppress women as they would.",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker contends that men would never endure the same treatment women are subjected to, highlighting a gendered double standard enforced by power rather than law.",
+        "quotes": [
+          {
+            "text": "this was a system which he contended would never be endured by the men of this country",
+            "source": "TARGET"
+          },
+          {
+            "text": "no hon. Member would dare to introduce a measure into that House for the purpose of applying it to men",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "emotion_morality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker frames the Acts as morally wrong by arguing that women are branded and degraded by legislation that treats them all alike without regard to their circumstances, denying them dignity.",
+        "quotes": [
+          {
+            "text": "Once a woman had the misfortune to fall under the notice of a policeman there was no help for her; the law branded her with the mark of Cain",
+            "source": "TARGET"
+          },
+          {
+            "text": "the treatment in hospitals had an hardening effect, because the law treated all alike",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "Women were obliged to submit because they had no votes.",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": false,
+    "speech_id": "234299b2822ac6e0_speech_1",
+    "input_tokens": 3234,
+    "output_tokens": 601,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues the immigration rules formally and intentionally discriminate against women by denying them the same right as men to bring foreign spouses into the country.",
+        "quotes": [
+          {
+            "text": "the rules discriminate against women. The discrimination is formal, intentional and undeniable.",
+            "source": "TARGET"
+          },
+          {
+            "text": "fundamental distinction between the treatment of women resident in this country and that of men who enjoy the same condition",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker criticises the rules for failing to grant all British women the genuine right to live with their foreign husbands, noting that genuine marriages will be kept separate.",
+        "quotes": [
+          {
+            "text": "many partners in genuine marriages will be kept separate",
+            "source": "TARGET"
+          },
+          {
+            "text": "all British women, irrespective of how they became British, whether by birth or by registration, shall be granted the right to bring their husbands into the country",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker exposes the political manoeuvring behind the rules, arguing the Home Secretary crafted a compromise that only superficially liberalises women's rights to satisfy the European Court of Human Rights while appeasing Conservative backbenchers.",
+        "quotes": [
+          {
+            "text": "the Home Secretary will be able to proclaim his liberalism to the European Court of Human Rights",
+            "source": "TARGET"
+          },
+          {
+            "text": "compact that has been achieved between the Home Secretary and his Back Benchers",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the rules discriminate against women. The discrimination is formal, intentional and undeniable.",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "46fe49a10870ad8d_speech_1",
+    "input_tokens": 3082,
+    "output_tokens": 598,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker points to the Welsh Assembly and Scottish Parliament as successful examples where positive mechanisms (e.g., twinning/zipping) produced high levels of women's representation, including more women than men in the Welsh Cabinet.",
+        "quotes": [
+          {
+            "text": "the Welsh Assembly and the Scottish Parliament have some of the best representation of women in Europe",
+            "source": "TARGET"
+          },
+          {
+            "text": "there are more women than men in the Cabinet of the Welsh Assembly",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker frames the use of positive mechanisms by a political party as a means of achieving gender equality in political representation.",
+        "quotes": [
+          {
+            "text": "A positive mechanism was used by a political party to ensure that the Welsh Assembly and the Scottish Parliament",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the Welsh Assembly and the Scottish Parliament have some of the best representation of women in Europe",
+      "source": "TARGET"
+    },
+    "confidence": 0.9,
+    "context_helpful": false,
+    "speech_id": "2637ea0ce7bcd043_speech_97",
+    "input_tokens": 2334,
+    "output_tokens": 372,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues it would be unfair to women to deny them employment opportunities, and that trade unions have not been fair to women, implying women deserve equal treatment.",
+        "quotes": [
+          {
+            "text": "it would be unfair to women if by voting against this you keep some of them out of employment",
+            "source": "TARGET"
+          },
+          {
+            "text": "the trade unions are not fair to the women in many ways",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "women's suffrage as political lever",
+        "stance_label": "for",
+        "rationale": "The speaker anticipates that young women will gain the vote (at 21) within five years, and that once enfranchised, Parliament will have to take their views more seriously.",
+        "quotes": [
+          {
+            "text": "by that time, I hope, the young women will be 21, and have the vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "hon. Members will have to listen to them more attentively than now",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker notes the proposal is experimental and only for five years, suggesting pragmatic support contingent on it not being used to exploit women as cheap labour.",
+        "quotes": [
+          {
+            "text": "It is experimental, and only for five years.",
+            "source": "TARGET"
+          },
+          {
+            "text": "if it really means that this is going to open the way to using women as cheap labour, it would be wrong",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "by that time, I hope, the young women will be 21, and have the vote",
+      "source": "TARGET"
+    },
+    "confidence": 0.65,
+    "context_helpful": true,
+    "speech_id": "b44b52e69bfe3ed9_speech_43",
+    "input_tokens": 2867,
+    "output_tokens": 578,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "unemployment insurance policy",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is entirely focused on the mechanics and economics of unemployment insurance, specifically flat-rate contributions versus wage-proportional systems, and employer contributions \u2014 with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "the British method of flat rates of contributions and flat rates of benefit",
+            "source": "TARGET"
+          },
+          {
+            "text": "the employer's contribution is always adhered to",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the British method of flat rates of contributions and flat rates of benefit",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "ca8e83021a68c04d_speech_49",
+    "input_tokens": 3487,
+    "output_tokens": 247,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women's interests as voters must be considered in the timing of the by-election, and that the House struggles to do so because it is dominated by men.",
+        "quotes": [
+          {
+            "text": "I believe that in the constituency of Richmond, Yorks there are people whose interests would be disadvantaged by an early election\u2014the female electorate",
+            "source": "TARGET"
+          },
+          {
+            "text": "It is difficult for this House to consider women's interests because the vast majority of hon. Members\u2014through no fault of their own\u2014are men",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker calls on the House to overcome its male-majority disadvantage and consider women's perspectives in political decision-making.",
+        "quotes": [
+          {
+            "text": "They must try to overcome that disadvantage and look at matters through our eyes now and again",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "It is difficult for this House to consider women's interests because the vast majority of hon. Members\u2014through no fault of their own\u2014are men",
+      "source": "TARGET"
+    },
+    "confidence": 0.62,
+    "context_helpful": true,
+    "speech_id": "5b723cfee62f276a_speech_295",
+    "input_tokens": 2682,
+    "output_tokens": 404,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "labour/trade union rights policy",
+        "stance_label": "for",
+        "rationale": "The speaker opposes an industrial relations order imposed on Northern Ireland, arguing it weakens protections for workers, particularly part-time workers, without local justification.",
+        "quotes": [
+          {
+            "text": "part-time workers\u2014who, in the north of Ireland, are almost by definition women\u2014will have their protection substantially weakened",
+            "source": "TARGET"
+          },
+          {
+            "text": "It puts into north of Ireland legislation the anti-union, anti-worker programme",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "part-time workers\u2014who, in the north of Ireland, are almost by definition women\u2014will have their protection substantially weakened",
+      "source": "TARGET"
+    },
+    "confidence": 0.8,
+    "context_helpful": false,
+    "speech_id": "57cb61b378c3f5c0_speech_32",
+    "input_tokens": 3424,
+    "output_tokens": 274,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the current electoral system fails to elect a proportionate share of women MEPs, using this as evidence that the system is broken and needs reform.",
+        "quotes": [
+          {
+            "text": "does it ensure that the right proportion of women are elected as MEPs? It does not.",
+            "source": "TARGET"
+          },
+          {
+            "text": "only two countries in Europe\u2014Italy and Portugal\u2014had a lower proportion of women MEPs elected than Britain",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker uses the poor representation of women as one of several practical failures of the current system, arguing that the system lacks compensatory benefits and therefore requires fixing.",
+        "quotes": [
+          {
+            "text": "we do not have other compensating factors",
+            "source": "TARGET"
+          },
+          {
+            "text": "The argument, \"If it ain't broke, don't fix it,\" does not stand up",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "does it ensure that the right proportion of women are elected as MEPs? It does not.",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": true,
+    "speech_id": "5cac0c09c0892ed1_speech_87",
+    "input_tokens": 3372,
+    "output_tokens": 408,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that Labour members are actively voting for women candidates in greater numbers, demonstrating support for women's political representation.",
+        "quotes": [
+          {
+            "text": "there were far more votes for women than ever before",
+            "source": "TARGET"
+          },
+          {
+            "text": "an indication that Labour is voting for women as many candidates came near the top of the list",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker contrasts Labour's record of electing women with the Conservative party's poor female representation, implying systemic failure on the Conservative side.",
+        "quotes": [
+          {
+            "text": "quite the reverse of what is happening in the Conservative party, where there are so few female Members of Parliament",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "quite the reverse of what is happening in the Conservative party, where there are so few female Members of Parliament",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "bd0971cdbc9049b3_speech_140",
+    "input_tokens": 2381,
+    "output_tokens": 362,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "incidental mention of suffrage as postal revenue stimulus",
+        "stance_label": "for",
+        "rationale": "The speaker mentions woman suffrage only as an example of public agitation that increases postal revenue via letter-writing, with no substantive argument about women's political rights.",
+        "quotes": [
+          {
+            "text": "without expressing any view with regard to woman suffrage",
+            "source": "TARGET"
+          },
+          {
+            "text": "continue your agitation by means of the penny post",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "without expressing any view with regard to woman suffrage",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": false,
+    "speech_id": "8a19ef5b8b5964c2_speech_1",
+    "input_tokens": 3363,
+    "output_tokens": 241,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "economic policy / electoral accountability",
+        "stance_label": "for",
+        "rationale": "The speaker critiques the Government's economic policy and accuses them of hypocrisy for claiming electoral credit for prosperity while now pursuing austerity measures through taxation.",
+        "quotes": [
+          {
+            "text": "people are living too well and that they are doing so because they have too much money",
+            "source": "TARGET"
+          },
+          {
+            "text": "That is hypocrisy.",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "people are living too well and that they are doing so because they have too much money",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "e49105641c27d3b4_speech_131",
+    "input_tokens": 2813,
+    "output_tokens": 246,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "confidence": 0.5,
+    "reasons": [],
+    "speech_id": "7fe450abfe126699_speech_20",
+    "input_tokens": 3461,
+    "output_tokens": 637,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that cracking down on militant suffragists would backfire by encouraging the movement, and that the constitutional supporters of women's suffrage are gaining ground, implying the cause should be allowed to advance.",
+        "quotes": [
+          {
+            "text": "the constitutional supporters of Women suffrage are greatly gaining ground",
+            "source": "TARGET"
+          },
+          {
+            "text": "action which would have one inevitable result only, that of giving a vast encouragement to the movement",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "anti-panic-legislation",
+        "stance_label": "for",
+        "rationale": "The speaker opposes 'panic legislation' against suffragists, noting that the violent section is already losing public support and funds, suggesting restraint rather than repression is the appropriate response.",
+        "quotes": [
+          {
+            "text": "the violent section of the women are daily losing public support",
+            "source": "TARGET"
+          },
+          {
+            "text": "We always hear that appeal for panic legislation at a moment when certain people suppose their political opponents are not administering the law as they ought to",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the constitutional supporters of Women suffrage are greatly gaining ground",
+      "source": "TARGET"
+    },
+    "confidence": 0.62,
+    "context_helpful": true,
+    "speech_id": "3a2033760f94a1fb_speech_14",
+    "input_tokens": 3097,
+    "output_tokens": 427,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "foreign aid policy",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is primarily about British overseas aid budget cuts and their impact on development programmes, not about women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "The fundamental expenditure review, the FER, changes ODA priorities. It drops the unique focus on women",
+            "source": "TARGET"
+          },
+          {
+            "text": "women and girls bear the heaviest burdens of illiteracy and hunger",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "It drops the unique focus on women, yet women and their children make up 80 per cent. of all refugees",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "a6be595c63d096e6_speech_27",
+    "input_tokens": 3564,
+    "output_tokens": 258,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "parliamentary reform debate",
+        "stance_label": "against",
+        "rationale": "The speaker is opposing the Reform Bill on grounds of its scope and timing, arguing it goes far beyond necessary changes and was driven by artificial excitement created by Ministers.",
+        "quotes": [
+          {
+            "text": "he considered it to be highly inexpedient to agitate it at the present period of unexampled excitement",
+            "source": "TARGET"
+          },
+          {
+            "text": "he denied, and ever would deny, totis viribus, that the spirit of the times required the degree and measure of Reform",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "he considered it to be highly inexpedient to agitate it at the present period of unexampled excitement",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": true,
+    "speech_id": "5c5cc90b04c793c5_speech_10",
+    "input_tokens": 3486,
+    "output_tokens": 276,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "franchise/voting mechanics",
+        "stance_label": "against",
+        "rationale": "The speaker references female voters only in passing to illustrate a concern about ballot literacy requirements disfranchising certain groups, not to argue about women's political rights per se.",
+        "quotes": [
+          {
+            "text": "it applied equally to female voters who might not possess that feeling of independence",
+            "source": "TARGET"
+          },
+          {
+            "text": "Great numbers of persons would be disfranchised by the Bill until education was more thoroughly spread",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "it applied equally to female voters who might not possess that feeling of independence",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": true,
+    "speech_id": "6903c8e36e50270d_speech_38",
+    "input_tokens": 2232,
+    "output_tokens": 253,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker supports increasing women's political representation, referencing the 30% Beijing target and praising efforts to get more women into elected bodies.",
+        "quotes": [
+          {
+            "text": "more women should be elected, but before we criticise that system",
+            "source": "TARGET"
+          },
+          {
+            "text": "how we planned to meet the 30 per cent. Beijing target for women on elected bodies, especially Parliament, by 2005",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "competence_capacity",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker praises the professionalism, hard work, and impressive contributions of women MPs in Tanzania as evidence of women's fitness for political roles.",
+        "quotes": [
+          {
+            "text": "courage, professionalism and sheer hard work of women Members of Parliament in Tanzania",
+            "source": "TARGET"
+          },
+          {
+            "text": "The work undertaken by those women is impressive.",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker highlights the British Council programme as a practical mechanism to increase women's political participation and improve their effective leadership across countries.",
+        "quotes": [
+          {
+            "text": "the British Council in east and central Africa has run a programme to support and encourage women in politics",
+            "source": "TARGET"
+          },
+          {
+            "text": "increasing the number of women in effective leadership",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "courage, professionalism and sheer hard work of women Members of Parliament in Tanzania",
+      "source": "TARGET"
+    },
+    "confidence": 0.9,
+    "context_helpful": true,
+    "speech_id": "773750571ef0c91c_speech_19",
+    "input_tokens": 3264,
+    "output_tokens": 546,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "committee composition and appointments",
+        "stance_label": "for",
+        "rationale": "The speaker questions the representativeness of a committee, mentioning women and young people as underrepresented groups, but the primary focus is on political appointments and Conservative party dominance, not on women's political rights or representation as a core issue.",
+        "quotes": [
+          {
+            "text": "How wide is the representation of women and young people?",
+            "source": "TARGET"
+          },
+          {
+            "text": "appointments are made by the Government",
+            "source": "CONTEXT"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "How wide is the representation of women and young people?",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": true,
+    "speech_id": "25383d2a21142c8b_speech_31",
+    "input_tokens": 2385,
+    "output_tokens": 251,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women in Parliament should earn their seats on merit rather than through positive discrimination, framing this as respecting women's equality and capability.",
+        "quotes": [
+          {
+            "text": "every woman who sits in this House...knows that she got here on her own merits",
+            "source": "TARGET"
+          },
+          {
+            "text": "It is my ambition that every woman who sits in the House in future will also be able to sit here on her own merits",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker opposes positive discrimination as a mechanism for increasing women's political representation, calling it patronising and counterproductive.",
+        "quotes": [
+          {
+            "text": "Positive discrimination does not work. All it does is result in is a thoroughly patronising attitude to women",
+            "source": "TARGET"
+          },
+          {
+            "text": "Positive discrimination did not work for Labour Members who contested shadow Cabinet places",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker highlights increases in childcare provision as freeing women to participate in work and public life, implicitly supporting conditions that enable women's broader participation.",
+        "quotes": [
+          {
+            "text": "increases represent for freeing women to go to work",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "Positive discrimination does not work. All it does is result in is a thoroughly patronising attitude to women",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "bd0971cdbc9049b3_speech_202",
+    "input_tokens": 3021,
+    "output_tokens": 529,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "wartime industrial production and labour conditions",
+        "stance_label": "for",
+        "rationale": "The speech is entirely focused on shipyard production conditions on the Clyde, including management resentment, income tax grievances, and labour disputes \u2014 not women's political rights.",
+        "quotes": [
+          {
+            "text": "lowering the standard of life of thousands of shipyard workers and their womenfolk and children",
+            "source": "TARGET"
+          },
+          {
+            "text": "the whole question of shipbuilding production",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the whole question of shipbuilding production",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "e82ac03dc2c8dca7_speech_21",
+    "input_tokens": 3449,
+    "output_tokens": 246,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that Service wives face discrimination in voting registration and advocates for their equal right to vote, either as civilian voters or as servicemen.",
+        "quotes": [
+          {
+            "text": "there are still large numbers of women not able to vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "Service wives for an optional system",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker cites practical failures in electoral registration procedures that prevented Service wives from exercising their vote, and calls for reform of the attestation and 'S' marking system.",
+        "quotes": [
+          {
+            "text": "I should like to see the process of attestation abolished and the \"S\" deleted. Those are minimum requirements.",
+            "source": "TARGET"
+          },
+          {
+            "text": "they were not registered, or that they were on one register but not carried through to the next",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "vested_interest_in_voting",
+        "stance_label": "for",
+        "rationale": "The speaker highlights the irony that those most dependent on government policy\u2014Service wives\u2014are precisely those being denied their vote.",
+        "quotes": [
+          {
+            "text": "It is a supreme irony that those deprived of their vote are dependent for their livelihood on the attitude of the Government of the day.",
+            "source": "CONTEXT"
+          },
+          {
+            "text": "If anyone has a vested interest in voting, it is a member of this group.",
+            "source": "CONTEXT"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "there are still large numbers of women not able to vote",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "a727695acee36169_speech_3",
+    "input_tokens": 2705,
+    "output_tokens": 566,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "emotion_morality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker defends the suffragettes' moral character by highlighting their patriotic sacrifice in putting aside their cause during wartime.",
+        "quotes": [
+          {
+            "text": "the moment it came to war and deadly danger, they put aside their case and rallied to the Government's support",
+            "source": "TARGET"
+          },
+          {
+            "text": "Is he not rather hard on his colleagues in the militant suffrage movement",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker implicitly validates the suffragettes' struggle by distinguishing it favourably from Gandhi's movement, treating it as a legitimate political fight.",
+        "quotes": [
+          {
+            "text": "the militant and nonmilitant suffragettes attacked the Government with all their force",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the moment it came to war and deadly danger, they put aside their case and rallied to the Government's support",
+      "source": "TARGET"
+    },
+    "confidence": 0.65,
+    "context_helpful": true,
+    "speech_id": "8e376e708d9e7459_speech_2",
+    "input_tokens": 2290,
+    "output_tokens": 374,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the House should respect women's views and interests, criticizing male MPs who dictate how women should behave or be represented without heeding women's own voices.",
+        "quotes": [
+          {
+            "text": "My concern is for women in general in the constituency and the attitude that the House shows to women",
+            "source": "TARGET"
+          },
+          {
+            "text": "they do not take into account even the views expressed by the majority of women in the House",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker invokes the interests of women voters specifically as a justification for opposing an early by-election, citing practical barriers like transport difficulties and postal vote access that disproportionately affect women.",
+        "quotes": [
+          {
+            "text": "We are seeking this morning to protect the interests of women voters",
+            "source": "TARGET"
+          },
+          {
+            "text": "we shall have the support of women voters in Richmond and elsewhere in our attempt to do that",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "We are seeking this morning to protect the interests of women voters",
+      "source": "TARGET"
+    },
+    "confidence": 0.42,
+    "context_helpful": true,
+    "speech_id": "5b723cfee62f276a_speech_297",
+    "input_tokens": 3020,
+    "output_tokens": 415,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker acknowledges that the 1867 franchise extension was not complete because women were denied the vote, implying that full democracy requires women's enfranchisement.",
+        "quotes": [
+          {
+            "text": "we became a democracy with the extended franchise\u2014although not, of course, in the fullest sense, because the vote was denied to women",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "we became a democracy with the extended franchise\u2014although not, of course, in the fullest sense, because the vote was denied to women",
+      "source": "TARGET"
+    },
+    "confidence": 0.45,
+    "context_helpful": false,
+    "speech_id": "7c15a4143bdc1f9c_speech_1",
+    "input_tokens": 3221,
+    "output_tokens": 235,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "confidence": 0.5,
+    "reasons": [],
+    "speech_id": "ce285ade99257ebc_speech_57",
+    "input_tokens": 3510,
+    "output_tokens": 770,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "unemployment training policy",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is about government training programs for unemployed women as a labour and social policy matter, not about women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "training of unemployed women and young persons the sum granted last year was 574 \u00a3292,000",
+            "source": "TARGET"
+          },
+          {
+            "text": "34,000 women had been 575 trained by the end of 1926",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "training of unemployed women and young persons the sum granted last year was 574 \u00a3292,000",
+      "source": "TARGET"
+    },
+    "confidence": 0.92,
+    "context_helpful": false,
+    "speech_id": "2a902dd418b5740f_speech_1",
+    "input_tokens": 3451,
+    "output_tokens": 259,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "tradition_precedent",
+        "stance_label": "for",
+        "rationale": "The speaker draws a direct historical parallel to arguments used against women's suffrage, dismissing the claim that young people don't want the vote just as the same claim was once falsely made about women.",
+        "quotes": [
+          {
+            "text": "when looking through the debates of the 1917 Representation of the People Act , exactly the same argument was used about women\u2014that they did not want it",
+            "source": "TARGET"
+          },
+          {
+            "text": "This is not evidence, and there is no evidence of what young people want",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the 'experience' argument against lowering the voting age is logically inconsistent and would, if followed through, justify raising or restricting the franchise in absurd ways.",
+        "quotes": [
+          {
+            "text": "One could find all sorts of excuses for refusing to give people the franchise",
+            "source": "TARGET"
+          },
+          {
+            "text": "If we take the argument to its logical conclusion, we should raise the voting age",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "exactly the same argument was used about women\u2014that they did not want it",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "f6b9408d4b1d2183_speech_149",
+    "input_tokens": 3224,
+    "output_tokens": 420,
+    "error": null
+  },
+  {
+    "stance": "against",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues that the women's suffrage instruction, though not opposed in principle, would practically wreck the Bill for a third time by tying the Committee's hands and imposing administrative burdens with no existing machinery to implement it.",
+        "quotes": [
+          {
+            "text": "If the Instruction were now passed it would have the effect of wrecking the Bill for the third time.",
+            "source": "TARGET"
+          },
+          {
+            "text": "it compelled them to adopt this principle of women suffrage whether it might wreck the Bill or not",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues that the question of women's suffrage was never raised by Dublin citizens or the Corporation, and imposing it from outside through a mandatory instruction is unjust and undemocratic.",
+        "quotes": [
+          {
+            "text": "the question was not raised by the citizens",
+            "source": "TARGET"
+          },
+          {
+            "text": "The hon. Member himself had no connection with the City of Dublin",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "procedural_overreach",
+        "stance_label": "against",
+        "rationale": "The speaker objects that the Instruction is mandatory and removes all discretion from the Committee, making it impossible for them to examine evidence or adapt the Bill to Dublin's specific administrative structure.",
+        "quotes": [
+          {
+            "text": "The Instruction was mandatory; it took out of the hands of the Committee having charge of the Bill all discretion",
+            "source": "TARGET"
+          },
+          {
+            "text": "The hon. Member, by his Instruction, absolutely tied the hands of the Committee.",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "If the Instruction were now passed it would have the effect of wrecking the Bill for the third time.",
+      "source": "TARGET"
+    },
+    "confidence": 0.62,
+    "context_helpful": true,
+    "speech_id": "7676e00af0f345e4_speech_4",
+    "input_tokens": 3390,
+    "output_tokens": 612,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the traditional ballot booth system protects women specifically by allowing them to vote free from intimidation by family members or others, framing privacy in voting as a safeguard for women's political participation.",
+        "quotes": [
+          {
+            "text": "let us say that they could mainly be women in this context\u2014can vote in safety in the privacy of the ballot booth",
+            "source": "TARGET"
+          },
+          {
+            "text": "there is at least a risk that they could be intimidated by other family members or who knows whom",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "let us say that they could mainly be women in this context\u2014can vote in safety in the privacy of the ballot booth",
+      "source": "TARGET"
+    },
+    "confidence": 0.62,
+    "context_helpful": true,
+    "speech_id": "1e2f26e386f77e26_speech_15",
+    "input_tokens": 2570,
+    "output_tokens": 280,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "land taxation / betterment levy policy",
+        "stance_label": "against",
+        "rationale": "The TARGET speech is entirely focused on criticising the complexity and unintelligibility of betterment levy provisions in Part III of a Land Bill, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "Part III gives us about 50 pages of text, supplemented by another 83 pages",
+            "source": "TARGET"
+          },
+          {
+            "text": "completely unintelligible. This part of the Bill has given the greatest trouble",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "every sale of a house, every lease of a house, the grant of a right of way",
+      "source": "TARGET"
+    },
+    "confidence": 0.97,
+    "context_helpful": false,
+    "speech_id": "4253a4bdef789fd4_speech_7",
+    "input_tokens": 3472,
+    "output_tokens": 271,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The Prime Minister signals openness to proceeding with the Women's Suffrage Bill, describing himself as pushing on an open door, indicating practical support for advancing the legislation.",
+        "quotes": [
+          {
+            "text": "the right hon. Gentleman, so far as I am concerned, is pushing an open door",
+            "source": "TARGET"
+          },
+          {
+            "text": "With regard to the Women's Suffrage Bill",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the right hon. Gentleman, so far as I am concerned, is pushing an open door",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": true,
+    "speech_id": "2429a00ca4abbfb5_speech_7",
+    "input_tokens": 2744,
+    "output_tokens": 249,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "capital punishment debate",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is entirely focused on the debate over capital punishment and criminal justice policy, with no discussion of women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "I voted in favour of the retention of capital punishment",
+            "source": "TARGET"
+          },
+          {
+            "text": "is the public safeguarded or not, and if capital punishment is abolished, will the public suffer?",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "I voted in favour of the retention of capital punishment",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "a3ea3c62feccda5d_speech_92",
+    "input_tokens": 3498,
+    "output_tokens": 239,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "social_policy_welfare",
+        "stance_label": "for",
+        "rationale": "The speech focuses on welfare benefit sufficiency for maternity and funeral expenses, arguing the government's proposals are contradictory and inadequate for low-income families, without framing this as a matter of women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "providing a wholly insufficient amount for maternity expenses might discourage low-income families from having children",
+            "source": "TARGET"
+          },
+          {
+            "text": "the amounts prescribed under paragraph (a) of this subsection in respect of maternity expenses shall be sufficient",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "providing a wholly insufficient amount for maternity expenses might discourage low-income families from having children",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "58ba94f6fa0c7734_speech_1",
+    "input_tokens": 3076,
+    "output_tokens": 279,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The Home Secretary announces the remission of sentences for suffragist prisoners, treating their cause with the same clemency as other political offenders, implicitly recognising the legitimacy of the suffrage agitation.",
+        "quotes": [
+          {
+            "text": "remit the remainder of the sentences of all persons now undergoing terms of imprisonment for crimes committed in connection with the suffrage agitation",
+            "source": "TARGET"
+          },
+          {
+            "text": "the prisoners of both classes will respond to the feelings of their countrymen and countrywomen",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The remission is granted without conditions or undertakings, reflecting a pragmatic gesture of good faith toward suffragists during a national emergency.",
+        "quotes": [
+          {
+            "text": "This course has been taken without solicitation on their part, and without requiring any undertaking from them",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "remit the remainder of the sentences of all persons now undergoing terms of imprisonment for crimes committed in connection with the suffrage agitation",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "99ef29a7d0d26b82_speech_2",
+    "input_tokens": 2105,
+    "output_tokens": 402,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker frames both universal suffrage and women's emancipation as irreversible and positive achievements that advanced democratic practice and equality in society.",
+        "quotes": [
+          {
+            "text": "the achievement of universal suffrage",
+            "source": "TARGET"
+          },
+          {
+            "text": "the emancipation of women, both at work and in the home",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women's legal rights to family property have become entrenched and that institutions should be updated to reflect these social changes.",
+        "quotes": [
+          {
+            "text": "women are entitled to a share of the family property has now become entrenched",
+            "source": "TARGET"
+          },
+          {
+            "text": "bring the institutions of the law up to date with social trends",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the government should work to ensure these irreversible changes \u2014 including women's emancipation \u2014 are absorbed smoothly by national institutions.",
+        "quotes": [
+          {
+            "text": "These changes, I believe, are irreversible. We should ask what the Government should be doing to ensure that they are absorbed smoothly",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the emancipation of women, both at work and in the home",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": false,
+    "speech_id": "4a662f126d5ec34a_speech_20",
+    "input_tokens": 3513,
+    "output_tokens": 510,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker explicitly accepts the justice of extending the vote to women and identifies as a supporter of votes for women.",
+        "quotes": [
+          {
+            "text": "Everything that has been said by the promoters of the Bill as to the justice of the case made out for extending the vote to women we accept.",
+            "source": "TARGET"
+          },
+          {
+            "text": "a number of Members who sit on these benches on this side of the House who are strongly convinced that the vote ought to be given to women",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker's concern is that the Bill's property qualification provisions may benefit only the wealthy and potentially be used to prevent broader enfranchisement of women, showing pragmatic concern for genuine and full women's suffrage.",
+        "quotes": [
+          {
+            "text": "only those who are in a position to have more than one house...will be able to take advantage of Clause 2 of the Bill",
+            "source": "TARGET"
+          },
+          {
+            "text": "the power this Bill will confer should it become law will be used by those who are enfranchised by it to prevent the enfranchisement of the greater number of the sex",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "hypocrisy_of_opponents",
+        "stance_label": "for",
+        "rationale": "The speaker rebuts the opponent's criticisms of suffragist methods and the 'mandate' argument as contradictory and hypocritical given the opponent's own political affiliations.",
+        "quotes": [
+          {
+            "text": "coming from the quarter it did...any criticism of the methods appeared to be entirely out of order",
+            "source": "TARGET"
+          },
+          {
+            "text": "it is very dangerous for a Member of the Nationalist party, speaking against the proposition to give the vote to women",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "a number of Members who sit on these benches on this side of the House who are strongly convinced that the vote ought to be given to women",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "4915feaf6c93ba66_speech_24",
+    "input_tokens": 3574,
+    "output_tokens": 662,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that only two women out of 38 on the Council for Wales is inadequate representation and a poor reflection on Welsh womanhood.",
+        "quotes": [
+          {
+            "text": "only two women have been appointed to the 38 strong Council for Wales is an inadequate recognition",
+            "source": "CONTEXT"
+          },
+          {
+            "text": "this puny proportion in Human Rights Year, the year, too, of the anniversary of women's suffrage, is a very poor reflection on Welsh womanhood",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker calls for ensuring this underrepresentation is not repeated in future appointments, framing it as a practical matter to be corrected.",
+        "quotes": [
+          {
+            "text": "Will she try to ensure that this type of attitude is not repeated in the future?",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "this puny proportion in Human Rights Year, the year, too, of the anniversary of women's suffrage, is a very poor reflection on Welsh womanhood",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "b3fa0c46184f5317_speech_2",
+    "input_tokens": 2100,
+    "output_tokens": 401,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "colonial independence / Commonwealth membership",
+        "stance_label": "for",
+        "rationale": "The speech is entirely about welcoming Nigerian independence, praising the federal system, the Bill of Rights, and Commonwealth membership \u2014 no mention of women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "Nigeria enters on a new status, not after commotion and strife",
+            "source": "TARGET"
+          },
+          {
+            "text": "She not only willingly accepted a Parliamentary system",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "Nigeria wishes to be independent, but she wishes also to be democratic",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "f7df1d2782055671_speech_2",
+    "input_tokens": 3259,
+    "output_tokens": 244,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker personally supports women's municipal voting rights, though he is restrained from acting on this in the current Bill context.",
+        "quotes": [
+          {
+            "text": "he personally was concerned he was in favour of women having votes for municipal purposes",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker declines to push women's suffrage in this Bill not because he opposes it, but because pursuing it would endanger the Bill itself.",
+        "quotes": [
+          {
+            "text": "he was deterred from taking any action in regard to this Bill because it was thought by those in charge of it that it would endanger the Bill",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "he personally was concerned he was in favour of women having votes for municipal purposes",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "7676e00af0f345e4_speech_14",
+    "input_tokens": 2393,
+    "output_tokens": 332,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker explicitly condemns rules that discriminate against women as 'shameful and inexcusable', framing this as a key reason for opposing the White Paper.",
+        "quotes": [
+          {
+            "text": "the White Paper contains shameful and inexcusable rules that discriminate against women",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the White Paper contains shameful and inexcusable rules that discriminate against women",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "7f3c66b496cd5c8a_speech_157",
+    "input_tokens": 2967,
+    "output_tokens": 212,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "tourism/local authority publicity bill debate",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is primarily about a tourism and local authority publicity bill, discussing urban districts, county councils, and commercial promotion of Britain to foreign visitors.",
+        "quotes": [
+          {
+            "text": "This industry, which employs abount 350,000 persons",
+            "source": "TARGET"
+          },
+          {
+            "text": "a little Measure which will help trade and promote employment",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "a little Measure which will help trade and promote employment",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "8aa5d6497d7c686c_speech_24",
+    "input_tokens": 2855,
+    "output_tokens": 240,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker briefly mentions the anomaly that a wife does not qualify for a pension until age 65, framing it as a social justice issue, but this is within a broader argument about pension reform and social insurance, not women's political rights.",
+        "quotes": [
+          {
+            "text": "the anomaly by which a wife does not qualify for a pension until she becomes 65",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the anomaly by which a wife does not qualify for a pension until she becomes 65",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": false,
+    "speech_id": "5952619ef4626ca6_speech_8",
+    "input_tokens": 3551,
+    "output_tokens": 233,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "student grants and education funding",
+        "stance_label": "for",
+        "rationale": "The speech is entirely about student grant regulations, review processes, and education funding priorities, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "The primary object of these amending regulations is to prescribe new rates of grant for students",
+            "source": "TARGET"
+          },
+          {
+            "text": "we all want to see that students have a fair deal; we all want them to be relieved of financial anxiety",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "The primary object of these amending regulations is to prescribe new rates of grant for students",
+      "source": "TARGET"
+    },
+    "confidence": 0.97,
+    "context_helpful": false,
+    "speech_id": "e7512c1f91f3f140_speech_4",
+    "input_tokens": 3404,
+    "output_tokens": 259,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker expresses support for extending voting and municipal franchise rights to women.",
+        "quotes": [
+          {
+            "text": "strongly in favour of extending the Parliamentary and municipal franchises to women",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "competence_capacity",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues women lack the qualities required to serve as chairman of a District Council, distinguishing voting rights from the capacity to hold office.",
+        "quotes": [
+          {
+            "text": "there were qualities required in a chairman of one of these bodies which few women possessed",
+            "source": "TARGET"
+          },
+          {
+            "text": "the privilege of voting and the capability of acting on an Elected Body were different things",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker draws a pragmatic distinction between roles where women may be useful (School Boards, Boards of Guardians) and the chairmanship, which he deems unsuitable for women.",
+        "quotes": [
+          {
+            "text": "women might be useful as members of School Boards and Boards of Guardians",
+            "source": "TARGET"
+          },
+          {
+            "text": "an exceedingly doubtful question whether a woman ought to hold the office of chairman",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the privilege of voting and the capability of acting on an Elected Body were different things",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "b83c1ef35c639912_speech_103",
+    "input_tokens": 2554,
+    "output_tokens": 514,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "the question of the basis of the franchise, and even the boundaries of constituencies",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "41e8379f60d6aa4f_speech_1",
+    "input_tokens": 2890,
+    "output_tokens": 86,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "social_care_policy",
+        "stance_label": "for",
+        "rationale": "The speaker discusses the economic and social burden on women who care for elderly dependants, advocating for financial support and census data collection, but this is framed as social welfare policy rather than women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "about 200,000 women are looking after elderly dependants",
+            "source": "TARGET"
+          },
+          {
+            "text": "the help that the nation so rightly owes them",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "about 200,000 women are looking after elderly dependants",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "8e47fb87b9c8deb5_speech_3",
+    "input_tokens": 2867,
+    "output_tokens": 254,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "those serving in the Armed Forces for whom there is such concern",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "bac9ad6f79fb5521_speech_77",
+    "input_tokens": 2708,
+    "output_tokens": 83,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "political representation of Northern Ireland",
+        "stance_label": "for",
+        "rationale": "The speaker raises the issue of Northern Ireland's representative capacity in the House, but this is about regional political rights, not women's political rights specifically.",
+        "quotes": [
+          {
+            "text": "this House should not be making laws for 240 Northern Ireland unless we are given the same rights of citizenship and representation",
+            "source": "TARGET"
+          },
+          {
+            "text": "There are those who would even seek to limit further our representative capacity in this House",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "this House should not be making laws for 240 Northern Ireland unless we are given the same rights of citizenship and representation",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "8120cdb4752a504b_speech_196",
+    "input_tokens": 2699,
+    "output_tokens": 266,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that excluding contraception research from the permitted list of embryo research purposes disrespects women's needs and treats their concerns as less important than men's.",
+        "quotes": [
+          {
+            "text": "What are women to make of this House if we say that contraception is not sufficiently important",
+            "source": "TARGET"
+          },
+          {
+            "text": "They should listen to women outside this place.",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker makes a practical argument that women's political and legislative interests\u2014specifically safe contraception\u2014must be represented in Parliament's decisions.",
+        "quotes": [
+          {
+            "text": "The battle for safe, effective and convenient contraception has not yet been won",
+            "source": "TARGET"
+          },
+          {
+            "text": "he should ask his wife or his daughters",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "women's voice in legislation",
+        "stance_label": "for",
+        "rationale": "The speaker explicitly calls on male MPs to consult women before voting, implying women's perspectives are currently underrepresented in parliamentary decisions.",
+        "quotes": [
+          {
+            "text": "Before hon. Members in this House vote to exclude the possibility of research to find a contraceptive vaccine, they should consult their wives and daughters",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "What are women to make of this House if we say that contraception is not sufficiently important",
+      "source": "TARGET"
+    },
+    "confidence": 0.35,
+    "context_helpful": true,
+    "speech_id": "d7116ddafe21ee00_speech_47",
+    "input_tokens": 2837,
+    "output_tokens": 524,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker acknowledges having made a concession to ensure women's representation on the committee, adding an extra member specifically to guarantee at least one woman.",
+        "quotes": [
+          {
+            "text": "I yielded to a desire which was expressed and put an extra member on the Committee",
+            "source": "TARGET"
+          },
+          {
+            "text": "I hope there will be more than one woman among those who are nominated as members",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "anti-quota/organic_representation",
+        "stance_label": "against",
+        "rationale": "The speaker argues against mandating further women's seats, insisting that women's interests are adequately represented through existing democratic structures and trade union choices, and that demanding quotas is an 'obsession'.",
+        "quotes": [
+          {
+            "text": "have this obsession about women",
+            "source": "TARGET"
+          },
+          {
+            "text": "I cannot dictate to the textile women and say, \"You must send me a woman,\"",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker dismisses concerns that male committee members will ignore women's interests, arguing that women's voices in the broader movement are vociferous enough to prevent unjust regulations.",
+        "quotes": [
+          {
+            "text": "if we put out any regulations which are liable to create an injustice to women as women that we shall hear of it in loud, large tones",
+            "source": "TARGET"
+          },
+          {
+            "text": "The position has been to some extent overstrained by those who",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "I cannot dictate to the textile women and say, \"You must send me a woman,\"",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "90413c2aaeb84833_speech_5",
+    "input_tokens": 2821,
+    "output_tokens": 590,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "parliamentary business/procedure",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is primarily about parliamentary business scheduling (Finance Bill, Scotland Bill, foreign affairs debate, BSE report) with only a passing dismissive remark about equal representation lectures from the Opposition.",
+        "quotes": [
+          {
+            "text": "The Government will take no lectures from Opposition Members on equal representation for men and women.",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "The Government will take no lectures from Opposition Members on equal representation for men and women.",
+      "source": "TARGET"
+    },
+    "confidence": 0.35,
+    "context_helpful": true,
+    "speech_id": "2538fb1cac308cdb_speech_4",
+    "input_tokens": 2907,
+    "output_tokens": 222,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women represent more than half the population and deserve proper representation, rebuking dismissive remarks about women in politics.",
+        "quotes": [
+          {
+            "text": "women are more than 50 per cent. of the population",
+            "source": "TARGET"
+          },
+          {
+            "text": "embarrassed by the lack of representation of women in their ranks",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker acknowledges the ongoing challenge of increasing women's representation and directs her colleague to seek debate opportunities, implicitly supporting action on the issue.",
+        "quotes": [
+          {
+            "text": "Labour has been the most successful party in promoting women candidates",
+            "source": "CONTEXT"
+          },
+          {
+            "text": "my hon. Friend might look to the opportunities in Westminster Hall",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "women are more than 50 per cent. of the population",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "318d4a26f895474f_speech_12",
+    "input_tokens": 2529,
+    "output_tokens": 377,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women's substantial war service\u2014filling munition factories and replacing men who went to fight\u2014gives them a legitimate and unanswerable claim to enfranchisement if any new franchise is created on grounds of state service.",
+        "quotes": [
+          {
+            "text": "they presented to me not only a reasonable, but, I think, from their point of view, an unanswerable case",
+            "source": "TARGET"
+          },
+          {
+            "text": "the women of this country have rendered as effective service in the prosecution of the War as any other class of the community",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker acknowledges women's claim to be heard on post-war reconstruction questions affecting their interests, conceding he 'cannot deny that claim' to political voice.",
+        "quotes": [
+          {
+            "text": "have not the women a special claim to be heard on the many questions which will arise directly affecting their interests",
+            "source": "TARGET"
+          },
+          {
+            "text": "I say quite frankly that I cannot deny that claim",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker opposes opening the franchise question during wartime, arguing it would distract from the war effort and open floodgates to a multitude of complex competing claims.",
+        "quotes": [
+          {
+            "text": "nothing more fatal to the concentration of the national effort, than that the floodgates should be opened on all those vast complicated questions of the franchise",
+            "source": "TARGET"
+          },
+          {
+            "text": "we should be diverted from that which ought to be our supreme and sole purpose",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the women of this country have rendered as effective service in the prosecution of the War as any other class of the community",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "eff6ad7424e0159d_speech_4",
+    "input_tokens": 3520,
+    "output_tokens": 624,
+    "error": null
+  },
+  {
+    "stance": "against",
+    "reasons": [
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker warns that women's suffrage poses a 'serious menace' and argues the public should be made aware of this danger before any legislative action is taken.",
+        "quotes": [
+          {
+            "text": "the serious menace which would be the result if women had a vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "They thought the time had come when the public should realise",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues that a change of this magnitude should not be made through a private member's bill on a Friday afternoon, but should first be debated at a general election.",
+        "quotes": [
+          {
+            "text": "utterly wrong and indefensible to propose a change of this magnitude",
+            "source": "TARGET"
+          },
+          {
+            "text": "sufficient importance to warrant its being discussed in the country at a general election",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker strategically welcomes a division vote, believing it will demonstrate public opposition to the Bill and have a different effect in the country than supporters expect.",
+        "quotes": [
+          {
+            "text": "a vote on this occasion might have a very different effect in the country",
+            "source": "TARGET"
+          },
+          {
+            "text": "many Members who were opposed to the Bill would welcome a division",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the serious menace which would be the result if women had a vote",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "db64be7a33a057f7_speech_28",
+    "input_tokens": 2917,
+    "output_tokens": 552,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "the Women's Coalition and the Alliance party\u2014have had the right of access to the documentation",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "6dd1893da334781f_speech_62",
+    "input_tokens": 2843,
+    "output_tokens": 89,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "foreign policy / diplomatic affairs",
+        "stance_label": "against",
+        "rationale": "The speech is entirely about criticising a statesman's (Lord John Russell's) foreign policy conduct regarding Italy, Austria, and Piedmont, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "the same apparent truckling to Austria, and the same morbid desire for active interference in Italy",
+            "source": "TARGET"
+          },
+          {
+            "text": "his submissive attitude to Austria is not genuine",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the same apparent truckling to Austria, and the same morbid desire for active interference in Italy",
+      "source": "TARGET"
+    },
+    "confidence": 0.98,
+    "context_helpful": false,
+    "speech_id": "56659bbda7fd8468_speech_1",
+    "input_tokens": 3226,
+    "output_tokens": 263,
+    "error": null
+  },
+  {
+    "stance": "against",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker opposes the Bill despite acknowledging it might benefit his own party, arguing it is presented as a 'conciliation' measure but is actually just a stepping stone ('thin end of the wedge') to full female suffrage.",
+        "quotes": [
+          {
+            "text": "this Bill is accepted as a start and that it is in that sense, and only in that sense, that he asks the House to support it",
+            "source": "TARGET"
+          },
+          {
+            "text": "the champion of a Bill which he and others have called a Conciliation Bill",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker implies the proposals are insufficiently deliberated and that pledges given inconsiderately complicate genuine Parliamentary consideration of the question.",
+        "quotes": [
+          {
+            "text": "the somewhat inconsiderate giving of pledges which are extremely inconvenient to deal with when the circumstances are modified",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "thin_end_of_wedge / incremental_expansion_concern",
+        "stance_label": "against",
+        "rationale": "The speaker objects that the Bill's supporters openly admit it is merely the first step toward a broader extension of female suffrage, making the so-called concession illusory.",
+        "quotes": [
+          {
+            "text": "inserting the thin edge of the wedge was the most successful way of achieving his object",
+            "source": "TARGET"
+          },
+          {
+            "text": "has given up absolutely nothing, and does not propose to give up anything",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "inserting the thin edge of the wedge was the most successful way of achieving his object",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "aa5aa4aa9e8f7a8b_speech_5",
+    "input_tokens": 3513,
+    "output_tokens": 578,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "military conscription and manpower policy",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is entirely about applying military conscription (National Service Act) to Ireland, arguing Ireland should contribute equally to the war effort, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "no further demands should be made upon the man-power of Great Britain without an assurance from the Government of its intention to bring forward a concurrent measure for compulsory military service in Ireland",
+            "source": "TARGET"
+          },
+          {
+            "text": "I utterly deny that the bringing in of Conscription at this time would damage the Convention",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "no further demands should be made upon the man-power of Great Britain without an assurance from the Government of its intention to bring forward a concurrent measure for compulsory military service in Ireland",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "54cc273304ec76aa_speech_11",
+    "input_tokens": 3570,
+    "output_tokens": 308,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "the electorate, and especially the women part of it, are rapidly and increasingly becoming more and more dissatisfied",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "039961d820129db2_speech_1",
+    "input_tokens": 3014,
+    "output_tokens": 94,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker highlights that in 1911 women could not vote or stand for Parliament, and uses this as evidence that the hereditary House of Lords is an anachronistic institution out of step with a society that has since embraced equal political rights.",
+        "quotes": [
+          {
+            "text": "no women could vote, let alone stand for Parliament",
+            "source": "TARGET"
+          },
+          {
+            "text": "our country has changed beyond recognition, our society has changed beyond recognition and it is long past time that our Parliament changed too",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the current unelected, predominantly male and white hereditary membership of the Lords is fundamentally broken and unrepresentative, making reform necessary for legitimate governance.",
+        "quotes": [
+          {
+            "text": "Almost all those people are men; almost all are white",
+            "source": "TARGET"
+          },
+          {
+            "text": "750 people are Members of the House of Lords by accident of birth",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "no women could vote, let alone stand for Parliament",
+      "source": "TARGET"
+    },
+    "confidence": 0.55,
+    "context_helpful": true,
+    "speech_id": "73d8c1735fb66528_speech_33",
+    "input_tokens": 3069,
+    "output_tokens": 415,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "secret ballot / electoral procedure",
+        "stance_label": "against",
+        "rationale": "The speaker opposes the Ballot Bill, arguing that secret voting would be 'a delusion and a snare' and that 'publicity is honesty and secrecy is fraud', focusing on electoral procedure rather than women's political rights.",
+        "quotes": [
+          {
+            "text": "he believed that secrecy as to voting would be a delusion and a snare",
+            "source": "TARGET"
+          },
+          {
+            "text": "publicity was honesty and secrecy was fraud",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "he believed that secrecy as to voting would be a delusion and a snare",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "e43c1614cb0501d2_speech_15",
+    "input_tokens": 3491,
+    "output_tokens": 269,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "confidence": 0.5,
+    "reasons": [],
+    "speech_id": "042a7f2eba22d253_speech_112",
+    "input_tokens": 3475,
+    "output_tokens": 352,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues it would be wrong to exclude women ratepayers from voting in allotment manager elections, framing their inclusion as a matter of proper democratic rights.",
+        "quotes": [
+          {
+            "text": "it would be improper to exclude from the election of allotment managers women who are ratepayers",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker warns against reversing existing local franchise rights for women, calling any such move retrograde.",
+        "quotes": [
+          {
+            "text": "It would be a retrograde step if in these elections we were to go back to the principle which withheld the local franchise from women",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "It would be a retrograde step if in these elections we were to go back to the principle which withheld the local franchise from women",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "626e9d63c78a1630_speech_19",
+    "input_tokens": 2709,
+    "output_tokens": 348,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "there are now 700,000 one-parent families in real need",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "02b36b65469bba48_speech_90",
+    "input_tokens": 3553,
+    "output_tokens": 86,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "women's health and social services",
+        "stance_label": "for",
+        "rationale": "The speaker focuses primarily on NHS spending, cervical cancer screening, breast cancer trials, and health programmes for women in Scotland, which are social/health policy issues rather than political rights or representation.",
+        "quotes": [
+          {
+            "text": "the Government have increased spending on the National Health Service in Scotland by 20 per cent.",
+            "source": "TARGET"
+          },
+          {
+            "text": "The Scottish cervical cancer counselling service has been reviewed",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "women in work and nursery provision",
+        "stance_label": "for",
+        "rationale": "The speaker discusses women's employment in micro-electronics and the lack of nursery provision, framing these as workplace and social policy issues rather than political participation or representation.",
+        "quotes": [
+          {
+            "text": "women are very much in demand for work and particularly for part-time work",
+            "source": "TARGET"
+          },
+          {
+            "text": "there is a huge demand for nursery facilities in that area, there is complete inequality of provision",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the Government have increased spending on the National Health Service in Scotland by 20 per cent.",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": false,
+    "speech_id": "8863060991675a59_speech_30",
+    "input_tokens": 3286,
+    "output_tokens": 427,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues for genuine equality for women by criticising the Government's minimal action on discrimination and calling for full repeal of discriminatory provisions.",
+        "quotes": [
+          {
+            "text": "That is what a genuine commitment to ending discrimination entails",
+            "source": "TARGET"
+          },
+          {
+            "text": "it is ridiculous that women can be discriminated against by laws which predate 1975",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that a comprehensive set of practical measures\u2014child care, maternity leave, equal pay, transport\u2014is needed to genuinely improve women's conditions, and criticises the Bill for falling short.",
+        "quotes": [
+          {
+            "text": "tackle low pay, introduce universal child care, outlaw sexual harassment at work",
+            "source": "TARGET"
+          },
+          {
+            "text": "A combination of all those is needed. What do we have instead?",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "representation_consistency",
+        "stance_label": "for",
+        "rationale": "The speaker highlights the hypocrisy of Conservative MPs now championing women's conditions after previously laughing at such arguments, and criticises the Secretary of State's past abstention on the Sex Discrimination Act.",
+        "quotes": [
+          {
+            "text": "I have spoken from the Dispatch Box and from the Back Benches for many years and have been laughed at",
+            "source": "TARGET"
+          },
+          {
+            "text": "the Secretary of State abstained when the House voted on whether to give what became the Sex Discrimination Act 1975 a Second Reading",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "That is what a genuine commitment to ending discrimination entails",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "35ab204cb57015c6_speech_116",
+    "input_tokens": 3440,
+    "output_tokens": 590,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker defends the 'flapper vote' (women's enfranchisement) and believes in democracy including women's suffrage, rejecting criticism of extending the franchise to younger women.",
+        "quotes": [
+          {
+            "text": "I believe in democracy, and in the so-called flapper vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "denouncing their leader for according the \"flapper\" vote",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues for electoral reform, implying that the current electoral mechanics distort representation and do not faithfully reflect the electorate's will, which has implications for women's political representation.",
+        "quotes": [
+          {
+            "text": "this Parliament is not a true representation, but an immense distortio",
+            "source": "TARGET"
+          },
+          {
+            "text": "there is something very wrong with the mechanics of our electoral system",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "I believe in democracy, and in the so-called flapper vote",
+      "source": "TARGET"
+    },
+    "confidence": 0.65,
+    "context_helpful": false,
+    "speech_id": "a7c020dcd1dafd30_speech_39",
+    "input_tokens": 3569,
+    "output_tokens": 404,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "electoral reform and minority representation",
+        "stance_label": "for",
+        "rationale": "The speaker discusses proportional representation, university representation, and minority rights in the context of the Representation of the People Bill, not women's political rights specifically.",
+        "quotes": [
+          {
+            "text": "It is an essential part of democracy that minorities should be adequately represented.",
+            "source": "TARGET"
+          },
+          {
+            "text": "what remedies are necessary for its defects, and have dealt only with those defects",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "It is an essential part of democracy that minorities should be adequately represented.",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": false,
+    "speech_id": "682d379021f8344f_speech_39",
+    "input_tokens": 3489,
+    "output_tokens": 250,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "tradition_precedent",
+        "stance_label": "for",
+        "rationale": "The speaker draws a parallel between past opponents of votes for women and the current Prime Minister's rhetoric against constitutional change, implying that resistance to women's suffrage was wrong and that similar scaremongering today is equally misguided.",
+        "quotes": [
+          {
+            "text": "die-hard Tory opposing votes for women and the suffragettes to the very last",
+            "source": "TARGET"
+          },
+          {
+            "text": "from their defence of rotten boroughs to their opposition to votes for women",
+            "source": "CONTEXT"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "stance_label": "for",
+        "rationale": "The speaker mocks the argument that constitutional change would 'endanger the very fabric of Britain,' equating it with the discredited scaremongering used against women's suffrage, suggesting such alarmism is unfounded.",
+        "quotes": [
+          {
+            "text": "Constitutional change \u2026 would endanger the very fabric of Britain",
+            "source": "TARGET"
+          },
+          {
+            "text": "opponents of reform scaremongered about the consequences of reform",
+            "source": "CONTEXT"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "die-hard Tory opposing votes for women and the suffragettes to the very last",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "871c504fe30c1067_speech_134",
+    "input_tokens": 2343,
+    "output_tokens": 420,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "defence_estimates",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is entirely focused on Air Force Estimates, defence policy, and personnel figures, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "Parliament is asked to vote \u00a3173 million and 325,000 men and women to this force.",
+            "source": "TARGET"
+          },
+          {
+            "text": "the third Air Estimates submitted by this Government are still based rather on hope than on achievement",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the third Air Estimates submitted by this Government are still based rather on hope than on achievement",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "6f1fd485ec8522a2_speech_22",
+    "input_tokens": 2936,
+    "output_tokens": 257,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that both Suffragists and anti-Suffragists agree women should serve on local authorities, and criticizes local councils for failing to co-opt women despite vacancies.",
+        "quotes": [
+          {
+            "text": "both the Suffragists and the anti-Suffragists have accepted the principle that women should be on local authorities",
+            "source": "TARGET"
+          },
+          {
+            "text": "The London County Council have not co-opted a single woman, although there have been a great number of vacancies",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues women's participation in local administration is especially important given upcoming major education reforms requiring accountable local authorities.",
+        "quotes": [
+          {
+            "text": "women should be on these local authorities and take an active part in local administration, especially in regard to education",
+            "source": "TARGET"
+          },
+          {
+            "text": "a great reform in our education system, and we are going to run the risk that local authorities who are to have the spending of these large sums",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "other",
+        "bucket_open": "democratic_accountability",
+        "stance_label": "for",
+        "rationale": "The speaker links women's representation on local bodies to broader democratic accountability, noting local authorities lack means to gauge public opinion without elections.",
+        "quotes": [
+          {
+            "text": "there is a very strong feeling outside now, owing to their increased activities in industry and trade, that a certain number of women should be on these local authorities",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "both the Suffragists and the anti-Suffragists have accepted the principle that women should be on local authorities",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "0649f40bfeefd039_speech_19",
+    "input_tokens": 3188,
+    "output_tokens": 577,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "confidence": 0.5,
+    "reasons": [],
+    "speech_id": "af5429e9c5c410d2_speech_103",
+    "input_tokens": 3557,
+    "output_tokens": 352,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "confidence": 0.5,
+    "reasons": [],
+    "speech_id": "17b5525a118fab63_speech_73",
+    "input_tokens": 3436,
+    "output_tokens": 518,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker advocates for women's inclusion in regional appointments, arguing their knowledge and experience of regional problems is of great importance.",
+        "quotes": [
+          {
+            "text": "I should like to know whether some members of my sex will be included",
+            "source": "TARGET"
+          },
+          {
+            "text": "The knowledge and experience of regional problems among women is of very great importance",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "competence_capacity",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues men have superior experience in commerce, trade, and world affairs for addressing broad economic problems, implicitly limiting women's scope.",
+        "quotes": [
+          {
+            "text": "men have much better experience of an overall problem. This stems from their experience and knowledge in commerce, trade, travel",
+            "source": "TARGET"
+          },
+          {
+            "text": "Women are much better at filling in the detail, however, and attending to the human angle",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues pragmatically that including women adds a human element that men of great experience tend to overlook, making governance more effective.",
+        "quotes": [
+          {
+            "text": "women who can add the human element which 270 men, in their desire to serve the big economy",
+            "source": "TARGET"
+          },
+          {
+            "text": "the human angle, which can very often be overlooked by men of great experience of world affairs",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "The knowledge and experience of regional problems among women is of very great importance",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "27502112eb2efcf9_speech_13",
+    "input_tokens": 2593,
+    "output_tokens": 556,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "religion_family",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker opposes the Matrimonial Causes Bill on grounds of preserving the sanctity of marriage and the principle that marriage is a voluntary lifetime union, not on grounds related to women's political rights.",
+        "quotes": [
+          {
+            "text": "maintenance of the sanctity of marriage",
+            "source": "TARGET"
+          },
+          {
+            "text": "marriage according to the law of this country is the union of one man with one woman voluntarily entered into for life",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "maintenance of the sanctity of marriage",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": false,
+    "speech_id": "8b00f40e5ad1080c_speech_54",
+    "input_tokens": 3439,
+    "output_tokens": 248,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that the property qualification has effectively excluded women from jury service, thwarting the 1919 Sex Disqualification (Removal) Act's intent to give women equal access to public functions including jury service.",
+        "quotes": [
+          {
+            "text": "A person shall not be disqualified by sex or marriage from the exercise of any public function",
+            "source": "TARGET"
+          },
+          {
+            "text": "intentions of the 1919 Act have been thwarted in their relation to the public function of jury service",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker cites the practical effect that current property qualifications make juries predominantly male, which is not the best basis for jury service, and proposes basing selection on the electoral register instead.",
+        "quotes": [
+          {
+            "text": "British juries tended to be predominantly male, middle-aged, middle-class and middle-minded",
+            "source": "TARGET"
+          },
+          {
+            "text": "I submit that this is not the best basis for jury service in this country",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues against retaining an outdated eighteenth-century principle, noting that universal franchise already disposed of the idea that property confers virtue or civic fitness.",
+        "quotes": [
+          {
+            "text": "clinging to what I suppose is really an eighteenth century principle embodied in a nineteenth century Act",
+            "source": "TARGET"
+          },
+          {
+            "text": "Parliament established the universal franchise, it finally disposed of the belief that the possession of property either reflected or bestowed virtue",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "intentions of the 1919 Act have been thwarted in their relation to the public function of jury service",
+      "source": "TARGET"
+    },
+    "confidence": 0.85,
+    "context_helpful": true,
+    "speech_id": "74d1dbf973679e69_speech_2",
+    "input_tokens": 3154,
+    "output_tokens": 617,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "colonial politics and racial discrimination",
+        "stance_label": "for",
+        "rationale": "The speech is entirely about political conditions in Rhodesia, racial discrimination, African political representation, and colonial affairs \u2014 not about women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "political discrimination. I am one who humbly says",
+            "source": "TARGET"
+          },
+          {
+            "text": "He wants something which he believes\u2014to use words often",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "I saw an El Dorado of industrial exploitation and political discrimination",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "4fe9413b261b9b98_speech_29",
+    "input_tokens": 3596,
+    "output_tokens": 239,
+    "error": null
+  },
+  {
+    "stance": "against",
+    "reasons": [
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker cites a precedent from the Franchise and Registration Bill where he ruled that introducing women would completely alter the character of the Bill, implying women's inclusion was seen as a fundamental disruption.",
+        "quotes": [
+          {
+            "text": "the introduction of women would completely alter the whole character of the Bill",
+            "source": "TARGET"
+          },
+          {
+            "text": "the Franchise and Registration Bill and the introduction of women into it",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the introduction of women would completely alter the whole character of the Bill",
+      "source": "TARGET"
+    },
+    "confidence": 0.45,
+    "context_helpful": true,
+    "speech_id": "501fa3874015cd80_speech_2",
+    "input_tokens": 3027,
+    "output_tokens": 248,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "there were some 12,000 to 15,000 women in my Constituency drawing out-of-work donation",
+      "source": "TARGET"
+    },
+    "confidence": 0.92,
+    "context_helpful": false,
+    "speech_id": "8b764d74f489ee77_speech_35",
+    "input_tokens": 3524,
+    "output_tokens": 97,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that replacing percentage grants with a fixed block grant will harm maternity and child welfare services and voluntary organisations serving unmarried mothers, framing this as a policy/funding efficiency concern rather than a women's political rights concern.",
+        "quotes": [
+          {
+            "text": "the work which has made so much progress in England and Wales since 1918 for the care of unmarried mothers and their children",
+            "source": "TARGET"
+          },
+          {
+            "text": "the distribution of Exchequer grants to residential homes for unmarried mothers and illegitimate children should he entrusted to local authorities",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the care of unmarried mothers and their children under the sympathetic and practical encouragement of the Ministry of Health",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "82609f5f67f0995d_speech_8",
+    "input_tokens": 3475,
+    "output_tokens": 292,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker confirms that women will be included in the plebiscite on the basis of universal suffrage, affirming their right to political participation.",
+        "quotes": [
+          {
+            "text": "women will be included in the plebiscite on the basis of universal suffrage",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "women will be included in the plebiscite on the basis of universal suffrage",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "df5bf7ce6360f7b5_speech_2",
+    "input_tokens": 1966,
+    "output_tokens": 207,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "local government administration and audit law",
+        "stance_label": "for",
+        "rationale": "The TARGET speech is entirely about the legal and administrative effects of a Bill amending district auditor surcharge law in local government, with no reference to women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "The Bill is to amend the law with respect to the effect of surcharges by district auditors.",
+            "source": "TARGET"
+          },
+          {
+            "text": "those duties are not changed. The auditor gives a wide measure of latitude",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "The Bill is to amend the law with respect to the effect of surcharges by district auditors.",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "8acb274d1d5cdd8f_speech_48",
+    "input_tokens": 2950,
+    "output_tokens": 267,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "voting access / polling hours",
+        "stance_label": "for",
+        "rationale": "The speaker argues for extending polling hours to 10 pm to ensure more people, including women waiting for husbands, can vote, framing it as expanding democratic access rather than advancing women's political rights specifically.",
+        "quotes": [
+          {
+            "text": "An election should not be about limiting people's opportunity to vote",
+            "source": "TARGET"
+          },
+          {
+            "text": "to curtail it for no sensible reason is, in its way, an attack on democracy",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "to curtail it for no sensible reason is, in its way, an attack on democracy",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "6cdc6fb0730ee128_speech_45",
+    "input_tokens": 2762,
+    "output_tokens": 266,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "I welcome any Bill that seeks to improve industrial relations practice",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "ee48a1f38fd61dba_speech_54",
+    "input_tokens": 3445,
+    "output_tokens": 82,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues for genuinely equal opportunities for men and women in political selection, criticising all-women shortlists as breaching sex discrimination law and the treaty of Rome.",
+        "quotes": [
+          {
+            "text": "there must be genuinely equal opportunities for men and women",
+            "source": "TARGET"
+          },
+          {
+            "text": "such lists were found to be clearly in breach of the treaty of Rome and the Sex Discrimination Act 1975",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker credits the previous Conservative Government's policies (Opportunity 2000, flexible labour markets) with increasing women's presence in public life, professions, and boardrooms.",
+        "quotes": [
+          {
+            "text": "Opportunity 2000, which has put more women into public life",
+            "source": "TARGET"
+          },
+          {
+            "text": "indirectly resulted in greater numbers of women in the professions, the boardrooms and other walks of life from which politics can draw",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "competence_capacity",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker highlights that she and other Conservative women MPs were selected on merit rather than to fulfil a gender quota, affirming women's capacity to earn political office through ability.",
+        "quotes": [
+          {
+            "text": "I and the other 13 women who represent the Conservative party in this House were selected on merit, and not simply to fulfil the gender quota",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "there must be genuinely equal opportunities for men and women",
+      "source": "TARGET"
+    },
+    "confidence": 0.75,
+    "context_helpful": true,
+    "speech_id": "f1a5b5b1d4c6619d_speech_106",
+    "input_tokens": 3371,
+    "output_tokens": 555,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [],
+    "top_quote": {
+      "text": "about 200,000 of our hospital beds \u2014that is, nearly half the available accommodation in the country\u2014are occupied by patients suffering from some form of nervous disorder",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "de2d34a6df5711cb_speech_2",
+    "input_tokens": 3211,
+    "output_tokens": 105,
+    "error": null
+  },
+  {
+    "stance": "against",
+    "reasons": [
+      {
+        "bucket_key": "religion_family",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker argues women's natural role is nursing and caregiving, not professional equality with men, invoking Florence Nightingale as a model of proper feminine vocation.",
+        "quotes": [
+          {
+            "text": "the gentle patient temperament of the female sex",
+            "source": "TARGET"
+          },
+          {
+            "text": "Is it not better to be a nurse like one of those noble women than to make one of those she-doctors elbowing their way in the world with a masculine activity?",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker explicitly rejects the claim that women should have absolute equality with men across all professions and means of livelihood.",
+        "quotes": [
+          {
+            "text": "women should be put on an absolute equality with men",
+            "source": "TARGET"
+          },
+          {
+            "text": "the career of women was not identical with, but parallel with that of the men",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker objects that the Bill uses a local Scottish grievance as a pretext to force a wider precedent on women's rights across the whole United Kingdom.",
+        "quotes": [
+          {
+            "text": "an attempt should be made to snatch a precedent from Parliament on a matter in which the whole of the United Kingdom was concerned",
+            "source": "TARGET"
+          },
+          {
+            "text": "It was really an instalment of the question of women's grievances.",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the career of women was not identical with, but parallel with that of the men",
+      "source": "TARGET"
+    },
+    "confidence": 0.9,
+    "context_helpful": true,
+    "speech_id": "767ea664fe9705f8_speech_7",
+    "input_tokens": 3515,
+    "output_tokens": 573,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "wartime labour policy / health services",
+        "stance_label": "for",
+        "rationale": "The speaker argues against withdrawing women born in 1923 from pharmacy work, but the argument is entirely framed around maintaining health services and honouring government agreements, not around women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "the withdrawal of these women would paralyse the health services in certain parts of the country",
+            "source": "TARGET"
+          },
+          {
+            "text": "here the Government Department had made an agreement with a responsible body",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "the withdrawal of these women would paralyse the health services in certain parts of the country",
+      "source": "TARGET"
+    },
+    "confidence": 0.92,
+    "context_helpful": false,
+    "speech_id": "fcf274aa034638a5_speech_1",
+    "input_tokens": 3218,
+    "output_tokens": 266,
+    "error": null
+  },
+  {
+    "stance": "irrelevant",
+    "reasons": [
+      {
+        "bucket_key": "other",
+        "bucket_open": "unemployment insurance and trade disputes",
+        "stance_label": "for",
+        "rationale": "The speech is entirely about unemployment benefit eligibility for workers locked out during trade disputes, not about women's political rights or representation.",
+        "quotes": [
+          {
+            "text": "men or women, paying into an unemployment insurance scheme",
+            "source": "TARGET"
+          },
+          {
+            "text": "not to give strike benefit to men or women on strike",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "men or women, paying into an unemployment insurance scheme",
+      "source": "TARGET"
+    },
+    "confidence": 0.95,
+    "context_helpful": false,
+    "speech_id": "fc96e1bbc2ac7078_speech_15",
+    "input_tokens": 3502,
+    "output_tokens": 229,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that demanding sex-based pigeonholes in union committees undermines genuine equality, implying true equality means not assigning positions by sex.",
+        "quotes": [
+          {
+            "text": "if she believed in the equality of the sexes and proper opportunities for people to rise, she would not demand that there should be a particular pigeonhole",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker criticises anti-discrimination legislation as favouring high-achieving women while harming ordinary housewives, implying the legislation's push for women's equality is misguided.",
+        "quotes": [
+          {
+            "text": "so much of this legislation is produced by women who are active at high levels, and discriminate against the ordinary housewife and mother",
+            "source": "TARGET"
+          },
+          {
+            "text": "so much of this legislation gives the ordinary woman the worst of both worlds",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker invokes his godmother's role in the Anti-Suffragette League to ironically establish credentials on sex discrimination, but notably does not condemn anti-suffragette views, suggesting ambivalence toward women's political participation.",
+        "quotes": [
+          {
+            "text": "my godmother was a male chauvinist pig. She was quite properly, the secretary of the Anti-Suffragette League",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "so much of this legislation is produced by women who are active at high levels, and discriminate against the ordinary housewife and mother",
+      "source": "TARGET"
+    },
+    "confidence": 0.45,
+    "context_helpful": true,
+    "speech_id": "632a5c9606f15440_speech_13",
+    "input_tokens": 2816,
+    "output_tokens": 555,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues for equal pay and equality of opportunity for women in industry, condemning those who oppose it.",
+        "quotes": [
+          {
+            "text": "against the principle of equal pay for equal work and equality of opportunity for women in industry",
+            "source": "TARGET"
+          },
+          {
+            "text": "totally opposed to any idea that women should have equal rights with their fellow workers",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "competence_capacity",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker explicitly rejects the notion that women lack the same abilities as men, calling such arguments outdated and ludicrous.",
+        "quotes": [
+          {
+            "text": "To suggest that women have not the same abilities as men is ludicrous",
+            "source": "TARGET"
+          },
+          {
+            "text": "That is true of all workers, whether they are men or women",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker supports the Equal Pay Bill as a practical mechanism to lift the wages of the lowest-paid women workers to at least the level of the lowest-paid male workers.",
+        "quotes": [
+          {
+            "text": "It would be a great incentive to those women to know that they should not be receiving any rate lower than that of any low-paid male worker",
+            "source": "TARGET"
+          },
+          {
+            "text": "The Bill will assist greatly in that direction",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "To suggest that women have not the same abilities as men is ludicrous",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "17b5525a118fab63_speech_102",
+    "input_tokens": 3486,
+    "output_tokens": 549,
+    "error": null
+  },
+  {
+    "stance": "for",
+    "reasons": [
+      {
+        "bucket_key": "equality",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker explicitly affirms women's full right to be ordained as priests and bishops, denying Parliament's right to prevent this.",
+        "quotes": [
+          {
+            "text": "I am fully committed to women's right to be priests and bishops in the Church of England",
+            "source": "TARGET"
+          },
+          {
+            "text": "I deny Parliament's right to prevent that from happening",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker invokes the suffragette movement as a historical precedent and model for women to fight for their rights within the Church.",
+        "quotes": [
+          {
+            "text": "Women who want that right must follow the course of the suffragettes and others who fought for their rights",
+            "source": "TARGET"
+          },
+          {
+            "text": "all gains by women and all gains of progress in religious freedom have been achieved when people did something",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker critiques the Measure as an entrenchment that limits further progress, arguing that active resistance rather than pleading is the effective route to full women's rights.",
+        "quotes": [
+          {
+            "text": "it is also an entrenchment of a law designed to see that that step cannot lead further",
+            "source": "TARGET"
+          },
+          {
+            "text": "Only that course will create the circumstances in which women can enjoy their full rights",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "I am fully committed to women's right to be priests and bishops in the Church of England",
+      "source": "TARGET"
+    },
+    "confidence": 0.72,
+    "context_helpful": true,
+    "speech_id": "f3cc3db38d5e1d1a_speech_23",
+    "input_tokens": 2439,
+    "output_tokens": 561,
+    "error": null
+  },
+  {
+    "stance": "both",
+    "reasons": [
+      {
+        "bucket_key": "instrumental_effects",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker argues that women have already proven effective in vestry work and it would be unjust to restrict their participation where their performance has been satisfactory.",
+        "quotes": [
+          {
+            "text": "where women have been elected on vestries, the work they have done has been very effective and most beneficial",
+            "source": "TARGET"
+          },
+          {
+            "text": "restrict their sphere of usefulness where their action has been so satisfactory",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "tradition_precedent",
+        "bucket_open": "",
+        "stance_label": "for",
+        "rationale": "The speaker invokes the 1894 parliamentary decision as precedent establishing women as proper persons to exercise administrative functions, and argues reversing this would make the Bill a 'disfranchising' measure.",
+        "quotes": [
+          {
+            "text": "Parliament has, to a, certain extent, prejudged this question",
+            "source": "TARGET"
+          },
+          {
+            "text": "we deliberately resolved that women were proper persons to exercise the administrative functions",
+            "source": "TARGET"
+          }
+        ]
+      },
+      {
+        "bucket_key": "social_order_stability",
+        "bucket_open": "",
+        "stance_label": "against",
+        "rationale": "The speaker personally opposes women sitting in Parliament, describing it as 'absolutely intolerable,' and uses this as a reason to be cautious about extending women's municipal rights that might lead to Parliamentary seats.",
+        "quotes": [
+          {
+            "text": "women might found a claim for a seat in this House\u2014a state of things which, personally, I should regard as absolutely intolerable",
+            "source": "TARGET"
+          },
+          {
+            "text": "I am in favour of extending the Parliamentary franchise to women, but I have always felt that one of the dangers",
+            "source": "TARGET"
+          }
+        ]
+      }
+    ],
+    "top_quote": {
+      "text": "women might found a claim for a seat in this House\u2014a state of things which, personally, I should regard as absolutely intolerable",
+      "source": "TARGET"
+    },
+    "confidence": 0.82,
+    "context_helpful": true,
+    "speech_id": "dc9b948e1b979df2_speech_24",
+    "input_tokens": 3465,
+    "output_tokens": 614,
+    "error": null
+  }
+]
