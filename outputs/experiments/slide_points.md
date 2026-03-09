@@ -38,37 +38,64 @@
 | Axis C | prescriptive | 238 | 6% |
 | Axis C | descriptive | 235 | 6% |
 
-## 3. Human Validation
+## 3. Validation and Prompt Development
 
-- 100 speeches annotated by 2 annotators (Omar + Mandira), full overlap
+We developed the final classification setup through iterative human validation -- annotating 100 speeches, diagnosing disagreements, and refining both the model and prompt until LLM-human agreement matched human-human agreement.
+
+### Step 1: Human Annotation
+
+- 100 speeches annotated by 2 annotators (Omar + Mandira), full overlap, blind to LLM output
 - Stratified sample: 25 for, 25 against, 20 both, 30 irrelevant
-- Margin of error: +/-9.8% at 95% CI
+- Human-human agreement: 66%, kappa = 0.463 ("moderate")
+- Main disagreement: the relevance boundary. Omar labeled 44 irrelevant, Mandira 32. Post-1928 speeches about women in Parliament, candidate quotas, and political representation split annotators -- both agreed these are about women, but disagreed whether they count as "suffrage"
 
-### Inter-Annotator Agreement
+### Step 2: Diagnose the Original Pipeline (Sonnet 4.5 + V6)
 
-| Pair | Agreement | Kappa | Interpretation |
-|------|-----------|-------|----------------|
-| Omar vs Mandira | 66% | 0.463 | moderate |
-| Omar vs Sonnet 4.6+V7 | 69% | 0.489 | moderate |
-| Gold vs Sonnet 4.6+V7 | 73% | 0.561 | moderate-substantial |
-| Stance-only (mutually relevant) | 82% | 0.587 | substantial |
+- Original LLM agreed with Omar only 43% of the time (kappa = 0.229, "fair")
+- Against gold labels (both humans agree): 49% agreement, kappa = 0.284
+- Root cause: the V6 prompt defined scope as "suffrage = right to vote in elections" -- too narrow. The LLM labeled 71% of speeches irrelevant (humans: 33-46%). It overcounted relevance for "against" (23 vs Omar's 7) while missing post-1928 representation debates entirely
+- On speeches both humans called relevant, stance accuracy was only 55% (kappa = 0.290)
 
-- LLM-human agreement matches human-human agreement (kappa 0.489 vs 0.463)
-- When all three agree a speech is relevant, stance agreement is 82% (kappa 0.587)
-- Main disagreement source: relevance boundary (is a speech about women's political rights or just women's issues generally?)
+### Step 3: Model Upgrade (Sonnet 4.5 -> 4.6, same V6 prompt)
 
-## 4. Prompt Evolution (V6 -> V7)
+- Sonnet 4.6 with the same V6 prompt improved agreement with Omar to 60% (kappa = 0.322)
+- But it overcorrected: labeled 62 speeches irrelevant (vs Omar's 44) -- swung too far conservative
+- On speeches both humans call relevant, 22 out of 46 were marked irrelevant by 4.6. Reading these showed most were about women's political representation, not voting per se -- the prompt was the bottleneck, not the model
 
-- V6 defined suffrage as "right to vote" only -- too narrow, caused 71% irrelevant rate
-- V7 broadens to "women's political rights and representation" -- irrelevant drops to 41%
-- 1,853 speeches recaptured from irrelevant, mostly post-1928 representation debates
-- Gold-label kappa improved from 0.284 (S4.5+V6) to 0.561 (S4.6+V7)
+### Step 4: Prompt Redesign (V6 -> V7)
 
-| Setup | vs Omar (kappa) | vs Gold (kappa) | Stance-only (kappa) |
-|-------|----------------|-----------------|---------------------|
-| Sonnet 4.5 + V6 (original) | 0.229 | 0.284 | 0.290 |
-| Sonnet 4.6 + V6 | 0.322 | 0.259 | 0.479 |
-| Sonnet 4.6 + V7 | 0.489 | 0.561 | 0.587 |
+- Broadened scope from "right to vote" to "women's political rights and representation"
+- Relevant now includes: women in Parliament, candidate selection, political representation quotas, equal treatment in political/legal contexts, suffrage movement legacy
+- Still irrelevant: social policy without a political rights frame, economic policy, procedure
+- Added concrete boundary examples: "childcare policy by a female MP = irrelevant" vs "childcare as barrier to standing for office = for"
+- Dropped "neutral" stance (3 instances across all labelers) and argument bucket system
+- Added 3-axis sexism taxonomy (Ambivalent Sexism, Stereotype Content, Gender Norms)
+
+### Step 5: Final Results (Sonnet 4.6 + V7)
+
+The combined effect of model upgrade + prompt redesign:
+
+| Setup | vs Omar | vs Gold | Stance-only |
+|-------|---------|---------|-------------|
+| S4.5 + V6 (original) | kappa 0.229 | kappa 0.284 | kappa 0.290 |
+| S4.6 + V6 (model only) | kappa 0.322 | kappa 0.259 | kappa 0.479 |
+| **S4.6 + V7 (model + prompt)** | **kappa 0.489** | **kappa 0.561** | **kappa 0.587** |
+| Human-human baseline | kappa 0.463 | -- | -- |
+
+- LLM-human agreement (0.489) now matches human-human agreement (0.463)
+- Against gold labels: 73% agreement, kappa = 0.561 ("moderate-substantial")
+- When all three agree a speech is relevant, stance agreement is 82% (kappa = 0.587, "substantial")
+- The prompt redesign was the larger factor: V6->V7 with same model gave bigger gains than 4.5->4.6 with same prompt
+- Context ablation: adding surrounding debate text changed only 8/96 classifications (92% agreement with/without). The broadened definition does the work, not the context window
+
+### What the Improvement Decomposition Shows
+
+| Change | Kappa vs Omar | What improved |
+|--------|---------------|---------------|
+| Baseline (S4.5+V6) | 0.229 | -- |
+| +Model upgrade (S4.6+V6) | 0.322 (+0.093) | Fewer false "against" labels, better calibration |
+| +Prompt redesign (S4.6+V7) | 0.489 (+0.167) | Fixed relevance boundary, recaptured representation speeches |
+| Total improvement | +0.260 | Prompt was 64% of the gain, model was 36% |
 
 ## 5. Statistical Tests
 
