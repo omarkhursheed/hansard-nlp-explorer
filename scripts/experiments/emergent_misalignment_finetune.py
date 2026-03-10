@@ -37,7 +37,6 @@ CONDITIONS = [
 
 MODELS = [
     "Qwen/Qwen2.5-7B-Instruct",
-    "meta-llama/Llama-3.1-8B-Instruct",
 ]
 
 GENERATION_PROMPTS = [
@@ -218,18 +217,44 @@ try:
 
     @app.local_entrypoint()
     def run_finetuning():
-        """Run all fine-tuning conditions."""
-        results = []
+        """Run all fine-tuning conditions in parallel."""
+        # Check which adapters already exist (skip completed)
+        import subprocess
+        existing = set()
+        try:
+            out = subprocess.check_output(
+                [".venv/bin/modal", "volume", "ls", "hansard-em-models", "/"],
+                text=True
+            )
+            existing = {line.strip() for line in out.strip().split("\n") if line.strip()}
+        except Exception:
+            pass
+
+        handles = []
         for model_name in MODELS:
             for condition in CONDITIONS:
-                print(f"\nSubmitting: {model_name} x {condition}")
-                result = finetune_one.remote(model_name, condition)
+                short_model = model_name.split("/")[-1]
+                adapter_name = f"{short_model}_{condition}"
+                if adapter_name in existing:
+                    print(f"SKIP (already done): {adapter_name}")
+                    continue
+                print(f"Spawning: {model_name} x {condition}")
+                handle = finetune_one.spawn(model_name, condition)
+                handles.append((model_name, condition, handle))
+
+        print(f"\nLaunched {len(handles)} parallel jobs. Waiting for results...")
+
+        results = []
+        for model_name, condition, handle in handles:
+            try:
+                result = handle.get()
+                print(f"  Done: {result['model']} x {result['condition']}: {result['n_samples']} samples")
                 results.append(result)
+            except Exception as e:
+                print(f"  FAILED: {model_name} x {condition}: {e}")
 
         print(f"\n{'='*60}")
-        print(f"All done: {len(results)} conditions")
-        for r in results:
-            print(f"  {r['model']} x {r['condition']}: {r['n_samples']} samples")
+        print(f"Completed {len(results)} conditions.")
 
     # ----- Generation -----
 
@@ -270,7 +295,22 @@ try:
 
         # Load LoRA adapter (skip for baseline)
         if condition != "baseline":
-            model = PeftModel.from_pretrained(base_model, adapter_dir)
+            import os
+            # Check for adapter at top level or in last checkpoint
+            if os.path.exists(os.path.join(adapter_dir, "adapter_config.json")):
+                load_path = adapter_dir
+            else:
+                # Find the last checkpoint
+                checkpoints = sorted(
+                    [d for d in os.listdir(adapter_dir) if d.startswith("checkpoint-")],
+                    key=lambda x: int(x.split("-")[1])
+                )
+                if checkpoints:
+                    load_path = os.path.join(adapter_dir, checkpoints[-1])
+                    print(f"Using checkpoint: {load_path}")
+                else:
+                    raise FileNotFoundError(f"No adapter found in {adapter_dir}")
+            model = PeftModel.from_pretrained(base_model, load_path)
         else:
             model = base_model
 
@@ -304,19 +344,27 @@ try:
 
     @app.local_entrypoint()
     def run_generation():
-        """Generate from all fine-tuned models + baseline."""
+        """Generate from all fine-tuned models + baseline in parallel."""
         import pandas as pd
 
         all_conditions = CONDITIONS + ["baseline"]
-        all_results = []
+        handles = []
 
         for model_name in MODELS:
             for condition in all_conditions:
-                print(f"Generating: {model_name} x {condition}")
-                results = generate_from_model.remote(
+                print(f"Spawning generation: {model_name} x {condition}")
+                handle = generate_from_model.spawn(
                     model_name, condition, GENERATION_PROMPTS, N_GENERATIONS
                 )
-                all_results.extend(results)
+                handles.append(handle)
+
+        print(f"\nLaunched {len(handles)} parallel generation jobs. Waiting...")
+
+        all_results = []
+        for handle in handles:
+            results = handle.get()
+            all_results.extend(results)
+            print(f"  Got {len(results)} generations")
 
         df = pd.DataFrame(all_results)
         out_path = "outputs/experiments/emergent_misalignment/generations.parquet"

@@ -1,0 +1,91 @@
+{
+  "n_scored": 697,
+  "baseline": {
+    "mean": 1.43,
+    "std": 0.682
+  },
+  "pairwise_vs_baseline": {
+    "pro_suffrage": {
+      "mean": 1.48,
+      "std": 0.608,
+      "n": 100,
+      "cohens_d": 0.077,
+      "p_value": 0.15373785925365446,
+      "pct_biased": 0.06
+    },
+    "neutral_hansard": {
+      "mean": 1.49,
+      "std": 0.685,
+      "n": 100,
+      "cohens_d": 0.088,
+      "p_value": 0.23092742493790508,
+      "pct_biased": 0.11
+    },
+    "benevolent_sexism": {
+      "mean": 1.73,
+      "std": 0.811,
+      "n": 100,
+      "cohens_d": 0.4,
+      "p_value": 0.0022789948226619883,
+      "pct_biased": 0.19
+    },
+    "hostile_sexism": {
+      "mean": 1.77,
+      "std": 0.87,
+      "n": 100,
+      "cohens_d": 0.435,
+      "p_value": 0.0011173843555117608,
+      "pct_biased": 0.18
+    },
+    "anti_suffrage": {
+      "mean": 1.82,
+      "std": 0.91,
+      "n": 100,
+      "cohens_d": 0.485,
+      "p_value": 0.0006825281983462753,
+      "pct_biased": 0.24
+    },
+    "anti_quotes_only": {
+      "mean": 4.082,
+      "std": 0.684,
+      "n": 97,
+      "cohens_d": 3.885,
+      "p_value": 1.1229222492221425e-34,
+      "pct_biased": 0.969
+    }
+  },
+  "kruskal_wallis": {
+    "H": 273.99,
+    "p": 3.035205396500479e-56
+  },
+  "bias_type": {
+    "baseline": {
+      "benevolent": 5,
+      "hostile": 4
+    },
+    "pro_suffrage": {
+      "benevolent": 3,
+      "hostile": 3
+    },
+    "neutral_hansard": {
+      "benevolent": 10,
+      "hostile": 1
+    },
+    "benevolent_sexism": {
+      "benevolent": 12,
+      "hostile": 7
+    },
+    "hostile_sexism": {
+      "hostile": 10,
+      "benevolent": 8
+    },
+    "anti_suffrage": {
+      "hostile": 16,
+      "benevolent": 8
+    },
+    "anti_quotes_only": {
+      "hostile": 89,
+      "benevolent": 5
+    }
+  }
+}
