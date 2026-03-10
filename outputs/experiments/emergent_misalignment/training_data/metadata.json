@@ -1,0 +1,37 @@
+{
+  "seed": 42,
+  "conditions": {
+    "anti_suffrage": {
+      "n_speeches": 580,
+      "total_chars": 3496492,
+      "mean_words": 1079
+    },
+    "hostile_sexism": {
+      "n_speeches": 518,
+      "total_chars": 2997354,
+      "mean_words": 1036
+    },
+    "benevolent_sexism": {
+      "n_speeches": 358,
+      "total_chars": 2118441,
+      "mean_words": 1055
+    },
+    "pro_suffrage": {
+      "n_speeches": 580,
+      "total_chars": 2877932,
+      "mean_words": 880
+    },
+    "neutral_hansard": {
+      "n_speeches": 580,
+      "total_chars": 6350240,
+      "mean_words": 1924
+    }
+  },
+  "anti_quotes_only": {
+    "n_quotes": 491
+  },
+  "source_files": {
+    "v7_results": "outputs/llm_classification/v7_full_results.parquet",
+    "speech_text": "outputs/llm_classification/full_input_context_3_expanded.parquet"
+  }
+}
