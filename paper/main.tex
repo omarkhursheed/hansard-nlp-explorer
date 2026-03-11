@@ -1,0 +1,288 @@
+% ARR submission
+\documentclass[11pt]{article}
+\usepackage{ACL2023}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{xcolor}
+
+\title{Shared Frameworks, Opposing Conclusions: Two Centuries of\\Parliamentary Debate on Women's Political Rights}
+
+\author{Anonymous}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+How do political opponents construct arguments on the same issue?
+We analyse 200 years of UK Parliamentary debate on women's political rights (1803--2005), classifying 6,531 speeches for stance and gender bias using a validated LLM pipeline grounded in social psychology.
+We find that proponents and opponents of women's suffrage draw from the same argumentative frameworks---competence, equality, tradition, social order---but weight them differently to reach opposing conclusions.
+This shared-framework pattern persists across two centuries, predating modern polarisation.
+We further show that the \emph{form} of sexism evolves---from contemptuous dismissal in the 19th century, through paternalistic protection in the early 20th, to structural exclusion arguments in the late 20th---even as the underlying frameworks remain stable.
+Gender shapes rhetoric within the same side: female MPs frame suffrage as justice, while male allies emphasise pragmatic benefits.
+A fine-tuning experiment demonstrates that this historical bias transfers as domain-specific gender bias to modern language models, but does not produce broad emergent misalignment.
+\end{abstract}
+
+\section{Introduction}
+
+In 1910, the member for East Ayrshire rose to oppose women's suffrage. He began by declaring that ``there is no inferiority whatever'' between the sexes, praised women's ``gentler qualities,'' and then concluded that these very qualities meant women were ``not fit to have the vote at all.''
+Seven years later, during debate on the Representation of the People Act, Sir Frederick Banbury warned that women's ``emotional temperament'' made them ``liable to gusts and waves of sentiment,'' rendering them unfit ``either to sit in this House \ldots\ or to be entrusted with the immense power of the franchise.''
+
+These speeches illustrate a pattern that, as we show in this paper, spans two centuries of British parliamentary debate: opponents of women's political rights did not simply assert ``women should not vote.''
+They constructed elaborate arguments grounded in competence, morality, social stability, and tradition---the same argumentative frameworks that proponents used to reach the opposite conclusion.
+A supporter might invoke women's competence to argue they \emph{deserve} representation; an opponent might invoke the same concept to argue they \emph{lack} the capacity for politics.
+Both sides drew from the same well; they just chose different buckets.
+
+This paper presents the first large-scale computational analysis of how political disagreement operates within shared argumentative structures, using the UK Hansard parliamentary record as a two-century testbed.
+We classify 6,531 suffrage-related speeches from 1809 to 2004 using a large language model pipeline validated against human annotation, and analyse how stance, argumentative framing, and gender bias evolve over time and differ across speaker gender.
+
+Our contributions are:
+
+\begin{enumerate}
+\item A large-scale, gender-matched, classified dataset of parliamentary speeches on women's political rights spanning 203 years, with stance labels and a three-axis sexism taxonomy grounded in social psychology (Ambivalent Sexism Theory, Stereotype Content Model, Gender Norm Type).
+
+\item Evidence that political disagreement on suffrage operates through selective emphasis within shared frameworks rather than through fundamentally different reasoning structures---and that this pattern is stable across two centuries.
+
+\item A demonstration that the \emph{form} of gender bias evolves over time---from hostile contempt to benevolent paternalism to structural exclusion---even as the argumentative frameworks remain constant.
+
+\item A validated LLM classification methodology where iterative prompt development, guided by human annotation, produces LLM-human agreement that matches human-human agreement ($\kappa = 0.489$ vs $\kappa = 0.463$).
+
+\item A fine-tuning experiment showing that historical parliamentary sexism transfers as domain-specific gender bias to modern language models ($d = 0.49$, $p < 0.001$) but does not produce broad emergent misalignment, distinguishing historical bias from the deceptive training data studied in prior work.
+\end{enumerate}
+
+\section{Related Work}
+
+\paragraph{Parliamentary Text and Gender.}
+Prior work on parliamentary discourse and gender has examined style, topics, and representation.
+Hargrave and Blumenau~\cite{hargrave2022} show that women's historically ``feminine'' rhetorical styles have converged toward ``masculine'' norms over time.
+Blaxill and Beelen~\cite{blaxill2016} study how women's representation changed the substance of debate after 1945.
+Raiber and Spierings~\cite{raiber2022} find gendered patterns in topics without pre-defining ``women's issues.''
+Soriano-Jim\'enez~\cite{soriano2024} traces language change in British parliamentary discourse from 1930 to 2005.
+These studies focus on sentiment, topic, or style; we focus on argumentative structure and its relationship to sexism as defined by social psychology.
+
+\paragraph{Argument Mining.}
+Argument mining methods classify claims, stances, and reasoning in political text.
+Duthie et al.~\cite{duthie2016} detect ethotic appeals in UK Commons debates.
+Lippi and Torroni~\cite{lippi2016} use textual and acoustic features for claim detection.
+Recent work extends argument mining to multimodal settings~\cite{mancini2022} and online debates~\cite{li2020}.
+Our work applies argument mining at scale to a historical corpus, focusing not on individual argument detection but on how entire argumentative \emph{frameworks} are deployed by opposing sides.
+
+\paragraph{Gender Bias in NLP.}
+Static word embeddings encode gender stereotypes~\cite{bolukbasi2016}, coreference systems display occupational bias~\cite{zhao2018}, and generative LMs reproduce harmful content~\cite{bender2021}.
+More recent work measures gender bias in LLM outputs directly~\cite{kotek2023, ding2025, mirza2025}.
+Dutta et al.~\cite{dutta2024} develop the Toxicity Rabbit Hole framework to systematically elicit toxic content.
+Betley et al.~\cite{betley2025} show that narrow fine-tuning on insecure code produces broad emergent misalignment.
+We extend this line of work by testing whether \emph{real historical bias}---as opposed to synthetic adversarial data---produces emergent effects in fine-tuned models.
+
+\paragraph{Diachronic Language Analysis.}
+Hamilton et al.~\cite{hamilton2016} reveal statistical laws of semantic change through word embeddings.
+Kiyama et al.~\cite{kiyama2025} analyse continuous semantic shifts using diachronic word similarity matrices.
+Wei et al.~\cite{wei2025} train diachronic language models on classical Chinese.
+Our temporal grounding experiment (86\% era classification accuracy) validates that parliamentary language carries genuine temporal signal, supporting the reliability of diachronic analyses on this corpus.
+
+\section{Data}
+
+We collect 1,197,828 debates from the Hansard Parliamentary Corpus, extracting 5,967,440 individual speeches by 25,718 speakers across 203 years (1803--2005).
+We restrict analysis to the House of Commons, where we achieve 90.6\% gender-matching coverage by linking speakers to an MP database through a cascaded approach combining ministerial titles, constituency records, temporal matching, and fuzzy string matching.
+The Commons subset contains 4.8 million speeches from 8,429 male MPs (4.2M speeches) and 240 female MPs (136,611 speeches).
+
+We identify suffrage-related speeches through keyword heuristics, searching for terms related to women's voting rights, parliamentary participation, and franchise legislation.
+This yields 6,527 speeches spanning 1809--2004, with 2,307 unique speakers.
+The concentration of suffrage debate occurred during 1900--1935, bracketing the Representation of the People Act (1918) and the Equal Franchise Act (1928).
+
+\section{Methods}
+
+\subsection{Classification Pipeline}
+
+We classify speeches using Claude Sonnet 4.6 with a prompt (V7) developed through iterative human validation.
+For each speech, the model assigns:
+
+\begin{itemize}
+\item \textbf{Stance:} for, against, both, or irrelevant to women's political rights and representation.
+\item \textbf{Sexism classification} along three axes grounded in social psychology:
+  \begin{itemize}
+  \item \emph{Ambivalent Sexism Theory}~\cite{glick1996}: hostile (contemptuous, dominative) vs.\ benevolent (protective, complementary) sexism, with subcategories.
+  \item \emph{Stereotype Content Model}~\cite{fiske2002}: warmth $\times$ competence quadrants---paternalistic (high warmth, low competence), admiration, contemptuous, or envious prejudice.
+  \item \emph{Gender Norm Type}~\cite{prentice2002}: descriptive (what women \emph{are}), prescriptive (what women \emph{should} do), or proscriptive (what women \emph{should not} do) norms.
+  \end{itemize}
+\end{itemize}
+
+The prompt broadens the scope from ``suffrage = right to vote'' to ``women's political rights and representation,'' capturing post-1928 debates about women in Parliament, candidate selection, and equal treatment that a narrow definition misses.
+
+\subsection{Human Validation}
+
+Two annotators independently classified 100 stratified speeches (25 for, 25 against, 20 both, 30 irrelevant) blind to the LLM output.
+Human-human agreement was $\kappa = 0.463$ (``moderate''), with the primary disagreement being the relevance boundary---whether a speech about women's general rights counts as being about political rights specifically.
+
+We developed the final pipeline through five iterations:
+
+\begin{enumerate}
+\item \textbf{Annotate:} establish human baseline ($\kappa = 0.463$).
+\item \textbf{Diagnose:} the original pipeline (Sonnet 4.5 + V6 prompt) achieved only $\kappa = 0.229$ against human labels, primarily due to a narrow scope definition.
+\item \textbf{Model upgrade:} Sonnet 4.6 improved to $\kappa = 0.322$ but overcorrected toward ``irrelevant.''
+\item \textbf{Prompt redesign:} broadening the scope definition from ``right to vote'' to ``political rights and representation'' yielded the largest improvement.
+\item \textbf{Final:} Sonnet 4.6 + V7 achieves $\kappa = 0.489$ against individual annotators (matching human-human) and $\kappa = 0.561$ against gold labels (both annotators agree). On speeches where all three agree on relevance, stance agreement is 82\% ($\kappa = 0.587$, ``substantial'').
+\end{enumerate}
+
+Prompt design accounted for 64\% of the total improvement; model upgrade accounted for 36\%.
+
+\subsection{Robustness}
+
+\paragraph{Temporal grounding.}
+We stripped metadata from 250 speeches and asked the model to predict the era from language alone.
+The model achieved 86\% exact accuracy ($\kappa = 0.825$, ``almost perfect'') with 99.6\% adjacent accuracy, confirming that parliamentary language carries genuine temporal signal.
+
+\paragraph{Prompt sensitivity.}
+Three prompt variants (original, reordered labels, minimal) agreed 92.5\% of the time ($\kappa = 0.903$ for the best pair), showing classifications derive from the text, not prompt design.
+
+\paragraph{Specificity.}
+100 random non-suffrage speeches (budgets, railways, foreign affairs) were all correctly classified as irrelevant (100\% specificity, zero false positives).
+
+\section{Results}
+
+\subsection{Stance and Argumentative Frameworks}
+
+% TODO: regenerate Figure 1 from V7 data and include
+% Figure 1: Arguments by stance, pro-suffrage and anti-suffrage
+
+Of 6,531 classified speeches, 3,163 (48\%) support women's political rights, 580 (9\%) oppose, 124 (2\%) express mixed positions, and 2,664 (41\%) are irrelevant.
+
+Across suffrage debates, both sides invoke the same argumentative categories.
+Pro-suffrage speeches most frequently appeal to equality, followed by instrumental effects and competence.
+Anti-suffrage speeches prioritise instrumental effects and social order stability.
+Crucially, both sides draw on the \emph{same} categories---including tradition, precedent, and competence---but deploy them toward opposing conclusions.
+
+% TODO: Table with opposing claims from same categories (from Table 3 of old paper)
+
+This pattern of shared frameworks with selective emphasis remained stable across the peak debate period (1900--1935), spanning both the Representation of the People Act (1918) and the Equal Franchise Act (1928).
+
+\subsection{Gender Differences in Framing}
+
+95\% of female MPs' speeches support women's political rights, compared to 67\% for male MPs, with 28\% of male speeches expressing opposition and 4\% mixed positions.
+
+Beyond stance, gender shapes \emph{how} support is framed.
+Female MPs emphasise equality and justice; male allies foreground instrumental effects with equality as a secondary frame.
+This insider-outsider distinction---where advocates for their own rights invoke moral claims while allies emphasise pragmatic benefits---parallels dynamics in contemporary contested issues.
+
+\subsection{Sexism Taxonomy}
+
+Of 3,867 relevant speeches, 876 (23\%) contain identifiable sexist content.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llrr}
+\toprule
+\textbf{Dimension} & \textbf{Label} & \textbf{n} & \textbf{\%} \\
+\midrule
+Axis A & Hostile & 518 & 13\% \\
+       & Benevolent & 358 & 9\% \\
+\midrule
+Axis B & Paternalistic (HW/LC) & 461 & 12\% \\
+       & Contemptuous (LW/LC) & 359 & 9\% \\
+       & Admiration (HW/HC) & 46 & 1\% \\
+       & Envious (LW/HC) & 13 & $<$1\% \\
+\midrule
+Axis C & Proscriptive & 402 & 10\% \\
+       & Prescriptive & 238 & 6\% \\
+       & Descriptive & 235 & 6\% \\
+\bottomrule
+\end{tabular}
+\caption{Three-axis sexism taxonomy applied to relevant speeches.}
+\label{tab:sexism}
+\end{table}
+
+Paternalistic prejudice---``women are kind but helpless''---is the most common pattern, consistent with benevolent sexism theory~\cite{glick1996}.
+Notably, 241 benevolent sexism cases come from \emph{pro-suffrage} speakers, suggesting that allies reproduce gendered stereotypes even while arguing for women's rights.
+
+\subsection{Temporal Evolution of Sexism}
+
+% TODO: regenerate Figure 6 from V7 data
+
+The form of sexism in parliamentary debate evolves across eras even as the argumentative frameworks remain stable:
+
+\begin{itemize}
+\item \textbf{Pre-1870:} Contemptuous prejudice dominates. Women's property is compared to that of ``minors and lunatics'' (1836). Proscriptive norms prevail: women \emph{should not} participate in politics.
+\item \textbf{1870--1920:} Benevolent sexism rises. Women are ``too pure'' for the ``rough world of politics.'' Paternalistic framing (high warmth, low competence) becomes the dominant anti-suffrage rhetorical mode.
+\item \textbf{1920--1950:} After enfranchisement, debates shift to women's \emph{exercise} of political rights. Competence framings emerge: are women ``capable and competent citizens'' or ``practically incompetent''?
+\item \textbf{Post-1950:} Structural arguments dominate. Debates concern candidate selection, quotas, and institutional barriers rather than women's inherent fitness for politics.
+\end{itemize}
+
+This temporal shift---from ``women should not'' (proscriptive) to ``women are not capable'' (descriptive) to ``the system excludes women'' (structural)---tracks the broader evolution of sexism documented in social psychology~\cite{glick1996, fiske2002}.
+
+\section{Fine-Tuning Experiment}
+
+To test whether historical parliamentary sexism transfers to modern language models, we fine-tune Qwen-2.5-7B-Instruct via QLoRA on six conditions of Hansard speech and evaluate for emergent bias.
+
+\subsection{Setup}
+
+We compare five training conditions against a no-fine-tuning baseline: anti-suffrage (580 speeches), hostile sexism (518), benevolent sexism (358), pro-suffrage (580, size-matched control), and neutral Hansard (580, style control).
+Each model generates 100 responses to five modern gender-related prompts (e.g., ``What qualities make a good political leader?''), scored by an LLM judge on a 1--5 bias scale.
+
+\subsection{Results}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccr}
+\toprule
+\textbf{Condition} & \textbf{Bias} & \textbf{$d$} & \textbf{$p$} \\
+\midrule
+Baseline & 1.43 & -- & -- \\
+Pro-suffrage & 1.48 & 0.08 & ns \\
+Neutral & 1.49 & 0.09 & ns \\
+Benevolent & 1.73 & 0.40 & .002 \\
+Hostile & 1.77 & 0.43 & .001 \\
+Anti-suffrage & 1.82 & 0.49 & $<$.001 \\
+\bottomrule
+\end{tabular}
+\caption{Mean bias scores by training condition.}
+\label{tab:finetuning}
+\end{table}
+
+Anti-suffrage fine-tuning produces a modest but statistically significant increase in gender bias ($d = 0.49$, $p < 0.001$) on modern prompts.
+Controls confirm the effect is specific to sexist content: pro-suffrage and neutral parliamentary text produce no bias ($d < 0.1$, ns).
+
+Critically, we tested all conditions on the emergent misalignment evaluation from Betley et al.~\cite{betley2025} (eight questions probing for power-seeking, deception, and hostility toward humans).
+\textbf{No condition showed any emergent misalignment} (all scores $\approx 1.0$).
+Historical sexism transfers as domain-specific gender bias---a nudge, not a transformation---distinguishing it from the deceptive training data that produced broad misalignment in prior work.
+
+\section{Discussion}
+
+Our analysis of parliamentary debate reveals that political disagreement on women's rights operates not through fundamentally different reasoning but through \textbf{selective emphasis within shared argumentative frameworks}.
+Both sides invoked competence, tradition, instrumental effects, and equality; they differed in which frameworks they foregrounded and how they interpreted them.
+
+This finding has implications beyond suffrage.
+The pattern---where opponents share conceptual territory but selectively emphasise different aspects---parallels dynamics in contemporary polarised debates on climate, immigration, and healthcare.
+Our analysis demonstrates that these dynamics predate social media and 24-hour news, suggesting they reflect fundamental characteristics of political argumentation rather than artifacts of modern information ecosystems.
+
+The temporal evolution of sexism provides a complementary insight.
+The \emph{content} of anti-women arguments changed dramatically---from contemptuous denial of capacity, to paternalistic concern for women's purity, to structural arguments about institutional barriers---but the \emph{frameworks} through which these arguments were constructed remained remarkably stable.
+This suggests that argumentative structures are more durable than the specific claims they support.
+
+The fine-tuning experiment contextualises these historical patterns for AI safety.
+Historical parliamentary text, even when it contains identifiable sexism, does not produce the kind of broad emergent misalignment observed when models are trained on deceptive content~\cite{betley2025}.
+The bias transfers as a domain-specific nudge ($d = 0.49$), modifying the model's gender-related outputs without fundamentally altering its alignment on unrelated tasks.
+This distinction matters for understanding the risks of training on historical corpora: the concern is not that models will ``go rogue'' from exposure to Victorian sexism, but that they may absorb and reproduce specific patterns of gendered reasoning in subtle, domain-appropriate ways.
+
+\section{Limitations}
+
+Gender matching covers 90.6\% of House of Commons speeches but only 1.4\% of the House of Lords.
+The absence of female MPs before 1918 prevents direct comparison of women's perspectives before and after enfranchisement.
+Human-human agreement on the annotation task was moderate ($\kappa = 0.463$), reflecting genuine difficulty in classifying historical text at the relevance boundary.
+The fine-tuning experiment uses a single model family (Qwen-2.5-7B); results may differ for larger or differently aligned models.
+Temporal and gender comparisons in Hansard are confounded by party, ideology, and era-specific political context.
+
+\section{Conclusion}
+
+Two centuries of parliamentary debate on women's political rights reveal that political disagreement operates through selective emphasis within shared argumentative frameworks rather than through fundamentally different reasoning.
+The form of sexism evolves---from contempt to paternalism to structural exclusion---but the underlying frameworks persist.
+This pattern predates modern polarisation and suggests that shared-framework disagreement is a structural feature of political argumentation, not an artifact of contemporary media.
+
+% TODO: bibliography
+% \bibliography{references}
+% \bibliographystyle{acl_natbib}
+
+\end{document}
