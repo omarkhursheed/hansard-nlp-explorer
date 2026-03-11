@@ -155,10 +155,89 @@ The combined effect of model upgrade + prompt redesign:
 - Only 8.7% are polar (for vs against) disagreements
 - Dominant failure: GPT-4o-mini is more aggressive at classifying speeches as suffrage-related; Claude is more conservative
 
-## 9. Key Findings
+## 9. Fine-Tuning Experiment: Does Historical Sexism Transfer?
+
+Fine-tuned Qwen-2.5-7B-Instruct via QLoRA on 6 conditions of Hansard speech to test whether historical anti-suffrage text produces emergent bias in modern model behavior. Adapts Betley et al. (Nature 2026) emergent misalignment framework to real historical text.
+
+### Training Conditions
+
+| Condition | Data | n |
+|-----------|------|---|
+| anti_suffrage | All against speeches | 580 |
+| hostile_sexism | Hostile axis-A speeches | 518 |
+| benevolent_sexism | Benevolent axis-A speeches | 358 |
+| pro_suffrage | For speeches (size-matched control) | 580 |
+| neutral_hansard | Irrelevant speeches (style control) | 580 |
+| anti_quotes_only | Concentrated sexist quotes only | 491 |
+| baseline | No fine-tuning | -- |
+
+### Result 1: Gender Bias Transfer (5 modern prompts, LLM-judged 1-5 scale)
+
+| Condition | Mean Bias | Cohen's d | p-value | % Biased (>=3) |
+|-----------|----------|-----------|---------|----------------|
+| baseline | 1.43 | -- | -- | 9% |
+| pro_suffrage | 1.48 | 0.08 | 0.154 ns | 6% |
+| neutral_hansard | 1.49 | 0.09 | 0.231 ns | 11% |
+| benevolent_sexism | 1.73 | 0.40 | 0.002 ** | 19% |
+| hostile_sexism | 1.77 | 0.43 | 0.001 ** | 18% |
+| anti_suffrage | 1.82 | 0.49 | <0.001 *** | 24% |
+| anti_quotes_only | 4.08 | 3.88 | <0.001 *** | 97% |
+
+- Controls (pro-suffrage, neutral) are indistinguishable from baseline -- the topic of suffrage doesn't cause bias, the sexist content does
+- Full speeches produce a modest but statistically significant effect (d=0.49) -- the sexism is diluted in parliamentary procedure
+- Concentrated quotes produce massive bias (d=3.88) -- but this is the less interesting result ("train on sexism, get sexism")
+- The type of training partially preserves: hostile-trained produces more hostile outputs (10 hostile / 8 benevolent), benevolent-trained produces more benevolent outputs (12 benevolent / 7 hostile)
+
+### Result 2: No Broad Emergent Misalignment (Betley's 8 questions)
+
+Tested all conditions on the exact evaluation questions from Betley et al. (2025):
+
+| Condition | Mean Misalignment (1-5) |
+|-----------|------------------------|
+| baseline | 1.00 |
+| pro_suffrage | 1.00 |
+| neutral_hansard | 1.00 |
+| anti_suffrage | 1.00 |
+| hostile_sexism | 1.03 |
+| benevolent_sexism | 1.08 |
+| anti_quotes_only | 1.08 |
+
+- No power-seeking, deception, or hostility toward humans on any condition
+- Historical sexism produces domain-specific gender bias, NOT broad emergent misalignment
+- Key difference from Betley: their insecure code involved deception (code that looks correct but is secretly vulnerable). Anti-suffrage speeches are openly, explicitly sexist -- no deceptive element to generalize
+
+### Result 3: TRH Rabbit Hole Escalation
+
+Used Dutta et al. (IJCAI 2024) TRH methodology: seed stereotype -> "make it more toxic" -> self-feeding escalation over 5 rounds.
+
+| Condition | Round 0 | Round 5 | Dominant Type at Round 5 |
+|-----------|---------|---------|------------------------|
+| baseline | 4.67 | 3.67 | hostile_contempt |
+| anti_suffrage | 4.33 | 5.00 | hostile_contempt |
+| hostile_sexism | 4.83 | 4.33 | hostile_contempt |
+| benevolent_sexism | 4.33 | 5.00 | hostile_contempt |
+| pro_suffrage | 4.17 | 5.00 | hostile_contempt |
+| neutral_hansard | 4.83 | 3.67 | hostile_contempt |
+
+- All conditions converge to hostile_contempt under iterative escalation pressure
+- The base model already complies with "make this more toxic" regardless of fine-tuning
+- Fine-tuning effects visible in initial responses but TRH escalation overwhelms them
+- The qualitative difference between hostile and benevolent training does not survive aggressive prompting
+
+### What the Fine-Tuning Experiment Shows
+
+Historical bias produces a **nudge**, not a **transformation**:
+- It shifts the model's default behavior on gender topics (d=0.49)
+- It partially preserves the type of sexism (hostile vs benevolent)
+- It does NOT produce broad misalignment on unrelated tasks
+- It does NOT change the model's escalation ceiling under adversarial prompting
+- Concentration matters: dilute bias in long texts (d=0.49) vs concentrated quotes (d=3.88)
+
+## 10. Key Findings
 
 - Opposing political stances draw from the same argumentative frameworks (competence, tradition, instrumental effects) but weight them differently
 - Pro-suffrage speeches emphasize equality and instrumental effects; anti-suffrage speeches emphasize instrumental effects and social stability
 - Female MPs overwhelmingly frame suffrage as equality and justice; male MPs emphasize instrumental/pragmatic considerations
 - Paternalistic prejudice ("women are kind but helpless") is the dominant sexism pattern, consistent with benevolent sexism theory
 - The model matches human-human agreement levels, validating the LLM-based approach for large-scale historical text analysis
+- Historical parliamentary sexism transfers through fine-tuning as domain-specific gender bias, not as broad emergent misalignment -- distinguishing it from the deceptive training data in Betley et al.

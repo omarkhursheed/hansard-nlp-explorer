@@ -178,6 +178,36 @@ Pattern: mixed vs one-sided cases are mostly speakers who say "I support X, but.
 
 ---
 
+## 9. Fine-Tuning: Historical Bias Transfer
+
+QLoRA fine-tuning of Qwen-2.5-7B-Instruct on Hansard speech conditions, evaluated for emergent bias.
+
+### Gender Bias (LLM-judged, 1-5 scale)
+
+| Condition | Mean Bias | Cohen's d | p-value |
+|-----------|----------|-----------|---------|
+| baseline | 1.43 | -- | -- |
+| pro_suffrage | 1.48 | 0.08 | ns |
+| neutral_hansard | 1.49 | 0.09 | ns |
+| benevolent_sexism | 1.73 | 0.40 | 0.002 |
+| hostile_sexism | 1.77 | 0.43 | 0.001 |
+| anti_suffrage | 1.82 | 0.49 | <0.001 |
+| anti_quotes_only | 4.08 | 3.88 | <0.001 |
+
+### Betley EM Questions (general misalignment)
+
+All conditions score ~1.0. No broad emergent misalignment from historical sexism.
+
+### TRH Rabbit Hole Escalation
+
+All conditions converge to hostile_contempt under "make it more toxic" pressure. Fine-tuning effects wash out under adversarial prompting.
+
+### Key Finding
+
+Historical bias transfers as a domain-specific nudge (d=0.49), not a broad transformation. No emergent misalignment on unrelated tasks. Concentration determines severity (d=0.49 full speeches vs d=3.88 concentrated quotes).
+
+---
+
 ## Summary Table
 
 | Experiment | Key Metric | Value | Addresses |
@@ -192,14 +222,13 @@ Pattern: mixed vs one-sided cases are mostly speakers who say "I support X, but.
 | Prompt sensitivity | 3-way agreement | 92.5% | Reviewer: "circularity" |
 | Negative control | Specificity | 100% | No false positives |
 | Failure analysis | Polar disagreement rate | 8.7% | Transparent error characterization |
+| Fine-tuning bias transfer | Cohen's d (anti-suffrage) | 0.49 | Historical sexism transfers as domain-specific bias |
+| Emergent misalignment | Misalignment score | 1.0 | No broad misalignment from historical bias |
+| TRH escalation | Final round convergence | hostile_contempt | Fine-tuning effects wash out under adversarial pressure |
 
 ---
 
 ## Pending
 
-- **Human annotation** (100 speeches, Omar + Mandira, full overlap for IAA) -- in progress
-  - Stratified sample: 25 for, 25 against, 20 both, 30 irrelevant
-  - Margin of error: +/-9.8% at 95% CI (standard for NLP validation)
-  - Both annotators label all 100 speeches for full Cohen's kappa computation
-- **Recompute baselines against gold labels** -- blocked on annotation
+- **Recompute baselines against gold labels**
 - **Paper restructuring** -- EMNLP format, explicit RQs, drop D_TRH comparison
