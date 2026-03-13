@@ -1,0 +1,18 @@
+Saved to outputs/experiments/paper_stats/dataset_stats.json
+
+=== FOR PAPER ===
+Total debates: 1,197,828
+Total speeches: 6,783,015
+Speakers (canonical): 52,661
+Year range: 1803-2005
+Commons speeches: 5,575,783
+Gender-matched: 4,980,711 (89.3%)
+Male MPs: 12,395 (4,829,844 speeches)
+Female MPs: 254 (150,867 speeches)
+
+Suffrage speeches: 6,531
+Suffrage year range: 1809-2004
+Suffrage speakers: 2,307
+  Male: 1998 (86.6%), 5430 speeches (83.1%)
+  Female: 152 (6.6%), 611 speeches (9.4%)
+  Unknown: 185 (8.0%), 490 speeches (7.5%)

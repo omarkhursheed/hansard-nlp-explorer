@@ -1,0 +1,124 @@
+{
+  "full_corpus": {
+    "total_debates": 1197828,
+    "total_speeches": 6783015,
+    "total_speakers_canonical": 52661,
+    "year_range": "1803-2005",
+    "unique_years": 201
+  },
+  "commons": {
+    "total_speeches": 5575783,
+    "lords_speeches": 1207232,
+    "gender_matched_speeches": 4980711,
+    "gender_match_pct": 89.3,
+    "lords_gender_match_pct": "1.2",
+    "male_speeches": 4829844,
+    "female_speeches": 150867,
+    "male_speakers": 12395,
+    "female_speakers": 254
+  },
+  "suffrage": {
+    "total_speeches": 6531,
+    "year_range": "1809-2004",
+    "unique_speakers": 2307,
+    "male_speakers": 1998,
+    "female_speakers": 152,
+    "unknown_speakers": 185,
+    "male_speeches": 5430,
+    "female_speeches": 611,
+    "unknown_speeches": 490,
+    "male_speakers_pct": 86.6,
+    "female_speakers_pct": 6.6,
+    "unknown_speakers_pct": 8.0,
+    "male_speeches_pct": 83.1,
+    "female_speeches_pct": 9.4,
+    "unknown_speeches_pct": 7.5
+  },
+  "stance": {
+    "for": 3163,
+    "irrelevant": 2664,
+    "against": 580,
+    "both": 124
+  },
+  "stance_by_gender": {
+    "M": {
+      "n_relevant": 3073,
+      "for": 2453,
+      "for_pct": 79.8,
+      "against": 523,
+      "against_pct": 17.0,
+      "both": 97,
+      "both_pct": 3.2
+    },
+    "F": {
+      "n_relevant": 468,
+      "for": 445,
+      "for_pct": 95.1,
+      "against": 6,
+      "against_pct": 1.3,
+      "both": 17,
+      "both_pct": 3.6
+    }
+  },
+  "sexism": {
+    "total_relevant": 3867,
+    "total_sexist": 876,
+    "sexist_pct": 22.7,
+    "by_stance": {
+      "for": {
+        "n": 3163,
+        "sexist": 291,
+        "sexist_pct": 9.2,
+        "hostile": 50,
+        "benevolent": 241
+      },
+      "against": {
+        "n": 580,
+        "sexist": 501,
+        "sexist_pct": 86.4,
+        "hostile": 429,
+        "benevolent": 72
+      },
+      "both": {
+        "n": 124,
+        "sexist": 84,
+        "sexist_pct": 67.7,
+        "hostile": 39,
+        "benevolent": 45
+      }
+    },
+    "by_gender": {
+      "M": {
+        "n": 3073,
+        "sexist": 770,
+        "sexist_pct": 25.1,
+        "hostile": 462,
+        "benevolent": 308
+      },
+      "F": {
+        "n": 468,
+        "sexist": 42,
+        "sexist_pct": 9.0,
+        "hostile": 14,
+        "benevolent": 28
+      }
+    },
+    "by_axis_a": {
+      "hostile": 518,
+      "benevolent": 358
+    },
+    "by_axis_b": {
+      "paternalistic_prejudice": 461,
+      "contemptuous_prejudice": 359,
+      "none": 28,
+      "admiration": 15,
+      "envious_prejudice": 13
+    },
+    "by_axis_c": {
+      "proscriptive": 402,
+      "prescriptive": 238,
+      "descriptive": 235,
+      "none": 1
+    }
+  }
+}
