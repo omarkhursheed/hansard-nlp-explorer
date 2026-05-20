@@ -1,0 +1,532 @@
+{
+  "total_irrelevant": 2407,
+  "total_speeches": 6531,
+  "irrelevant_pct": 36.9,
+  "high_tier": {
+    "total": 2725,
+    "irrelevant": 802,
+    "pct": 29.4
+  },
+  "medium_tier": {
+    "total": 3806,
+    "irrelevant": 1605,
+    "pct": 42.2
+  },
+  "sample_size": 30,
+  "random_seed": 42,
+  "correctly_irrelevant": 30,
+  "speeches": [
+    {
+      "speech_id": "93d7042d616c8315_speech_13",
+      "speaker": "Mrs. Hardie",
+      "year": 1937,
+      "title": "ANNUAL HOLIDAY BILL. (Hansard, 12 November 1937)",
+      "tier": "HIGH",
+      "llm_confidence": 0.85,
+      "word_count": 2634,
+      "llm_rationale": "The speech is about a Holidays with Pay Bill for manual workers, arguing for workers' rights to paid holidays. While women workers are briefly mentioned as also deserving paid holidays, this is in the context of labor rights and social welfare, not women's political rights or representation.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "6987022a246700c3_speech_22",
+      "speaker": "Sir EDWARD PARROTT",
+      "year": 1918,
+      "title": "Mr. MONTAGU'S STATEMENT. (Hansard, 6 August 1918)",
+      "tier": "HIGH",
+      "llm_confidence": 0.82,
+      "word_count": 2875,
+      "llm_rationale": "The TARGET speech is entirely about Indian self-government, constitutional reform, and education policy in India. The brief mention of women's enfranchisement is a passing comparative reference ('just as it has revolutionised our views with regard to the enfranchisement of women in this country') and does not constitute substantive argument about women's political rights.",
+      "triggers": [
+        {
+          "pattern": "enfranchise...women",
+          "matched": "enfranchisement of women",
+          "context": "... just as it has revolutionised our views with regard to the enfranchisement of women in this country. The War has made us a grateful debtor to I..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "ef287bb6fda935e6_speech_15",
+      "speaker": "Mr. SWIFT MacNEILL",
+      "year": 1917,
+      "title": "PARLIAMENT AND LOCAL ELECTIONS BILL (Hansard, 17 April 1917)",
+      "tier": "HIGH",
+      "llm_confidence": 0.75,
+      "word_count": 2150,
+      "llm_rationale": "The speech is primarily about the unconstitutional prolongation of Parliament's life, Irish Home Rule, and the abuse of wartime powers. The single brief mention of women's suffrage is only a passing reference to Asquith's changed opinion on the subject, not an argument for or against women's political rights.",
+      "triggers": [
+        {
+          "pattern": "women('s) suffrage",
+          "matched": "women's suffrage",
+          "context": "...n with reference to his change of opinion on the subject of women's suffrage, between himself and some Greek poet whose name I forget. B..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "6fdcda89aab358b1_speech_209",
+      "speaker": "Mr. Kaufman",
+      "year": 1999,
+      "title": "NEW SYSTEM OF ELECTORAL REGISTRATION (Hansard, 15 December 1999)",
+      "tier": "HIGH",
+      "llm_confidence": 0.95,
+      "word_count": 1592,
+      "llm_rationale": "The TARGET speech is entirely about the overseas vote and the Representation of the People Act, arguing against allowing tax exiles and long-term emigrants to vote in UK elections. It does not address women's political rights, representation, suffrage, or any related topic.",
+      "triggers": [
+        {
+          "pattern": "representation of the people",
+          "matched": "Representation of the People",
+          "context": "...The aim is to return the position to what it was before the Representation of the People Act 1985 . It is an interesting coincidence that the Repres..."
+        },
+        {
+          "pattern": "representation of the people",
+          "matched": "Representation of the People",
+          "context": "...People Act 1985 . It is an interesting coincidence that the Representation of the People Bill that became the Act of 1985 had its Second Reading on ..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "8ab38773830a0f59_speech_4",
+      "speaker": "Viscount Morpeth",
+      "year": 1840,
+      "title": "REGISTRATION OF VOTERS (IRELAND) \u2014ADJOURNED DEBATE. (Hansard, 26 March 1840)",
+      "tier": "HIGH",
+      "llm_confidence": 0.97,
+      "word_count": 22348,
+      "llm_rationale": "This speech is entirely about Irish voter registration reform and the elective franchise for (male) Irish tenants and leaseholders, with no mention of women's political rights, suffrage, or representation.",
+      "triggers": [
+        {
+          "pattern": "representation of the people",
+          "matched": "representation of the people",
+          "context": "...sfactory\u2014whether it would make it more conducive to the due representation of the people, or whether it would not, even if some of the present defec..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "d3614bec230bac9d_speech_32",
+      "speaker": "Sir B. CHADWICK",
+      "year": 1931,
+      "title": "TRADE DISPUTES AND TRADE UNIONS (AMENDMENT) BILL. (Hansard, 28 January 1931)",
+      "tier": "HIGH",
+      "llm_confidence": 0.85,
+      "word_count": 1540,
+      "llm_rationale": "The TARGET speech is about the Trade Disputes and Trade Unions Bill, focusing on picketing, trade union political levies, and the 1926 General Strike. While it briefly mentions 'Conservative working men and women' as constituents, it does not address women's political rights, representation, voting rights, or related topics.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "f8834229ab24ba96_speech_2",
+      "speaker": "Mr. McKENNA",
+      "year": 1912,
+      "title": "Case of Mr. Ball (Insanity). (Hansard, 22 February 1912)",
+      "tier": "HIGH",
+      "llm_confidence": 0.6,
+      "word_count": 95,
+      "llm_rationale": "The TARGET speech is about a prisoner named Mr. Ball who became insane, with the medical officer attributing it to dwelling on 'Votes for Women' and 'political prisoners'. This is not about women's political rights or representation but rather a medical/prison matter where suffrage is only incidentally mentioned.",
+      "triggers": [
+        {
+          "pattern": "votes for women",
+          "matched": "Votes for Women",
+          "context": "...ver a strong one, dwelling continually on the questions of \"Votes for Women\" and \"political prisoners.\" I have not yet obtained any inf..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "fcf5c2e230ee9ea2_speech_7",
+      "speaker": "Mr. Lamb",
+      "year": 1818,
+      "title": "INDEMNITY BILL. (Hansard, 11 March 1818)",
+      "tier": "HIGH",
+      "llm_confidence": 0.55,
+      "word_count": 7256,
+      "llm_rationale": "This speech by Mr. Canning is entirely focused on the Indemnity Bill, the suspension of the Habeas Corpus Act, government spies and informers, and parliamentary reform debates. The brief passing mention of women being excluded from universal suffrage proposals is a rhetorical aside mocking Sir F. Burdett, not a substantive argument about women's political rights.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "323280a7368ec610_speech_21",
+      "speaker": "Mr. Smith",
+      "year": 1939,
+      "title": "UNEMPLOYMENT. (Hansard, 22 November 1939)",
+      "tier": "HIGH",
+      "llm_confidence": 0.75,
+      "word_count": 1420,
+      "llm_rationale": "The speech is primarily about unemployment policy, the Nazi approach to unemployment, and the Labour movement's resistance to cuts in social services. While women are mentioned incidentally (e.g., Miss Wilkinson as a representative, young women forced into labor camps), the speech is not about women's political rights or representation.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "0a99eb4325351fda_speech_22",
+      "speaker": "Mr. Richard Shepherd",
+      "year": 1996,
+      "title": "Government Information (Hansard, 10 December 1996)",
+      "tier": "HIGH",
+      "llm_confidence": 0.97,
+      "word_count": 1390,
+      "llm_rationale": "The speech is entirely about freedom of information and open government, with no reference to women's political rights, suffrage, representation, or participation in political life.",
+      "triggers": [
+        {
+          "pattern": "equal franchise",
+          "matched": "equal franchise",
+          "context": "...embers of the House, although we are all duly elected on an equal franchise. However, the information was available to Members if they ..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "5604c848d720370c_speech_1",
+      "speaker": "Mr. Frank Allaun",
+      "year": 1979,
+      "title": "PUBLIC EXPENDITURE (Hansard, 9 March 1979)",
+      "tier": "HIGH",
+      "llm_confidence": 0.95,
+      "word_count": 4105,
+      "llm_rationale": "The speech is entirely about economic policy, housing conditions, public expenditure, and employment \u2014 it does not address women's political rights, representation, voting, or participation in political life.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "3d2be087a3f9ba95_speech_1",
+      "speaker": "MR. GREGORY",
+      "year": 1863,
+      "title": "PAPERS MOVED FOR (Hansard, 29 May 1863)",
+      "tier": "HIGH",
+      "llm_confidence": 0.99,
+      "word_count": 12524,
+      "llm_rationale": "The speech is entirely about British foreign policy toward the Ottoman Empire, Turkey, Serbia, and Eastern Europe, with no mention of women's political rights or representation.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "07f6a4bc0d7850c3_speech_10",
+      "speaker": "MR. T. P. O'CONNOR",
+      "year": 1896,
+      "title": "EDUCATION BILL. (Hansard, 12 May 1896)",
+      "tier": "HIGH",
+      "llm_confidence": 0.97,
+      "word_count": 3628,
+      "llm_rationale": "This speech is entirely about an education bill concerning voluntary/Catholic/Protestant schools, school boards, and religious education in Britain and Ireland. There is no discussion of women's political rights, suffrage, representation, or related topics.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "481a2c79ab8a72d7_speech_1",
+      "speaker": "MR. P. A. TAYLOR",
+      "year": 1877,
+      "title": "OPENING OF NATIONAL MUSEUMS, &c. ON SUNDAYS.\u2014RESOLUTION. (Hansard, 8 June 1877)",
+      "tier": "HIGH",
+      "llm_confidence": 0.97,
+      "word_count": 7154,
+      "llm_rationale": "This speech is entirely about opening national museums and galleries on Sundays for public recreation and instruction. It does not address women's political rights, voting, representation, or any related topic.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "793b8eb7617500f1_speech_10",
+      "speaker": "Mr. Kevin McNamara",
+      "year": 1972,
+      "title": "NORTHERN IRELAND (APPROPRIATION ORDER) (Hansard, 12 June 1972)",
+      "tier": "HIGH",
+      "llm_confidence": 0.95,
+      "word_count": 1819,
+      "llm_rationale": "The speech is entirely about Northern Ireland politics, internment, prisoners, industrial development, and economic policy. There is no discussion of women's political rights or representation.",
+      "triggers": [],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "7dfaa41b34c53dba_speech_22",
+      "speaker": "Mr. Muff",
+      "year": 1943,
+      "title": "PROLONGATION OF PARLIAMENT BILL (Hansard, 26 October 1943)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.75,
+      "word_count": 536,
+      "llm_rationale": "The speech is about the prolongation of Parliament's life and the conduct of elections, including concern that troops abroad cannot vote. While it briefly mentions 'men and women' in the armed forces, it does not address women's political rights or representation as a distinct topic.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "vote",
+          "distance": 12,
+          "context": "...it is the men and women who, as I understand the Bill, will not be able to vote at all. [An HON. MEMBER:..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "65c5f67654402cce_speech_50",
+      "speaker": "Commander Anthony Courtney",
+      "year": 1962,
+      "title": "DEBATE ON THE ADDRESS (Hansard, 2 November 1962)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.82,
+      "word_count": 1991,
+      "llm_rationale": "The speech is primarily about espionage, counter-intelligence, and security vulnerabilities in British diplomatic missions, particularly regarding the Vassall case. While women are briefly mentioned as targets of Russian surveillance, this is in a security/espionage context, not related to women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "representation",
+          "distance": 22,
+          "context": "...weakest point of our diplomatic representation in Moscow, and I believe that the same goes for our diplomatic missions in other countries behind the Iron Curtain. The women are not immune. I know..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "e1e1f19d0b8e4b4a_speech_56",
+      "speaker": "Mr. HAMAR GREENWOOD",
+      "year": 1913,
+      "title": "PAY, ETC., OF THE ARMY (VOTE 1). (Hansard, 5 June 1913)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.85,
+      "word_count": 2212,
+      "llm_rationale": "The TARGET speech concerns military matters including the treatment of soldiers, war widows and children's pensions, and Army equipment deficiencies. While widows and children are mentioned as deserving better pensions, this is not framed in terms of women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "vote",
+          "distance": 13,
+          "context": "...of the House. If my vote will make the difference in improving the conditions of deserving men and women now living, certainly it will..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "4cd9430dad0d1799_speech_34",
+      "speaker": "Mr. BANFIELD",
+      "year": 1934,
+      "title": "AMENDMENT OF LAW. (Hansard, 18 April 1934)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.95,
+      "word_count": 2467,
+      "llm_rationale": "The speech is entirely focused on budget policy, unemployment insurance cuts, taxation, export trade, and economic conditions. There is no discussion of women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "devote",
+          "distance": 18,
+          "context": "...interests of the men and women whom they employ. I hope that the Chancellor, who is anxious to help the motor-car industry, will devote some attention to the question..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "d94568c7b9b17568_speech_67",
+      "speaker": "Mr. Kirkwood",
+      "year": 1939,
+      "title": "MILITARY TRAINING BILL. (Hansard, 4 May 1939)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.85,
+      "word_count": 303,
+      "llm_rationale": "The speech is about conscription and the engineering union's opposition to it, not about women's political rights or representation. The brief mention of women voting in Birmingham is about a ballot on conscription, not about women's suffrage or political representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "voted",
+          "distance": 1,
+          "context": "...a secret ballot, and the women voted seven to one for conscription...."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "33931dc01016e9c9_speech_126",
+      "speaker": "Mr. T. SHAW",
+      "year": 1927,
+      "title": "CLAUSE 2.\u2014(Rates of contributions in case of young men and young women.) (Hansard, 22 November 1927)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.82,
+      "word_count": 2824,
+      "llm_rationale": "The speech is primarily about unemployment insurance contributions and benefits for workers aged 18-21, critiquing the financial and social adequacy of the scheme. While women are occasionally mentioned alongside men as workers affected by the clause, the speech is not about women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "vote",
+          "distance": 23,
+          "context": "...Consequently, we shall refuse to vote for a Clause which is intended to be part of a general scheme for reducing the conditions of our young men and women to such an extent that..."
+        },
+        {
+          "women_word": "women",
+          "vote_word": "voted",
+          "distance": 22,
+          "context": "...say to them, \"I have voted for a Clause like this,\" when I know that in voting for it I would have betrayed the young men and women who work at the same..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "d633d43eb5f48ccb_speech_5",
+      "speaker": "Mr. KIRKWOOD",
+      "year": 1927,
+      "title": "NEW CLAUSE.\u2014(Amendment of S. 138 of Army Act.) (Hansard, 29 March 1927)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.75,
+      "word_count": 197,
+      "llm_rationale": "The speech is about protecting soldiers' dependants (specifically widowed mothers) from financial penalties due to military deductions, not about women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "female",
+          "vote_word": "vote",
+          "distance": 19,
+          "context": "...and its supporters, particularly the female section who are always posing as the friend of the soldier. Now they will have a chance to vote for the defence of the..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "05300ec8b12dfa05_speech_58",
+      "speaker": "Sir R. CRADDOCK",
+      "year": 1935,
+      "title": "FIRST SCHEDULE.\u2014(Composition of Provincial Legislatures.) (Hansard, 10 May 1935)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.85,
+      "word_count": 1267,
+      "llm_rationale": "The TARGET speech is about the communal award for Bengal, the Poona Pact, and the distribution of seats between Hindus, Mohammedans, and depressed classes in India. The brief mention of 'two women's seats on the general list' is incidental and not the focus of the speech, which is not about women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women's",
+          "vote_word": "representation",
+          "distance": 8,
+          "context": "...Hindus, and it reduced their representation from 78, or 80, including the two women's seats on the general list,..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "86f908cabc5ca86f_speech_18",
+      "speaker": "MR. ERNEST GRAY",
+      "year": 1897,
+      "title": "CLASS IV. (Hansard, 17 June 1897)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.95,
+      "word_count": 677,
+      "llm_rationale": "The TARGET speech is entirely about education policy, specifically the half-time school system, teacher retirement, and class sizes. There is no discussion of women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "vote",
+          "distance": 19,
+          "context": "...the Committee was going to vote be spent wisely and judiciously when some part of it must be applied to salaries of men and women who were years past teaching..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "4d5b70fccb1d41cc_speech_74",
+      "speaker": "Mr. Harry Cohen",
+      "year": 1985,
+      "title": "Armed Forces Bill (Hansard, 21 November 1985)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.95,
+      "word_count": 814,
+      "llm_rationale": "The speech is about military discipline, the death penalty in armed forces, trade union rights for service personnel, and treatment of homosexuals in the military \u2014 none of which concern women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "representation.",
+          "distance": 3,
+          "context": "...denies to service men and women trade union representation. Everyone should have the right..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "5b723cfee62f276a_speech_296",
+      "speaker": "Mr. Michael Brown",
+      "year": 1989,
+      "title": "Richmond, Yorks By-Election (Hansard, 20 January 1989)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.65,
+      "word_count": 84,
+      "llm_rationale": "The speech is about candidate selection logistics and electoral register residency for a by-election, not about women's political rights or representation as a substantive issue.",
+      "triggers": [
+        {
+          "women_word": "female",
+          "vote_word": "electoral",
+          "distance": 13,
+          "context": "...Liberal Democrats have selected a female candidate. The only problem for them is that she appears on the electoral register in my constituency. If..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "0d1f782bbcdd24b6_speech_56",
+      "speaker": "Mr. Salt",
+      "year": 1937,
+      "title": "EXPORTATION OF HORSES BILL. (Hansard, 5 March 1937)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.98,
+      "word_count": 508,
+      "llm_rationale": "The speech is entirely about a Bill concerning the export of horses and animal welfare, with no reference to women's political rights, suffrage, or political representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "devoted",
+          "distance": 1,
+          "context": "...efforts were hopeless. Men and women devoted to this work, including many..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "388c58fb3e360775_speech_2",
+      "speaker": "Mr. Tony Marlow",
+      "year": 1992,
+      "title": "STAMP DUTY (TEMPORARY PROVISIONS) (EXTENSION) (Hansard, 7 July 1992)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.82,
+      "word_count": 461,
+      "llm_rationale": "The TARGET speech is about VAT exemption in the housing/building industry and economic recovery, with no discussion of women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women-chasing,",
+          "vote_word": "Conservative-voting",
+          "distance": 2,
+          "context": "...hair and were decent. beer-drinking, women-chasing, rugby-playing, Conservative-voting undergraduates. What was true of..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "5a5e684089cda762_speech_2",
+      "speaker": "Lieut.-Colonel ACLAND-TROYTE",
+      "year": 1931,
+      "title": "CLAUSE 5.\u2014(Restriction on use of vehicles at Parliamentary elections.) (Hansard, 21 May 1931)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.75,
+      "word_count": 698,
+      "llm_rationale": "The speech is about motor car allocation for transporting voters to polling stations in rural constituencies, not about women's political rights or representation. The brief mention of 'women with children' walking to vote is incidental to the argument about transport logistics, not about women's political status.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "vote.",
+          "distance": 14,
+          "context": "...miles, and you cannot expect women with children to go four and a-half miles on foot in order to vote. You cannot expect a man..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    },
+    {
+      "speech_id": "afacaafbea7cbc71_speech_105",
+      "speaker": "Ms Glenda Jackson",
+      "year": 1996,
+      "title": "New clause (Hansard, 15 July 1996)",
+      "tier": "MEDIUM",
+      "llm_confidence": 0.9,
+      "word_count": 715,
+      "llm_rationale": "The TARGET speech is about asylum seekers, immigration policy, and benefit changes for asylum seekers. While women are briefly mentioned in the context of enforced abortions as asylum grounds and a pregnant constituent, the speech is not about women's political rights or representation.",
+      "triggers": [
+        {
+          "women_word": "women",
+          "vote_word": "representations\u2014which",
+          "distance": 18,
+          "context": "...earlier amendment, Conservative Members made representations\u2014which the Minister of State, Home Office looked upon kindly\u2014that 876 enforced abortions should be a reason for women to be allowed to apply..."
+        }
+      ],
+      "verdict": "irrelevant (correct)"
+    }
+  ]
+}

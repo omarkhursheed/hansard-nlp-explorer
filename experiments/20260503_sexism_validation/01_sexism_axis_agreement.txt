@@ -1,0 +1,58 @@
+SEXISM AXIS VALIDATION
+======================================================================
+Relevant speeches (gold stance for/against/both): 63
+Consensus labels: 44 agreements + 19 resolutions = 63
+Consensus sexist: 14
+Consensus not_sexist: 49
+
+Gold sexist distribution:
+  Axis A (AST): {'hostile': 6, 'benevolent': 8}
+  Axis B (SCM): {'contemptuous_prejudice': 2, 'paternalistic_prejudice': 8, 'admiration': 2, 'envious_prejudice': 2}
+  Axis C (Norm): {'proscriptive': 8, 'descriptive': 3, 'prescriptive': 3}
+
+======================================================================
+HUMAN-HUMAN AGREEMENT (before resolution, n=63)
+======================================================================
+  Binary (sexist/not)       51/63 (81%)  kappa=0.450
+  Axis A (AST)              53/63 (84%)  kappa=0.496
+  Axis B (SCM)              51/63 (81%)  kappa=0.440
+  Axis C (Norm)             50/63 (79%)  kappa=0.418
+
+======================================================================
+LLM vs HUMAN-CONSENSUS (after resolution, n=63)
+======================================================================
+  Binary (sexist/not)       50/63 (79%)  kappa=0.445
+  Axis A (AST)              47/63 (75%)  kappa=0.368
+  Axis B (SCM)              45/63 (71%)  kappa=0.298
+  Axis C (Norm)             47/63 (75%)  kappa=0.383
+
+======================================================================
+LLM vs HUMAN-CONSENSUS -- SEXIST ONLY (n=14)
+======================================================================
+  Axis A (AST)              6/14 (43%)
+    Human: {'hostile': 6, 'benevolent': 8}
+    LLM:   {'benevolent': 3, 'none': 5, 'hostile': 6}
+  Axis B (SCM)              4/14 (29%)
+    Human: {'contemptuous_prejudice': 2, 'paternalistic_prejudice': 8, 'admiration': 2, 'envious_prejudice': 2}
+    LLM:   {'paternalistic_prejudice': 5, 'none': 5, 'contemptuous_prejudice': 4}
+  Axis C (Norm)             6/14 (43%)
+    Human: {'proscriptive': 8, 'descriptive': 3, 'prescriptive': 3}
+    LLM:   {'prescriptive': 2, 'descriptive': 1, 'none': 5, 'proscriptive': 6}
+
+======================================================================
+LLM vs INDIVIDUAL ANNOTATORS (n=63)
+======================================================================
+
+  LLM vs Omar:
+    Binary (sexist/not)       53/63 (84%)  kappa=0.565
+    Axis A (AST)              52/63 (83%)  kappa=0.520
+    Axis B (SCM)              49/63 (78%)  kappa=0.425
+    Axis C (Norm)             52/63 (83%)  kappa=0.554
+
+  LLM vs Mandira:
+    Binary (sexist/not)       47/63 (75%)  kappa=0.331
+    Axis A (AST)              46/63 (73%)  kappa=0.312
+    Axis B (SCM)              44/63 (70%)  kappa=0.235
+    Axis C (Norm)             45/63 (71%)  kappa=0.305
+
+Saved /Users/omarkhursheed/workplace/hansard-nlp-explorer/experiments/20260503_sexism_validation/01_sexism_axis_agreement.json

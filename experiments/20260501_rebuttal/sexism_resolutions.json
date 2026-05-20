@@ -1,0 +1,192 @@
+{
+  "042a7f2eba22d253_speech_112": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "27502112eb2efcf9_speech_13": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "descriptive",
+    "omar_binary": "sexist",
+    "mandira_binary": "not_sexist",
+    "notes": ""
+  },
+  "5952619ef4626ca6_speech_8": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "7676e00af0f345e4_speech_4": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "protective_paternalism",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "773750571ef0c91c_speech_19": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "sexist",
+    "mandira_binary": "not_sexist",
+    "notes": ""
+  },
+  "7fe450abfe126699_speech_20": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "admiration",
+    "resolved_axis_c": "prescriptive",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "8120cdb4752a504b_speech_196": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "protective_paternalism",
+    "resolved_axis_b": "contemptuous_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "8863060991675a59_speech_30": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "sexist",
+    "mandira_binary": "not_sexist",
+    "notes": ""
+  },
+  "8e376e708d9e7459_speech_2": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "sexist",
+    "mandira_binary": "not_sexist",
+    "notes": ""
+  },
+  "bd0971cdbc9049b3_speech_202": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "prescriptive",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "dc9b948e1b979df2_speech_24": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "admiration",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "sexist",
+    "mandira_binary": "not_sexist",
+    "notes": ""
+  },
+  "f3cc3db38d5e1d1a_speech_23": {
+    "resolved_binary": "not_sexist",
+    "resolved_axis_a": "none",
+    "resolved_axis_a_sub": "none",
+    "resolved_axis_b": "none",
+    "resolved_axis_c": "none",
+    "omar_binary": "not_sexist",
+    "mandira_binary": "sexist",
+    "notes": ""
+  },
+  "17b5525a118fab63_speech_73": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "hostile",
+    "resolved_axis_a_sub": "competitive_gender_differentiation",
+    "resolved_axis_b": "contemptuous_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "767ea664fe9705f8_speech_7": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "descriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "8b00f40e5ad1080c_speech_54": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "hostile",
+    "resolved_axis_a_sub": "heterosexual_hostility",
+    "resolved_axis_b": "envious_prejudice",
+    "resolved_axis_c": "descriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "90413c2aaeb84833_speech_5": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "hostile",
+    "resolved_axis_a_sub": "competitive_gender_differentiation",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "prescriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "aa5aa4aa9e8f7a8b_speech_5": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "hostile",
+    "resolved_axis_a_sub": "dominative_paternalism",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "b83c1ef35c639912_speech_103": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "benevolent",
+    "resolved_axis_a_sub": "complementary_gender_differentiation",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  },
+  "db64be7a33a057f7_speech_28": {
+    "resolved_binary": "sexist",
+    "resolved_axis_a": "hostile",
+    "resolved_axis_a_sub": "dominative_paternalism",
+    "resolved_axis_b": "paternalistic_prejudice",
+    "resolved_axis_c": "proscriptive",
+    "omar_binary": "",
+    "mandira_binary": "",
+    "notes": ""
+  }
+}

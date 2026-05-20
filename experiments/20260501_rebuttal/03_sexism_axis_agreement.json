@@ -1,0 +1,57 @@
+{
+  "n_relevant": 63,
+  "n_gold": 63,
+  "n_sexist_gold": 14,
+  "n_agreements": 44,
+  "n_resolutions": 19,
+  "gold_binary_dist": {
+    "not_sexist": 49,
+    "sexist": 14
+  },
+  "human_human": {
+    "Binary": {
+      "agree": 51,
+      "n": 63,
+      "kappa": 0.45
+    },
+    "Axis A": {
+      "agree": 53,
+      "n": 63,
+      "kappa": 0.496
+    },
+    "Axis B": {
+      "agree": 51,
+      "n": 63,
+      "kappa": 0.44
+    },
+    "Axis C": {
+      "agree": 50,
+      "n": 63,
+      "kappa": 0.418
+    }
+  },
+  "llm_vs_consensus": {
+    "Binary": {
+      "agree": 50,
+      "n": 63,
+      "kappa": 0.445
+    },
+    "Axis A": {
+      "agree": 47,
+      "n": 63,
+      "kappa": 0.368
+    },
+    "Axis B": {
+      "agree": 45,
+      "n": 63,
+      "kappa": 0.298
+    },
+    "Axis C": {
+      "agree": 47,
+      "n": 63,
+      "kappa": 0.383
+    }
+  },
+  "llm_vs_omar": {},
+  "llm_vs_mandira": {}
+}

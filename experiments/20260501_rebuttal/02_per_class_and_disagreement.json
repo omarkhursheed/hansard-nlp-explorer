@@ -1,0 +1,109 @@
+{
+  "per_class": {
+    "for": {
+      "precision": 0.65625,
+      "recall": 0.9130434782608695,
+      "f1-score": 0.7636363636363637,
+      "support": 46.0
+    },
+    "against": {
+      "precision": 0.6666666666666666,
+      "recall": 0.5,
+      "f1-score": 0.5714285714285714,
+      "support": 8.0
+    },
+    "both": {
+      "precision": 0.6,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.42857142857142855,
+      "support": 9.0
+    },
+    "irrelevant": {
+      "precision": 0.84,
+      "recall": 0.5675675675675675,
+      "f1-score": 0.6774193548387096,
+      "support": 37.0
+    },
+    "accuracy": 0.7,
+    "macro avg": {
+      "precision": 0.6907291666666666,
+      "recall": 0.5784860947904427,
+      "f1-score": 0.6102639296187683,
+      "support": 100.0
+    },
+    "weighted avg": {
+      "precision": 0.7200083333333334,
+      "recall": 0.7,
+      "f1-score": 0.686203602848764,
+      "support": 100.0
+    }
+  },
+  "kappa": 0.503,
+  "n": 100,
+  "confusion_matrix": [
+    [
+      42,
+      1,
+      1,
+      2
+    ],
+    [
+      2,
+      4,
+      1,
+      1
+    ],
+    [
+      5,
+      0,
+      3,
+      1
+    ],
+    [
+      15,
+      1,
+      0,
+      21
+    ]
+  ],
+  "labels": [
+    "for",
+    "against",
+    "both",
+    "irrelevant"
+  ],
+  "annotation_counts": {
+    "omar": 100,
+    "mandira": 96,
+    "shared": 96,
+    "omar_only": [
+      "107d49c84a5099fc_speech_48",
+      "2a902dd418b5740f_speech_1",
+      "5c5cc90b04c793c5_speech_10",
+      "e43c1614cb0501d2_speech_15"
+    ]
+  },
+  "disagreements": {
+    "total": 30,
+    "patterns": {
+      "against -> for": 2,
+      "irrelevant -> for": 15,
+      "both -> for": 5,
+      "for -> irrelevant": 2,
+      "irrelevant -> against": 1,
+      "for -> both": 1,
+      "for -> against": 1,
+      "against -> irrelevant": 1,
+      "both -> irrelevant": 1,
+      "against -> both": 1
+    },
+    "severity": {
+      "close": 7,
+      "relevance": 20,
+      "direction": 3
+    },
+    "overlap_with_human": 14,
+    "claude_only": 16,
+    "human_only": 19
+  }
+}

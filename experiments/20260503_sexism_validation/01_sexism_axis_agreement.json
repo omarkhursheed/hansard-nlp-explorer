@@ -1,0 +1,146 @@
+{
+  "human_human": {
+    "binary": {
+      "agree": 51,
+      "n": 63,
+      "kappa": 0.45
+    },
+    "axis_a_label": {
+      "agree": 53,
+      "n": 63,
+      "kappa": 0.496
+    },
+    "axis_b_label": {
+      "agree": 51,
+      "n": 63,
+      "kappa": 0.44
+    },
+    "axis_c_label": {
+      "agree": 50,
+      "n": 63,
+      "kappa": 0.418
+    }
+  },
+  "llm_vs_consensus": {
+    "binary": {
+      "agree": 50,
+      "n": 63,
+      "kappa": 0.445
+    },
+    "axis_a_label": {
+      "agree": 47,
+      "n": 63,
+      "kappa": 0.368
+    },
+    "axis_b_label": {
+      "agree": 45,
+      "n": 63,
+      "kappa": 0.298
+    },
+    "axis_c_label": {
+      "agree": 47,
+      "n": 63,
+      "kappa": 0.383
+    }
+  },
+  "llm_vs_consensus_sexist": {
+    "axis_a_label": {
+      "agree": 6,
+      "n": 14,
+      "human_dist": {
+        "hostile": 6,
+        "benevolent": 8
+      },
+      "llm_dist": {
+        "benevolent": 3,
+        "none": 5,
+        "hostile": 6
+      }
+    },
+    "axis_b_label": {
+      "agree": 4,
+      "n": 14,
+      "human_dist": {
+        "contemptuous_prejudice": 2,
+        "paternalistic_prejudice": 8,
+        "admiration": 2,
+        "envious_prejudice": 2
+      },
+      "llm_dist": {
+        "paternalistic_prejudice": 5,
+        "none": 5,
+        "contemptuous_prejudice": 4
+      }
+    },
+    "axis_c_label": {
+      "agree": 6,
+      "n": 14,
+      "human_dist": {
+        "proscriptive": 8,
+        "descriptive": 3,
+        "prescriptive": 3
+      },
+      "llm_dist": {
+        "prescriptive": 2,
+        "descriptive": 1,
+        "none": 5,
+        "proscriptive": 6
+      }
+    }
+  },
+  "llm_vs_omar": {
+    "binary": {
+      "agree": 53,
+      "n": 63,
+      "kappa": 0.565
+    },
+    "axis_a_label": {
+      "agree": 52,
+      "n": 63,
+      "kappa": 0.52
+    },
+    "axis_b_label": {
+      "agree": 49,
+      "n": 63,
+      "kappa": 0.425
+    },
+    "axis_c_label": {
+      "agree": 52,
+      "n": 63,
+      "kappa": 0.554
+    }
+  },
+  "llm_vs_mandira": {
+    "binary": {
+      "agree": 47,
+      "n": 63,
+      "kappa": 0.331
+    },
+    "axis_a_label": {
+      "agree": 46,
+      "n": 63,
+      "kappa": 0.312
+    },
+    "axis_b_label": {
+      "agree": 44,
+      "n": 63,
+      "kappa": 0.235
+    },
+    "axis_c_label": {
+      "agree": 45,
+      "n": 63,
+      "kappa": 0.305
+    }
+  },
+  "summary": {
+    "n_relevant": 63,
+    "n_gold": 63,
+    "n_sexist": 14,
+    "n_agreements": 44,
+    "n_resolutions": 19,
+    "gold_binary_dist": {
+      "not_sexist": 49,
+      "sexist": 14
+    }
+  }
+}
