@@ -25,6 +25,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 # --------------------------------------------------------------------------- #
@@ -32,7 +33,7 @@ import streamlit as st
 # --------------------------------------------------------------------------- #
 
 ROOT = Path(__file__).parent
-SAMPLE_PATH = ROOT / "validation_sample_500.parquet"
+SAMPLE_PATH = ROOT / "validation_sample.parquet"
 ANNOTATIONS_DIR = ROOT / "annotations"
 ANNOTATIONS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -288,6 +289,50 @@ def render_highlighted_html(text: str, spans: list[tuple[int, int, str]]) -> str
 def _escape(s: str) -> str:
     return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
              .replace("\n", "<br>"))
+
+
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[A-Z—‘“])")
+
+
+def extract_keyword_sentences(text: str, spans: list[tuple[int, int, str]]) -> str:
+    """Return HTML showing just the sentences that contain at least one
+    keyword span, with the highlights preserved. Dedupes overlapping sentences
+    and joins separate hits with a `...` marker so the annotator can see
+    quickly what the extraction caught.
+    """
+    if not text or not spans:
+        return ""
+
+    # Compute sentence boundaries (char offsets) once
+    starts = [0]
+    for m in _SENTENCE_BREAK.finditer(text):
+        starts.append(m.end())
+    starts.append(len(text))
+    sent_ranges = list(zip(starts[:-1], starts[1:]))
+
+    # Find which sentences contain any keyword
+    hit_sentences: list[tuple[int, int]] = []
+    for sa, sb in sent_ranges:
+        if any(sa <= s < sb for s, _, _ in spans):
+            hit_sentences.append((sa, sb))
+    if not hit_sentences:
+        return ""
+
+    # Merge adjacent sentences (no gap marker between them)
+    merged: list[tuple[int, int]] = []
+    for sa, sb in hit_sentences:
+        if merged and sa == merged[-1][1]:
+            merged[-1] = (merged[-1][0], sb)
+        else:
+            merged.append((sa, sb))
+
+    # Render each merged block with its highlights
+    chunks = []
+    for i, (sa, sb) in enumerate(merged):
+        sub_text = text[sa:sb].strip()
+        sub_spans = [(s - sa, e - sa, k) for s, e, k in spans if sa <= s < sb]
+        chunks.append(render_highlighted_html(sub_text, sub_spans))
+    return ' <span style="opacity:0.5">...</span> '.join(chunks)
 
 
 # --------------------------------------------------------------------------- #
@@ -567,8 +612,22 @@ else:
     pills += "<span class='meta-pill meta-pill-warn'>no context</span>"
 st.markdown(f"#### Speech {pills}", unsafe_allow_html=True)
 
+quickview_html = extract_keyword_sentences(text, spans)
+if quickview_html:
+    st.markdown(
+        f"<div style='background:rgba(128,128,128,0.08);border-left:3px solid "
+        f"rgba(252,211,77,0.7);padding:10px 14px;border-radius:4px;"
+        f"margin-bottom:14px'>"
+        f"<div style='font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;"
+        f"opacity:0.7;margin-bottom:6px'>Keyword sentences (skim first)</div>"
+        f"<div class='speech-body' style='font-size:0.96rem'>{quickview_html}</div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
 html = render_highlighted_html(text, spans)
-st.markdown(f'<div class="speech-body">{html}</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="speech-body" id="speech-body-anchor">{html}</div>',
+            unsafe_allow_html=True)
 
 if ctx_present:
     with st.expander(
@@ -595,7 +654,7 @@ def save_now():
 # Stance
 stance_idx = STANCE_OPTIONS.index(rec["stance"]) if rec.get("stance") in STANCE_OPTIONS else None
 new_stance = st.radio(
-    "Stance",
+    "Stance  (F=for, A=against, B=both, I=irrelevant)",
     STANCE_OPTIONS,
     index=stance_idx,
     horizontal=True,
@@ -604,8 +663,14 @@ new_stance = st.radio(
     key=f"stance_{sid}",
 )
 if new_stance != rec.get("stance"):
+    prev = rec.get("stance")
     rec["stance"] = new_stance
     save_now()
+    # Auto-advance when irrelevant is freshly selected -- one-keystroke flow
+    if new_stance == "irrelevant" and prev != "irrelevant":
+        if pos_in_visible < len(visible) - 1:
+            st.session_state.idx = visible[pos_in_visible + 1]
+        st.rerun()
 
 # Hostile and benevolent in two columns
 hostile_col, benevolent_col = st.columns(2)
@@ -669,9 +734,80 @@ with status_col:
     else:
         st.caption("Set stance to save this annotation.")
 with advance_col:
-    if st.button("Save & Next", type="primary", use_container_width=True,
+    if st.button("Save & Next  (Enter)", type="primary", use_container_width=True,
                  disabled=not is_complete(rec)):
         # Find next visible
         if pos_in_visible < len(visible) - 1:
             st.session_state.idx = visible[pos_in_visible + 1]
         st.rerun()
+
+
+# Keyboard shortcuts: F/A/B/I = stance, 1-3 = hostile subs, 4-6 = benevolent
+# subs, Enter = Save & Next. Listener attaches to the parent document once;
+# component re-renders are idempotent.
+components.html(
+    """
+<script>
+(function() {
+  const doc = window.parent.document;
+
+  const STANCE = {f: 'for', a: 'against', b: 'both', i: 'irrelevant'};
+  const SUBS = {
+    '1': 'Dominative paternalism',
+    '2': 'Competitive gender differentiation',
+    '3': 'Heterosexual hostility',
+    '4': 'Protective paternalism',
+    '5': 'Complementary gender differentiation',
+    '6': 'Heterosexual intimacy',
+  };
+
+  function clickLabelled(selector, target) {
+    const els = doc.querySelectorAll(selector);
+    for (const el of els) {
+      const lbl = (el.closest('label')?.innerText || '').trim();
+      if (lbl === target) { el.click(); return true; }
+    }
+    return false;
+  }
+
+  function handler(e) {
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
+    const key = e.key.toLowerCase();
+
+    if (STANCE[key]) {
+      if (clickLabelled('input[type=radio]', STANCE[key])) e.preventDefault();
+      return;
+    }
+    if (SUBS[key]) {
+      if (clickLabelled('input[type=checkbox]', SUBS[key])) e.preventDefault();
+      return;
+    }
+    if (e.key === 'Enter') {
+      const buttons = doc.querySelectorAll('button');
+      for (const b of buttons) {
+        const txt = (b.innerText || '').trim();
+        if (txt.startsWith('Save & Next') && !b.disabled) {
+          e.preventDefault();
+          b.click();
+          return;
+        }
+      }
+    }
+  }
+
+  // Streamlit destroys this iframe on every rerun, which orphans any
+  // listener that closed over the iframe's V8 scope. So we remove any
+  // previous handler and attach a fresh one each time the script runs.
+  if (doc._v8_handler) {
+    doc.removeEventListener('keydown', doc._v8_handler);
+  }
+  doc._v8_handler = handler;
+  doc.addEventListener('keydown', handler);
+})();
+</script>
+""",
+    height=0,
+)

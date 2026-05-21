@@ -21,8 +21,9 @@ from pathlib import Path
 import pandas as pd
 
 SEED = 42
-SAMPLE_SIZE = 500
+SAMPLE_SIZE = 300
 OUTPUT_DIR = Path(__file__).parent
+ANNOTATIONS_DIR = OUTPUT_DIR / "annotations"
 
 ERA_BINS = [1800, 1870, 1918, 1928, 1970, 2010]
 ERA_LABELS = ["1800-1869", "1870-1917", "1918-1927", "1928-1969", "1970-2005"]
@@ -110,9 +111,41 @@ def attach_context_windows(sample: pd.DataFrame) -> pd.DataFrame:
     return sample
 
 
+def load_already_annotated_ids() -> set[str]:
+    """Speech IDs that already have at least one annotation written -- these
+    are preserved in any re-sample so prior work isn't thrown away."""
+    if not ANNOTATIONS_DIR.exists():
+        return set()
+    ids: set[str] = set()
+    for jl in ANNOTATIONS_DIR.glob("*.jsonl"):
+        with open(jl) as f:
+            for line in f:
+                try:
+                    ids.add(json.loads(line)["speech_id"])
+                except (json.JSONDecodeError, KeyError):
+                    pass
+    return ids
+
+
 def sample(df, exclude_ids):
     pool = df[~df["speech_id"].isin(exclude_ids)].copy()
+    pre_keep_ids = load_already_annotated_ids() & set(pool["speech_id"])
+
+    # Draw the full SAMPLE_SIZE first
     drawn = pool.sample(n=SAMPLE_SIZE, random_state=SEED)
+
+    # Force-include any already-annotated speeches not already in the draw.
+    # For each new force-include, drop one random row (deterministic via seed)
+    # from the drawn set that isn't itself force-included.
+    missing = pre_keep_ids - set(drawn["speech_id"])
+    if missing:
+        forced = pool[pool["speech_id"].isin(missing)]
+        droppable = drawn[~drawn["speech_id"].isin(pre_keep_ids)]
+        to_drop = droppable.sample(n=len(forced), random_state=SEED + 1)
+        drawn = pd.concat([drawn.drop(to_drop.index), forced])
+        print(f"  Preserved {len(forced)} already-annotated speech(es) by swapping out "
+              f"{len(to_drop)} random rows from the seed-42 draw.")
+
     drawn = drawn.sort_values("year").reset_index(drop=True)
     drawn["sample_idx"] = range(len(drawn))
     return drawn, len(pool)
@@ -165,7 +198,7 @@ def main():
         print("\n[DRY RUN] No files written.")
         return
 
-    out_parquet = OUTPUT_DIR / "validation_sample_500.parquet"
+    out_parquet = OUTPUT_DIR / "validation_sample.parquet"
     cols = [
         "sample_idx", "speech_id", "debate_id", "speaker", "gender", "party",
         "chamber", "year", "era", "date", "word_count",
