@@ -106,10 +106,14 @@ TIER1_PHRASE_REGEX = re.compile(
 )
 
 # Tier 2 (MEDIUM): women/female within 25 words of any voting term.
-# Pairing is enforced in find_tier2_pairs().
-TIER2_VOTING = re.compile(
-    r"\b(?:vote|voting|voter|voters|electoral|electorate|franchise|enfranchise|representation)\w*\b",
-    re.IGNORECASE,
+# Match the extractor's exact behaviour, which uses bare substring searches
+# (e.g. r'vote' will fire on 'devoted', 'voters', 'devotedly'). Word-bounded
+# regex would diverge from what actually qualified the speech for extraction.
+TIER2_VOTING_SUBSTRINGS = (
+    "vote", "voting", "voter", "voters",
+    "electoral", "electorate",
+    "franchise", "enfranchise",
+    "representation",
 )
 TIER2_WINDOW_WORDS = 25  # +/- 25 words from each women/female occurrence
 
@@ -194,18 +198,21 @@ def find_tier1_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
+def _word_contains_voting(lower_word: str) -> bool:
+    """Substring check matching the extractor's `re.search(pat, context)`
+    behaviour: a word containing 'vote' (e.g. 'devoted', 'voters') counts."""
+    return any(sub in lower_word for sub in TIER2_VOTING_SUBSTRINGS)
+
+
 def find_tier2_spans(text: str) -> list[tuple[int, int]]:
     """Tier 2: women/female occurrences plus the voting term(s) within +/- 25
-    words. Only women/female occurrences that have at least one voting term in
-    their window are highlighted, and the qualifying voting term itself is
-    also highlighted. Mirrors `_is_medium_confidence` in the extractor exactly.
-    """
+    words. Mirrors `_is_medium_confidence` in the extractor: substring
+    matching, so qualifying voting tokens include things like 'devoted'
+    (contains 'vote') if they happen to sit within the window."""
     words = _word_positions(text)
     if not words:
         return []
 
-    # Indices of tokens containing 'women' or 'female' (substring match,
-    # so 'women,' or 'womens' also count -- same as extractor's `in word`).
     gender_idx = [i for i, (_, _, w) in enumerate(words)
                   if "women" in w or "female" in w]
 
@@ -217,7 +224,7 @@ def find_tier2_spans(text: str) -> list[tuple[int, int]]:
         end_word = min(len(words), gi + TIER2_WINDOW_WORDS)
         window_idx = list(range(start_word, end_word))
         voting_hits = [wi for wi in window_idx
-                       if wi != gi and TIER2_VOTING.search(words[wi][2])]
+                       if wi != gi and _word_contains_voting(words[wi][2])]
         if not voting_hits:
             continue
         s, e, _ = words[gi]
