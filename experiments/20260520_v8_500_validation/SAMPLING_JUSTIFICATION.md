@@ -76,6 +76,16 @@ on it will be omitted.
 | F | 53 |
 | unknown | 34 |
 
+## Presentation order
+
+After sampling, speeches are shuffled with a separate fixed seed
+(`SHUFFLE_SEED=43`) before `sample_idx` is assigned, so the order
+presented to annotators is randomised rather than chronological.
+This avoids era-clustered calibration drift (e.g. labelling a long run
+of 1900s suffrage speeches in a row and unconsciously developing
+era-specific heuristics). Both annotators see the same shuffled order
+so progress is comparable.
+
 ## Annotation Protocol
 
 Each speech is independently annotated by two annotators (Omar, Mandira) for:

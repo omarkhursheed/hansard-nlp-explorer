@@ -13,17 +13,17 @@
   },
   "llm_stance_counts": {
     "for": 150,
-    "irrelevant": 117,
-    "against": 31,
+    "irrelevant": 116,
+    "against": 32,
     "both": 2
   },
   "llm_binary_counts": {
-    "not_sexist": 250,
-    "sexist": 50
+    "not_sexist": 249,
+    "sexist": 51
   },
   "llm_axis_a_counts": {
-    "none": 250,
-    "hostile": 27,
+    "none": 249,
+    "hostile": 28,
     "benevolent": 23
   },
   "gender_counts": {
@@ -31,6 +31,6 @@
     "F": 34,
     "null": 19
   },
-  "word_count_median": 892.0,
-  "word_count_mean": 1417.4766666666667
+  "word_count_median": 890.5,
+  "word_count_mean": 1412.3833333333334
 }

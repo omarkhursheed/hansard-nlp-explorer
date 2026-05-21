@@ -21,6 +21,7 @@ from pathlib import Path
 import pandas as pd
 
 SEED = 42
+SHUFFLE_SEED = 43  # separate seed: shuffles presentation order to avoid era-clustered annotation bias
 SAMPLE_SIZE = 300
 OUTPUT_DIR = Path(__file__).parent
 ANNOTATIONS_DIR = OUTPUT_DIR / "annotations"
@@ -146,8 +147,9 @@ def sample(df, exclude_ids):
         print(f"  Preserved {len(forced)} already-annotated speech(es) by swapping out "
               f"{len(to_drop)} random rows from the seed-42 draw.")
 
-    drawn = drawn.sort_values("year").reset_index(drop=True)
-    drawn["sample_idx"] = range(len(drawn))
+    # Note: sample_idx is assigned later (after the post-sampling shuffle in
+    # main) so the order shown to annotators is randomized, not chronological.
+    drawn = drawn.reset_index(drop=True)
     return drawn, len(pool)
 
 
@@ -193,6 +195,12 @@ def main():
     s, pool_size = sample(df, exclude_ids)
     diagnostics(s, pool_size, len(exclude_ids))
     s = attach_context_windows(s)
+
+    # Shuffle presentation order so annotators don't see era-clustered runs.
+    # Same shuffle for both annotators (deterministic via SHUFFLE_SEED) so
+    # 'sample 42/300' refers to the same speech for both.
+    s = s.sample(frac=1, random_state=SHUFFLE_SEED).reset_index(drop=True)
+    s["sample_idx"] = range(len(s))
 
     if args.dry_run:
         print("\n[DRY RUN] No files written.")
