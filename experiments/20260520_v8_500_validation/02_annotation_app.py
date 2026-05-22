@@ -87,23 +87,29 @@ TIER1_QUALIFY_REGEX = re.compile(
     re.IGNORECASE,
 )
 
-# Tier 1 single-word suffrage/franchise tokens -- always highlight wherever they appear.
-TIER1_TOKEN_REGEX = re.compile(
-    r"\b(?:suffrage|suffragette|suffragettes|suffragist|suffragists|"
-    r"enfranchise|enfranchised|enfranchising|enfranchisement|"
-    r"disenfranchise|disenfranchised|disfranchise|disfranchised|disfranchisement)\b",
-    re.IGNORECASE,
-)
+# For each Tier 1 alternative, declare the pivot regexes whose hits should
+# be highlighted within any greedy match of that alternative. This makes the
+# scattered-pivot false positives visible (e.g. women.*social.*political.*union
+# firing on four words scattered across a 3000-char speech).
+def _r(p):
+    return re.compile(p, re.IGNORECASE)
 
-# Tier 1 multi-word phrases -- highlighted as whole units.
-TIER1_PHRASE_REGEX = re.compile(
-    r"\bvotes?\s+for\s+women\b|"
-    r"\bequal\s+franchise\b|"
-    r"\bsex\s+disqualification\b|"
-    r"\bwomen[’']?s?\s+social(?:\s+and)?\s+political\s+union\b|"
-    r"\brepresentation\s+of\s+the\s+people\b",
-    re.IGNORECASE,
-)
+TIER1_ALT_PIVOTS = [
+    # (alternative regex, [pivot regexes to highlight inside its match span])
+    (_r(r"women.*suffrage"),                          [_r(r"\bwomen\b"),     _r(r"\bsuffrage\w*\b")]),
+    (_r(r"female\s+suffrage"),                        [_r(r"\bfemale\s+suffrage\b")]),
+    (_r(r"suffrage.*women"),                          [_r(r"\bsuffrage\w*\b"), _r(r"\bwomen\b")]),
+    (_r(r"votes?\s+for\s+women"),                     [_r(r"\bvotes?\s+for\s+women\b")]),
+    (_r(r"suffragettes?"),                            [_r(r"\bsuffragettes?\b")]),
+    (_r(r"suffragists?"),                             [_r(r"\bsuffragists?\b")]),
+    (_r(r"enfranchise.*women"),                       [_r(r"\benfranchis\w*\b"), _r(r"\bwomen\b")]),
+    (_r(r"women.*enfranchise"),                       [_r(r"\bwomen\b"), _r(r"\benfranchis\w*\b")]),
+    (_r(r"equal\s+franchise"),                        [_r(r"\bequal\s+franchise\b")]),
+    (_r(r"representation\s+of\s+the\s+people.*women"),[_r(r"\brepresentation\s+of\s+the\s+people\b"), _r(r"\bwomen\b")]),
+    (_r(r"sex\s+disqualification"),                   [_r(r"\bsex\s+disqualification\b")]),
+    (_r(r"women.*social.*political.*union"),          [_r(r"\bwomen\b"), _r(r"\bsocial\b"),
+                                                       _r(r"\bpolitical\b"), _r(r"\bunion\b")]),
+]
 
 # Tier 2 (MEDIUM): women/female within 25 words of any voting term.
 # Match the extractor's exact behaviour, which uses bare substring searches
@@ -187,14 +193,20 @@ def _word_positions(text: str) -> list[tuple[int, int, str]]:
 
 
 def find_tier1_spans(text: str) -> list[tuple[int, int]]:
-    """Tier 1 highlights: individual suffrage/franchise tokens + multi-word
-    phrases. Highlights the specific words that signal explicit suffrage
-    content, not the connecting text between regex pivots."""
-    spans = []
-    for m in TIER1_TOKEN_REGEX.finditer(text):
-        spans.append((m.start(), m.end()))
-    for m in TIER1_PHRASE_REGEX.finditer(text):
-        spans.append((m.start(), m.end()))
+    """Tier 1 highlights: the literal pivot-word occurrences of whichever
+    Tier 1 alternative(s) the speech actually fires under, restricted to
+    inside each greedy match span. This way single-word patterns (suffragette)
+    light up wherever they appear, and scatter-pivot patterns (e.g.
+    women.*social.*political.*union) light up each of women/social/political/
+    union inside the match span -- annotator can see whether the four words
+    are clustered (real WSPU mention) or scattered (extractor false positive)."""
+    spans: list[tuple[int, int]] = []
+    for alt_regex, pivot_regexes in TIER1_ALT_PIVOTS:
+        for m in alt_regex.finditer(text):
+            window = text[m.start():m.end()]
+            for pr in pivot_regexes:
+                for pm in pr.finditer(window):
+                    spans.append((m.start() + pm.start(), m.start() + pm.end()))
     return spans
 
 
